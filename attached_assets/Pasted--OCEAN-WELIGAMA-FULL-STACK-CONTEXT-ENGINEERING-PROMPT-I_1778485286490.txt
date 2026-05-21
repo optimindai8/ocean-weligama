@@ -1,0 +1,1686 @@
+# 🌊 OCEAN WELIGAMA — FULL-STACK CONTEXT ENGINEERING PROMPT
+### Industry-Grade • AI-Optimized • Psychologically Engineered • Production-Ready
+
+---
+
+> **PROMPT CLASSIFICATION**: Master System Context · Full-Stack Web Application · Tourism & Hospitality · Sri Lanka
+> **AI MODEL DIRECTIVE**: Parse every section in sequential order. Do NOT skip sections. Treat every constraint as a hard rule. Resolve ambiguity using the design principles defined in §3. When uncertain, default to the principle of "clarity over complexity."
+
+---
+
+## §0 — OPERATOR AUTHORITY & PRIME DIRECTIVES
+
+You are acting as the **world's most skilled Context Engineer AND Full-Stack Engineer**, simultaneously.
+
+You must produce **zero-ambiguity, production-deployable code and documentation** for the following project. Every decision you make must satisfy ALL of the following:
+
+| Priority | Directive |
+|----------|-----------|
+| P0 | **Psychological magnetism** — Every element placed must trigger a positive emotional or trust response in the visitor |
+| P1 | **Speed above all** — Pages must feel instant. No heavy libraries unless justified. LCP < 2.5s |
+| P2 | **Clarity first** — A first-time tourist with zero tech knowledge must complete a booking in < 3 minutes |
+| P3 | **Security by design** — Never treat security as an afterthought. Bake it in from schema to API to UI |
+| P4 | **Maintainability** — Clean architecture. The owner must be able to manage everything from the admin panel |
+| P5 | **Scalability** — Code must be organized to allow future feature additions without refactoring |
+
+---
+
+## §1 — PROJECT BRIEF
+
+### 1.1 Property Identity
+
+```
+Property Name  : Ocean Weligama
+Tagline        : "Your home by the ocean — Weligama, Sri Lanka"
+Location       : Weligama, Southern Province, Sri Lanka (100 steps from the ocean)
+Vibe           : Cozy · Homy · Beachside · Authentic Sri Lankan · International-friendly
+Target Guests  : International surfers, digital nomads, backpackers, couples, small families
+```
+
+### 1.2 Core Services Offered
+
+The website must prominently feature these 7 service pillars. Each pillar gets its own dedicated section/card in the design:
+
+| Icon | Service | Description |
+|------|---------|-------------|
+| 🏠 | **Houses** | Standalone private villa rental options |
+| 💡 | **Rooms** | Individual room rentals within the property |
+| 🏄 | **Surf Lessons** | Professional surf lessons for all skill levels |
+| 🛵 | **Scooters** | Scooter rental for exploring Weligama & surroundings |
+| 🍤 | **Food** | Local Sri Lankan cuisine and international options |
+| 🐳 | **Whale Watching** | Guided whale watching excursions |
+| 🌊 | **Ocean Access** | 100 steps to beach — core USP |
+
+### 1.3 Business Goal
+
+Convert **visitors into confirmed bookings** as fast as possible with as little friction as possible, while building **trust and emotional connection** through design and content.
+
+---
+
+## §2 — TECHNOLOGY STACK (NON-NEGOTIABLE)
+
+### 2.1 Frontend
+
+```
+Framework      : React 18+ with Vite 5+
+Language       : TypeScript (strict mode — tsconfig strict: true)
+Styling        : Tailwind CSS v3 + CSS custom properties for design tokens
+Animation      : Framer Motion (page transitions, scroll animations, micro-interactions)
+3D Effects     : CSS 3D transforms + Three.js (hero section only — keep it lightweight)
+State Mgmt     : Zustand (lightweight global state)
+Forms          : React Hook Form + Zod validation
+HTTP Client    : Axios with interceptors
+i18n           : i18next + react-i18next
+Router         : React Router v6
+Image Opt      : Vite plugin for image optimization + lazy loading
+```
+
+### 2.2 Backend
+
+```
+Runtime        : Node.js 20 LTS
+Framework      : Express 5 (async-native, no callback hell)
+ORM            : Drizzle ORM (type-safe SQL, zero runtime overhead)
+Database       : Supabase (PostgreSQL 15) — hosted, scalable, real-time capable
+Auth           : Supabase Auth (JWT-based) for admin panel only
+Email          : Nodemailer with SMTP (use Hostinger mail SMTP — free with hosting)
+Build Tool     : esbuild (fast bundling for Node.js backend)
+Validation     : Zod (shared schemas between frontend and backend)
+Security       : Helmet.js, express-rate-limit, cors, hpp, express-mongo-sanitize equiv
+Analytics      : Custom lightweight tracker (no third-party cookies) stored in Supabase
+```
+
+### 2.3 Database
+
+```
+Provider       : Supabase (PostgreSQL)
+ORM Layer      : Drizzle ORM (schema-first, migrations managed)
+Backups        : Supabase daily automatic backups + weekly manual exports
+```
+
+### 2.4 Hosting & Deployment
+
+```
+Platform       : Hostinger (VPS plan recommended)
+Frontend       : Served via Nginx (reverse proxy from VPS)
+Backend        : Node.js process managed by PM2
+SSL            : Let's Encrypt via Certbot (auto-renewal)
+CDN            : Cloudflare (free tier) — DNS, DDoS protection, caching
+CI/CD          : GitHub Actions → SSH deploy to Hostinger VPS
+Environment    : .env files (never committed), Hostinger env panel
+```
+
+---
+
+## §3 — DESIGN SYSTEM (PSYCHOLOGICAL & AESTHETIC FRAMEWORK)
+
+### 3.1 Design Philosophy
+
+This website must feel like **stepping barefoot onto warm sand at golden hour**. It must balance three psychological pillars:
+
+1. **Trust** — Clean structure, social proof, professional consistency
+2. **Desire** — Sensory imagery, emotion-triggering colors, aspirational lifestyle feel
+3. **Ease** — Zero-friction navigation, clear CTAs, fast booking
+
+### 3.2 Color Palette (CSS Custom Properties)
+
+```css
+:root {
+  /* Primary — Ocean-inspired */
+  --color-ocean-deep:     #0B3D5E;   /* Deep trust, headers, footer bg */
+  --color-ocean-mid:      #1A6B8A;   /* CTAs, active states */
+  --color-ocean-light:    #4BBCCC;   /* Highlights, icons, links */
+  --color-surf-foam:      #E8F8FA;   /* Light backgrounds, section alternates */
+
+  /* Secondary — Sri Lanka warmth */
+  --color-sand:           #F5E6C8;   /* Warm cards, testimonial bg */
+  --color-golden:         #F0A500;   /* CTA buttons, badges, urgency */
+  --color-coral:          #E8553A;   /* Price highlights, discount tags */
+  --color-palm:           #2D6A4F;   /* Nature accents, eco-badges */
+
+  /* Neutrals */
+  --color-white:          #FFFFFF;
+  --color-off-white:      #FAFAF8;
+  --color-charcoal:       #1C1C1E;   /* Body text */
+  --color-muted:          #6B7280;   /* Secondary text */
+  --color-border:         #E5E7EB;
+
+  /* Glassmorphism */
+  --glass-bg:             rgba(255, 255, 255, 0.12);
+  --glass-border:         rgba(255, 255, 255, 0.20);
+  --glass-blur:           blur(16px);
+}
+```
+
+### 3.3 Typography
+
+```css
+/* Display — Emotional, distinctive, memorable */
+--font-display: 'Playfair Display', Georgia, serif;        /* Hero titles, section headers */
+
+/* Body — Highly legible, friendly, modern */
+--font-body: 'DM Sans', system-ui, sans-serif;             /* All body copy */
+
+/* Accent — Casual, surf-culture energy */
+--font-accent: 'Caveat', cursive;                          /* Handwritten-style callouts */
+
+/* Mono — Technical, pricing, codes */
+--font-mono: 'JetBrains Mono', monospace;                  /* Booking codes, dates */
+
+/* Scale */
+--text-xs:   0.75rem;    /* 12px */
+--text-sm:   0.875rem;   /* 14px */
+--text-base: 1rem;       /* 16px */
+--text-lg:   1.125rem;   /* 18px */
+--text-xl:   1.25rem;    /* 20px */
+--text-2xl:  1.5rem;     /* 24px */
+--text-3xl:  1.875rem;   /* 30px */
+--text-4xl:  2.25rem;    /* 36px */
+--text-5xl:  3rem;       /* 48px */
+--text-hero: clamp(3rem, 8vw, 5.5rem); /* Fluid hero text */
+```
+
+### 3.4 Psychological Placement Rules (CRITICAL)
+
+Apply these rules without exception when placing any element:
+
+```
+RULE 1 — F-PATTERN ABOVE THE FOLD
+  → Most critical information: top-left quadrant
+  → Primary CTA: right of center or center (eye gravity point)
+  → Trust signal (reviews/rating): directly beneath the primary CTA
+
+RULE 2 — SCARCITY & URGENCY (NON-MANIPULATIVE)
+  → "X rooms available this week" — show real data from DB
+  → Subtle, not aggressive — never popup-spam
+
+RULE 3 — SOCIAL PROOF HIERARCHY
+  → Star rating + review count → Guest photos → Written testimonials
+  → Place social proof within 2 scrolls of any CTA
+
+RULE 4 — VISUAL BREATHING ROOM
+  → Minimum 80px vertical padding between major sections
+  → Cards need 24px internal padding minimum
+  → Never stack more than 3 dense elements without a spacer
+
+RULE 5 — CTA BUTTON PSYCHOLOGY
+  → Primary CTA: Golden (#F0A500) — triggers action/desire
+  → Secondary CTA: Ocean mid (#1A6B8A) — communicates trust
+  → All CTAs must have a verb: "Book Now", "Explore Rooms", "Start Surfing"
+  → Never use "Submit", "Click Here", or "Learn More" alone
+
+RULE 6 — IMAGERY PLACEMENT
+  → Lead with people having joy, not empty rooms
+  → Ocean/nature shots establish aspiration
+  → Real property photos build trust
+  → Show breakfast, sunsets, surf — emotions first, specs second
+
+RULE 7 — 3-CLICK RULE
+  → Any guest must reach booking confirmation screen within 3 clicks from landing page
+```
+
+### 3.5 Animation & Motion Principles
+
+```
+PHILOSOPHY   : Purposeful motion only. Every animation must have a reason.
+ENTRY        : Elements fade-slide in from bottom on scroll (staggered, 80ms apart)
+HERO         : Subtle parallax on background (max 20% movement) — not jarring
+HOVER        : Cards lift 4px + shadow deepens + subtle scale(1.02) — 200ms ease-out
+LOADING      : Wave-inspired skeleton loader (CSS animation, no spinner)
+TRANSITIONS  : Page transitions: 300ms fade (not slide — less motion sickness)
+3D           : Hero section ONLY. Tilt effect on main hero card (max 8deg)
+PERFORMANCE  : prefers-reduced-motion media query — disable all non-essential animations
+```
+
+---
+
+## §4 — SITE ARCHITECTURE & PAGES
+
+### 4.1 URL Structure
+
+```
+PUBLIC ROUTES
+/                         → Home (Landing Page)
+/rooms                    → All Rooms & Houses
+/rooms/:slug              → Individual Room Detail Page
+/services                 → All Services (Surf, Scooter, Food, Whale)
+/services/:slug           → Individual Service Detail Page
+/gallery                  → Photo & Video Gallery
+/about                    → About Ocean Weligama + Local Area Guide
+/book                     → Main Booking Page (standalone, distraction-free)
+/book/confirmation        → Booking Confirmation Page
+/contact                  → Contact Page
+/blog                     → Travel Blog (optional, SEO-driven)
+/blog/:slug               → Individual Blog Post
+
+ADMIN ROUTES (Protected)
+/ow-admin                 → Admin Login Page (obscure URL — not /admin)
+/ow-admin/dashboard       → Dashboard (visitors, bookings, revenue overview)
+/ow-admin/bookings        → Booking Management
+/ow-admin/rooms           → Room/Property Management
+/ow-admin/services        → Services Management
+/ow-admin/gallery         → Media Management (upload photos/videos)
+/ow-admin/content         → CMS — Edit any text/content on public website
+/ow-admin/translations    → Manage all 5 languages
+/ow-admin/reviews         → Manage guest reviews
+/ow-admin/analytics       → Visitor analytics, heatmaps, country breakdown
+/ow-admin/messages        → Contact form messages inbox
+/ow-admin/pricing         → Dynamic pricing management
+/ow-admin/settings        → Site settings, SMTP config, API keys
+
+ERROR ROUTES
+/404                      → Custom not found page (branded, helpful)
+/maintenance              → Maintenance mode page
+```
+
+### 4.2 Page-by-Page Blueprint
+
+---
+
+#### PAGE: HOME `/`
+
+**Purpose**: Convert visitor to booking intent in < 30 seconds.
+
+**Section Order** (psychological flow):
+```
+1. NAVIGATION BAR (sticky, glassmorphism on scroll)
+   - Logo (left) | Language Switcher | Nav Links | "Book Now" CTA (golden button)
+   - Mobile: hamburger menu with full-screen overlay
+
+2. HERO SECTION (100vh, parallax)
+   - Full-screen video background (ocean/surf footage, auto-play muted loop)
+   - Overlay: 40% dark gradient from bottom
+   - Main Headline: "Your Ocean Home in Weligama" (Playfair Display, white)
+   - Sub-headline: "100 steps from the waves · Sri Lanka" (DM Sans, sand color)
+   - Micro-social-proof: "⭐ 4.9 · 240+ guests loved it"
+   - Quick search/availability widget: [Check-in date] [Check-out date] [Guests] [Check Availability →]
+   - Scroll indicator: animated wave-down arrow
+
+3. TRUST BAR (full-width, dark bg, 1 scroll below fold)
+   - 4 trust signals in a row:
+     🔒 Secure Booking  |  🌊 100 Steps to Beach  |  ⭐ 4.9 Rating  |  🏄 Expert Surf Instructors
+
+4. SERVICES GRID (7-card bento layout)
+   - Each card: icon + name + 1-line description + "Explore →" link
+   - Hover: card lifts, background image reveals with overlay
+   - Cards: Houses, Rooms, Surf, Scooters, Food, Whale Watching, Beach Access
+
+5. FEATURED ROOMS (horizontal scroll on mobile, 3-col grid on desktop)
+   - 3 featured room/villa cards
+   - Each: hero image, room name, key amenities icons, price from X/night, "View Room" CTA
+
+6. SURF LIFESTYLE SECTION (split layout — 60/40)
+   - Left: Full-height image collage (surf, ocean, lifestyle)
+   - Right: Headline + copy + surf lesson highlight + CTA "Learn to Surf"
+   - 3D tilt effect on image stack
+
+7. WELIGAMA AREA GUIDE (map + highlights)
+   - Embedded OpenStreetMap or Mapbox (lightweight) showing location
+   - 4 nearby attraction cards: beach, restaurants, viewpoints, surf spots
+   - Distance badges from property
+
+8. SOCIAL PROOF (reviews section)
+   - Section header: "What Our Guests Say"
+   - Average rating display (large star + number)
+   - 4 review cards (auto-rotating carousel on mobile)
+   - Each: guest photo (avatar), name + country flag, rating, text, date
+   - "Read all reviews on Google →" link
+
+9. INSTAGRAM GALLERY STRIP (auto-scroll)
+   - 8 square images in a horizontal auto-scrolling strip
+   - Each links to full gallery page
+   - CTA: "Follow us @oceanweligama"
+
+10. BOOKING CTA SECTION (full-width, ocean bg)
+    - Headline: "Ready for your ocean escape?"
+    - Sub: "Book directly for the best rate — no middlemen"
+    - Quick date picker + "Check Availability" button
+    - Trust: "Free cancellation · No card surcharge · Best rate guaranteed"
+
+11. FOOTER
+    - Logo + tagline
+    - Links (4 columns): Navigate, Services, Location, Legal
+    - Social links: Instagram, Facebook, WhatsApp
+    - WhatsApp floating button (bottom-right, always visible)
+    - "© 2025 Ocean Weligama · Built with ❤️ in Sri Lanka"
+    - Languages: flag switcher (5 languages)
+```
+
+---
+
+#### PAGE: ROOMS `/rooms` + `/rooms/:slug`
+
+**List Page `/rooms`**:
+```
+- Filter bar: type (Room/House), guests, price range, availability dates
+- Room cards grid (2-col desktop, 1-col mobile)
+- Each card: hero image carousel (swipeable), name, bed config, max guests, amenities icons, price/night, "Book This Room" CTA
+- Sticky availability date picker on desktop sidebar
+```
+
+**Detail Page `/rooms/:slug`**:
+```
+- Full-width hero image with thumbnail gallery strip below
+- Room name, short description, key stats (sqm, beds, guests)
+- Tab section: Overview | Amenities | House Rules | Reviews
+- Availability calendar (real-time from DB)
+- Price calculator: check-in + check-out = total price
+- "Book Now" sticky CTA (mobile: bottom bar, desktop: sidebar card)
+- Related rooms (3 cards at bottom)
+```
+
+---
+
+#### PAGE: BOOKING `/book`
+
+**CRITICAL DESIGN RULE**: This page must be **distraction-free**. Remove navigation links. Keep only: logo, progress indicator, form, and support contact.
+
+```
+BOOKING FLOW (3 steps, shown as step progress bar at top):
+
+STEP 1 — SELECT DATES & ROOM
+  - Date range picker (beautiful calendar UI, ocean theme)
+  - Guest count selector
+  - Room/villa options with prices update live
+  - Selected room card shows on right (summary panel)
+
+STEP 2 — GUEST DETAILS
+  - Full name, email, phone (with country code picker)
+  - Nationality / Passport number (optional — for legal compliance)
+  - Special requests textarea
+  - Additional services checkboxes: [Surf Lesson] [Scooter Rental] [Airport Transfer] [Whale Watching]
+  - Real-time price total updates as services are added
+
+STEP 3 — REVIEW & CONFIRM
+  - Full booking summary (dates, room, services, total)
+  - Payment method selection:
+    Option A: Pay Now (Stripe / PayHere)
+    Option B: Pay at Property (50% hold required for peak season)
+  - Terms & Conditions checkbox
+  - "Confirm Booking" golden button
+
+CONFIRMATION PAGE:
+  - Animated success state (wave animation)
+  - Booking reference number (generated: OW-YYYYMMDD-XXXX)
+  - Summary of booking
+  - Email confirmation sent notice
+  - WhatsApp quick-share option
+  - "Add to Google Calendar" link
+  - "What to bring" quick tips card
+```
+
+---
+
+#### PAGE: ADMIN `/ow-admin`
+
+**Login Page**:
+```
+- Minimal, dark-themed page
+- Email + Password fields
+- TOTP/OTP second factor (MFA mandatory)
+- Failed attempt lockout: 5 attempts → 15 minute lockout → logged to DB
+- No "forgot password" on page — only via direct email to owner
+- Brute force protection via rate limiting middleware
+```
+
+**Dashboard `/ow-admin/dashboard`**:
+```
+METRICS ROW (4 cards):
+  - Today's Bookings | This Month Revenue | Occupancy Rate | Active Guests
+
+CHARTS:
+  - Bookings over time (line chart, 30/60/90 day filter)
+  - Revenue by service type (donut chart)
+  - Visitor countries (world map heat)
+  - Peak booking hours (bar chart)
+
+UPCOMING CHECKINS TABLE:
+  - Next 7 days | Guest name, room, dates, status, source country, payment status
+
+RECENT MESSAGES:
+  - Last 5 contact form submissions with quick reply button
+
+QUICK ACTIONS:
+  - + New Booking | Block Dates | Send Broadcast Email | Update Pricing
+```
+
+---
+
+## §5 — DATABASE SCHEMA (SUPABASE / POSTGRESQL)
+
+**ARCHITECTURE RULE**: Schema must be **normalized, readable, and maintainable**. No catch-all JSON blobs as shortcuts. Every table has a purpose. Every foreign key is explicit.
+
+### 5.1 Schema Design Principles
+
+```
+- Use UUIDs (gen_random_uuid()) for all primary keys
+- All tables have: created_at TIMESTAMPTZ DEFAULT NOW(), updated_at TIMESTAMPTZ
+- Soft deletes via deleted_at TIMESTAMPTZ (never hard delete guest data)
+- RLS (Row Level Security) policies enabled on all Supabase tables
+- All string enums stored as PostgreSQL ENUM types for data integrity
+- Indexes on all foreign keys and frequently queried columns
+```
+
+### 5.2 Full Database Schema (Drizzle ORM Format)
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/index.ts
+// All schema exports collected here
+// ============================================================
+
+export * from './users'
+export * from './rooms'
+export * from './bookings'
+export * from './services'
+export * from './pricing'
+export * from './reviews'
+export * from './gallery'
+export * from './content'
+export * from './translations'
+export * from './analytics'
+export * from './messages'
+export * from './availability'
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/users.ts
+// Admin users only — guests are stored in bookings table
+// ============================================================
+import { pgTable, uuid, text, timestamp, boolean, pgEnum } from 'drizzle-orm/pg-core'
+
+export const userRoleEnum = pgEnum('user_role', ['super_admin', 'admin', 'staff'])
+
+export const users = pgTable('users', {
+  id:           uuid('id').primaryKey().defaultRandom(),
+  email:        text('email').notNull().unique(),
+  passwordHash: text('password_hash').notNull(),
+  role:         userRoleEnum('role').notNull().default('staff'),
+  fullName:     text('full_name').notNull(),
+  isActive:     boolean('is_active').notNull().default(true),
+  mfaSecret:    text('mfa_secret'),          // TOTP secret (encrypted at rest)
+  mfaEnabled:   boolean('mfa_enabled').notNull().default(false),
+  lastLoginAt:  timestamp('last_login_at', { withTimezone: true }),
+  loginAttempts: text('login_attempts').default('0'), // JSON counter
+  lockedUntil:  timestamp('locked_until', { withTimezone: true }),
+  createdAt:    timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt:    timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  deletedAt:    timestamp('deleted_at', { withTimezone: true }),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/rooms.ts
+// ============================================================
+import { pgTable, uuid, text, integer, boolean, decimal, timestamp, pgEnum } from 'drizzle-orm/pg-core'
+
+export const roomTypeEnum = pgEnum('room_type', ['room', 'villa', 'dormitory', 'suite'])
+export const roomStatusEnum = pgEnum('room_status', ['active', 'maintenance', 'hidden'])
+
+export const rooms = pgTable('rooms', {
+  id:              uuid('id').primaryKey().defaultRandom(),
+  slug:            text('slug').notNull().unique(),       // URL-friendly identifier
+  type:            roomTypeEnum('type').notNull(),
+  status:          roomStatusEnum('status').notNull().default('active'),
+  maxGuests:       integer('max_guests').notNull(),
+  bedrooms:        integer('bedrooms').notNull().default(1),
+  bathrooms:       integer('bathrooms').notNull().default(1),
+  sizeM2:          integer('size_m2'),
+  floor:           integer('floor').default(0),
+  basePricePerNight: decimal('base_price_per_night', { precision: 10, scale: 2 }).notNull(),
+  cleaningFee:     decimal('cleaning_fee', { precision: 10, scale: 2 }).default('0'),
+  currency:        text('currency').notNull().default('USD'),
+  isFeatured:      boolean('is_featured').default(false),
+  sortOrder:       integer('sort_order').default(0),
+  heroImageUrl:    text('hero_image_url'),
+  createdAt:       timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt:       timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  deletedAt:       timestamp('deleted_at', { withTimezone: true }),
+})
+
+// Translations for rooms (multi-language content)
+export const roomTranslations = pgTable('room_translations', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  roomId:      uuid('room_id').notNull().references(() => rooms.id, { onDelete: 'cascade' }),
+  locale:      text('locale').notNull(),                  // 'en', 'de', 'fr', 'zh', 'ru'
+  name:        text('name').notNull(),
+  description: text('description').notNull(),
+  shortDesc:   text('short_desc'),
+  createdAt:   timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt:   timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// Amenities linked to rooms
+export const amenities = pgTable('amenities', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  key:         text('key').notNull().unique(),             // 'wifi', 'ac', 'hot_water', etc.
+  iconName:    text('icon_name').notNull(),                // Lucide icon name
+  category:   text('category').notNull(),                 // 'comfort', 'bathroom', 'kitchen', etc.
+})
+
+export const roomAmenities = pgTable('room_amenities', {
+  id:        uuid('id').primaryKey().defaultRandom(),
+  roomId:    uuid('room_id').notNull().references(() => rooms.id, { onDelete: 'cascade' }),
+  amenityId: uuid('amenity_id').notNull().references(() => amenities.id),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/bookings.ts
+// ============================================================
+import { pgTable, uuid, text, integer, decimal, timestamp, boolean, pgEnum, date } from 'drizzle-orm/pg-core'
+import { rooms } from './rooms'
+
+export const bookingStatusEnum = pgEnum('booking_status', [
+  'pending',       // Created, awaiting confirmation
+  'confirmed',     // Confirmed, payment received or agreed
+  'checked_in',    // Guest has arrived
+  'checked_out',   // Guest has left
+  'cancelled',     // Booking cancelled
+  'no_show',       // Guest didn't show
+])
+
+export const paymentStatusEnum = pgEnum('payment_status', [
+  'unpaid',
+  'partial',       // Deposit paid
+  'paid',          // Fully paid
+  'refunded',
+  'failed',
+])
+
+export const paymentMethodEnum = pgEnum('payment_method', [
+  'online_card',   // Stripe / PayHere
+  'bank_transfer',
+  'cash',
+  'pending',
+])
+
+export const bookings = pgTable('bookings', {
+  id:                 uuid('id').primaryKey().defaultRandom(),
+  reference:          text('reference').notNull().unique(),  // OW-20250101-A4F2
+  roomId:             uuid('room_id').notNull().references(() => rooms.id),
+  checkIn:            date('check_in').notNull(),
+  checkOut:           date('check_out').notNull(),
+  nights:             integer('nights').notNull(),
+  guestCount:         integer('guest_count').notNull(),
+
+  // Guest information (no separate guest table — GDPR minimization)
+  guestFullName:      text('guest_full_name').notNull(),
+  guestEmail:         text('guest_email').notNull(),
+  guestPhone:         text('guest_phone').notNull(),
+  guestNationality:   text('guest_nationality'),
+  guestCountryCode:   text('guest_country_code'),           // ISO 3166-1 alpha-2
+  specialRequests:    text('special_requests'),
+
+  // Pricing
+  roomRatePerNight:   decimal('room_rate_per_night', { precision: 10, scale: 2 }).notNull(),
+  roomSubtotal:       decimal('room_subtotal', { precision: 10, scale: 2 }).notNull(),
+  servicesSubtotal:   decimal('services_subtotal', { precision: 10, scale: 2 }).default('0'),
+  cleaningFee:        decimal('cleaning_fee', { precision: 10, scale: 2 }).default('0'),
+  totalAmount:        decimal('total_amount', { precision: 10, scale: 2 }).notNull(),
+  currency:           text('currency').notNull().default('USD'),
+  depositAmount:      decimal('deposit_amount', { precision: 10, scale: 2 }).default('0'),
+
+  // Status
+  status:             bookingStatusEnum('status').notNull().default('pending'),
+  paymentStatus:      paymentStatusEnum('payment_status').notNull().default('unpaid'),
+  paymentMethod:      paymentMethodEnum('payment_method').notNull().default('pending'),
+  paymentReference:   text('payment_reference'),            // Stripe/PayHere transaction ID
+
+  // Source tracking
+  bookingSource:      text('booking_source').default('website'), // 'website', 'whatsapp', 'email'
+  languageUsed:       text('language_used').default('en'),
+
+  // Internal notes (admin only)
+  adminNotes:         text('admin_notes'),
+  isConfirmedEmail:   boolean('is_confirmed_email').default(false),
+
+  createdAt:          timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt:          timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  cancelledAt:        timestamp('cancelled_at', { withTimezone: true }),
+  deletedAt:          timestamp('deleted_at', { withTimezone: true }),
+})
+
+// Services added to a booking
+export const bookingServices = pgTable('booking_services', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  bookingId:   uuid('booking_id').notNull().references(() => bookings.id, { onDelete: 'cascade' }),
+  serviceId:   uuid('service_id').notNull(),               // References services.id
+  quantity:    integer('quantity').notNull().default(1),
+  unitPrice:   decimal('unit_price', { precision: 10, scale: 2 }).notNull(),
+  subtotal:    decimal('subtotal', { precision: 10, scale: 2 }).notNull(),
+  notes:       text('notes'),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/services.ts
+// ============================================================
+import { pgTable, uuid, text, decimal, boolean, integer, timestamp, pgEnum } from 'drizzle-orm/pg-core'
+
+export const serviceUnitEnum = pgEnum('service_unit', [
+  'per_person',
+  'per_day',
+  'per_session',
+  'flat_rate',
+])
+
+export const services = pgTable('services', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  slug:        text('slug').notNull().unique(),
+  iconEmoji:   text('icon_emoji').notNull(),
+  category:    text('category').notNull(),
+  basePrice:   decimal('base_price', { precision: 10, scale: 2 }).notNull(),
+  unit:        serviceUnitEnum('unit').notNull(),
+  isActive:    boolean('is_active').default(true),
+  isBookable:  boolean('is_bookable').default(true),    // Can be added to booking
+  maxCapacity: integer('max_capacity'),
+  sortOrder:   integer('sort_order').default(0),
+  createdAt:   timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt:   timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const serviceTranslations = pgTable('service_translations', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  serviceId:   uuid('service_id').notNull().references(() => services.id, { onDelete: 'cascade' }),
+  locale:      text('locale').notNull(),
+  name:        text('name').notNull(),
+  description: text('description').notNull(),
+  shortDesc:   text('short_desc'),
+  createdAt:   timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/availability.ts
+// ============================================================
+import { pgTable, uuid, date, boolean, text, timestamp } from 'drizzle-orm/pg-core'
+import { rooms } from './rooms'
+
+export const availability = pgTable('availability', {
+  id:           uuid('id').primaryKey().defaultRandom(),
+  roomId:       uuid('room_id').notNull().references(() => rooms.id, { onDelete: 'cascade' }),
+  date:         date('date').notNull(),
+  isBlocked:    boolean('is_blocked').notNull().default(false),
+  blockReason:  text('block_reason'),                       // 'booked', 'maintenance', 'owner_use'
+  bookingId:    uuid('booking_id'),                         // Linked booking if blocked by reservation
+  createdAt:    timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/pricing.ts
+// ============================================================
+import { pgTable, uuid, date, decimal, text, timestamp, boolean } from 'drizzle-orm/pg-core'
+import { rooms } from './rooms'
+
+// Season pricing overrides
+export const pricingRules = pgTable('pricing_rules', {
+  id:           uuid('id').primaryKey().defaultRandom(),
+  roomId:       uuid('room_id').references(() => rooms.id, { onDelete: 'cascade' }),  // null = applies to all
+  name:         text('name').notNull(),                     // 'Christmas 2025', 'Low Season'
+  dateFrom:     date('date_from').notNull(),
+  dateTo:       date('date_to').notNull(),
+  pricePerNight: decimal('price_per_night', { precision: 10, scale: 2 }).notNull(),
+  minNights:    text('min_nights').default('1'),
+  isActive:     boolean('is_active').default(true),
+  priority:     text('priority').default('10'),             // Higher = takes precedence
+  createdAt:    timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt:    timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/reviews.ts
+// ============================================================
+import { pgTable, uuid, text, integer, boolean, timestamp } from 'drizzle-orm/pg-core'
+import { bookings } from './bookings'
+
+export const reviews = pgTable('reviews', {
+  id:             uuid('id').primaryKey().defaultRandom(),
+  bookingId:      uuid('booking_id').references(() => bookings.id),
+  guestName:      text('guest_name').notNull(),
+  guestCountry:   text('guest_country'),
+  guestAvatarUrl: text('guest_avatar_url'),
+  ratingOverall:  integer('rating_overall').notNull(),      // 1-5
+  ratingCleanliness: integer('rating_cleanliness'),
+  ratingLocation:    integer('rating_location'),
+  ratingValue:       integer('rating_value'),
+  reviewText:     text('review_text').notNull(),
+  ownerReply:     text('owner_reply'),
+  isApproved:     boolean('is_approved').default(false),    // Moderated before display
+  isFeatured:     boolean('is_featured').default(false),
+  source:         text('source').default('website'),        // 'website', 'google', 'booking_com'
+  createdAt:      timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt:      timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  deletedAt:      timestamp('deleted_at', { withTimezone: true }),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/gallery.ts
+// ============================================================
+import { pgTable, uuid, text, boolean, integer, timestamp, pgEnum } from 'drizzle-orm/pg-core'
+
+export const mediaTypeEnum = pgEnum('media_type', ['image', 'video'])
+
+export const gallery = pgTable('gallery', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  mediaType:   mediaTypeEnum('media_type').notNull().default('image'),
+  url:         text('url').notNull(),                       // Supabase Storage URL
+  thumbnailUrl: text('thumbnail_url'),
+  altText:     text('alt_text'),                            // Accessibility + SEO
+  caption:     text('caption'),
+  category:    text('category'),                            // 'room', 'surf', 'food', 'area', 'general'
+  roomId:      uuid('room_id'),                             // Optional: linked to a room
+  serviceId:   uuid('service_id'),                          // Optional: linked to a service
+  sortOrder:   integer('sort_order').default(0),
+  isHero:      boolean('is_hero').default(false),           // Used in main hero areas
+  isFeatured:  boolean('is_featured').default(false),
+  uploadedBy:  uuid('uploaded_by'),                         // Admin user ID
+  fileSize:    text('file_size'),                           // Bytes
+  dimensions:  text('dimensions'),                          // "1920x1080"
+  createdAt:   timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  deletedAt:   timestamp('deleted_at', { withTimezone: true }),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/content.ts
+// CMS - Allows admin to edit any text/content on the website
+// ============================================================
+import { pgTable, uuid, text, timestamp, boolean } from 'drizzle-orm/pg-core'
+
+export const siteContent = pgTable('site_content', {
+  id:        uuid('id').primaryKey().defaultRandom(),
+  key:       text('key').notNull().unique(),           // 'hero_headline', 'about_description', etc.
+  type:      text('type').notNull().default('text'),   // 'text', 'html', 'json', 'url'
+  isLive:    boolean('is_live').default(true),
+  updatedBy: uuid('updated_by'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const siteContentTranslations = pgTable('site_content_translations', {
+  id:        uuid('id').primaryKey().defaultRandom(),
+  contentId: uuid('content_id').notNull().references(() => siteContent.id, { onDelete: 'cascade' }),
+  locale:    text('locale').notNull(),
+  value:     text('value').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/analytics.ts
+// Lightweight privacy-first analytics — no cookies
+// ============================================================
+import { pgTable, uuid, text, timestamp, integer } from 'drizzle-orm/pg-core'
+
+export const pageViews = pgTable('page_views', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  sessionId:   text('session_id').notNull(),              // Random UUID per session (no cookie)
+  page:        text('page').notNull(),
+  referrer:    text('referrer'),
+  userAgent:   text('user_agent'),
+  countryCode: text('country_code'),                      // Derived from IP via CF header
+  city:        text('city'),
+  deviceType:  text('device_type'),                       // 'mobile', 'tablet', 'desktop'
+  language:    text('language'),                          // Which language they used
+  duration:    integer('duration'),                       // Time on page in seconds
+  createdAt:   timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const conversionEvents = pgTable('conversion_events', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  sessionId:   text('session_id').notNull(),
+  eventType:   text('event_type').notNull(),              // 'booking_start', 'booking_complete', 'contact_sent'
+  metadata:    text('metadata'),                          // JSON string
+  createdAt:   timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
+```
+
+```typescript
+// ============================================================
+// FILE: src/db/schema/messages.ts
+// Contact form messages
+// ============================================================
+import { pgTable, uuid, text, boolean, timestamp } from 'drizzle-orm/pg-core'
+
+export const contactMessages = pgTable('contact_messages', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  fullName:    text('full_name').notNull(),
+  email:       text('email').notNull(),
+  phone:       text('phone'),
+  subject:     text('subject'),
+  message:     text('message').notNull(),
+  countryCode: text('country_code'),
+  isRead:      boolean('is_read').default(false),
+  isReplied:   boolean('is_replied').default(false),
+  repliedAt:   timestamp('replied_at', { withTimezone: true }),
+  createdAt:   timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  deletedAt:   timestamp('deleted_at', { withTimezone: true }),
+})
+```
+
+---
+
+## §6 — API ROUTES (EXPRESS 5 BACKEND)
+
+### 6.1 Architecture Conventions
+
+```
+/src
+  /api
+    /routes          → Express route handlers (thin — only parse req/res)
+    /controllers     → Business logic (called by routes)
+    /services        → Data access + external integrations
+    /middleware      → Auth, rate-limit, validate, etc.
+    /validators      → Zod schemas for request validation
+  /db
+    /schema          → Drizzle table definitions (as above)
+    /migrations      → Drizzle migration files
+    /seed            → Seed data for development
+  /lib
+    /email           → Nodemailer email service
+    /security        → Encryption, token utils
+    /constants       → Shared constants
+  /types             → TypeScript type definitions
+  index.ts           → Express app entry point
+```
+
+### 6.2 Route Definitions
+
+```typescript
+// PUBLIC API
+GET  /api/v1/rooms                    → List all active rooms (with filters)
+GET  /api/v1/rooms/:slug              → Single room detail
+GET  /api/v1/rooms/:slug/availability → Availability for room in date range
+GET  /api/v1/services                 → List all active services
+GET  /api/v1/services/:slug           → Single service detail
+POST /api/v1/bookings/check           → Check availability + get price quote
+POST /api/v1/bookings/create          → Create new booking
+GET  /api/v1/bookings/:ref            → Get booking by reference (public — for confirmation)
+GET  /api/v1/reviews                  → Approved reviews (paginated)
+GET  /api/v1/gallery                  → Gallery items (with category filter)
+POST /api/v1/contact                  → Submit contact message
+GET  /api/v1/content/:key             → Get site content by key
+GET  /api/v1/translations/:locale     → Get all translations for locale
+POST /api/v1/analytics/track          → Track page view (no-cookie, no PII)
+
+// ADMIN API (all require valid JWT)
+POST /api/v1/admin/auth/login         → Login + MFA verify
+POST /api/v1/admin/auth/logout        → Revoke session
+GET  /api/v1/admin/auth/me            → Current admin user
+
+GET  /api/v1/admin/bookings           → All bookings (filter by status, date, room)
+GET  /api/v1/admin/bookings/:id       → Single booking detail
+PATCH /api/v1/admin/bookings/:id      → Update booking status / notes
+DELETE /api/v1/admin/bookings/:id     → Soft delete booking
+
+GET  /api/v1/admin/rooms              → All rooms (incl. inactive)
+POST /api/v1/admin/rooms              → Create room
+PATCH /api/v1/admin/rooms/:id         → Update room
+DELETE /api/v1/admin/rooms/:id        → Soft delete room
+
+GET  /api/v1/admin/services           → All services
+POST /api/v1/admin/services           → Create service
+PATCH /api/v1/admin/services/:id      → Update service
+
+GET  /api/v1/admin/reviews            → All reviews (incl. unapproved)
+PATCH /api/v1/admin/reviews/:id       → Approve / reply / feature
+
+POST /api/v1/admin/gallery/upload     → Upload media (Supabase Storage)
+DELETE /api/v1/admin/gallery/:id      → Remove media
+
+GET  /api/v1/admin/analytics/dashboard → Aggregated dashboard metrics
+GET  /api/v1/admin/analytics/visitors  → Visitor breakdown by country
+GET  /api/v1/admin/analytics/bookings  → Booking trend data
+
+GET  /api/v1/admin/messages           → Contact messages
+PATCH /api/v1/admin/messages/:id      → Mark read/replied
+
+GET  /api/v1/admin/content            → All CMS content keys
+PATCH /api/v1/admin/content/:key      → Update content value (any language)
+
+GET  /api/v1/admin/pricing            → All pricing rules
+POST /api/v1/admin/pricing            → Create pricing rule
+PATCH /api/v1/admin/pricing/:id       → Update pricing rule
+DELETE /api/v1/admin/pricing/:id      → Delete pricing rule
+
+GET  /api/v1/admin/availability/:roomId → Room availability calendar
+POST /api/v1/admin/availability/block   → Block dates
+DELETE /api/v1/admin/availability/:id   → Unblock date
+```
+
+---
+
+## §7 — MULTI-LANGUAGE SYSTEM
+
+### 7.1 Supported Languages
+
+| Code | Language | Region Focus |
+|------|----------|-------------|
+| `en` | English | Default — Global |
+| `de` | German | Germany, Austria, Switzerland |
+| `fr` | French | France, Belgium |
+| `zh` | Chinese (Simplified) | China, Singapore |
+| `ru` | Russian | Russia, Eastern Europe |
+
+### 7.2 Implementation
+
+```typescript
+// Language detection priority:
+// 1. User explicit selection (stored in localStorage)
+// 2. Browser Accept-Language header
+// 3. Default: English
+
+// Translation file structure
+/src/locales/
+  en/
+    common.json       // Navigation, buttons, labels
+    home.json         // Home page copy
+    rooms.json        // Room-related copy
+    booking.json      // Booking flow copy
+    services.json     // Services copy
+    errors.json       // Error messages
+  de/
+    ... (same structure)
+  fr/
+    ... (same structure)
+  zh/
+    ... (same structure)
+  ru/
+    ... (same structure)
+```
+
+### 7.3 Language Switcher UI
+
+```
+- Flag emoji + language name in native script
+- Position: Navigation bar (desktop: top right) | Footer | Mobile menu
+- Selection persists across sessions via localStorage
+- URL does NOT change (no /de/ prefix) — client-side only
+- All dynamic DB content (rooms, services) fetches the active locale's translation
+```
+
+---
+
+## §8 — SECURITY IMPLEMENTATION
+
+### 8.1 Network Layer
+
+```
+✅ Cloudflare Free Tier
+   - DNS proxied (hides origin IP)
+   - DDoS protection (automatic)
+   - Rate limiting at edge
+   - Bot challenge for suspicious traffic
+
+✅ SSL/TLS
+   - Let's Encrypt certificate (auto-renewed via Certbot)
+   - TLS 1.2 minimum (TLS 1.3 preferred)
+   - HSTS header: max-age=31536000; includeSubDomains; preload
+   - Certificate Transparency monitoring
+```
+
+### 8.2 Application Layer (Express Middleware Stack)
+
+```typescript
+// Apply in this exact order:
+app.use(helmet({                          // Comprehensive security headers
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc:  ["'self'"],
+      imgSrc:      ["'self'", "data:", "https:"],
+      scriptSrc:   ["'self'"],
+      styleSrc:    ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc:     ["'self'", "https://fonts.gstatic.com"],
+      connectSrc:  ["'self'", process.env.SUPABASE_URL],
+      frameSrc:    ["'none'"],
+    }
+  },
+  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+  noSniff: true,
+  xssFilter: true,
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+}))
+
+app.use(cors({
+  origin: [process.env.FRONTEND_URL],
+  credentials: true,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+}))
+
+app.use(hpp())                            // HTTP Parameter Pollution protection
+app.use(express.json({ limit: '10kb' })) // Body size limit
+
+// Rate limiters
+const globalRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,             // 15 minutes
+  max: 200,                              // Per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
+const authRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,                               // Strict for auth endpoints
+  skipSuccessfulRequests: true,
+})
+
+const bookingRateLimit = rateLimit({
+  windowMs: 60 * 60 * 1000,             // 1 hour
+  max: 20,                               // Max 20 booking attempts per hour per IP
+})
+```
+
+### 8.3 Authentication Security
+
+```typescript
+// JWT Configuration
+const JWT_ALGORITHM = 'RS256'            // Asymmetric — more secure than HS256
+const JWT_ACCESS_TTL = '15m'             // Short-lived access tokens
+const JWT_REFRESH_TTL = '7d'             // Longer-lived refresh tokens
+
+// MFA (TOTP) — Mandatory for all admin accounts
+// Use: speakeasy + qrcode libraries
+// Flow: Login → validate password → require TOTP code → issue JWT
+
+// Password requirements
+// Min 12 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
+// bcrypt with saltRounds: 12
+
+// Session management
+// Refresh tokens stored in DB (allows revocation)
+// Admin logout invalidates refresh token in DB
+```
+
+### 8.4 Database Security (Supabase RLS)
+
+```sql
+-- Row Level Security examples
+
+-- Public can only read approved reviews
+CREATE POLICY "public_read_approved_reviews"
+ON reviews FOR SELECT
+TO anon
+USING (is_approved = TRUE AND deleted_at IS NULL);
+
+-- Only authenticated admins can write to reviews
+CREATE POLICY "admin_all_reviews"
+ON reviews FOR ALL
+TO authenticated
+USING (TRUE);
+
+-- Bookings: admin can read all, public can only read by reference
+CREATE POLICY "public_read_own_booking"
+ON bookings FOR SELECT
+TO anon
+USING (reference = current_setting('request.jwt.claims', true)::json->>'booking_ref');
+```
+
+### 8.5 Input Validation & Sanitization
+
+```typescript
+// All user inputs must pass through Zod schemas
+// Example for booking creation:
+const createBookingSchema = z.object({
+  roomId:       z.string().uuid(),
+  checkIn:      z.string().date(),
+  checkOut:     z.string().date(),
+  guestCount:   z.number().int().min(1).max(20),
+  guestName:    z.string().min(2).max(100).trim(),
+  guestEmail:   z.string().email().toLowerCase().trim(),
+  guestPhone:   z.string().regex(/^\+?[\d\s\-()]{8,20}$/),
+  serviceIds:   z.array(z.string().uuid()).optional(),
+  specialReqs:  z.string().max(1000).optional(),
+})
+
+// SQL injection: Drizzle ORM uses parameterized queries automatically
+// XSS: Zod trims/validates all inputs; React escapes output by default
+// CSRF: Not needed for pure API (JWT in header, not cookies)
+```
+
+### 8.6 File Upload Security
+
+```typescript
+// Media upload validation
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4']
+const MAX_FILE_SIZE = 10 * 1024 * 1024  // 10MB
+
+// Process: Validate MIME → Resize image → Upload to Supabase Storage
+// Never serve user-uploaded files from the same origin as the app
+// Supabase Storage bucket: set to private, generate signed URLs
+```
+
+---
+
+## §9 — EMAIL SYSTEM (NODEMAILER)
+
+### 9.1 Email Templates (Transactional)
+
+```
+EMAIL 1: Booking Confirmation (to guest)
+  Subject: "🌊 Booking Confirmed — Ocean Weligama | Ref: {REFERENCE}"
+  Content: Booking details, check-in instructions, WhatsApp contact, directions
+
+EMAIL 2: Booking Notification (to admin)
+  Subject: "New Booking: {GUEST_NAME} | {CHECKIN} - {CHECKOUT} | {ROOM}"
+  Content: Full booking details, guest info, action buttons
+
+EMAIL 3: Booking Cancellation (to guest)
+  Subject: "Booking Cancelled — Ocean Weligama | Ref: {REFERENCE}"
+  Content: Cancellation confirmation, refund policy, rebooking offer
+
+EMAIL 4: Contact Message Autoresponse (to sender)
+  Subject: "Thanks for reaching out — Ocean Weligama"
+  Content: Acknowledgment, WhatsApp link for faster response, expected reply time
+
+EMAIL 5: Pre-arrival Reminder (to guest, sent 3 days before check-in)
+  Subject: "🏄 Almost time — Your Weligama escape is in 3 days!"
+  Content: Check-in details, weather, what to pack, surf forecast
+```
+
+### 9.2 SMTP Configuration (Hostinger)
+
+```
+Host:     mail.yourdomain.com
+Port:     587 (STARTTLS) or 465 (SSL)
+User:     hello@oceanweligama.com
+Auth:     LOGIN
+TLS:      Required
+```
+
+---
+
+## §10 — PERFORMANCE REQUIREMENTS
+
+### 10.1 Core Web Vitals Targets
+
+| Metric | Target | Strategy |
+|--------|--------|----------|
+| LCP (Largest Contentful Paint) | < 2.5s | Hero image preload, Cloudflare CDN |
+| FID / INP | < 100ms | Minimal JS, deferred non-critical scripts |
+| CLS (Cumulative Layout Shift) | < 0.1 | Explicit image dimensions, skeleton loaders |
+| TTFB (Time to First Byte) | < 800ms | Supabase edge, Cloudflare cache |
+
+### 10.2 Optimization Rules
+
+```
+IMAGES:
+  - Convert all images to WebP format (Vite plugin)
+  - Responsive srcset for all images (3 sizes: 400w, 800w, 1200w)
+  - Lazy load all below-fold images (loading="lazy")
+  - Hero image: preload link tag in <head>
+  - Max hero image: 200KB (WebP)
+
+JAVASCRIPT:
+  - Code splitting per route (React.lazy + Suspense)
+  - No unused dependencies
+  - Three.js only loaded on home page hero (dynamic import)
+  - All third-party scripts deferred
+
+CSS:
+  - Tailwind purge unused classes in production
+  - Critical CSS inlined in <head>
+  - Non-critical CSS loaded async
+
+FONTS:
+  - Google Fonts: preconnect + display=swap
+  - Subset to Latin + Cyrillic only (not full Unicode)
+  - Max 2 font families (display + body)
+
+API:
+  - All public endpoints cached at Cloudflare edge (5 min TTL)
+  - Booking/availability: no cache (always fresh)
+  - Image URLs: 24h Cloudflare cache
+  - Gzip compression on all API responses
+  - Supabase connection pooling via PgBouncer (built-in)
+```
+
+---
+
+## §11 — FILE & FOLDER STRUCTURE
+
+### 11.1 Monorepo Layout
+
+```
+ocean-weligama/
+├── frontend/                    # React + Vite app
+│   ├── public/
+│   │   ├── fonts/
+│   │   ├── icons/
+│   │   └── og-image.jpg
+│   ├── src/
+│   │   ├── assets/              # Static images, videos
+│   │   ├── components/
+│   │   │   ├── ui/              # Base design system components
+│   │   │   ├── layout/          # Header, Footer, AdminLayout
+│   │   │   ├── booking/         # Booking flow components
+│   │   │   ├── rooms/           # Room cards, gallery
+│   │   │   ├── services/        # Service cards
+│   │   │   ├── admin/           # Admin panel components
+│   │   │   └── shared/          # Toast, Modal, Loader, etc.
+│   │   ├── pages/
+│   │   │   ├── public/          # Home, Rooms, Services, etc.
+│   │   │   └── admin/           # Admin pages
+│   │   ├── hooks/               # Custom React hooks
+│   │   ├── store/               # Zustand stores
+│   │   ├── lib/
+│   │   │   ├── api.ts           # Axios instance + typed API calls
+│   │   │   ├── i18n.ts          # i18next setup
+│   │   │   └── utils.ts         # Shared utilities
+│   │   ├── locales/             # Translation JSON files
+│   │   ├── types/               # TypeScript interfaces
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── index.html
+│   ├── vite.config.ts
+│   ├── tailwind.config.ts
+│   └── tsconfig.json
+│
+├── backend/                     # Node.js + Express API
+│   ├── src/
+│   │   ├── api/
+│   │   │   ├── routes/
+│   │   │   ├── controllers/
+│   │   │   ├── services/
+│   │   │   ├── middleware/
+│   │   │   └── validators/
+│   │   ├── db/
+│   │   │   ├── schema/
+│   │   │   ├── migrations/
+│   │   │   └── seed/
+│   │   ├── lib/
+│   │   │   ├── email/
+│   │   │   └── security/
+│   │   ├── types/
+│   │   └── index.ts
+│   ├── esbuild.config.js
+│   ├── drizzle.config.ts
+│   ├── tsconfig.json
+│   └── package.json
+│
+├── shared/                      # Shared TypeScript types + Zod schemas
+│   └── src/
+│       ├── schemas/             # Zod validation schemas (used by both FE and BE)
+│       └── types/               # Shared TypeScript types
+│
+├── .github/
+│   └── workflows/
+│       └── deploy.yml           # GitHub Actions CI/CD
+├── nginx/
+│   └── ocean-weligama.conf      # Nginx config for Hostinger VPS
+├── .env.example                 # Template for environment variables
+└── README.md
+```
+
+---
+
+## §12 — ENVIRONMENT VARIABLES
+
+```bash
+# backend/.env
+
+# Supabase
+SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...         # Never expose to frontend
+DATABASE_URL=postgresql://...            # Direct connection for Drizzle
+
+# JWT
+JWT_ACCESS_SECRET=<generate: openssl rand -base64 64>
+JWT_REFRESH_SECRET=<generate: openssl rand -base64 64>
+
+# Email (Hostinger SMTP)
+SMTP_HOST=mail.oceanweligama.com
+SMTP_PORT=587
+SMTP_USER=hello@oceanweligama.com
+SMTP_PASS=<your-email-password>
+EMAIL_FROM="Ocean Weligama <hello@oceanweligama.com>"
+ADMIN_EMAIL=owner@oceanweligama.com
+
+# App
+NODE_ENV=production
+PORT=3001
+FRONTEND_URL=https://oceanweligama.com
+
+# Security
+ENCRYPTION_KEY=<generate: openssl rand -base64 32>
+
+# Optional: Stripe for online payments
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+```
+
+---
+
+## §13 — DEPLOYMENT (HOSTINGER VPS)
+
+### 13.1 Nginx Configuration
+
+```nginx
+# /etc/nginx/sites-available/oceanweligama.com
+
+server {
+  listen 80;
+  server_name oceanweligama.com www.oceanweligama.com;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl http2;
+  server_name oceanweligama.com www.oceanweligama.com;
+
+  ssl_certificate     /etc/letsencrypt/live/oceanweligama.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/oceanweligama.com/privkey.pem;
+  ssl_protocols       TLSv1.2 TLSv1.3;
+  ssl_ciphers         ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
+  ssl_prefer_server_ciphers off;
+
+  # Security headers
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+  add_header X-Frame-Options "DENY" always;
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+  add_header Permissions-Policy "geolocation=(), camera=(), microphone=()" always;
+
+  # Frontend (React build)
+  root /var/www/oceanweligama/frontend/dist;
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;   # SPA routing
+    expires 1h;
+  }
+
+  location /assets/ {
+    expires 1y;                         # Long cache for hashed assets
+    add_header Cache-Control "public, immutable";
+  }
+
+  # Backend API
+  location /api/ {
+    proxy_pass http://localhost:3001;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_cache_bypass $http_upgrade;
+    client_max_body_size 10M;
+  }
+
+  # Gzip
+  gzip on;
+  gzip_types text/plain application/json application/javascript text/css image/svg+xml;
+  gzip_min_length 256;
+}
+```
+
+### 13.2 PM2 Process Management
+
+```javascript
+// ecosystem.config.js
+module.exports = {
+  apps: [{
+    name: 'ocean-weligama-api',
+    script: './backend/dist/index.js',
+    instances: 'max',              // Cluster mode — use all CPU cores
+    exec_mode: 'cluster',
+    watch: false,
+    env_production: {
+      NODE_ENV: 'production',
+      PORT: 3001,
+    },
+    error_file: '/var/log/pm2/ow-api-error.log',
+    out_file:   '/var/log/pm2/ow-api-out.log',
+    log_date_format: 'YYYY-MM-DD HH:mm:ss',
+    max_memory_restart: '500M',
+  }]
+}
+```
+
+### 13.3 GitHub Actions Deploy
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy to Hostinger VPS
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      - name: Build frontend
+        run: |
+          cd frontend && npm ci && npm run build
+
+      - name: Build backend
+        run: |
+          cd backend && npm ci && npm run build
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /var/www/oceanweligama
+            git pull origin main
+            cd frontend && npm ci && npm run build
+            cd ../backend && npm ci && npm run build
+            pm2 reload ocean-weligama-api
+```
+
+---
+
+## §14 — CONTENT SEED DATA
+
+### 14.1 Rooms to Create
+
+```
+ROOM 1: "Surf Room"
+  slug: surf-room | type: room | guests: 2 | beds: 1 double
+  price: $45/night | amenities: wifi, ac, hot-water, fan
+
+ROOM 2: "Garden Room"  
+  slug: garden-room | type: room | guests: 2 | beds: 1 double
+  price: $40/night | amenities: wifi, fan, hot-water
+
+ROOM 3: "The Ocean House"
+  slug: ocean-house | type: villa | guests: 6 | beds: 3
+  price: $120/night | amenities: wifi, ac, kitchen, hot-water, tv, terrace
+
+ROOM 4: "Surfer's Dorm"  
+  slug: surfers-dorm | type: dormitory | guests: 6 | beds: 6 bunk
+  price: $18/night | amenities: wifi, fan, shared-bathroom, locker
+```
+
+### 14.2 Services to Create
+
+```
+SERVICE 1: Surf Lessons (Beginner)
+  slug: surf-lessons-beginner | price: $35 | unit: per_person | emoji: 🏄
+
+SERVICE 2: Surf Lessons (Intermediate)
+  slug: surf-lessons-intermediate | price: $45 | unit: per_person | emoji: 🏄
+
+SERVICE 3: Scooter Rental (Full Day)
+  slug: scooter-rental-day | price: $12 | unit: per_day | emoji: 🛵
+
+SERVICE 4: Whale Watching Tour
+  slug: whale-watching | price: $60 | unit: per_person | emoji: 🐳
+
+SERVICE 5: Sri Lankan Breakfast
+  slug: breakfast | price: $8 | unit: per_person | emoji: 🍤
+
+SERVICE 6: Airport Transfer
+  slug: airport-transfer | price: $45 | unit: flat_rate | emoji: 🚗
+```
+
+---
+
+## §15 — ADMIN PANEL URL
+
+```
+PRODUCTION:   https://oceanweligama.com/ow-admin
+STAGING:      https://staging.oceanweligama.com/ow-admin
+
+CREDENTIALS:  Set during initial setup via seeding script
+              Owner creates first admin account via CLI:
+              npm run admin:create --email=owner@oceanweligama.com --name="Ocean Weligama Owner"
+
+MFA:          TOTP QR code shown once at first login. Owner must scan with
+              Google Authenticator or Authy. Backup codes generated and emailed.
+```
+
+---
+
+## §16 — BOOKING REFERENCE GENERATION
+
+```typescript
+// Format: OW-YYYYMMDD-XXXX
+// Where XXXX = 4 random alphanumeric uppercase characters
+// Example: OW-20251224-A4F2
+
+function generateBookingReference(): string {
+  const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'   // No confusable chars (0,O,1,I)
+  const suffix = Array.from({ length: 4 }, () =>
+    chars[Math.floor(Math.random() * chars.length)]
+  ).join('')
+  return `OW-${date}-${suffix}`
+}
+```
+
+---
+
+## §17 — PSYCHOLOGICAL UX COPY GUIDELINES
+
+### 17.1 Tone of Voice
+
+```
+BRAND VOICE: Warm · Honest · Adventurous · Local Expert · Never corporate
+AVOID: "Luxury", "World-class", "Premium" (feels fake for a homy villa)
+USE:   "Cozy", "Real", "Local", "Barefoot", "Your home away from home"
+
+EMOTIONAL JOURNEY MAP:
+  Curiosity → Desire → Trust → Action → Delight → Advocacy
+
+Each page section must move the visitor one step forward on this journey.
+```
+
+### 17.2 Microcopy Examples
+
+```
+CTA buttons:
+  ✅ "Check Availability →"
+  ✅ "Book My Stay"
+  ✅ "Start Surfing"
+  ❌ "Submit"
+  ❌ "Learn More"
+
+Urgency (real, not fake):
+  ✅ "3 nights left this month at this price"
+  ❌ "ONLY 2 ROOMS LEFT!!! BOOK NOW!!!" (manipulative)
+
+Trust signals:
+  ✅ "Free cancellation up to 7 days before arrival"
+  ✅ "No hidden fees · What you see is what you pay"
+  ✅ "Direct booking = best price (we don't pay Booking.com commission)"
+
+Error messages:
+  ✅ "Those dates aren't available — try shifting by a day or two?"
+  ❌ "Error: Date conflict. Please select valid dates."
+```
+
+---
+
+## §18 — FINAL BUILD CHECKLIST
+
+Before delivering code, verify all items:
+
+```
+DESIGN
+□ Design system variables defined and used consistently
+□ Responsive: tested at 375px, 768px, 1024px, 1440px
+□ Reduced motion media query implemented
+□ Dark mode support (optional but recommended)
+□ All images have alt text (accessibility + SEO)
+□ Color contrast ratios pass WCAG AA
+
+FUNCTIONALITY
+□ Booking flow completes end-to-end in < 3 minutes
+□ Availability calendar shows accurate real-time data
+□ Email confirmation sent on successful booking
+□ Admin can create/edit/delete: rooms, services, bookings, gallery, content
+□ Language switcher changes ALL visible text instantly
+□ Contact form submits and autoreply sent
+□ WhatsApp floating button opens correct number
+□ Analytics tracking works without cookies
+□ MFA login works for admin
+□ Rate limiting tested (block after 10 failed auth attempts)
+
+PERFORMANCE
+□ Lighthouse score > 90 on all pages
+□ LCP < 2.5s on 4G mobile
+□ All images in WebP format
+□ No console errors in production build
+□ API responses < 200ms for cached data
+
+SECURITY
+□ All Helmet.js headers present (verify with https://securityheaders.com)
+□ JWT tokens short-lived (15 min access, 7 day refresh)
+□ All inputs validated with Zod before DB queries
+□ Admin panel only accessible via correct URL (/ow-admin)
+□ Supabase RLS policies active on all tables
+□ No sensitive data in frontend bundle or console logs
+□ CORS only allows production frontend domain
+□ Rate limiting active on all API routes
+
+SEO
+□ Meta title + description on all public pages
+□ Open Graph tags for social sharing
+□ Canonical URLs set
+□ Sitemap.xml generated
+□ robots.txt configured (block /ow-admin/)
+□ Structured data (JSON-LD) for Property, Reviews
+
+DEPLOYMENT
+□ .env.example up to date
+□ All secrets in environment variables (never in code)
+□ PM2 ecosystem config works
+□ Nginx config handles API proxy and SPA routing
+□ SSL certificate installed and auto-renews
+□ Cloudflare DNS configured with proxy enabled
+□ GitHub Actions deploy pipeline tested
+□ Database migrations run on deploy
+□ PM2 restarts on reboot (pm2 startup)
+```
+
+---
+
+*End of Context Engineering Prompt — Ocean Weligama Full-Stack Website*
+*Version 1.0 · Prepared for AI-assisted development · All constraints are hard requirements*
+*Every section is interconnected — implement as a system, not as isolated parts*

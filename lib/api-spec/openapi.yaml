@@ -1,0 +1,2124 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Ocean Weligama API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: rooms
+    description: Room and villa operations
+  - name: services
+    description: Service operations
+  - name: bookings
+    description: Booking operations
+  - name: reviews
+    description: Guest review operations
+  - name: gallery
+    description: Gallery operations
+  - name: content
+    description: CMS content operations
+  - name: contact
+    description: Contact form operations
+  - name: analytics
+    description: Analytics tracking
+  - name: admin-auth
+    description: Admin authentication
+  - name: admin-bookings
+    description: Admin booking management
+  - name: admin-rooms
+    description: Admin room management
+  - name: admin-services
+    description: Admin service management
+  - name: admin-reviews
+    description: Admin review management
+  - name: admin-analytics
+    description: Admin analytics
+  - name: admin-messages
+    description: Admin message management
+  - name: admin-pricing
+    description: Admin pricing management
+  - name: admin-availability
+    description: Admin availability management
+  - name: admin-gallery
+    description: Admin gallery moderation
+  - name: blogs
+    description: Blog operations
+  - name: admin-blogs
+    description: Admin blog management
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # PUBLIC ROOMS
+  /v1/rooms:
+    get:
+      operationId: listRooms
+      tags: [rooms]
+      summary: List active rooms with optional filters
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [room, villa, dormitory, suite]
+        - name: guests
+          in: query
+          schema:
+            type: integer
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+        - name: locale
+          in: query
+          schema:
+            type: string
+            default: en
+      responses:
+        "200":
+          description: List of rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Room"
+
+  /v1/rooms/featured:
+    get:
+      operationId: listFeaturedRooms
+      tags: [rooms]
+      summary: List featured rooms for the home page
+      parameters:
+        - name: locale
+          in: query
+          schema:
+            type: string
+            default: en
+      responses:
+        "200":
+          description: Featured rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Room"
+
+  /v1/rooms/{slug}:
+    get:
+      operationId: getRoom
+      tags: [rooms]
+      summary: Get room detail by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          schema:
+            type: string
+            default: en
+      responses:
+        "200":
+          description: Room detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomDetail"
+        "404":
+          description: Room not found
+
+  /v1/rooms/{slug}/availability:
+    get:
+      operationId: getRoomAvailability
+      tags: [rooms]
+      summary: Get availability calendar for a room
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Availability data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AvailabilityDay"
+
+  # PUBLIC SERVICES
+  /v1/services:
+    get:
+      operationId: listServices
+      tags: [services]
+      summary: List all active services
+      parameters:
+        - name: locale
+          in: query
+          schema:
+            type: string
+            default: en
+      responses:
+        "200":
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+
+  /v1/services/{slug}:
+    get:
+      operationId: getService
+      tags: [services]
+      summary: Get service detail by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          schema:
+            type: string
+            default: en
+      responses:
+        "200":
+          description: Service detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+
+  # PUBLIC BOOKINGS
+  /v1/bookings/check:
+    post:
+      operationId: checkAvailabilityAndPrice
+      tags: [bookings]
+      summary: Check availability and get price quote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingCheck"
+      responses:
+        "200":
+          description: Price quote
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingQuote"
+
+  /v1/bookings:
+    post:
+      operationId: createBooking
+      tags: [bookings]
+      summary: Create a new booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "201":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "400":
+          description: Validation error or unavailable
+
+  /v1/bookings/{reference}:
+    get:
+      operationId: getBookingByReference
+      tags: [bookings]
+      summary: Get booking by reference number (public confirmation)
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Booking detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "404":
+          description: Booking not found
+
+  # PUBLIC REVIEWS
+  /v1/reviews:
+    get:
+      operationId: listReviews
+      tags: [reviews]
+      summary: List approved guest reviews
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: featured
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Reviews list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewList"
+    post:
+      operationId: createReview
+      tags: [reviews]
+      summary: Submit a new guest review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewCreate"
+      responses:
+        "201":
+          description: Review submitted (pending approval)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+
+  /v1/reviews/summary:
+    get:
+      operationId: getReviewSummary
+      tags: [reviews]
+      summary: Get aggregate review statistics
+      responses:
+        "200":
+          description: Review summary with average ratings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewSummary"
+
+  # PUBLIC GALLERY
+  /v1/gallery:
+    get:
+      operationId: listGallery
+      tags: [gallery]
+      summary: List gallery items
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 24
+      responses:
+        "200":
+          description: Gallery items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GalleryItem"
+    post:
+      operationId: createGalleryItem
+      tags: [gallery]
+      summary: Submit a new gallery image (tourist upload)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GalleryInput"
+      responses:
+        "201":
+          description: Gallery image submitted (pending approval)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GalleryItem"
+
+  # CMS CONTENT
+  /v1/content/{key}:
+    get:
+      operationId: getContent
+      tags: [content]
+      summary: Get CMS content by key
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: locale
+          in: query
+          schema:
+            type: string
+            default: en
+      responses:
+        "200":
+          description: Content value
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentItem"
+
+  # CONTACT
+  /v1/contact:
+    post:
+      operationId: submitContact
+      tags: [contact]
+      summary: Submit a contact message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactInput"
+      responses:
+        "201":
+          description: Message submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactResult"
+
+  # ANALYTICS
+  /v1/analytics/track:
+    post:
+      operationId: trackPageView
+      tags: [analytics]
+      summary: Track a page view (cookieless)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PageViewInput"
+      responses:
+        "200":
+          description: Tracked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackResult"
+
+  # ADMIN AUTH
+  /v1/admin/auth/login:
+    post:
+      operationId: adminLogin
+      tags: [admin-auth]
+      summary: Admin login with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthResult"
+        "401":
+          description: Invalid credentials
+
+  /v1/admin/auth/logout:
+    post:
+      operationId: adminLogout
+      tags: [admin-auth]
+      summary: Admin logout
+      responses:
+        "200":
+          description: Logged out
+
+  /v1/admin/auth/me:
+    get:
+      operationId: adminGetMe
+      tags: [admin-auth]
+      summary: Get current admin user
+      responses:
+        "200":
+          description: Current admin user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+        "401":
+          description: Unauthorized
+
+  # ADMIN BOOKINGS
+  /v1/admin/bookings:
+    get:
+      operationId: adminListBookings
+      tags: [admin-bookings]
+      summary: List all bookings with filters
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Admin bookings list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminBookingList"
+
+  /v1/admin/bookings/{id}:
+    get:
+      operationId: adminGetBooking
+      tags: [admin-bookings]
+      summary: Get booking detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Booking detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+    patch:
+      operationId: adminUpdateBooking
+      tags: [admin-bookings]
+      summary: Update booking status or notes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingUpdate"
+      responses:
+        "200":
+          description: Updated booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+    delete:
+      operationId: adminDeleteBooking
+      tags: [admin-bookings]
+      summary: Soft delete booking
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+
+  # ADMIN ROOMS
+  /v1/admin/rooms:
+    get:
+      operationId: adminListRooms
+      tags: [admin-rooms]
+      summary: List all rooms including inactive
+      responses:
+        "200":
+          description: All rooms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Room"
+    post:
+      operationId: adminCreateRoom
+      tags: [admin-rooms]
+      summary: Create new room
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoomInput"
+      responses:
+        "201":
+          description: Room created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Room"
+
+  /v1/admin/rooms/{id}:
+    patch:
+      operationId: adminUpdateRoom
+      tags: [admin-rooms]
+      summary: Update room
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RoomUpdate"
+      responses:
+        "200":
+          description: Updated room
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Room"
+    delete:
+      operationId: adminDeleteRoom
+      tags: [admin-rooms]
+      summary: Soft delete room
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+
+  # ADMIN SERVICES
+  /v1/admin/services:
+    get:
+      operationId: adminListServices
+      tags: [admin-services]
+      summary: List all services
+      responses:
+        "200":
+          description: All services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+    post:
+      operationId: adminCreateService
+      tags: [admin-services]
+      summary: Create service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceInput"
+      responses:
+        "201":
+          description: Service created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+
+  /v1/admin/services/{id}:
+    patch:
+      operationId: adminUpdateService
+      tags: [admin-services]
+      summary: Update service
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceUpdate"
+      responses:
+        "200":
+          description: Updated service
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+    delete:
+      operationId: adminDeleteService
+      tags: [admin-services]
+      summary: Delete service
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Service deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  # ADMIN REVIEWS
+  /v1/admin/reviews:
+    get:
+      operationId: adminListReviews
+      tags: [admin-reviews]
+      summary: List all reviews including unapproved
+      responses:
+        "200":
+          description: All reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Review"
+
+  /v1/admin/reviews/{id}:
+    patch:
+      operationId: adminUpdateReview
+      tags: [admin-reviews]
+      summary: Approve, reply to, or feature a review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewUpdate"
+      responses:
+        "200":
+          description: Updated review
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Review"
+    delete:
+      operationId: adminDeleteReview
+      tags: [admin-reviews]
+      summary: Delete a review permanently
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+
+  # ADMIN GALLERY
+  /v1/admin/gallery:
+    get:
+      operationId: adminListGallery
+      tags: [admin-gallery]
+      summary: List all gallery items including pending
+      responses:
+        "200":
+          description: All gallery items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GalleryItem"
+
+  /v1/admin/gallery/{id}/status:
+    patch:
+      operationId: adminUpdateGalleryStatus
+      tags: [admin-gallery]
+      summary: Approve or reject a gallery image
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GalleryUpdate"
+      responses:
+        "200":
+          description: Updated gallery item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GalleryItem"
+
+  /v1/admin/gallery/{id}:
+    delete:
+      operationId: adminDeleteGalleryItem
+      tags: [admin-gallery]
+      summary: Delete a gallery image permanently
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+
+  # ADMIN ANALYTICS
+  /v1/admin/analytics/dashboard:
+    get:
+      operationId: adminGetDashboard
+      tags: [admin-analytics]
+      summary: Get dashboard metrics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardMetrics"
+
+  /v1/admin/analytics/bookings-trend:
+    get:
+      operationId: adminGetBookingsTrend
+      tags: [admin-analytics]
+      summary: Booking trend data
+      parameters:
+        - name: days
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: Booking trend
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrendPoint"
+
+  /v1/admin/analytics/upcoming-checkins:
+    get:
+      operationId: adminGetUpcomingCheckins
+      tags: [admin-analytics]
+      summary: Upcoming check-ins for the next 7 days
+      responses:
+        "200":
+          description: Upcoming checkins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+
+  # ADMIN MESSAGES
+  /v1/admin/messages:
+    get:
+      operationId: adminListMessages
+      tags: [admin-messages]
+      summary: List contact messages
+      parameters:
+        - name: isRead
+          in: query
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContactMessage"
+
+  /v1/admin/messages/{id}:
+    patch:
+      operationId: adminUpdateMessage
+      tags: [admin-messages]
+      summary: Mark message read or replied
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MessageUpdate"
+      responses:
+        "200":
+          description: Updated message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactMessage"
+    delete:
+      operationId: adminDeleteMessage
+      tags: [admin-messages]
+      summary: Delete a message permanently
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+
+  # ADMIN PRICING
+  /v1/admin/pricing:
+    get:
+      operationId: adminListPricingRules
+      tags: [admin-pricing]
+      summary: List all pricing rules
+      responses:
+        "200":
+          description: Pricing rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PricingRule"
+    post:
+      operationId: adminCreatePricingRule
+      tags: [admin-pricing]
+      summary: Create pricing rule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PricingRuleInput"
+      responses:
+        "201":
+          description: Created pricing rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PricingRule"
+
+  /v1/admin/pricing/{id}:
+    patch:
+      operationId: adminUpdatePricingRule
+      tags: [admin-pricing]
+      summary: Update pricing rule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PricingRuleUpdate"
+      responses:
+        "200":
+          description: Updated pricing rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PricingRule"
+    delete:
+      operationId: adminDeletePricingRule
+      tags: [admin-pricing]
+      summary: Delete pricing rule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+
+  # ADMIN AVAILABILITY
+  /v1/admin/availability/{roomId}:
+    get:
+      operationId: adminGetRoomAvailability
+      tags: [admin-availability]
+      summary: Get room availability calendar
+      parameters:
+        - name: roomId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Availability
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AvailabilityDay"
+
+  /v1/admin/availability/block:
+    post:
+      operationId: adminBlockDates
+      tags: [admin-availability]
+      summary: Block dates for a room
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlockDatesInput"
+      responses:
+        "201":
+          description: Dates blocked
+
+  /v1/upload:
+    post:
+      operationId: uploadFile
+      tags: [public]
+      summary: Upload a file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+
+  /v1/admin/availability/{id}:
+    delete:
+      operationId: adminUnblockDate
+      tags: [admin-availability]
+      summary: Unblock a date
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Unblocked
+
+  # PUBLIC BLOGS
+  /v1/blogs:
+    get:
+      operationId: listBlogs
+      tags: [blogs]
+      summary: List active blogs
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of blogs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Blog"
+
+  /v1/blogs/{id}:
+    get:
+      operationId: getBlog
+      tags: [blogs]
+      summary: Get blog detail by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Blog detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+
+  # ADMIN BLOGS
+  /v1/admin/blogs:
+    get:
+      operationId: adminListBlogs
+      tags: [admin-blogs]
+      summary: List all blogs for admin
+      responses:
+        "200":
+          description: All blogs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Blog"
+    post:
+      operationId: adminCreateBlog
+      tags: [admin-blogs]
+      summary: Create new blog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlogInput"
+      responses:
+        "201":
+          description: Blog created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+
+  /v1/admin/blogs/{id}:
+    patch:
+      operationId: adminUpdateBlog
+      tags: [admin-blogs]
+      summary: Update blog
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlogUpdate"
+      responses:
+        "200":
+          description: Updated blog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+    delete:
+      operationId: adminDeleteBlog
+      tags: [admin-blogs]
+      summary: Delete blog
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Blog:
+      type: object
+      required: [id, title, description, image, category, date, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        category:
+          type: string
+        date:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    BlogInput:
+      type: object
+      required: [title, description, image, category, date]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        category:
+          type: string
+          enum: [Surfing, Travel, Food, Lifestyle, Yoga]
+        date:
+          type: string
+          format: date-time
+
+    BlogUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+        category:
+          type: string
+          enum: [Surfing, Travel, Food, Lifestyle, Yoga]
+        date:
+          type: string
+          format: date-time
+
+    Room:
+      type: object
+      required: [id, slug, type, status, maxGuests, bedrooms, bathrooms, basePricePerNight, currency, name, description]
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        type:
+          type: string
+          enum: [room, villa, dormitory, suite]
+        status:
+          type: string
+          enum: [active, maintenance, hidden]
+        maxGuests:
+          type: integer
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: integer
+        sizeM2:
+          type: ["integer", "null"]
+        basePricePerNight:
+          type: string
+        cleaningFee:
+          type: ["string", "null"]
+        currency:
+          type: string
+        isFeatured:
+          type: boolean
+        heroImageUrl:
+          type: ["string", "null"]
+        name:
+          type: string
+        description:
+          type: string
+        shortDesc:
+          type: ["string", "null"]
+        amenities:
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+        gallery:
+          type: ["array", "null"]
+          items:
+            type: string
+        highlights:
+          type: ["array", "null"]
+          items:
+            type: string
+
+    RoomDetail:
+      allOf:
+        - $ref: "#/components/schemas/Room"
+        - type: object
+          properties:
+            images:
+              type: array
+              items:
+                $ref: "#/components/schemas/GalleryItem"
+            relatedRooms:
+              type: array
+              items:
+                $ref: "#/components/schemas/Room"
+
+    RoomInput:
+      type: object
+      required: [slug, type, maxGuests, bedrooms, bathrooms, basePricePerNight, currency, name, description]
+      properties:
+        slug:
+          type: string
+        type:
+          type: string
+          enum: [room, villa, dormitory, suite]
+        maxGuests:
+          type: integer
+        bedrooms:
+          type: integer
+        bathrooms:
+          type: integer
+        sizeM2:
+          type: ["integer", "null"]
+        basePricePerNight:
+          type: string
+        cleaningFee:
+          type: ["string", "null"]
+        currency:
+          type: string
+        isFeatured:
+          type: boolean
+        heroImageUrl:
+          type: ["string", "null"]
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: ["string", "null"]
+        gallery:
+          type: ["array", "null"]
+          items:
+            type: string
+        highlights:
+          type: ["array", "null"]
+          items:
+            type: string
+
+    RoomUpdate:
+      type: object
+      properties:
+        type:
+          type: string
+        status:
+          type: string
+        maxGuests:
+          type: integer
+        basePricePerNight:
+          type: string
+        heroImageUrl:
+          type: ["string", "null"]
+        isFeatured:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: ["string", "null"]
+        gallery:
+          type: ["array", "null"]
+          items:
+            type: string
+        highlights:
+          type: ["array", "null"]
+          items:
+            type: string
+
+    Service:
+      type: object
+      required: [id, slug, basePrice, isActive, name, type]
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        highlights:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum: [main, optional]
+        category:
+          type: ["string", "null"]
+        basePrice:
+          type: string
+        isActive:
+          type: boolean
+        isBookable:
+          type: boolean
+        sortOrder:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+
+    ServiceInput:
+      type: object
+      required: [slug, basePrice, name, type]
+      properties:
+        slug:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        highlights:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum: [main, optional]
+        category:
+          type: ["string", "null"]
+        basePrice:
+          type: string
+        isActive:
+          type: boolean
+        isBookable:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+
+    ServiceUpdate:
+      type: object
+      properties:
+        slug:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        highlights:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum: [main, optional]
+        category:
+          type: ["string", "null"]
+        basePrice:
+          type: string
+        isActive:
+          type: boolean
+        isBookable:
+          type: boolean
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        sortOrder:
+          type: integer
+
+    Booking:
+      type: object
+      required: [id, reference, roomId, checkIn, checkOut, nights, guestCount, guestFullName, guestEmail, guestPhone, totalAmount, currency, status, paymentStatus, paymentMethod, createdAt]
+      properties:
+        id:
+          type: string
+        reference:
+          type: string
+        roomId:
+          type: string
+        roomName:
+          type: ["string", "null"]
+        checkIn:
+          type: string
+        checkOut:
+          type: string
+        nights:
+          type: integer
+        guestCount:
+          type: integer
+        guestFullName:
+          type: string
+        guestEmail:
+          type: string
+        guestPhone:
+          type: string
+        guestNationality:
+          type: ["string", "null"]
+        guestCountryCode:
+          type: ["string", "null"]
+        specialRequests:
+          type: ["string", "null"]
+        roomRatePerNight:
+          type: string
+        roomSubtotal:
+          type: string
+        servicesSubtotal:
+          type: string
+        cleaningFee:
+          type: string
+        totalAmount:
+          type: string
+        currency:
+          type: string
+        depositAmount:
+          type: string
+        status:
+          type: string
+          enum: [pending, confirmed, checked_in, checked_out, cancelled, no_show]
+        paymentStatus:
+          type: string
+          enum: [unpaid, partial, paid, refunded, failed]
+        paymentMethod:
+          type: string
+          enum: [online_card, bank_transfer, cash, pending]
+        bookingSource:
+          type: ["string", "null"]
+        adminNotes:
+          type: ["string", "null"]
+        services:
+          type: array
+          items:
+            $ref: "#/components/schemas/BookingService"
+        createdAt:
+          type: string
+
+    BookingService:
+      type: object
+      required: [id, serviceId, serviceName, quantity, unitPrice, subtotal]
+      properties:
+        id:
+          type: string
+        serviceId:
+          type: string
+        serviceName:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: string
+        subtotal:
+          type: string
+
+    BookingInput:
+      type: object
+      required: [roomId, checkIn, checkOut, guestCount, guestFullName, guestEmail, guestPhone, paymentMethod]
+      properties:
+        roomId:
+          type: string
+        checkIn:
+          type: string
+          format: date
+        checkOut:
+          type: string
+          format: date
+        guestCount:
+          type: integer
+        guestFullName:
+          type: string
+        guestEmail:
+          type: string
+        guestPhone:
+          type: string
+        guestNationality:
+          type: ["string", "null"]
+        specialRequests:
+          type: ["string", "null"]
+        serviceIds:
+          type: array
+          items:
+            type: string
+        paymentMethod:
+          type: string
+          enum: [online_card, bank_transfer, cash, pending]
+        languageUsed:
+          type: ["string", "null"]
+
+    BookingUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        paymentStatus:
+          type: string
+        adminNotes:
+          type: string
+        paymentMethod:
+          type: string
+
+    BookingCheck:
+      type: object
+      required: [roomId, checkIn, checkOut, guestCount]
+      properties:
+        roomId:
+          type: string
+        checkIn:
+          type: string
+          format: date
+        checkOut:
+          type: string
+          format: date
+        guestCount:
+          type: integer
+        serviceIds:
+          type: array
+          items:
+            type: string
+
+    BookingQuote:
+      type: object
+      required: [available, roomRatePerNight, nights, roomSubtotal, servicesSubtotal, cleaningFee, totalAmount, currency]
+      properties:
+        available:
+          type: boolean
+        roomRatePerNight:
+          type: string
+        nights:
+          type: integer
+        roomSubtotal:
+          type: string
+        servicesSubtotal:
+          type: string
+        cleaningFee:
+          type: string
+        totalAmount:
+          type: string
+        currency:
+          type: string
+        unavailableDates:
+          type: array
+          items:
+            type: string
+
+    AdminBookingList:
+      type: object
+      required: [bookings, total, page, limit]
+      properties:
+        bookings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Booking"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    Review:
+      type: object
+      required: [id, guestName, ratingOverall, reviewText, isApproved, createdAt]
+      properties:
+        id:
+          type: string
+        bookingId:
+          type: ["string", "null"]
+        guestName:
+          type: string
+        guestCountry:
+          type: ["string", "null"]
+        guestAvatarUrl:
+          type: ["string", "null"]
+        ratingOverall:
+          type: integer
+        title:
+          type: ["string", "null"]
+        ratingCleanliness:
+          type: ["integer", "null"]
+        ratingLocation:
+          type: ["integer", "null"]
+        ratingValue:
+          type: ["integer", "null"]
+        reviewText:
+          type: string
+        ownerReply:
+          type: ["string", "null"]
+        isApproved:
+          type: boolean
+        isFeatured:
+          type: boolean
+        source:
+          type: string
+        createdAt:
+          type: string
+
+    ReviewList:
+      type: object
+      required: [reviews, total]
+      properties:
+        reviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/Review"
+        total:
+          type: integer
+
+    ReviewSummary:
+      type: object
+      required: [averageRating, totalReviews, averageCleanliness, averageLocation, averageValue, ratingDistribution]
+      properties:
+        averageRating:
+          type: number
+        totalReviews:
+          type: integer
+        averageCleanliness:
+          type: number
+        averageLocation:
+          type: number
+        averageValue:
+          type: number
+        ratingDistribution:
+          type: object
+          properties:
+            "5": { type: integer }
+            "4": { type: integer }
+            "3": { type: integer }
+            "2": { type: integer }
+            "1": { type: integer }
+
+    ReviewCreate:
+      type: object
+      required: [guestName, ratingOverall, reviewText]
+      properties:
+        guestName:
+          type: string
+        guestCountry:
+          type: ["string", "null"]
+        guestAvatarUrl:
+          type: ["string", "null"]
+        ratingOverall:
+          type: integer
+          minimum: 1
+          maximum: 5
+        title:
+          type: ["string", "null"]
+        reviewText:
+          type: string
+
+    ReviewUpdate:
+      type: object
+      properties:
+        isApproved:
+          type: boolean
+        isFeatured:
+          type: boolean
+        ownerReply:
+          type: ["string", "null"]
+
+    GalleryItem:
+      type: object
+      required: [id, mediaType, url, status, createdAt]
+      properties:
+        id:
+          type: string
+        mediaType:
+          type: string
+          enum: [image, video]
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+        url:
+          type: string
+        thumbnailUrl:
+          type: ["string", "null"]
+        altText:
+          type: ["string", "null"]
+        caption:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        isFeatured:
+          type: boolean
+        createdAt:
+          type: string
+
+    GalleryInput:
+      type: object
+      required: [url, category]
+      properties:
+        url:
+          type: string
+        category:
+          type: string
+        caption:
+          type: ["string", "null"]
+
+    GalleryUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+
+    AvailabilityDay:
+      type: object
+      required: [date, isBlocked]
+      properties:
+        date:
+          type: string
+        isBlocked:
+          type: boolean
+        blockReason:
+          type: ["string", "null"]
+
+    ContentItem:
+      type: object
+      required: [key, value, locale]
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+        locale:
+          type: string
+
+    ContactInput:
+      type: object
+      required: [fullName, email, message]
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        subject:
+          type: ["string", "null"]
+        message:
+          type: string
+        countryCode:
+          type: ["string", "null"]
+
+    ContactResult:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+
+    ContactMessage:
+      type: object
+      required: [id, fullName, email, message, isRead, isReplied, createdAt]
+      properties:
+        id:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        subject:
+          type: ["string", "null"]
+        message:
+          type: string
+        countryCode:
+          type: ["string", "null"]
+        isRead:
+          type: boolean
+        isReplied:
+          type: boolean
+        repliedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    MessageUpdate:
+      type: object
+      properties:
+        isRead:
+          type: boolean
+        isReplied:
+          type: boolean
+
+    PageViewInput:
+      type: object
+      required: [sessionId, page]
+      properties:
+        sessionId:
+          type: string
+        page:
+          type: string
+        referrer:
+          type: ["string", "null"]
+        deviceType:
+          type: ["string", "null"]
+        language:
+          type: ["string", "null"]
+        duration:
+          type: ["integer", "null"]
+
+    TrackResult:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+
+    AdminLoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AdminAuthResult:
+      type: object
+      required: [token, user]
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/AdminUser"
+
+    AdminUser:
+      type: object
+      required: [id, email, fullName, role]
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        role:
+          type: string
+          enum: [super_admin, admin, staff]
+        isActive:
+          type: boolean
+
+    DashboardMetrics:
+      type: object
+      required: [todayBookings, monthRevenue, occupancyRate, activeGuests, totalBookings, pendingBookings, confirmedBookings]
+      properties:
+        todayBookings:
+          type: integer
+        monthRevenue:
+          type: string
+        occupancyRate:
+          type: number
+        activeGuests:
+          type: integer
+        totalBookings:
+          type: integer
+        pendingBookings:
+          type: integer
+        confirmedBookings:
+          type: integer
+        recentMessages:
+          type: integer
+
+    TrendPoint:
+      type: object
+      required: [date, bookings, revenue]
+      properties:
+        date:
+          type: string
+        bookings:
+          type: integer
+        revenue:
+          type: string
+
+    PricingRule:
+      type: object
+      required: [id, name, dateFrom, dateTo, pricePerNight, isActive]
+      properties:
+        id:
+          type: string
+        roomId:
+          type: ["string", "null"]
+        name:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        pricePerNight:
+          type: string
+        minNights:
+          type: string
+        isActive:
+          type: boolean
+        priority:
+          type: string
+
+    PricingRuleInput:
+      type: object
+      required: [name, dateFrom, dateTo, pricePerNight]
+      properties:
+        roomId:
+          type: ["string", "null"]
+        name:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        pricePerNight:
+          type: string
+        minNights:
+          type: string
+        isActive:
+          type: boolean
+        priority:
+          type: string
+
+    PricingRuleUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        dateFrom:
+          type: string
+        dateTo:
+          type: string
+        pricePerNight:
+          type: string
+        isActive:
+          type: boolean
+
+    BlockDatesInput:
+      type: object
+      required: [roomId, dates, blockReason]
+      properties:
+        roomId:
+          type: string
+        dates:
+          type: array
+          items:
+            type: string
+        blockReason:
+          type: string
