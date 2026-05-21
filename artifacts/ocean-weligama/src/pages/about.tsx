@@ -1,167 +1,740 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Footer } from "@/components/footer";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { MapPin, Heart, Waves, Sun, Wind, Anchor, Camera, Compass } from "lucide-react";
+import { 
+  MapPin, 
+  Heart, 
+  Waves, 
+  Sun, 
+  Anchor, 
+  Camera, 
+  Compass, 
+  Coffee, 
+  Utensils, 
+  Award, 
+  Smile, 
+  Sparkles, 
+  Ship, 
+  Bike, 
+  Check, 
+  ChevronRight, 
+  Map 
+} from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 
-const PHILOSOPHY = [
-  { icon: Waves, title: "Ocean Proximity", desc: "100 steps to the surf. We believe life is better lived with sand between your toes." },
-  { icon: Sun, title: "Solar Pacing", desc: "We follow the rhythm of the sun, from dawn patrols to golden hour dinners." },
-  { icon: Heart, title: "Authentic Soul", desc: "Not a hotel, but a home. Real Sri Lankan hospitality, from our family to yours." },
-  { icon: Anchor, title: "Rooted Luxury", desc: "Barefoot comfort meets curated design. Luxury that doesn't feel forced." },
+// Neighborhood spots list with distances and descriptions
+const NEIGHBORHOOD_SPOTS = [
+  {
+    id: "beach",
+    name: "Weligama Beach",
+    distance: "3 min walk",
+    icon: Waves,
+    details: "The perfect golden stretch of sand for surfers of all levels. Famous for its consistent, friendly waves and spectacular shallow-water learning areas."
+  },
+  {
+    id: "dining",
+    name: "Cafés & Restaurants",
+    distance: "1-5 min walk",
+    icon: Coffee,
+    details: "A food lover's paradise. Stroll to a variety of highly rated spots serving authentic Sri Lankan rice & curry, fresh seafood, and specialty western coffee."
+  },
+  {
+    id: "village",
+    name: "Sri Lankan Village Life",
+    distance: "On your doorstep",
+    icon: MapPin,
+    details: "Quiet, peaceful paths away from the bustling main road noise. Walk among swaying coconut trees and experience authentic, warm Sri Lankan village culture."
+  },
+  {
+    id: "surf",
+    name: "Surf Breaks & Points",
+    distance: "3 min walk",
+    icon: Compass,
+    details: "Immediate access to local breaks. Whether you're catching your very first wave or seeking hidden points, our spot matches your travel style."
+  }
 ];
 
-const AREA_GUIDE = [
-  { name: "Weligama Bay", desc: "The crown jewel of beginner surf. Safe, shallow, and endlessly beautiful.", distance: "2 min walk", icon: Waves },
-  { name: "Mirissa Harbor", desc: "Where the giants of the deep roam. World-class whale watching experiences.", distance: "10 min drive", icon: Anchor },
-  { name: "Historic Galle", desc: "Colonial echoes meet modern boutiques in this UNESCO-protected fort city.", distance: "30 min drive", icon: Camera },
-  { name: "Secret Surf Spots", desc: "From Midigama to Ahangama, we know every hidden reef and point break.", distance: "15 min drive", icon: Compass },
+// Experience Customizer activity list
+const ACTIVITIES = [
+  {
+    id: "surf-pkg",
+    name: "Surf Packages",
+    desc: "Complete options designed for different skills, including board rentals & daily coach reviews.",
+    icon: Award,
+    category: "Adventure"
+  },
+  {
+    id: "yoga",
+    name: "Yoga Experiences",
+    desc: "Restorative classes on our rooftop, perfect for deep surf recovery and centering your mind.",
+    icon: Sparkles,
+    category: "Wellness"
+  },
+  {
+    id: "lessons",
+    name: "Surfing Lessons",
+    desc: "Step-by-step coaching from friendly, local ISA-certified instructors right at the beach.",
+    icon: Waves,
+    category: "Adventure"
+  },
+  {
+    id: "whale-watching",
+    name: "Whale Watching Tours",
+    desc: "Stunning boat trips from neighboring Mirissa Harbor to see majestic blue whales up close.",
+    icon: Ship,
+    category: "Nature"
+  },
+  {
+    id: "safari",
+    name: "Safari Trips",
+    desc: "Venture to Udawalawe or Yala National Parks to see wild elephants, leopards, and rich birdlife.",
+    icon: NatureIcon,
+    category: "Nature"
+  },
+  {
+    id: "cooking",
+    name: "Cookery Classes",
+    desc: "Learn to grind local spices and cook the perfect, fragrant Sri Lankan rice & coconut curry.",
+    icon: Utensils,
+    category: "Culture"
+  },
+  {
+    id: "scooters",
+    name: "Scooter Rentals",
+    desc: "Grab a scooter to explore pristine coastal roads and hidden bays at your own pace.",
+    icon: Bike,
+    category: "Adventure"
+  }
+];
+
+// Custom icon for Safari since Compass is used
+function NatureIcon(props: any) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+      <path d="M12 6v12" />
+      <path d="M8 10h8" />
+      <path d="M8 14h8" />
+    </svg>
+  );
+}
+
+// Heritage Values
+const VALUES = [
+  {
+    icon: Award,
+    title: "100% Locally Owned",
+    desc: "We are proud to be a 100% locally owned Sri Lankan business. We support local families, hire locally, and reinvest in the sustainable growth of the Weligama community."
+  },
+  {
+    icon: Smile,
+    title: "Warm Family Atmosphere",
+    desc: "At Ocean Air, we offer much more than accommodation. Our friendly team works hard to make every single guest feel welcome, comfortable, and part of the family."
+  },
+  {
+    icon: Sparkles,
+    title: "Improving Every Season",
+    desc: "We are dedicated to improving every season. From upgrading room comfort to expanding experiences, we ensure your Southern Coast holiday is unforgettable."
+  }
 ];
 
 export default function AboutPage() {
+  const [hoveredLocation, setHoveredLocation] = useState<string | null>(null);
+  const [selectedActivities, setSelectedActivities] = useState<string[]>(["lessons", "yoga"]);
+  const [activeRoomTab, setActiveRoomTab] = useState<"basic" | "deluxe">("deluxe");
+  const [sunsetMode, setSunsetMode] = useState<boolean>(false);
+
+  const toggleActivity = (id: string) => {
+    setSelectedActivities(prev => 
+      prev.includes(id) 
+        ? prev.filter(item => item !== id) 
+        : [...prev, id]
+    );
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
-
+      
       <PageHero
-        title="Ocean Air"
-        description="A surfer's dream, a traveler's home, and the soul of the Southern Coast."
-        badgeText="Born from the tides"
+        title="About Ocean Air"
+        description="Welcome to Ocean Air ~ your locally owned tropical escape in the heart of Weligama."
+        badgeText="Authentic Island Life"
         badgeIcon={<Waves className="w-3.5 h-3.5 text-[#4BBCCC]" />}
       />
 
-      {/* The Origin Narrative */}
-      <section className="py-16 sm:py-32 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-20 items-center max-w-6xl mx-auto">
+      {/* The Neighborhood & Introduction Narrative */}
+      <section className="py-16 sm:py-24 bg-white relative overflow-hidden">
+        {/* Ambient blob */}
+        <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/5 blur-3xl rounded-full -translate-y-1/2 -z-10 pointer-events-none" />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
+            {/* Story Editorial */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: -35 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative"
+              transition={{ duration: 0.6 }}
+              className="space-y-6 sm:space-y-8"
             >
-              <div className="absolute -left-10 -top-10 text-[15rem] font-serif font-black text-muted/20 -z-10 select-none">
-                "
-              </div>
-              <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold text-primary mb-6 sm:mb-10 leading-tight">
-                Where the Sand Meets <br/> Our Story
+              <span className="text-[#4BBCCC] font-black tracking-[0.3em] uppercase text-xs mb-3 block">
+                The Weligama Spirit
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-primary leading-tight">
+                Where Sand, Surf, <br /> & Local Vibe Connect
               </h2>
-              <div className="space-y-8 text-lg text-muted-foreground leading-relaxed">
+              <div className="space-y-6 text-base sm:text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  Ocean Air Weligama wasn't built from a blueprint; it was built from a feeling. A feeling of waking up to the smell of salt air, of catching the first light on the waves, and of gathering around a table of fresh curry as the sun dips below the horizon.
+                  Located in a beautiful and peaceful Sri Lankan village just a short walk from the famous Weligama Beach, 
+                  <strong> Ocean Air</strong> offers the perfect mix of surfing, relaxation, local culture, and unforgettable island experiences.
                 </p>
                 <p>
-                  We are a family-run boutique destination dedicated to the art of "Barefoot Luxury." We believe that true luxury isn't about marble floors—it's about the perfect view, the warmest smile, and the knowledge that you are exactly where you belong.
+                  We are surrounded by many popular restaurants, cafés, and attractions, all within walking distance, making our location ideal for every type of traveler. Walk down quiet local paths to catch the morning swell, or grab a coffee at nearby hotspots—our boutique escape is built to serve your curiosity.
                 </p>
               </div>
-              <div className="mt-12 flex items-center gap-6">
-                <Link href="/book">
-                  <Button className="bg-primary text-white rounded-full px-10 py-6 h-auto text-lg shadow-2xl hover:scale-105 transition-transform">
-                    Stay With Us
+
+              <div className="pt-4 flex items-center gap-6">
+                <Link href="/booking">
+                  <Button className="bg-primary hover:bg-[#0B3D5E] text-white rounded-full px-8 py-5 h-auto text-sm sm:text-base font-bold shadow-xl transition-all hover:scale-105">
+                    Plan Your Stay
                   </Button>
                 </Link>
-                <div className="flex flex-col">
-                  <span className="font-serif font-bold text-primary italic">The Team</span>
-                  <span className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Ocean Air Weligama</span>
+                <div className="flex flex-col border-l-2 border-[#4BBCCC]/30 pl-4">
+                  <span className="font-serif font-bold text-primary italic text-sm">Ocean Air Team</span>
+                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-black">Weligama, Sri Lanka</span>
                 </div>
               </div>
             </motion.div>
 
+            {/* Interactive Location Guide Card */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, x: 35 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative aspect-square rounded-[2rem] sm:rounded-[4rem] overflow-hidden shadow-2xl"
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="relative bg-card/75 backdrop-blur-md p-6 sm:p-10 rounded-[2.5rem] border border-border/80 shadow-xl overflow-hidden"
             >
-              <img 
-                src="/gallery-interior.png" 
-                className="w-full h-full object-cover" 
-                alt="Our Interior"
-              />
-              <div className="absolute inset-0 bg-primary/10 mix-blend-multiply" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#4BBCCC]/10 blur-2xl rounded-full pointer-events-none" />
+              <h3 className="text-lg sm:text-xl font-serif font-bold text-primary mb-4 flex items-center gap-2">
+                <Map className="w-5 h-5 text-[#4BBCCC]" />
+                Explore the Neighborhood
+              </h3>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-6">
+                Hover or tap on any destination below to discover what surrounds our peaceful tropical escape:
+              </p>
+
+              <div className="space-y-3.5">
+                {NEIGHBORHOOD_SPOTS.map((spot) => {
+                  const Icon = spot.icon;
+                  const isHovered = hoveredLocation === spot.id;
+                  return (
+                    <div
+                      key={spot.id}
+                      onMouseEnter={() => setHoveredLocation(spot.id)}
+                      onMouseLeave={() => setHoveredLocation(null)}
+                      onClick={() => setHoveredLocation(hoveredLocation === spot.id ? null : spot.id)}
+                      className={`p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                        isHovered 
+                          ? "bg-white border-[#4BBCCC] shadow-md translate-x-2" 
+                          : "bg-white/50 border-border hover:bg-white hover:border-[#4BBCCC]/40"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2.5 rounded-xl transition-colors ${isHovered ? "bg-[#4BBCCC]/15 text-[#4BBCCC]" : "bg-primary/5 text-primary"}`}>
+                            <Icon className="w-4 h-4 sm:w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-foreground text-sm sm:text-base">{spot.name}</h4>
+                            <p className="text-[10px] text-muted-foreground font-black tracking-widest uppercase">{spot.distance}</p>
+                          </div>
+                        </div>
+                        <ChevronRight className={`w-4 h-4 text-muted-foreground/60 transition-transform duration-300 ${isHovered ? "rotate-90 text-[#4BBCCC]" : ""}`} />
+                      </div>
+                      
+                      <AnimatePresence>
+                        {isHovered && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="overflow-hidden"
+                          >
+                            <p className="text-xs sm:text-sm text-muted-foreground mt-3 pt-3 border-t border-dashed border-border leading-relaxed">
+                              {spot.details}
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Barefoot Philosophy Grid */}
-      <section className="py-16 sm:py-32 bg-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-24">
-            <span className="text-primary font-black tracking-[0.4em] uppercase text-xs mb-4 block">Our Pillars</span>
-            <h2 className="text-4xl md:text-6xl font-serif font-bold text-foreground">The Barefoot Philosophy</h2>
+      {/* Experience Builder Widget ("Sri Lanka at Your Own Pace") */}
+      <section className="py-16 sm:py-24 bg-muted/20">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-16">
+            <span className="text-primary font-black tracking-[0.3em] uppercase text-xs mb-3 block">
+              Tailored Travel Styles
+            </span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground">
+              Sri Lanka At Your Own Pace
+            </h2>
+            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
+              At Ocean Air, we offer much more than just accommodation. Choose to add any activities you like during your stay to create a truly flexible island holiday.
+            </p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-            {PHILOSOPHY.map((item, idx) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="group relative bg-white p-6 sm:p-12 rounded-[2rem] sm:rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border border-border"
+
+          <div className="grid lg:grid-cols-12 gap-10 items-start">
+            {/* Interactive Selector list */}
+            <div className="lg:col-span-7 space-y-4">
+              <h3 className="text-base sm:text-lg font-bold text-primary mb-3">
+                Tap to Select Your Custom Add-Ons:
+              </h3>
+              <div className="grid gap-3">
+                {ACTIVITIES.map((activity) => {
+                  const Icon = activity.icon;
+                  const isSelected = selectedActivities.includes(activity.id);
+                  return (
+                    <div
+                      key={activity.id}
+                      onClick={() => toggleActivity(activity.id)}
+                      className={`group flex items-start gap-4 p-4 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                        isSelected 
+                          ? "bg-white border-[#4BBCCC] shadow-md ring-1 ring-[#4BBCCC]/30" 
+                          : "bg-white/50 border-border hover:bg-white hover:border-[#4BBCCC]/30"
+                      }`}
+                    >
+                      <div className={`mt-0.5 p-2 rounded-xl transition-colors ${
+                        isSelected ? "bg-[#4BBCCC]/15 text-[#4BBCCC]" : "bg-primary/5 text-primary group-hover:bg-[#4BBCCC]/10 group-hover:text-[#4BBCCC]"
+                      }`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-foreground text-sm sm:text-base">{activity.name}</h4>
+                          <span className={`text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                            activity.category === "Adventure" ? "bg-amber-100 text-amber-800" :
+                            activity.category === "Wellness" ? "bg-emerald-100 text-emerald-800" :
+                            activity.category === "Nature" ? "bg-sky-100 text-sky-800" : "bg-purple-100 text-purple-800"
+                          }`}>
+                            {activity.category}
+                          </span>
+                        </div>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{activity.desc}</p>
+                      </div>
+
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
+                        isSelected ? "bg-[#4BBCCC] border-[#4BBCCC] text-white" : "border-muted-foreground/30"
+                      }`}>
+                        {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Live customizer sidebar */}
+            <div className="lg:col-span-5 lg:sticky lg:top-24">
+              <div className="bg-primary text-white p-6 sm:p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+                {/* Glow ball */}
+                <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-[#4BBCCC]/20 blur-2xl rounded-full pointer-events-none" />
+                
+                <h3 className="text-xl sm:text-2xl font-serif font-bold mb-3 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-[#4BBCCC]" />
+                  Your Tailored Stay
+                </h3>
+                <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6">
+                  Select your room, and dynamically add these experiences upon check-in or booking. Enjoy Southern Sri Lanka on your own schedule.
+                </p>
+
+                <div className="border-t border-white/10 pt-6 mb-6">
+                  <h4 className="text-[10px] uppercase tracking-widest text-[#4BBCCC] font-black mb-3">Included Activities:</h4>
+                  {selectedActivities.length === 0 ? (
+                    <p className="text-sm text-white/40 italic">Select items on the left to design your tropical escape.</p>
+                  ) : (
+                    <ul className="space-y-2.5">
+                      {selectedActivities.map((actId) => {
+                        const act = ACTIVITIES.find(a => a.id === actId);
+                        return (
+                          <motion.li
+                            key={actId}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center gap-2 text-sm text-white/95 font-medium"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#4BBCCC]" />
+                            {act?.name}
+                          </motion.li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="bg-white/5 p-4 rounded-xl mb-8 border border-white/10 text-xs text-white/80 leading-relaxed space-y-1">
+                  <p><strong>✨ Unrestricted Flexibility:</strong> Stay 2 nights or 2 weeks. Custom build a package that fits your personal budget and pace.</p>
+                </div>
+
+                <Link href="/booking">
+                  <Button className="w-full bg-[#4BBCCC] hover:bg-white text-primary hover:text-primary rounded-full py-6 h-auto text-sm sm:text-base font-bold transition-all shadow-lg hover:scale-[1.02]">
+                    Build This Package
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sanctuary Switcher (Basic Private vs Deluxe Ocean View) */}
+      <section className="py-16 sm:py-24 bg-white">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div>
+              <span className="text-[#4BBCCC] font-black tracking-[0.3em] uppercase text-xs mb-3 block">
+                Sleep and Sanctuary
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-primary">
+                Designed For All Budgets
+              </h2>
+            </div>
+
+            {/* Room tab triggers */}
+            <div className="bg-primary/5 p-1.5 rounded-full flex self-start md:self-end border border-primary/10">
+              <button
+                onClick={() => setActiveRoomTab("basic")}
+                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 ${
+                  activeRoomTab === "basic" 
+                    ? "bg-primary text-white shadow-md" 
+                    : "text-muted-foreground hover:text-primary"
+                }`}
               >
-                <div className="absolute -inset-2 bg-primary/5 rounded-[3.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative z-10 text-center">
-                  <div className="w-16 h-16 rounded-[1.5rem] bg-primary/5 flex items-center justify-center mx-auto mb-8 transition-transform group-hover:rotate-12">
-                    <item.icon className="w-8 h-8 text-primary" />
+                Basic Private Room
+              </button>
+              <button
+                onClick={() => setActiveRoomTab("deluxe")}
+                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 ${
+                  activeRoomTab === "deluxe" 
+                    ? "bg-primary text-white shadow-md" 
+                    : "text-muted-foreground hover:text-primary"
+                }`}
+              >
+                Deluxe Double (Ocean View)
+              </button>
+            </div>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {activeRoomTab === "basic" ? (
+              <motion.div
+                key="basic-room"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35 }}
+                className="grid lg:grid-cols-12 gap-10 sm:gap-16 items-center"
+              >
+                <div className="lg:col-span-5 space-y-6">
+                  <span className="bg-amber-100 text-amber-800 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
+                    Cozy Comfort & Value
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Comfortable Basic Private</h3>
+                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                    Traveling on a budget or looking for simple, quiet privacy? Our Basic Private Rooms are prepared with authentic care. Clean, cozy, and quiet, they offer the perfect escape to sleep deeply and recharge after long hours catching waves at Weligama Beach.
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-4 border-t border-border pt-6 text-xs sm:text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Quiet Village Vibe
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#4BBCCC]" /> High-speed Wi-Fi
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Cozy Private Space
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Daily Housekeeping
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-serif font-bold text-foreground mb-4">{item.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+
+                  <div className="pt-4">
+                    <Link href="/rooms">
+                      <Button className="rounded-full bg-primary hover:bg-[#0B3D5E] text-white px-8 py-5 h-auto text-xs sm:text-sm font-bold shadow-lg">
+                        View Rates & Details
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7">
+                  <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl bg-muted border border-border/60">
+                    <img
+                      src="/assets/room-1.png"
+                      alt="Basic Private Room at Ocean Air Weligama"
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
+                  </div>
                 </div>
               </motion.div>
-            ))}
+            ) : (
+              <motion.div
+                key="deluxe-room"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.35 }}
+                className="grid lg:grid-cols-12 gap-10 sm:gap-16 items-center"
+              >
+                <div className="lg:col-span-5 space-y-6">
+                  <span className="bg-[#4BBCCC]/20 text-[#4BBCCC] text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
+                    Premium Coastal Stay
+                  </span>
+                  <h3 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Deluxe Double with Balcony</h3>
+                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                    Upgrade to stunning views. Our Deluxe Double Rooms features spacious designs, modern comforts, private balconies, and beautiful views facing the ocean. Prepared with delicate attention to give you an authentic, refreshing island experience.
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-4 border-t border-border pt-6 text-xs sm:text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Private Balcony
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Beautiful Ocean Views
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Air Conditioning
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Authentic Local Styling
+                    </div>
+                  </div>
+
+                  <div className="pt-4">
+                    <Link href="/rooms">
+                      <Button className="rounded-full bg-primary hover:bg-[#0B3D5E] text-white px-8 py-5 h-auto text-xs sm:text-sm font-bold shadow-lg">
+                        View Rates & Details
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-7">
+                  <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl bg-muted border border-border/60">
+                    <img
+                      src="/gallery-room-luxury.jpg"
+                      alt="Deluxe Double Room with Balcony at Ocean Air"
+                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </section>
+
+      {/* Rooftop Café Vibe Shift Simulator */}
+      <section className="py-16 sm:py-24 bg-muted/20 overflow-hidden">
+        <div className="container mx-auto px-4 max-w-6xl">
+          {/* Shiftable container block */}
+          <div className={`relative p-6 sm:p-14 rounded-[2.5rem] transition-all duration-[1000ms] shadow-2xl border ${
+            sunsetMode 
+              ? "bg-[linear-gradient(135deg,#1f1330_0%,#431c3c_50%,#5e2637_100%)] text-white border-purple-900/30" 
+              : "bg-[linear-gradient(135deg,#E8F8FA_0%,#F4FBFB_60%,#FAFAF8_100%)] text-foreground border-[#4BBCCC]/20"
+          }`}>
+            {/* Glow orbs */}
+            <div className={`absolute top-[-20%] right-[-10%] w-[300px] h-[300px] blur-[120px] rounded-full transition-all duration-[1000ms] pointer-events-none ${
+              sunsetMode ? "bg-amber-500/20" : "bg-[#4BBCCC]/20"
+            }`} />
+            <div className={`absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] blur-[120px] rounded-full transition-all duration-[1000ms] pointer-events-none ${
+              sunsetMode ? "bg-purple-500/10" : "bg-primary/5"
+            }`} />
+
+            <div className="relative z-10 grid lg:grid-cols-12 gap-10 sm:gap-14 items-center">
+              {/* Text area */}
+              <div className="lg:col-span-6 space-y-6">
+                <div className="flex items-center gap-2">
+                  <Coffee className={`w-5 h-5 ${sunsetMode ? "text-amber-400" : "text-[#4BBCCC]"}`} />
+                  <span className={`text-[10px] font-black uppercase tracking-[0.25em] ${sunsetMode ? "text-amber-400" : "text-[#4BBCCC]"}`}>
+                    Scenic Culinary Social Space
+                  </span>
+                </div>
+
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold leading-tight">
+                  The Rooftop Café
+                </h2>
+
+                <p className={`text-sm sm:text-base leading-relaxed transition-colors duration-[1000ms] ${
+                  sunsetMode ? "text-white/80" : "text-muted-foreground"
+                }`}>
+                  One of the highlights of Ocean Air is our rooftop café, where guests can enjoy breakfast, fresh food, coffee, tropical drinks, stunning ocean views, and unforgettable sunsets. It’s the perfect place to relax, meet fellow travelers, and unwind after surfing or exploring the area.
+                </p>
+
+                {/* Vibe shift selector */}
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
+                  <span className={`text-xs sm:text-sm font-bold ${sunsetMode ? "text-white/70" : "text-muted-foreground"}`}>
+                    Experience the Atmosphere:
+                  </span>
+                  <div className="bg-black/10 p-1 rounded-full flex self-start border border-black/5">
+                    <button
+                      onClick={() => setSunsetMode(false)}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                        !sunsetMode 
+                          ? "bg-white text-primary shadow-sm animate-pulse-highlight" 
+                          : "text-white/60 hover:text-white"
+                      }`}
+                    >
+                      <Sun className="w-3.5 h-3.5" /> Morning Vibes
+                    </button>
+                    <button
+                      onClick={() => setSunsetMode(true)}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                        sunsetMode 
+                          ? "bg-amber-500 text-white shadow-sm" 
+                          : "text-muted-foreground hover:text-primary"
+                      }`}
+                    >
+                      <Sparkles className="w-3.5 h-3.5" /> Sunset Golden Hour
+                    </button>
+                  </div>
+                </div>
+
+                {/* Info grid */}
+                <div className="grid grid-cols-2 gap-6 border-t border-black/10 pt-6">
+                  <div>
+                    <h4 className="font-bold text-xs uppercase tracking-widest text-[#4BBCCC] mb-1">Rooftop Food</h4>
+                    <p className={`text-xs transition-colors duration-[1000ms] leading-relaxed ${sunsetMode ? "text-white/60" : "text-muted-foreground"}`}>
+                      Healthy breakfast, local tropical fruit bowls, local teas, and traditional Sri Lankan delicacies.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs uppercase tracking-widest text-[#4BBCCC] mb-1">Scenic Socials</h4>
+                    <p className={`text-xs transition-colors duration-[1000ms] leading-relaxed ${sunsetMode ? "text-white/60" : "text-muted-foreground"}`}>
+                      Breathtaking sunsets and 360-degree ocean views that make it Weligama's favorite unwind spot.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Photo transitions */}
+              <div className="lg:col-span-6">
+                <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl bg-black/10 border border-white/10">
+                  <AnimatePresence mode="wait">
+                    {!sunsetMode ? (
+                      <motion.img
+                        key="day-view"
+                        src="/assets/food.png"
+                        alt="Rooftop Cafe Breakfast and Drinks at Ocean Air"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.05 }}
+                        transition={{ duration: 0.6 }}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    ) : (
+                      <motion.img
+                        key="sunset-view"
+                        src="/gallery-sunset.png"
+                        alt="Stunning sunset view from Ocean Air rooftop"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 1.05 }}
+                        transition={{ duration: 0.6 }}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                    )}
+                  </AnimatePresence>
+                  <div className={`absolute inset-0 transition-opacity duration-[1000ms] pointer-events-none ${
+                    sunsetMode ? "bg-amber-600/10 mix-blend-color-burn" : "bg-transparent"
+                  }`} />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Discovery Guide */}
-      <section className="py-16 sm:py-32 container mx-auto px-4">
-        <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
-          <div className="max-w-2xl">
-            <span className="text-accent font-black tracking-[0.4em] uppercase text-xs mb-4 block">Insider Knowledge</span>
-            <h2 className="text-4xl md:text-6xl font-serif font-bold text-foreground">Weligama Discovery Guide</h2>
+      {/* 100% Locally Owned Pride section */}
+      <section className="py-16 sm:py-24 bg-white">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="text-center mb-16">
+            <span className="text-[#4BBCCC] font-black tracking-[0.3em] uppercase text-xs mb-3 block">
+              Our Identity
+            </span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-primary">
+              100% Locally Owned
+            </h2>
+            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
+              We are dedicated to building a welcoming, sustainable home away from home, driven by real family values.
+            </p>
           </div>
-          <p className="text-muted-foreground text-lg max-w-sm">
-            We don't just host you; we guide you to the hidden rhythms of the South Coast.
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {AREA_GUIDE.map((place, idx) => (
-            <motion.div
-              key={place.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="bg-card p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border border-border hover:border-primary transition-colors flex flex-col justify-between"
-            >
-              <div>
-                <place.icon className="w-10 h-10 text-accent mb-8" />
-                <h3 className="text-xl font-bold text-foreground mb-2">{place.name}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-8">{place.desc}</p>
-              </div>
-              <div className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-primary">
-                <MapPin className="w-4 h-4" />
-                {place.distance}
-              </div>
-            </motion.div>
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {VALUES.map((val, idx) => {
+              const Icon = val.icon;
+              return (
+                <motion.div
+                  key={val.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  className="group relative bg-card p-6 sm:p-10 rounded-[2rem] border border-border/80 hover:border-[#4BBCCC]/50 hover:shadow-2xl transition-all duration-300 flex flex-col text-center"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-primary/5 text-primary flex items-center justify-center mx-auto mb-6 transition-all group-hover:bg-[#4BBCCC]/15 group-hover:text-[#4BBCCC] group-hover:scale-110">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-xl font-serif font-bold text-foreground mb-4">{val.title}</h3>
+                  <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground">{val.desc}</p>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* Final Invitation */}
-      <section className="py-20 sm:py-40 bg-primary relative overflow-hidden text-center">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
+      {/* Final Invitation Call to Action */}
+      <section className="py-20 sm:py-32 bg-primary relative overflow-hidden text-center text-white">
+        {/* Subtle mesh details */}
+        <div className="absolute inset-0 opacity-15 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#4BBCCC] via-primary to-primary pointer-events-none" />
+        
         <div className="relative z-10 max-w-3xl mx-auto px-4">
-          <h2 className="text-3xl sm:text-4xl md:text-7xl font-serif font-bold text-white mb-8">Ready to Write <br/> Your Island Story?</h2>
-          <p className="text-white/80 text-xl mb-12 leading-relaxed">
-            The surf is clean, the air is salt-sweet, and your room is waiting. Join us for a stay that feels less like a holiday and more like a homecoming.
+          <span className="text-[#4BBCCC] font-black tracking-[0.4em] uppercase text-xs mb-4 block">
+            Your Weligama Escape
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight">
+            Ready to Discover Sri Lanka?
+          </h2>
+          <p className="text-white/80 text-sm sm:text-lg mb-10 leading-relaxed max-w-xl mx-auto">
+            Whether you are looking for adventure, surfing, yoga, nature, or simply a peaceful beach holiday, Ocean Air is ready to give you a unique Sri Lankan experience you will never forget.
           </p>
-          <Link href="/book">
-            <Button size="lg" className="bg-accent text-primary px-8 sm:px-16 py-6 sm:py-8 rounded-full font-bold text-base sm:text-xl shadow-2xl hover:bg-white transition-all">
+          <Link href="/booking">
+            <Button size="lg" className="bg-[#4BBCCC] hover:bg-white text-primary hover:text-primary px-8 sm:px-12 py-5 sm:py-7 rounded-full font-black text-xs sm:text-base tracking-widest uppercase shadow-2xl hover:scale-105 h-auto transition-all">
               Book Your Experience
             </Button>
           </Link>
