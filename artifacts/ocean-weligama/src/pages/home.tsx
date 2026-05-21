@@ -25,8 +25,7 @@ export default function Home() {
             poster="/hero-video-poster.jpg"
             className="w-full h-full object-cover scale-105"
           >
-            <source src="/hero-video.mp4" type="video/mp4" />
-            <source src="/hero-video.webm" type="video/webm" />
+            <source src="/hero-video.mov" type="video/quicktime" />
           </video>
           {/* Multi-layered Cinematic Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
