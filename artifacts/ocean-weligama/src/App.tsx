@@ -23,6 +23,7 @@ import AdminDashboard from "@/pages/admin/dashboard";
 import AdminBookings from "@/pages/admin/bookings";
 import AdminRooms from "@/pages/admin/rooms";
 import AdminPackages from "@/pages/admin/packages";
+import AdminAddons from "@/pages/admin/addons";
 import AdminReviews from "@/pages/admin/reviews";
 import AdminMessages from "@/pages/admin/messages";
 import AdminPricing from "@/pages/admin/pricing";
@@ -81,6 +82,7 @@ function App() {
               <Route path="/ow-admin/bookings" component={AdminBookings} />
               <Route path="/ow-admin/rooms" component={AdminRooms} />
               <Route path="/ow-admin/packages" component={AdminPackages} />
+              <Route path="/ow-admin/addons" component={AdminAddons} />
               <Route path="/ow-admin/reviews" component={AdminReviews} />
               <Route path="/ow-admin/messages" component={AdminMessages} />
               <Route path="/ow-admin/pricing" component={AdminPricing} />

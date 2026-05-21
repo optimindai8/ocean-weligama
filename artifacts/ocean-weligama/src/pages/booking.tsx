@@ -431,7 +431,8 @@ export default function BookingPage() {
       {/* ── MAIN CONTENT ────────────────────────────────────────────────── */}
       <main className="flex-1 py-12 md:py-16 px-4">
         <div className="container mx-auto">
-          <AnimatePresence mode="wait" custom={dir}>
+          <Form {...form}>
+            <AnimatePresence mode="wait" custom={dir}>
 
             {/* ══════════════════════════════════════════════════════════════
                 STEP 1 — Guests
@@ -1034,9 +1035,8 @@ export default function BookingPage() {
                     initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
                     className="lg:col-span-7 space-y-5"
                   >
-                    <Form {...form}>
-                      <form className="space-y-5">
-                        {/* Details card */}
+                    <form className="space-y-5">
+                      {/* Details card */}
                         <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-6">
                           <p className="text-[10px] font-black uppercase tracking-widest text-primary">Your Details</p>
 
@@ -1151,7 +1151,6 @@ export default function BookingPage() {
                           </button>
                         </div>
                       </form>
-                    </Form>
 
                     <button
                       onClick={() => goTo(6)}
@@ -1247,7 +1246,8 @@ export default function BookingPage() {
               </motion.div>
             )}
 
-          </AnimatePresence>
+            </AnimatePresence>
+          </Form>
         </div>
       </main>
 

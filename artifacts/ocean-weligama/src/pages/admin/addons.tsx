@@ -93,7 +93,7 @@ const serviceSchema = z.object({
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
 
-export default function AdminPackages() {
+export default function AdminAddons() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -152,8 +152,8 @@ export default function AdminPackages() {
         description: "",
         imageUrl: "",
         highlights: [],
-        type: "main",
-        category: "Main Package",
+        type: "optional",
+        category: "Adventure",
         basePrice: "0.00",
         isActive: true,
         isBookable: true,
@@ -225,7 +225,7 @@ export default function AdminPackages() {
       ...values,
       description: values.description || null,
       imageUrl: values.imageUrl || null,
-      category: values.category || "Main Package",
+      category: values.category || "Adventure",
       sortOrder: values.sortOrder ? parseInt(values.sortOrder, 10) || 0 : 0,
     };
 
@@ -308,10 +308,10 @@ export default function AdminPackages() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-serif font-bold text-foreground mb-1">
-              Packages Administration
+              Experiences & Add-ons
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
-              Manage Surf packages, Retreats, and Main packages.
+              Manage extra experiences, optional lessons, and rentals like Yoga, Safari, and Scooters.
             </p>
           </div>
           <Button 
@@ -319,7 +319,7 @@ export default function AdminPackages() {
             className="rounded-full shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all gap-2"
           >
             <Plus className="w-5 h-5" />
-            Add New Package
+            Add New Experience
           </Button>
         </div>
 
@@ -329,9 +329,9 @@ export default function AdminPackages() {
               <Skeleton key={i} className="h-64 rounded-3xl" />
             ))}
           </div>
-        ) : services && (services as Service[]).filter(s => s.type === "main").length > 0 ? (
+        ) : services && (services as Service[]).filter(s => s.type === "optional").length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(services as Service[]).filter(s => s.type === "main").map((service) => (
+            {(services as Service[]).filter(s => s.type === "optional").map((service) => (
               <div 
                 key={service.id} 
                 className="group relative bg-card hover:bg-accent/5 border border-border rounded-3xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 flex flex-col"
@@ -347,8 +347,8 @@ export default function AdminPackages() {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="default" className="rounded-full">
-                      Main
+                    <Badge variant="outline" className="rounded-full">
+                      Optional
                     </Badge>
                     <Badge variant={service.isActive ? "default" : "secondary"} className="rounded-full">
                       {service.isActive ? "Active" : "Inactive"}
@@ -381,7 +381,7 @@ export default function AdminPackages() {
                   <h3 className="text-xl font-bold mb-1">{service.name}</h3>
                   <div className="flex items-center gap-2 mb-3">
                     <Badge variant="outline" className="text-[10px] uppercase tracking-wider bg-muted/50 border-none rounded-md px-1.5 py-0.5">
-                      {service.category || "Main Package"}
+                      {service.category || "Adventure"}
                     </Badge>
                     <span className="text-xs text-muted-foreground font-mono">/{service.slug}</span>
                   </div>
@@ -412,12 +412,12 @@ export default function AdminPackages() {
             <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
               <Sparkles className="w-10 h-10 text-muted-foreground" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">No packages yet</h2>
+            <h2 className="text-2xl font-bold mb-2">No experiences yet</h2>
             <p className="text-muted-foreground max-w-md mb-8">
-              Start adding your packages or retreats to show them to your guests.
+              Start adding your optional experiences and add-ons like Yoga, Surfing Lessons, or Scooter Rentals.
             </p>
             <Button onClick={() => handleOpenDialog()} className="rounded-full px-8">
-              Create Your First Package
+              Create Your First Add-on
             </Button>
           </div>
         )}
@@ -426,10 +426,10 @@ export default function AdminPackages() {
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-[32px] p-8">
             <DialogHeader className="mb-6">
               <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-                {editingService ? <><Settings2 className="w-6 h-6 text-primary" /> Edit Package</> : <><Plus className="w-6 h-6 text-primary" /> Add New Package</>}
+                {editingService ? <><Settings2 className="w-6 h-6 text-primary" /> Edit Experience</> : <><Plus className="w-6 h-6 text-primary" /> Add New Experience</>}
               </DialogTitle>
               <DialogDescription>
-                Fill in the details below to {editingService ? "update your existing" : "create a new"} package.
+                Fill in the details below to {editingService ? "update your existing" : "create a new"} experience.
               </DialogDescription>
             </DialogHeader>
 
@@ -439,7 +439,7 @@ export default function AdminPackages() {
                   {/* Left Column: Visuals & Basics */}
                   <div className="space-y-8">
                     <div className="space-y-4">
-                      <Label>Package Image</Label>
+                      <Label>Add-on Image</Label>
                       <div 
                         onClick={() => !form.watch("imageUrl") && fileInputRef.current?.click()}
                         className={`relative aspect-video rounded-3xl overflow-hidden bg-muted border-2 border-dashed border-border flex items-center justify-center group ${!form.watch("imageUrl") ? "cursor-pointer hover:border-primary/50 transition-colors" : ""}`}
@@ -515,9 +515,9 @@ export default function AdminPackages() {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Package Name</FormLabel>
+                            <FormLabel>Add-on Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="e.g. Surfer Starter Package" {...field} className="rounded-xl h-12 text-lg font-semibold" />
+                              <Input placeholder="e.g. Yoga Class" {...field} className="rounded-xl h-12 text-lg font-semibold" />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -545,7 +545,29 @@ export default function AdminPackages() {
                   <div className="space-y-8">
                     <div className="grid grid-cols-1 gap-6">
 
-
+                      <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Category</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value || ""}>
+                              <FormControl>
+                                <SelectTrigger className="rounded-xl">
+                                  <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="rounded-xl">
+                                <SelectItem value="Adventure" className="rounded-lg">Adventure</SelectItem>
+                                <SelectItem value="Wellness" className="rounded-lg">Wellness</SelectItem>
+                                <SelectItem value="Nature" className="rounded-lg">Nature</SelectItem>
+                                <SelectItem value="Culture" className="rounded-lg">Culture</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -613,7 +635,7 @@ export default function AdminPackages() {
                               </div>
                             ))}
                             {(!field.value || field.value.length === 0) && (
-                              <p className="text-[11px] text-muted-foreground italic text-center py-4">Add the things included in this package.</p>
+                              <p className="text-[11px] text-muted-foreground italic text-center py-4">Add the things included in this experience.</p>
                             )}
                           </div>
                           <FormMessage />
@@ -687,7 +709,7 @@ export default function AdminPackages() {
                     Cancel
                   </Button>
                   <Button type="submit" disabled={createService.isPending || updateService.isPending} className="rounded-full px-12 h-12 bg-primary shadow-xl shadow-primary/20">
-                    {createService.isPending || updateService.isPending ? "Saving..." : editingService ? "Update Package" : "Create Package"}
+                    {createService.isPending || updateService.isPending ? "Saving..." : editingService ? "Update Experience" : "Create Experience"}
                   </Button>
                 </DialogFooter>
               </form>
@@ -700,7 +722,7 @@ export default function AdminPackages() {
             <AlertDialogHeader>
               <AlertDialogTitle className="text-2xl font-bold">Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription className="text-base">
-                This will permanently delete this package and all its associated data. This action cannot be undone.
+                This will permanently delete this experience and all its associated data. This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="pt-6">
