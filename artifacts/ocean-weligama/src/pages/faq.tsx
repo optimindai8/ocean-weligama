@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Footer } from "@/components/footer";
 import { ChevronDown, MessageCircle, HelpCircle, Waves, Plane, Bed } from "lucide-react";
+import { PageHero } from "@/components/page-hero";
 
 const FAQ_DATA = [
   {
@@ -57,33 +58,12 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
       
-      {/* Premium Hero Section */}
-      <section className="relative pt-40 pb-24 overflow-hidden bg-primary">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent blur-[120px] rounded-full animate-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-white blur-[120px] rounded-full animate-pulse" />
-        </div>
-        
-        <div className="container relative z-10 mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 mb-8"
-          >
-            <HelpCircle className="w-4 h-4 text-accent" />
-            <span className="text-white text-[10px] font-bold tracking-[0.3em] uppercase">Concierge Desk</span>
-          </motion.div>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-serif font-bold text-white mb-0"
-          >
-            How Can We <br/> Help You Today?
-          </motion.h1>
-        </div>
-      </section>
+      <PageHero
+        title="How Can We Help You Today?"
+        description=""
+        badgeText="Concierge Desk"
+        badgeIcon={<HelpCircle className="w-3.5 h-3.5 text-[#4BBCCC]" />}
+      />
 
       <main className="flex-1 py-24 bg-muted/20">
         <div className="container mx-auto px-4 max-w-4xl">

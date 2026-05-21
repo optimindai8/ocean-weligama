@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Mail, Clock, MessageCircle, Send, Globe, ShieldCheck, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
+import { PageHero } from "@/components/page-hero";
 
 const contactSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -75,46 +76,12 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
 
-      {/* Cinematic Contact Hero */}
-      <section className="relative pt-40 pb-24 overflow-hidden bg-primary">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent blur-[120px] rounded-full" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-white blur-[120px] rounded-full" />
-        </div>
-
-        <div className="container relative z-10 mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 mb-8"
-          >
-            <Globe className="w-4 h-4 text-accent" />
-            <span className="text-white text-[10px] font-bold tracking-[0.3em] uppercase">Global Concierge</span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-6xl md:text-8xl font-serif font-bold text-white mb-8"
-          >
-            Let's <span className="italic font-normal text-accent text-5xl sm:text-7xl md:text-9xl">Connect</span>
-          </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center justify-center gap-4 text-white/80 font-serif italic text-base sm:text-xl px-4"
-          >
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            "Real people, island hospitality. Always here for you."
-          </motion.div>
-        </div>
-      </section>
+      <PageHero
+        title="Let's Connect"
+        description="Real people, island hospitality. Always here for you."
+        badgeText="Global Concierge"
+        badgeIcon={<Globe className="w-3.5 h-3.5 text-[#4BBCCC]" />}
+      />
 
       <main className="flex-1 py-24 bg-muted/20">
         <div className="container mx-auto px-4">

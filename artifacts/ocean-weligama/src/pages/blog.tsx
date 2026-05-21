@@ -5,6 +5,7 @@ import { Calendar, ArrowRight, BookOpen, Search, Clock, Tag, ChevronRight, Spark
 import { useListBlogs, getListBlogsQueryKey } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
+import { PageHero } from "@/components/page-hero";
 
 const CATEGORIES = ["All", "Surfing", "Travel", "Food", "Lifestyle", "Yoga"];
 
@@ -260,10 +261,6 @@ export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   const { data: blogs, isLoading } = useListBlogs(
     undefined,
@@ -288,77 +285,27 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F9FB] selection:bg-[#0B3D5E] selection:text-white overflow-x-hidden">
 
-      {/* Hero */}
-      <section ref={heroRef} className="relative h-[50vh] flex items-center justify-center overflow-hidden bg-[#052439]">
-        {/* Parallax background */}
-        <motion.div style={{ y: heroY }} className="absolute inset-0 scale-110">
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,#052439_0%,#0B3D5E_50%,#1A6B8A_100%)]" />
-          {/* Animated grid */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:48px_48px]" />
-          {/* Glow orbs */}
-          <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [0.15, 0.25, 0.15] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[-20%] right-[10%] w-[500px] h-[500px] bg-[#4BBCCC]/20 blur-[100px] rounded-full"
-          />
-          <motion.div
-            animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-[-20%] left-[5%] w-[400px] h-[400px] bg-[#1A6B8A]/20 blur-[80px] rounded-full"
-          />
-        </motion.div>
-
-        <motion.div style={{ opacity: heroOpacity }} className="container relative z-10 mx-auto px-4 text-center mt-16">
-          <motion.div
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 bg-[#4BBCCC]/15 border border-[#4BBCCC]/30 px-5 py-2 rounded-full mb-6"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-[#4BBCCC]" />
-            <span className="text-[#4BBCCC] text-[10px] font-black uppercase tracking-[0.25em]">The Ocean Journal</span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-5xl md:text-7xl font-serif font-bold text-white mb-5 leading-none tracking-tight"
-          >
-            Island Stories
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-white/70 text-sm md:text-base max-w-lg mx-auto font-sans leading-relaxed"
-          >
-            Surf diaries, coastal flavours, and barefoot adventures — all from the shores of Weligama.
-          </motion.p>
-
-          {/* Live stats row */}
-          {!isLoading && blogList.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.35, duration: 0.5 }}
-              className="flex items-center justify-center gap-6 mt-8"
-            >
-              <div className="flex items-center gap-2 text-white/60 text-xs font-medium">
-                <TrendingUp className="w-3.5 h-3.5 text-[#4BBCCC]" />
-                <Counter target={blogList.length} />
-                <span>Stories Published</span>
-              </div>
-              <span className="w-px h-4 bg-white/20" />
-              <div className="flex items-center gap-2 text-white/60 text-xs font-medium">
-                <Tag className="w-3.5 h-3.5 text-[#4BBCCC]" />
-                <span>{Object.keys(categoryCounts).length - 1} Categories</span>
-              </div>
-            </motion.div>
-          )}
-        </motion.div>
-      </section>
+      <PageHero
+        title="Island Stories"
+        description="Surf diaries, coastal flavours, and barefoot adventures — all from the shores of Weligama."
+        badgeText="The Ocean Journal"
+        badgeIcon={<BookOpen className="w-3.5 h-3.5 text-[#4BBCCC]" />}
+      >
+        {!isLoading && blogList.length > 0 && (
+          <>
+            <div className="flex items-center gap-2 text-white/60 text-xs font-medium">
+              <TrendingUp className="w-3.5 h-3.5 text-[#4BBCCC]" />
+              <Counter target={blogList.length} />
+              <span>Stories Published</span>
+            </div>
+            <span className="w-px h-4 bg-white/20" />
+            <div className="flex items-center gap-2 text-white/60 text-xs font-medium">
+              <Tag className="w-3.5 h-3.5 text-[#4BBCCC]" />
+              <span>{Object.keys(categoryCounts).length - 1} Categories</span>
+            </div>
+          </>
+        )}
+      </PageHero>
 
       {/* Main Content */}
       <main className="flex-1 py-16 bg-[#F7F9FB]">

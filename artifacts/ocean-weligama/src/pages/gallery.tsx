@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   useListGallery,
   useCreateGalleryItem,
@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Footer } from "@/components/footer";
 import { X, Maximize2, Camera, Upload, Plus, Check, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { PageHero } from "@/components/page-hero";
 
 const CATEGORIES = ["all", "rooms", "beach", "food", "activities", "property"] as const;
 type Category = typeof CATEGORIES[number];
@@ -41,8 +42,7 @@ export default function GalleryPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, 100]);
+
 
   const { data: dbItems = [], isLoading } = useListGallery(
     activeCategory !== "all" ? { category: activeCategory, limit: 96 } : { limit: 96 }
@@ -117,39 +117,12 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background overflow-hidden">
 
-      {/* Parallax Hero */}
-      <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden bg-primary pt-24">
-        <motion.div style={{ y: y1 }} className="absolute inset-0 z-0">
-          <img src="/gallery-sunset.png" className="w-full h-full object-cover opacity-60 scale-110" alt="Gallery Hero" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-black/20" />
-        </motion.div>
-        <div className="relative z-10 text-center container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 mb-6"
-          >
-            <Camera className="w-4 h-4 text-accent" />
-            <span className="text-white text-xs font-bold tracking-widest uppercase">Visual Storytelling</span>
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-8xl font-serif font-bold text-white mb-6 drop-shadow-2xl"
-          >
-            Ocean Air <br /> Through Our Lens
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="text-white/80 text-lg md:text-xl max-w-xl mx-auto"
-          >
-            Share your memory — upload a photo and inspire the next adventurer.
-          </motion.p>
-        </div>
-      </section>
+      <PageHero
+        title="Ocean Air Through Our Lens"
+        description="Share your memory — upload a photo and inspire the next adventurer."
+        badgeText="Visual Storytelling"
+        badgeIcon={<Camera className="w-3.5 h-3.5 text-[#4BBCCC]" />}
+      />
 
       {/* Featured Showcase */}
       <section className="py-24 container mx-auto px-4">

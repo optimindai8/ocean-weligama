@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Waves, Check, Sparkles, HelpCircle } from "lucide-react";
+import { PageHero } from "@/components/page-hero";
 
 export default function PackagesPage() {
   const { data: rawServices, isLoading } = useListServices();
@@ -32,45 +33,12 @@ export default function PackagesPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#0B3D5E] overflow-hidden">
 
-      {/* Hero */}
-      <section className="relative pt-44 pb-28 bg-[#0B3D5E] overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-          <motion.div 
-            animate={{ 
-              scale: [1, 1.1, 1],
-              opacity: [0.3, 0.5, 0.3] 
-            }}
-            transition={{ duration: 10, repeat: Infinity }}
-            className="absolute -top-1/2 -left-1/4 w-full h-full bg-[#4BBCCC]/25 rounded-full blur-[120px]" 
-          />
-        </div>
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-[#4BBCCC] font-bold tracking-[0.4em] uppercase text-xs mb-4 block"
-          >
-            Ocean Air Surf &amp; Wellness
-          </motion.span>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 leading-tight"
-          >
-            Our Curated Packages
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-light leading-relaxed"
-          >
-            Choose your perfect journey. Whether looking for comprehensive packages or customizable optional experiences, we have something tailored just for you.
-          </motion.p>
-        </div>
-      </section>
+      <PageHero
+        title="Our Curated Packages"
+        description="Choose your perfect journey. Whether looking for comprehensive packages or customizable optional experiences, we have something tailored just for you."
+        badgeText="Ocean Air Surf & Wellness"
+        badgeIcon={<Sparkles className="w-3.5 h-3.5 text-[#4BBCCC]" />}
+      />
 
       {/* Section 1: Surf Packages (Main Packages) */}
       <section className="py-24 container mx-auto px-4">

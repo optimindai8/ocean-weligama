@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users, BedDouble, Square, ArrowRight, Wind, Wifi, Coffee } from "lucide-react";
+import { PageHero } from "@/components/page-hero";
 
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
@@ -30,42 +31,12 @@ export default function RoomsPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
 
-      {/* Cinematic Mood Hero */}
-      <section className="relative pt-40 pb-24 overflow-hidden bg-primary">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-accent blur-[120px] rounded-full" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-white blur-[120px] rounded-full" />
-        </div>
-        
-        <div className="container relative z-10 mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 mb-8"
-          >
-            <BedDouble className="w-4 h-4 text-accent" />
-            <span className="text-white text-[10px] font-bold tracking-[0.3em] uppercase">Private Sanctuaries</span>
-          </motion.div>
-          
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-serif font-bold text-white mb-8"
-          >
-            Find Your <br/> <span className="italic font-normal text-accent">Ocean Soul</span>
-          </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-serif italic"
-          >
-            "Where barefoot luxury meets the rhythm of the waves."
-          </motion.p>
-        </div>
-      </section>
+      <PageHero
+        title="Find Your Ocean Soul"
+        description="Where barefoot luxury meets the rhythm of the waves."
+        badgeText="Private Sanctuaries"
+        badgeIcon={<BedDouble className="w-3.5 h-3.5 text-[#4BBCCC]" />}
+      />
 
       {/* Interactive Mood Filters */}
       <section className="relative z-20 px-4 py-8 -mb-12 mt-4 max-w-full overflow-hidden">

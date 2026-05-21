@@ -39,7 +39,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/upload", upload.single("file"), async (req, res) => {
+app.use(["/api/upload", "/api/v1/upload"], upload.single("file"), async (req, res) => {
   try {
     if (!supabase) return res.status(500).json({ error: "Supabase configuration missing" });
     const file = req.file;

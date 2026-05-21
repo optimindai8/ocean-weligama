@@ -1,8 +1,9 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Footer } from "@/components/footer";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { MapPin, Heart, Waves, Sun, Wind, Anchor, Camera, Compass } from "lucide-react";
+import { PageHero } from "@/components/page-hero";
 
 const PHILOSOPHY = [
   { icon: Waves, title: "Ocean Proximity", desc: "100 steps to the surf. We believe life is better lived with sand between your toes." },
@@ -19,50 +20,15 @@ const AREA_GUIDE = [
 ];
 
 export default function AboutPage() {
-  const { scrollY } = useScroll();
-  const yHero = useTransform(scrollY, [0, 500], [0, 200]);
-
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
 
-      {/* Cinematic Hero Anchor */}
-      <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
-        <motion.div style={{ y: yHero }} className="absolute inset-0 z-0">
-          <img 
-            src="/gallery-beach-coastline.jpg" 
-            className="w-full h-full object-cover scale-110" 
-            alt="Weligama Coastline"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-black/50 to-black/30" />
-        </motion.div>
-        
-        <div className="container relative z-10 mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md px-6 py-2 rounded-full border border-white/30 mb-8"
-          >
-            <Waves className="w-4 h-4 text-accent" />
-            <span className="text-white text-[10px] font-bold tracking-[0.4em] uppercase drop-shadow-md">Born from the tides</span>
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-4xl sm:text-6xl md:text-9xl font-serif font-bold text-white mb-8 drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
-          >
-            Ocean Air
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-base sm:text-xl md:text-3xl text-white/95 font-serif italic max-w-2xl mx-auto px-2 drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
-          >
-            "A surfer's dream, a traveler's home, and the soul of the Southern Coast."
-          </motion.p>
-        </div>
-      </section>
+      <PageHero
+        title="Ocean Air"
+        description="A surfer's dream, a traveler's home, and the soul of the Southern Coast."
+        badgeText="Born from the tides"
+        badgeIcon={<Waves className="w-3.5 h-3.5 text-[#4BBCCC]" />}
+      />
 
       {/* The Origin Narrative */}
       <section className="py-16 sm:py-32 bg-white">
