@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, Check, Calendar, Users, CreditCard, Sparkles, ShieldCheck, Waves, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Calendar, Users, CreditCard, Sparkles, ShieldCheck, Waves, ArrowRight, Award, Ship, Compass, Utensils, Bike } from "lucide-react";
 import { Link } from "wouter";
 import { Footer } from "@/components/footer";
 
@@ -34,6 +34,129 @@ const guestSchema = z.object({
 
 type GuestForm = z.infer<typeof guestSchema>;
 
+const UI_ADDONS = [
+  {
+    id: "surf-pkg",
+    name: "Surf Packages",
+    desc: "Complete options designed for different skills, including board rentals & daily coach reviews.",
+    icon: Award,
+    category: "Adventure",
+    dbSlug: "surfer-advance-package",
+    pricing: "From €200 / package",
+    payOnArrival: false,
+  },
+  {
+    id: "yoga",
+    name: "Yoga Experiences",
+    desc: "Restorative classes on our rooftop, perfect for deep surf recovery and centering your mind.",
+    icon: Sparkles,
+    category: "Wellness",
+    dbSlug: null,
+    pricing: "Pay on arrival / Arrange at check-in",
+    payOnArrival: true,
+  },
+  {
+    id: "lessons",
+    name: "Surfing Lessons",
+    desc: "Step-by-step coaching from friendly, local ISA-certified instructors right at the beach.",
+    icon: Waves,
+    category: "Adventure",
+    dbSlug: "surf-lessons",
+    pricing: "From €100 / course",
+    payOnArrival: false,
+  },
+  {
+    id: "whale-watching",
+    name: "Whale Watching Tours",
+    desc: "Stunning boat trips from neighboring Mirissa Harbor to see majestic blue whales up close.",
+    icon: Ship,
+    category: "Nature",
+    dbSlug: null,
+    pricing: "Pay on arrival / Arrange at check-in",
+    payOnArrival: true,
+  },
+  {
+    id: "safari",
+    name: "Safari Trips",
+    desc: "Venture to Udawalawe or Yala National Parks to see wild elephants, leopards, and rich birdlife.",
+    icon: Compass,
+    category: "Nature",
+    dbSlug: null,
+    pricing: "Pay on arrival / Arrange at check-in",
+    payOnArrival: true,
+  },
+  {
+    id: "cooking",
+    name: "Cookery Classes",
+    desc: "Learn to grind local spices and cook the perfect, fragrant Sri Lankan rice & coconut curry.",
+    icon: Utensils,
+    category: "Culture",
+    dbSlug: null,
+    pricing: "Pay on arrival / Arrange at check-in",
+    payOnArrival: true,
+  },
+  {
+    id: "scooters",
+    name: "Scooter Rentals",
+    desc: "Grab a scooter to explore pristine coastal roads and hidden bays at your own pace.",
+    icon: Bike,
+    category: "Adventure",
+    dbSlug: null,
+    pricing: "Pay on arrival / Arrange at check-in",
+    payOnArrival: true,
+  }
+];
+
+const getCategoryStyle = (category: string) => {
+  switch (category) {
+    case "Adventure":
+      return {
+        bg: "bg-sky-50 text-sky-700 border-sky-200",
+        badge: "bg-sky-100 text-sky-800",
+        accent: "text-sky-600",
+        ring: "focus-within:ring-sky-500",
+        borderSelected: "border-sky-500 bg-sky-50/30",
+        glow: "shadow-sky-500/10",
+      };
+    case "Wellness":
+      return {
+        bg: "bg-purple-50 text-purple-700 border-purple-200",
+        badge: "bg-purple-100 text-purple-800",
+        accent: "text-purple-600",
+        ring: "focus-within:ring-purple-500",
+        borderSelected: "border-purple-500 bg-purple-50/30",
+        glow: "shadow-purple-500/10",
+      };
+    case "Nature":
+      return {
+        bg: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        badge: "bg-emerald-100 text-emerald-800",
+        accent: "text-emerald-600",
+        ring: "focus-within:ring-emerald-500",
+        borderSelected: "border-emerald-500 bg-emerald-50/30",
+        glow: "shadow-emerald-500/10",
+      };
+    case "Culture":
+      return {
+        bg: "bg-amber-50 text-amber-700 border-amber-200",
+        badge: "bg-amber-100 text-amber-800",
+        accent: "text-amber-600",
+        ring: "focus-within:ring-amber-500",
+        borderSelected: "border-amber-500 bg-amber-50/30",
+        glow: "shadow-amber-500/10",
+      };
+    default:
+      return {
+        bg: "bg-gray-50 text-gray-700 border-gray-200",
+        badge: "bg-gray-100 text-gray-800",
+        accent: "text-gray-600",
+        ring: "focus-within:ring-gray-500",
+        borderSelected: "border-gray-500 bg-gray-50/30",
+        glow: "shadow-gray-500/10",
+      };
+  }
+};
+
 export default function BookingPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -44,6 +167,7 @@ export default function BookingPage() {
   const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
   const [guestCount, setGuestCount] = useState(2);
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
+  const [selectedFrontendAddons, setSelectedFrontendAddons] = useState<string[]>(["lessons", "yoga"]);
   const [priceData, setPriceData] = useState<{
     roomRatePerNight: string;
     nights: number;
@@ -59,6 +183,46 @@ export default function BookingPage() {
   const { data: services } = useListServices();
   const checkAvailability = useCheckAvailabilityAndPrice();
   const createBooking = useCreateBooking();
+
+  const handleToggleAddon = (addonId: string, dbSlug: string | null) => {
+    const isSelected = selectedFrontendAddons.includes(addonId);
+    
+    // Toggle frontend state
+    setSelectedFrontendAddons(prev => 
+      isSelected ? prev.filter(id => id !== addonId) : [...prev, addonId]
+    );
+
+    // Toggle database state if applicable
+    if (dbSlug && Array.isArray(services)) {
+      const dbService = services.find(s => s.slug === dbSlug);
+      if (dbService) {
+        setSelectedServiceIds(prev => 
+          isSelected ? prev.filter(id => id !== dbService.id) : [...prev, dbService.id]
+        );
+      }
+    }
+  };
+
+  // Sync initial frontend selected add-ons to database serviceIds once services data loads
+  useEffect(() => {
+    if (Array.isArray(services) && selectedServiceIds.length === 0) {
+      const initialDbIds: string[] = [];
+      
+      selectedFrontendAddons.forEach(addonId => {
+        const addon = UI_ADDONS.find(a => a.id === addonId);
+        if (addon && addon.dbSlug) {
+          const dbService = services.find(s => s.slug === addon.dbSlug);
+          if (dbService) {
+            initialDbIds.push(dbService.id);
+          }
+        }
+      });
+      
+      if (initialDbIds.length > 0) {
+        setSelectedServiceIds(initialDbIds);
+      }
+    }
+  }, [services]);
 
   const form = useForm<GuestForm>({
     resolver: zodResolver(guestSchema),
@@ -113,9 +277,22 @@ export default function BookingPage() {
   async function onSubmit(data: GuestForm) {
     if (!selectedRoomId || !dateRange.from || !dateRange.to) return;
     try {
+      const payOnArrivalAddons = UI_ADDONS.filter(addon => 
+        addon.payOnArrival && selectedFrontendAddons.includes(addon.id)
+      ).map(a => a.name);
+
+      let finalSpecialRequests = data.specialRequests || "";
+      if (payOnArrivalAddons.length > 0) {
+        const addonText = `[Requested Add-ons (Pay on Arrival): ${payOnArrivalAddons.join(", ")}]`;
+        finalSpecialRequests = finalSpecialRequests 
+          ? `${addonText}\n${finalSpecialRequests}`
+          : addonText;
+      }
+
       const booking = await createBooking.mutateAsync({
         data: {
           ...data,
+          specialRequests: finalSpecialRequests,
           roomId: selectedRoomId,
           checkIn: toDateStr(dateRange.from),
           checkOut: toDateStr(dateRange.to),
@@ -287,39 +464,70 @@ export default function BookingPage() {
                   <div className="space-y-6">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <Waves className="w-4 h-4 text-primary" />
+                        <Sparkles className="w-4 h-4 text-primary" />
                       </div>
-                      <h2 className="text-xl font-serif font-bold">Add Experiences</h2>
+                      <h2 className="text-xl font-serif font-bold">Custom Add-Ons & Experiences</h2>
                     </div>
+                    <p className="text-sm text-muted-foreground -mt-2">
+                      Tap to select your custom add-ons. You can build a package that fits your personal budget and pace.
+                    </p>
 
-                    <div className="flex flex-wrap gap-4">
-                      {Array.isArray(services) && services.filter(s => s.isBookable).map((service) => (
-                        <button
-                          key={service.id}
-                          onClick={() => {
-                            if (selectedServiceIds.includes(service.id)) {
-                              setSelectedServiceIds(prev => prev.filter(id => id !== service.id));
-                            } else {
-                              setSelectedServiceIds(prev => [...prev, service.id]);
-                            }
-                          }}
-                          className={`flex items-center gap-4 px-6 py-3.5 rounded-full border-2 transition-all duration-500 ${
-                            selectedServiceIds.includes(service.id)
-                              ? "bg-primary text-white border-primary shadow-lg"
-                              : "bg-white text-muted-foreground border-border hover:border-primary/30"
-                          }`}
-                        >
-                          {service.imageUrl ? (
-                            <img src={service.imageUrl} alt={service.name} className="w-6 h-6 rounded-full object-cover shrink-0" />
-                          ) : (
-                            <Sparkles className="w-5 h-5 shrink-0" />
-                          )}
-                          <div className="text-left">
-                            <p className="text-xs font-bold leading-none">{service.name}</p>
-                            <p className="text-[9px] font-black uppercase tracking-widest mt-1 opacity-70">+€{service.basePrice}</p>
-                          </div>
-                        </button>
-                      ))}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {UI_ADDONS.map((addon) => {
+                        const Icon = addon.icon;
+                        const isSelected = selectedFrontendAddons.includes(addon.id);
+                        const style = getCategoryStyle(addon.category);
+                        
+                        // Find database service price dynamically if applicable
+                        let displayPrice = addon.pricing;
+                        if (addon.dbSlug && Array.isArray(services)) {
+                          const dbService = services.find(s => s.slug === addon.dbSlug);
+                          if (dbService) {
+                            const unit = (dbService as any).unit;
+                            displayPrice = `+€${parseInt(dbService.basePrice)} ${unit === "per_person" ? "/ person" : "/ stay"}`;
+                          }
+                        }
+
+                        return (
+                          <button
+                            key={addon.id}
+                            type="button"
+                            onClick={() => handleToggleAddon(addon.id, addon.dbSlug)}
+                            className={`group relative text-left p-6 rounded-[2rem] border-2 transition-all duration-500 flex flex-col justify-between h-full hover:scale-[1.01] hover:shadow-xl ${
+                              isSelected
+                                ? `${style.borderSelected} border-primary shadow-lg ${style.glow}`
+                                : "border-white bg-white hover:border-primary/20 shadow-md"
+                            }`}
+                          >
+                            <div className="w-full">
+                              <div className="flex items-center justify-between mb-4">
+                                <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${style.badge}`}>
+                                  {addon.category}
+                                </span>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                                  isSelected ? "bg-primary text-white" : "bg-muted text-muted-foreground"
+                                }`}>
+                                  {isSelected ? <Check className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                                </div>
+                              </div>
+                              
+                              <h3 className="text-lg font-serif font-bold text-foreground mb-2 flex items-center gap-2">
+                                {addon.name}
+                              </h3>
+                              <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+                                {addon.desc}
+                              </p>
+                            </div>
+
+                            <div className="w-full pt-4 border-t border-dashed border-muted flex items-center justify-between">
+                              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Price</span>
+                              <span className={`text-xs font-bold ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
+                                {displayPrice}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -356,6 +564,31 @@ export default function BookingPage() {
                               <p className="text-sm font-bold">{Math.round((dateRange.to.getTime() - dateRange.from.getTime()) / 86400000)}</p>
                             </div>
                           </div>
+
+                          {selectedFrontendAddons.length > 0 && (
+                            <div className="space-y-2">
+                              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block">Selected Add-Ons</span>
+                              <div className="flex flex-wrap gap-1.5">
+                                {selectedFrontendAddons.map(addonId => {
+                                  const addon = UI_ADDONS.find(a => a.id === addonId);
+                                  if (!addon) return null;
+                                  return (
+                                    <span 
+                                      key={addonId} 
+                                      className={`text-[9px] font-bold px-2 py-1 rounded-full flex items-center gap-1 border ${
+                                        addon.payOnArrival 
+                                          ? "bg-purple-50 text-purple-700 border-purple-100" 
+                                          : "bg-sky-50 text-sky-700 border-sky-100"
+                                      }`}
+                                    >
+                                      {addon.name}
+                                      {addon.payOnArrival && <span className="text-[8px] opacity-70">(arrival)</span>}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
 
                           <Button
                             size="lg"
@@ -489,7 +722,30 @@ export default function BookingPage() {
                             <span className="font-bold">+€{priceData.servicesSubtotal}</span>
                           </div>
                         )}
-                        <div className="flex justify-between items-center pt-8">
+                        
+                        {/* Selected pay-on-arrival add-ons */}
+                        {selectedFrontendAddons.some(id => {
+                          const add = UI_ADDONS.find(a => a.id === id);
+                          return add?.payOnArrival;
+                        }) && (
+                          <div className="space-y-3 pt-6 border-t border-white/10 mt-6">
+                            <span className="text-white/60 text-[10px] font-black uppercase tracking-widest block">Pay on Arrival Add-ons</span>
+                            <div className="space-y-2">
+                              {selectedFrontendAddons.map(id => {
+                                const add = UI_ADDONS.find(a => a.id === id);
+                                if (!add || !add.payOnArrival) return null;
+                                return (
+                                  <div key={id} className="flex justify-between items-center text-xs">
+                                    <span className="text-white/80">{add.name}</span>
+                                    <span className="font-bold text-accent">Arrange at check-in</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex justify-between items-center pt-8 border-t border-white/10 mt-6">
                           <span className="text-white/60 text-xs font-black uppercase tracking-widest">Total Amount</span>
                           <span className="text-4xl font-serif font-bold text-accent">€{priceData.totalAmount}</span>
                         </div>
@@ -538,6 +794,32 @@ export default function BookingPage() {
                       </div>
                     </div>
                   </div>
+
+                  {selectedFrontendAddons.length > 0 && (
+                    <div className="border-b border-border pb-8 md:pb-12 space-y-6">
+                      <h3 className="text-xs font-black uppercase tracking-widest text-primary">Your Tailored Experiences</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {selectedFrontendAddons.map(id => {
+                          const addon = UI_ADDONS.find(a => a.id === id);
+                          if (!addon) return null;
+                          const Icon = addon.icon;
+                          return (
+                            <div key={id} className="flex items-center gap-3 p-4 bg-muted/20 rounded-2xl border border-border/50">
+                              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                <Icon className="w-4 h-4 text-primary" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-foreground">{addon.name}</p>
+                                <p className="text-[10px] text-muted-foreground uppercase font-black tracking-wider">
+                                  {addon.payOnArrival ? "Pay on arrival" : "Included in booking"}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-8">
                     <h3 className="text-xs font-black uppercase tracking-widest text-primary text-center">Payment Method</h3>
