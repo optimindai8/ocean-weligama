@@ -77,39 +77,28 @@ type GuestForm = z.infer<typeof guestSchema>;
 // ─────────────────────────────────────────────────────────────────────────────
 // Static data
 // ─────────────────────────────────────────────────────────────────────────────
-const DB_PACKAGES = [
-  {
-    id: "surf-pkg",
-    name: "Surf Packages",
-    desc: "Board rental, daily coaching & performance reviews for every skill level.",
-    icon: Award,
-    dbSlug: "surfer-advance-package",
-    tag: "Adventure",
-  },
-  {
-    id: "lessons",
-    name: "Surfing Lessons",
-    desc: "ISA-certified local instructors guiding you step-by-step right at Weligama Beach.",
-    icon: Waves,
-    dbSlug: "surf-lessons",
-    tag: "Adventure",
-  },
-];
-
-const POA_EXPERIENCES = [
-  { id: "yoga",           name: "Yoga Experiences",  desc: "Restorative rooftop sessions, perfect for surf recovery and mental calm.", icon: Sparkles, tag: "Wellness"  },
-  { id: "whale-watching", name: "Whale Watching",    desc: "Majestic blue whale encounters from Mirissa Harbor by boat.",            icon: Ship,     tag: "Nature"   },
-  { id: "safari",         name: "Safari Trips",      desc: "Wild elephants & leopards in Udawalawe or Yala National Park.",          icon: Compass,  tag: "Nature"   },
-  { id: "cooking",        name: "Cookery Classes",   desc: "Grind spices and cook a fragrant Sri Lankan rice & coconut curry.",      icon: Utensils, tag: "Culture"  },
-  { id: "scooters",       name: "Scooter Rentals",   desc: "Explore pristine coastal roads and hidden bays at your own pace.",       icon: Bike,     tag: "Adventure"},
-];
-
 const TAG_COLORS: Record<string, string> = {
   Adventure: "bg-sky-100 text-sky-700",
   Wellness:  "bg-purple-100 text-purple-700",
   Nature:    "bg-emerald-100 text-emerald-700",
   Culture:   "bg-amber-100 text-amber-700",
 };
+
+function getServiceIcon(name: string) {
+  const n = name.toLowerCase();
+  if (n.includes('surf') || n.includes('package')) return Award;
+  if (n.includes('lesson')) return Waves;
+  if (n.includes('yoga')) return Sparkles;
+  if (n.includes('whale')) return Ship;
+  if (n.includes('safari')) return Compass;
+  if (n.includes('cook')) return Utensils;
+  if (n.includes('scooter') || n.includes('bike')) return Bike;
+  return Sparkles;
+}
+
+function getServiceTag(category?: string | null) {
+  return category || "Adventure";
+}
 
 const STEPS = [
   { n: 1, label: "Guests",      icon: Users      },
@@ -131,7 +120,7 @@ function getAirportPrices(n: number) {
 }
 
 // Slide variants — direction-aware
-const slide = {
+const slide: any = {
   enter: (d: number) => ({ x: d * 70, opacity: 0, scale: 0.97 }),
   center: {
     x: 0, opacity: 1, scale: 1,
@@ -241,9 +230,7 @@ export default function BookingPage() {
   const [guestCount,            setGuestCount]            = useState(2);
   const [dateRange,             setDateRange]             = useState<{ from?: Date; to?: Date }>({});
   const [selectedRoomId,        setSelectedRoomId]        = useState<string | null>(null);
-  const [selectedPackageIds,    setSelectedPackageIds]    = useState<string[]>([]);
   const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>([]);
-  const [selectedExperienceIds, setSelectedExperienceIds] = useState<string[]>([]);
   const [priceData,             setPriceData]             = useState<any>(null);
 
   const { data: rooms,    isLoading: roomsLoading } = useListRooms();
@@ -293,19 +280,8 @@ export default function BookingPage() {
   function toStr(d: Date) { return d.toISOString().slice(0, 10); }
 
   // ── Toggle helpers ─────────────────────────────────────────────────────────
-  function togglePkg(pkgId: string) {
-    const pkg = DB_PACKAGES.find(p => p.id === pkgId);
-    if (!pkg) return;
-    const sel = selectedPackageIds.includes(pkgId);
-    setSelectedPackageIds(p => sel ? p.filter(x => x !== pkgId) : [...p, pkgId]);
-    if (Array.isArray(services)) {
-      const svc = services.find(s => s.slug === pkg.dbSlug);
-      if (svc) setSelectedDbServiceIds(p => sel ? p.filter(x => x !== svc.id) : [...p, svc.id]);
-    }
-  }
-
-  function toggleExp(id: string) {
-    setSelectedExperienceIds(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  function toggleService(id: string) {
+    setSelectedDbServiceIds(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
   }
 
   // ── Availability check (Step 3 → 4) ───────────────────────────────────────
@@ -346,8 +322,8 @@ export default function BookingPage() {
       );
     }
     if (data.airportDrop) lines.push(`[Airport Drop: €${ap.drop} — Pay on Arrival]`);
-    const poaNames = POA_EXPERIENCES.filter(e => selectedExperienceIds.includes(e.id)).map(e => e.name);
-    if (poaNames.length) lines.push(`[Add-ons (Pay on Arrival): ${poaNames.join(", ")}]`);
+    const poaNames = []; // Admin handles payment online now via services array.
+
     let sr = data.specialRequests || "";
     if (lines.length) sr = lines.join("\n") + (sr ? "\n" + sr : "");
     try {
@@ -370,10 +346,12 @@ export default function BookingPage() {
     step > 1 ? `👥 ${guestCount} ${guestCount === 1 ? "Traveler" : "Travelers"}` : null,
     step > 2 && dateRange.from && dateRange.to ? `📅 ${fmt(dateRange.from)} → ${fmt(dateRange.to)} · ${nights}n` : null,
     step > 3 && selectedRoom ? `🏠 ${selectedRoom.name}` : null,
-    step > 4 && selectedPackageIds.length ? `🏄 ${selectedPackageIds.length} Package${selectedPackageIds.length > 1 ? "s" : ""}` : null,
-    step > 5 && selectedExperienceIds.length ? `✨ ${selectedExperienceIds.length} Experience${selectedExperienceIds.length > 1 ? "s" : ""}` : null,
+    step > 4 && selectedDbServiceIds.length ? `✨ ${selectedDbServiceIds.length} Add-on${selectedDbServiceIds.length > 1 ? "s" : ""}` : null,
     step > 6 && (watchPickup || watchDrop) ? "✈️ Airport Transfer" : null,
   ].filter(Boolean) as string[];
+
+  const packages = Array.isArray(services) ? services.filter(s => s.type === "main" || s.category?.toLowerCase() === "package") : [];
+  const experiences = Array.isArray(services) ? services.filter(s => s.type !== "main" && s.category?.toLowerCase() !== "package") : [];
 
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER
@@ -637,7 +615,15 @@ export default function BookingPage() {
                             <Check className="w-4 h-4 text-white" />
                           </motion.div>
                         )}
-                        <h3 className="text-2xl font-serif font-bold text-foreground mb-5">{room.name}</h3>
+                        {room.heroImageUrl && (
+                          <div className="w-full h-40 mb-5 rounded-2xl overflow-hidden bg-muted">
+                            <img src={room.heroImageUrl} alt={room.name} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <h3 className="text-2xl font-serif font-bold text-foreground mb-3">{room.name}</h3>
+                        {room.shortDesc && (
+                          <p className="text-sm text-muted-foreground mb-5 line-clamp-2">{room.shortDesc}</p>
+                        )}
                         <div className="flex items-end justify-between">
                           <div>
                             <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">Capacity</p>
@@ -688,18 +674,16 @@ export default function BookingPage() {
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
                   className="grid md:grid-cols-2 gap-6"
                 >
-                  {DB_PACKAGES.map(pkg => {
-                    const Icon = pkg.icon;
-                    const isSel = selectedPackageIds.includes(pkg.id);
-                    let price = "—";
-                    if (Array.isArray(services)) {
-                      const svc = services.find(s => s.slug === pkg.dbSlug);
-                      if (svc) price = `€${parseInt(svc.basePrice)}`;
-                    }
+                  {packages.map(pkg => {
+                    const Icon = getServiceIcon(pkg.name);
+                    const isSel = selectedDbServiceIds.includes(pkg.id);
+                    const tag = getServiceTag(pkg.category);
+                    const price = `€${parseInt(pkg.basePrice)}`;
+                    
                     return (
                       <button
                         key={pkg.id}
-                        onClick={() => togglePkg(pkg.id)}
+                        onClick={() => toggleService(pkg.id)}
                         className={`text-left p-8 rounded-[2rem] border-2 transition-all duration-400 relative ${
                           isSel
                             ? "border-emerald-500 bg-emerald-50/30 shadow-xl shadow-emerald-100 scale-[1.02]"
@@ -718,10 +702,10 @@ export default function BookingPage() {
                           <Icon className="w-6 h-6" />
                         </div>
                         <h3 className="text-xl font-serif font-bold text-foreground mb-2">{pkg.name}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed mb-6">{pkg.desc}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed mb-6">{pkg.description || pkg.highlights?.[0]}</p>
                         <div className="flex items-center justify-between pt-4 border-t border-dashed border-muted">
-                          <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${TAG_COLORS[pkg.tag]}`}>
-                            {pkg.tag}
+                          <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${TAG_COLORS[tag] || TAG_COLORS.Adventure}`}>
+                            {tag}
                           </span>
                           <span className={`text-sm font-bold ${isSel ? "text-emerald-600" : "text-muted-foreground"}`}>
                             {price}
@@ -736,8 +720,8 @@ export default function BookingPage() {
                   onBack={() => goTo(3)}
                   onContinue={() => goTo(5)}
                   continueLabel="Add Experiences"
-                  skipLabel={selectedPackageIds.length === 0 ? "Skip, no packages" : undefined}
-                  onSkip={selectedPackageIds.length === 0 ? () => goTo(5) : undefined}
+                  skipLabel="Skip Packages"
+                  onSkip={() => goTo(5)}
                 />
               </motion.div>
             )}
@@ -762,13 +746,16 @@ export default function BookingPage() {
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
                   className="grid sm:grid-cols-2 md:grid-cols-3 gap-5"
                 >
-                  {POA_EXPERIENCES.map(exp => {
-                    const Icon = exp.icon;
-                    const isSel = selectedExperienceIds.includes(exp.id);
+                  {experiences.map(exp => {
+                    const Icon = getServiceIcon(exp.name);
+                    const isSel = selectedDbServiceIds.includes(exp.id);
+                    const tag = getServiceTag(exp.category);
+                    const price = `€${parseInt(exp.basePrice)}`;
+
                     return (
                       <button
                         key={exp.id}
-                        onClick={() => toggleExp(exp.id)}
+                        onClick={() => toggleService(exp.id)}
                         className={`text-left p-6 rounded-[1.5rem] border-2 transition-all duration-400 relative ${
                           isSel
                             ? "border-purple-400 bg-purple-50/40 shadow-lg shadow-purple-100 scale-[1.02]"
@@ -787,13 +774,13 @@ export default function BookingPage() {
                           <Icon className="w-5 h-5" />
                         </div>
                         <h3 className="text-base font-serif font-bold text-foreground mb-1.5">{exp.name}</h3>
-                        <p className="text-xs text-muted-foreground leading-relaxed mb-4">{exp.desc}</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed mb-4">{exp.description || exp.highlights?.[0]}</p>
                         <div className="flex items-center justify-between">
-                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${TAG_COLORS[exp.tag]}`}>
-                            {exp.tag}
+                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${TAG_COLORS[tag] || TAG_COLORS.Wellness}`}>
+                            {tag}
                           </span>
-                          <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">
-                            Pay on arrival
+                          <span className="text-[9px] font-bold text-purple-600 uppercase tracking-widest">
+                            {price}
                           </span>
                         </div>
                       </button>
@@ -801,24 +788,12 @@ export default function BookingPage() {
                   })}
                 </motion.div>
 
-                {selectedExperienceIds.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                    className="mt-6 bg-purple-50 border border-purple-100 rounded-2xl px-6 py-4 flex items-center justify-between"
-                  >
-                    <p className="text-sm font-bold text-purple-700">
-                      ✨ {selectedExperienceIds.length} experience{selectedExperienceIds.length > 1 ? "s" : ""} added
-                    </p>
-                    <p className="text-xs text-purple-400 font-bold uppercase tracking-widest">All at check-in</p>
-                  </motion.div>
-                )}
-
                 <StepNav
                   onBack={() => goTo(4)}
                   onContinue={() => goTo(6)}
                   continueLabel="Airport Transfer"
-                  skipLabel={selectedExperienceIds.length === 0 ? "Skip, no extras" : undefined}
-                  onSkip={selectedExperienceIds.length === 0 ? () => goTo(6) : undefined}
+                  skipLabel="Skip Experiences"
+                  onSkip={() => goTo(6)}
                 />
               </motion.div>
             )}
@@ -883,86 +858,78 @@ export default function BookingPage() {
                     </button>
 
                     {/* Expanded: surfboard + flight info */}
-                    <AnimatePresence>
-                      {watchPickup && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.35 }}
-                          className="overflow-hidden border-t border-border/30"
-                        >
-                          <div className="p-7 space-y-6">
-                            {/* Surfboard */}
-                            <div className="flex items-center justify-between bg-sky-50 border border-sky-100 rounded-2xl p-5">
-                              <div>
-                                <p className="font-bold text-foreground text-sm">Bringing a surfboard?</p>
-                                <p className="text-xs text-muted-foreground mt-0.5">We'll arrange extra space in the vehicle</p>
-                              </div>
-                              <div className="flex gap-2">
-                                {["No", "Yes"].map(v => (
-                                  <button
-                                    key={v}
-                                    type="button"
-                                    onClick={() => form.setValue("bringingSurfboard", v === "Yes")}
-                                    className={`px-5 py-2 rounded-full text-sm font-bold border-2 transition-all duration-200 ${
-                                      (v === "Yes" ? watchSurfboard === true : watchSurfboard === false)
-                                        ? "bg-primary border-primary text-white shadow-md"
-                                        : "bg-white border-muted text-muted-foreground hover:border-primary/30"
-                                    }`}
-                                  >
-                                    {v}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-
-                            {/* Flight details */}
+                    {watchPickup && (
+                      <div className="border-t border-border/30">
+                        <div className="p-7 space-y-6">
+                          {/* Surfboard */}
+                          <div className="flex items-center justify-between bg-sky-50 border border-sky-100 rounded-2xl p-5">
                             <div>
-                              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
-                                <span className="w-0.5 h-4 bg-primary rounded-full inline-block" />
-                                Arrival Information
-                              </p>
-                              <div className="grid sm:grid-cols-3 gap-4">
-                                <FormField control={form.control} name="flightNumber" render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                      <Plane className="w-2.5 h-2.5" /> Flight No.
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="QR 654" className="h-12 rounded-xl border-muted bg-muted/20 font-mono px-4" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )} />
-                                <FormField control={form.control} name="flightDate" render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                      <Calendar className="w-2.5 h-2.5" /> Date
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input type="date" min={new Date().toISOString().slice(0, 10)} className="h-12 rounded-xl border-muted bg-muted/20 px-4" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )} />
-                                <FormField control={form.control} name="flightTime" render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
-                                      <Clock className="w-2.5 h-2.5" /> Time
-                                    </FormLabel>
-                                    <FormControl>
-                                      <Input type="time" className="h-12 rounded-xl border-muted bg-muted/20 px-4" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )} />
-                              </div>
+                              <p className="font-bold text-foreground text-sm">Bringing a surfboard?</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">We'll arrange extra space in the vehicle</p>
+                            </div>
+                            <div className="flex gap-2">
+                              {["No", "Yes"].map(v => (
+                                <button
+                                  key={v}
+                                  type="button"
+                                  onClick={() => form.setValue("bringingSurfboard", v === "Yes")}
+                                  className={`px-5 py-2 rounded-full text-sm font-bold border-2 transition-all duration-200 ${
+                                    (v === "Yes" ? watchSurfboard === true : watchSurfboard === false)
+                                      ? "bg-primary border-primary text-white shadow-md"
+                                      : "bg-white border-muted text-muted-foreground hover:border-primary/30"
+                                  }`}
+                                >
+                                  {v}
+                                </button>
+                              ))}
                             </div>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+
+                          {/* Flight details */}
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+                              <span className="w-0.5 h-4 bg-primary rounded-full inline-block" />
+                              Arrival Information
+                            </p>
+                            <div className="grid sm:grid-cols-3 gap-4">
+                              <FormField control={form.control} name="flightNumber" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                                    <Plane className="w-2.5 h-2.5" /> Flight No.
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input placeholder="QR 654" className="h-12 rounded-xl border-muted bg-muted/20 font-mono px-4" {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
+                              <FormField control={form.control} name="flightDate" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                                    <Calendar className="w-2.5 h-2.5" /> Date
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input type="date" min={new Date().toISOString().slice(0, 10)} className="h-12 rounded-xl border-muted bg-muted/20 px-4" {...field} value={field.value || ""} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
+                              <FormField control={form.control} name="flightTime" render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                                    <Clock className="w-2.5 h-2.5" /> Time
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input type="time" className="h-12 rounded-xl border-muted bg-muted/20 px-4" {...field} value={field.value || ""} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )} />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* ── Drop card ── */}
@@ -1220,33 +1187,16 @@ export default function BookingPage() {
                         </div>
                       </div>
 
-                      {/* Packages */}
-                      {selectedPackageIds.length > 0 && (
+                      {/* Packages & Add-ons */}
+                      {selectedDbServiceIds.length > 0 && (
                         <div className="space-y-2 pb-5 border-b border-white/15 text-sm">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Packages</p>
-                          {selectedPackageIds.map(id => {
-                            const pkg = DB_PACKAGES.find(p => p.id === id);
-                            const svc = Array.isArray(services) ? services.find(s => s.slug === pkg?.dbSlug) : null;
+                          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Packages & Experiences</p>
+                          {selectedDbServiceIds.map(id => {
+                            const svc = Array.isArray(services) ? services.find(s => s.id === id) : null;
                             return (
                               <div key={id} className="flex justify-between">
-                                <span className="text-white/80">{pkg?.name}</span>
-                                <span className="font-bold">{svc ? `€${parseInt(svc.basePrice)}` : "Included"}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-
-                      {/* Experiences */}
-                      {selectedExperienceIds.length > 0 && (
-                        <div className="space-y-2 pb-5 border-b border-white/15 text-sm">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Experiences (Pay on Arrival)</p>
-                          {selectedExperienceIds.map(id => {
-                            const exp = POA_EXPERIENCES.find(e => e.id === id);
-                            return (
-                              <div key={id} className="flex justify-between">
-                                <span className="text-white/80">{exp?.name}</span>
-                                <span className="text-accent font-bold text-xs uppercase tracking-widest">At check-in</span>
+                                <span className="text-white/80">{svc?.name}</span>
+                                <span className="font-bold">€{svc ? parseInt(svc.basePrice) : 0}</span>
                               </div>
                             );
                           })}
