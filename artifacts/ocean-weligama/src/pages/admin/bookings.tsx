@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   useAdminListBookings,
   useAdminUpdateBooking,
+  useAdminDeleteBooking,
   getAdminListBookingsQueryKey,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
@@ -10,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { ChevronLeft, ChevronRight, Filter, Trash2 } from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -44,6 +45,7 @@ export default function AdminBookings() {
   });
 
   const updateBooking = useAdminUpdateBooking();
+  const deleteBooking = useAdminDeleteBooking();
 
   const bookingsData = data as {
     bookings: Array<{
@@ -78,6 +80,21 @@ export default function AdminBookings() {
         onError: () => toast({ variant: "destructive", title: "Update failed" }),
       }
     );
+  }
+
+  function handleDeleteBooking(id: string) {
+    if (window.confirm("Are you sure you want to delete this booking? This action cannot be undone.")) {
+      deleteBooking.mutate(
+        { id },
+        {
+          onSuccess: () => {
+            toast({ title: "Booking deleted successfully" });
+            queryClient.invalidateQueries({ queryKey: getAdminListBookingsQueryKey(params) });
+          },
+          onError: () => toast({ variant: "destructive", title: "Failed to delete booking" }),
+        }
+      );
+    }
   }
 
   const totalPages = Math.ceil((bookingsData?.total ?? 0) / 20);
@@ -148,7 +165,7 @@ export default function AdminBookings() {
                       </td>
                       <td className="px-4 py-3 font-bold">${b.totalAmount}</td>
                       <td className="px-4 py-3">
-                        <div className="relative">
+                        <div className="flex items-center gap-2">
                           <select
                             value={b.status}
                             onChange={(e) => handleStatusChange(b.id, e.target.value)}
@@ -159,6 +176,17 @@ export default function AdminBookings() {
                               <option key={s} value={s}>{s.replace("_", " ")}</option>
                             ))}
                           </select>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => handleDeleteBooking(b.id)}
+                            disabled={deleteBooking.isPending}
+                            title="Delete Booking"
+                            data-testid={`delete-booking-${b.id}`}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </td>
                     </tr>
