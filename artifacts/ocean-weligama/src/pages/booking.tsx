@@ -251,6 +251,18 @@ export default function BookingPage() {
   const checkAvail = useCheckAvailabilityAndPrice();
   const createBook = useCreateBooking();
 
+  const computedTotal = (() => {
+    if (!priceData) return 0;
+    let t = parseFloat(priceData.roomSubtotal) + parseFloat(priceData.cleaningFee || "0");
+    if (Array.isArray(services)) {
+      for (const svcId of selectedDbServiceIds) {
+        const svc = services.find(s => s.id === svcId);
+        if (svc) t += parseFloat(svc.basePrice || "0");
+      }
+    }
+    return t.toFixed(2);
+  })();
+
   const form = useForm<GuestForm>({
     resolver: zodResolver(guestSchema),
     defaultValues: {
@@ -570,6 +582,10 @@ export default function BookingPage() {
                       toast({ variant: "destructive", title: "Please select check-in and check-out dates" });
                       return;
                     }
+                    if (dateRange.from.getTime() === dateRange.to.getTime()) {
+                      toast({ variant: "destructive", title: "Check-out must be after check-in" });
+                      return;
+                    }
                     goTo(3);
                   }}
                   continueLabel="Choose Your Room"
@@ -678,7 +694,7 @@ export default function BookingPage() {
                     let price = "—";
                     if (Array.isArray(services)) {
                       const svc = services.find(s => s.slug === pkg.dbSlug);
-                      if (svc) price = `€${parseInt(svc.basePrice)} / ${(svc as any).unit === "per_person" ? "person" : "stay"}`;
+                      if (svc) price = `€${parseInt(svc.basePrice)}`;
                     }
                     return (
                       <button
@@ -1088,6 +1104,16 @@ export default function BookingPage() {
                             )} />
                           </div>
 
+                          <FormField control={form.control} name="guestNationality" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-[10px] font-black uppercase tracking-widest ml-1">Nationality</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Spanish" className="h-14 rounded-2xl border-muted bg-muted/20 focus:bg-white px-6" {...field} value={field.value || ""} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+
                           <FormField control={form.control} name="specialRequests" render={({ field }) => (
                             <FormItem>
                               <FormLabel className="text-[10px] font-black uppercase tracking-widest ml-1">Special Requests (optional)</FormLabel>
@@ -1251,7 +1277,7 @@ export default function BookingPage() {
                         {priceData && (
                           <div className="flex items-end justify-between">
                             <span className="text-white/60 text-xs font-black uppercase tracking-widest">Total</span>
-                            <span className="text-4xl font-serif font-bold text-accent">€{priceData.totalAmount}</span>
+                            <span className="text-4xl font-serif font-bold text-accent">€{computedTotal}</span>
                           </div>
                         )}
                         {airportTotal > 0 && (
