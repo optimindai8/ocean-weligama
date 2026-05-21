@@ -153,17 +153,8 @@ const VALUES = [
 
 export default function AboutPage() {
   const [hoveredLocation, setHoveredLocation] = useState<string | null>(null);
-  const [selectedActivities, setSelectedActivities] = useState<string[]>(["lessons", "yoga"]);
   const [activeRoomTab, setActiveRoomTab] = useState<"basic" | "deluxe">("deluxe");
   const [sunsetMode, setSunsetMode] = useState<boolean>(false);
-
-  const toggleActivity = (id: string) => {
-    setSelectedActivities(prev => 
-      prev.includes(id) 
-        ? prev.filter(item => item !== id) 
-        : [...prev, id]
-    );
-  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
@@ -308,25 +299,17 @@ export default function AboutPage() {
             {/* Interactive Selector list */}
             <div className="lg:col-span-7 space-y-4">
               <h3 className="text-base sm:text-lg font-bold text-primary mb-3">
-                Tap to Select Your Custom Add-Ons:
+                Our Custom Add-Ons:
               </h3>
               <div className="grid gap-3">
                 {ACTIVITIES.map((activity) => {
                   const Icon = activity.icon;
-                  const isSelected = selectedActivities.includes(activity.id);
                   return (
                     <div
                       key={activity.id}
-                      onClick={() => toggleActivity(activity.id)}
-                      className={`group flex items-start gap-4 p-4 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${
-                        isSelected 
-                          ? "bg-white border-[#4BBCCC] shadow-md ring-1 ring-[#4BBCCC]/30" 
-                          : "bg-white/50 border-border hover:bg-white hover:border-[#4BBCCC]/30"
-                      }`}
+                      className="group flex items-start gap-4 p-4 sm:p-5 rounded-2xl border transition-all duration-300 bg-white/50 border-border hover:bg-white hover:border-[#4BBCCC]/30"
                     >
-                      <div className={`mt-0.5 p-2 rounded-xl transition-colors ${
-                        isSelected ? "bg-[#4BBCCC]/15 text-[#4BBCCC]" : "bg-primary/5 text-primary group-hover:bg-[#4BBCCC]/10 group-hover:text-[#4BBCCC]"
-                      }`}>
+                      <div className="mt-0.5 p-2 rounded-xl transition-colors bg-primary/5 text-primary group-hover:bg-[#4BBCCC]/10 group-hover:text-[#4BBCCC]">
                         <Icon className="w-5 h-5" />
                       </div>
                       
@@ -343,19 +326,13 @@ export default function AboutPage() {
                         </div>
                         <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{activity.desc}</p>
                       </div>
-
-                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
-                        isSelected ? "bg-[#4BBCCC] border-[#4BBCCC] text-white" : "border-muted-foreground/30"
-                      }`}>
-                        {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                      </div>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Live customizer sidebar */}
+            {/* Info sidebar */}
             <div className="lg:col-span-5 lg:sticky lg:top-24">
               <div className="bg-primary text-white p-6 sm:p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
                 {/* Glow ball */}
@@ -366,40 +343,31 @@ export default function AboutPage() {
                   Your Tailored Stay
                 </h3>
                 <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6">
-                  Select your room, and dynamically add these experiences upon check-in or booking. Enjoy Southern Sri Lanka on your own schedule.
+                  Add any of these experiences upon check-in or when booking your room. Enjoy Southern Sri Lanka on your own schedule without feeling rushed.
                 </p>
 
                 <div className="border-t border-white/10 pt-6 mb-6">
-                  <h4 className="text-[10px] uppercase tracking-widest text-[#4BBCCC] font-black mb-3">Included Activities:</h4>
-                  {selectedActivities.length === 0 ? (
-                    <p className="text-sm text-white/40 italic">Select items on the left to design your tropical escape.</p>
-                  ) : (
-                    <ul className="space-y-2.5">
-                      {selectedActivities.map((actId) => {
-                        const act = ACTIVITIES.find(a => a.id === actId);
-                        return (
-                          <motion.li
-                            key={actId}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="flex items-center gap-2 text-sm text-white/95 font-medium"
-                          >
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#4BBCCC]" />
-                            {act?.name}
-                          </motion.li>
-                        );
-                      })}
-                    </ul>
-                  )}
+                  <div className="flex items-center gap-3 text-sm text-white/95 font-medium mb-3">
+                    <Check className="w-4 h-4 text-[#4BBCCC]" /> Add during booking
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-white/95 font-medium mb-3">
+                    <Check className="w-4 h-4 text-[#4BBCCC]" /> Or decide when you arrive
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-white/95 font-medium mb-3">
+                    <Check className="w-4 h-4 text-[#4BBCCC]" /> No strict schedules
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-white/95 font-medium">
+                    <Check className="w-4 h-4 text-[#4BBCCC]" /> Fully refundable if plans change
+                  </div>
                 </div>
 
                 <div className="bg-white/5 p-4 rounded-xl mb-8 border border-white/10 text-xs text-white/80 leading-relaxed space-y-1">
-                  <p><strong>✨ Unrestricted Flexibility:</strong> Stay 2 nights or 2 weeks. Custom build a package that fits your personal budget and pace.</p>
+                  <p><strong>✨ Unrestricted Flexibility:</strong> Stay 2 nights or 2 weeks. Custom build an itinerary that fits your personal budget and pace.</p>
                 </div>
 
                 <Link href="/booking">
                   <Button className="w-full bg-[#4BBCCC] hover:bg-white text-primary hover:text-primary rounded-full py-6 h-auto text-sm sm:text-base font-bold transition-all shadow-lg hover:scale-[1.02]">
-                    Build This Package
+                    Explore Packages
                   </Button>
                 </Link>
               </div>

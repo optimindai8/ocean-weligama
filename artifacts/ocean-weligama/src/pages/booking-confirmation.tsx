@@ -8,7 +8,7 @@ import { Check, MessageCircle, Calendar, Users, ArrowRight } from "lucide-react"
 
 export default function BookingConfirmationPage() {
   const [location] = useLocation();
-  const ref = new URLSearchParams(location.split("?")[1] ?? "").get("ref") ?? "";
+  const ref = new URLSearchParams(window.location.search).get("ref") ?? "";
 
   const { data: booking, isLoading } = useGetBookingByReference(ref, {
     query: {

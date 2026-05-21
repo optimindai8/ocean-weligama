@@ -11,7 +11,14 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, Filter, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Filter, Trash2, Eye, User, Phone, Mail, Globe, Home, Calendar, Sparkles, CreditCard, MessageSquare, Clock } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -38,6 +45,7 @@ export default function AdminBookings() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
 
   const params = { page, limit: 20, ...(statusFilter ? { status: statusFilter } : {}) };
   const { data, isLoading } = useAdminListBookings(params, {
@@ -53,6 +61,10 @@ export default function AdminBookings() {
       reference: string;
       guestFullName: string;
       guestEmail: string;
+      guestPhone: string;
+      guestNationality: string;
+      specialRequests: string;
+      roomName: string;
       checkIn: string;
       checkOut: string;
       nights: number;
@@ -62,6 +74,11 @@ export default function AdminBookings() {
       totalAmount: string;
       currency: string;
       createdAt: string;
+      services: Array<{
+        serviceName: string;
+        quantity: number;
+        subtotal: string;
+      }>;
     }>;
     total: number;
     page: number;
@@ -144,7 +161,12 @@ export default function AdminBookings() {
                 </thead>
                 <tbody className="divide-y divide-border">
                   {bookingsData.bookings.map((b) => (
-                    <tr key={b.id} className="hover:bg-muted/20 transition-colors" data-testid={`row-booking-${b.id}`}>
+                    <tr 
+                      key={b.id} 
+                      className="hover:bg-muted/20 transition-colors cursor-pointer" 
+                      onClick={() => setSelectedBooking(b)}
+                      data-testid={`row-booking-${b.id}`}
+                    >
                       <td className="px-4 py-3 font-mono text-xs text-primary font-bold">{b.reference}</td>
                       <td className="px-4 py-3">
                         <p className="font-medium text-foreground">{b.guestFullName}</p>
@@ -165,7 +187,7 @@ export default function AdminBookings() {
                       </td>
                       <td className="px-4 py-3 font-bold">${b.totalAmount}</td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                           <select
                             value={b.status}
                             onChange={(e) => handleStatusChange(b.id, e.target.value)}
@@ -217,6 +239,115 @@ export default function AdminBookings() {
             </div>
           </div>
         )}
+
+        {/* Detailed Booking Modal */}
+        <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
+          <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto p-0 rounded-2xl gap-0 border-0 shadow-2xl">
+            {selectedBooking && (
+              <>
+                {/* Header */}
+                <div className="bg-primary p-6 sm:p-8 text-white relative">
+                  <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <Badge variant="outline" className="bg-white/10 text-white border-white/20 uppercase tracking-widest text-[10px]">
+                        {selectedBooking.status.replace("_", " ")}
+                      </Badge>
+                      <span className="font-mono text-white/70 text-sm">Ref: {selectedBooking.reference}</span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-serif font-bold mb-1">{selectedBooking.guestFullName}</h2>
+                    <div className="flex flex-wrap gap-4 text-sm text-white/80 mt-3">
+                      <div className="flex items-center gap-1.5"><Mail className="w-4 h-4" /> {selectedBooking.guestEmail}</div>
+                      {selectedBooking.guestPhone && <div className="flex items-center gap-1.5"><Phone className="w-4 h-4" /> {selectedBooking.guestPhone}</div>}
+                      {selectedBooking.guestNationality && <div className="flex items-center gap-1.5"><Globe className="w-4 h-4" /> {selectedBooking.guestNationality}</div>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 sm:p-8 space-y-6 bg-slate-50">
+                  
+                  {/* Room & Stay */}
+                  <div className="bg-white rounded-2xl p-5 sm:p-6 border border-border shadow-sm">
+                    <h3 className="text-sm font-black uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
+                      <Home className="w-4 h-4" /> Stay Details
+                    </h3>
+                    <div className="grid sm:grid-cols-2 gap-6">
+                      <div>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Room</p>
+                        <p className="font-bold text-foreground text-lg">{selectedBooking.roomName}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{selectedBooking.guestCount} {selectedBooking.guestCount === 1 ? 'Guest' : 'Guests'}</p>
+                      </div>
+                      <div className="flex gap-6">
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Check-in</p>
+                          <p className="font-bold">{selectedBooking.checkIn}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Check-out</p>
+                          <p className="font-bold">{selectedBooking.checkOut}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Add-ons */}
+                  {selectedBooking.services && selectedBooking.services.length > 0 && (
+                    <div className="bg-white rounded-2xl p-5 sm:p-6 border border-border shadow-sm">
+                      <h3 className="text-sm font-black uppercase tracking-widest text-emerald-600 mb-4 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" /> Add-Ons & Packages
+                      </h3>
+                      <div className="space-y-3">
+                        {selectedBooking.services.map((s: any, idx: number) => (
+                          <div key={idx} className="flex justify-between items-center p-3 rounded-xl bg-emerald-50/50 border border-emerald-100">
+                            <div>
+                              <p className="font-bold text-emerald-900">{s.serviceName}</p>
+                              <p className="text-xs text-emerald-700 mt-0.5">Quantity: {s.quantity}</p>
+                            </div>
+                            <span className="font-bold text-emerald-700">${s.subtotal}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Special Requests */}
+                  {selectedBooking.specialRequests && (
+                    <div className="bg-white rounded-2xl p-5 sm:p-6 border border-border shadow-sm">
+                      <h3 className="text-sm font-black uppercase tracking-widest text-amber-600 mb-4 flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4" /> Special Requests & Notes
+                      </h3>
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed bg-amber-50/50 p-4 rounded-xl border border-amber-100/50">
+                        {selectedBooking.specialRequests}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Payment */}
+                  <div className="bg-white rounded-2xl p-5 sm:p-6 border border-border shadow-sm">
+                    <h3 className="text-sm font-black uppercase tracking-widest text-slate-700 mb-4 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" /> Payment Summary
+                    </h3>
+                    <div className="flex justify-between items-center py-3 border-b border-border">
+                      <span className="text-muted-foreground">Payment Status</span>
+                      <Badge className={PAYMENT_COLORS[selectedBooking.paymentStatus] || "bg-muted text-muted-foreground"} variant="outline">
+                        {selectedBooking.paymentStatus}
+                      </Badge>
+                    </div>
+                    <div className="flex justify-between items-center pt-4">
+                      <span className="font-bold text-lg text-foreground">Total</span>
+                      <span className="font-black text-2xl text-primary">${selectedBooking.totalAmount} <span className="text-base text-muted-foreground">{selectedBooking.currency}</span></span>
+                    </div>
+                  </div>
+
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+
       </div>
     </AdminLayout>
   );
