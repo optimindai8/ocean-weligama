@@ -29,6 +29,7 @@ import AdminMessages from "@/pages/admin/messages";
 import AdminPricing from "@/pages/admin/pricing";
 import AdminGallery from "@/pages/admin/gallery";
 import AdminBlogs from "@/pages/admin/blogs";
+import AdminAirport from "@/pages/admin/airport";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +89,7 @@ function App() {
               <Route path="/ow-admin/pricing" component={AdminPricing} />
               <Route path="/ow-admin/gallery" component={AdminGallery} />
               <Route path="/ow-admin/blogs" component={AdminBlogs} />
+              <Route path="/ow-admin/airport" component={AdminAirport} />
 
               <Route component={NotFound} />
             </Switch>

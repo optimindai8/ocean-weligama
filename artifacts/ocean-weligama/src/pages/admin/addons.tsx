@@ -79,16 +79,16 @@ import {
 
 const serviceSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  slug: z.string().min(2, "Slug must be at least 2 characters").regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
+  slug: z.string().optional(),
   description: z.string().optional(),
   imageUrl: z.string().nullable().optional(),
-  highlights: z.array(z.string().min(1)).min(1, "Add at least one item of inclusion"),
+  highlights: z.array(z.string()).optional(),
   type: z.enum(["main", "optional"]),
   category: z.string().nullable().optional(),
   basePrice: z.string().min(1, "Price is required").regex(/^\d+(\.\d{1,2})?$/, "Invalid price format (e.g. 99.99)"),
   isActive: z.boolean().default(true),
   isBookable: z.boolean().default(true),
-  sortOrder: z.string().default("0"),
+  sortOrder: z.string().optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -221,12 +221,15 @@ export default function AdminAddons() {
   };
 
   const onSubmit = (values: ServiceFormValues) => {
+    const generatedSlug = values.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const data = {
       ...values,
+      slug: generatedSlug,
+      highlights: [values.name],
       description: values.description || null,
-      imageUrl: values.imageUrl || null,
-      category: values.category || "Adventure",
-      sortOrder: values.sortOrder ? parseInt(values.sortOrder, 10) || 0 : 0,
+      imageUrl: null,
+      category: "Adventure",
+      sortOrder: 0,
     };
 
     if (editingService) {
@@ -435,265 +438,49 @@ export default function AdminAddons() {
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                  {/* Left Column: Visuals & Basics */}
-                  <div className="space-y-8">
-                    <div className="space-y-4">
-                      <Label>Add-on Image</Label>
-                      <div 
-                        onClick={() => !form.watch("imageUrl") && fileInputRef.current?.click()}
-                        className={`relative aspect-video rounded-3xl overflow-hidden bg-muted border-2 border-dashed border-border flex items-center justify-center group ${!form.watch("imageUrl") ? "cursor-pointer hover:border-primary/50 transition-colors" : ""}`}
-                      >
-                        {form.watch("imageUrl") ? (
-                          <>
-                            <img src={form.watch("imageUrl")!} alt="Preview" className="w-full h-full object-cover" />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                              <Button 
-                                type="button" 
-                                variant="secondary" 
-                                size="sm" 
-                                className="rounded-full gap-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  fileInputRef.current?.click();
-                                }}
-                              >
-                                <Upload className="w-4 h-4" /> Change
-                              </Button>
-                              <Button 
-                                type="button" 
-                                variant="destructive" 
-                                size="sm" 
-                                className="rounded-full gap-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  form.setValue("imageUrl", "");
-                                }}
-                              >
-                                <X className="w-4 h-4" /> Remove
-                              </Button>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                            {isUploading ? (
-                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-                            ) : (
-                              <>
-                                <Upload className="w-10 h-10 mb-2 opacity-50" />
-                                <p className="text-sm font-medium">Click to upload image</p>
-                                <p className="text-[10px] uppercase tracking-wider">JPG, PNG, WebP up to 5MB</p>
-                              </>
-                            )}
-                          </div>
-                        )}
-                        <input 
-                          type="file" 
-                          ref={fileInputRef}
-                          className="hidden" 
-                          onChange={handleFileUpload}
-                          accept="image/*"
-                        />
-                      </div>
-                      <FormField
-                        control={form.control}
-                        name="imageUrl"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input placeholder="Or paste image URL here..." {...field} value={field.value || ""} className="rounded-xl text-xs bg-muted/30 border-none" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Add-on Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g. Yoga Class" {...field} className="rounded-xl h-12 text-lg font-semibold" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="slug"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Slug (URL Handle)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="surfer-starter-package" {...field} className="rounded-xl font-mono text-sm" />
-                            </FormControl>
-                            <FormDescription>URL-friendly handle: oceanweligama.com/packages/<strong>{field.value || "slug"}</strong></FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Right Column: Configuration */}
-                  <div className="space-y-8">
-                    <div className="grid grid-cols-1 gap-6">
-
-                      <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Category</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value || ""}>
-                              <FormControl>
-                                <SelectTrigger className="rounded-xl">
-                                  <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="rounded-xl">
-                                <SelectItem value="Adventure" className="rounded-lg">Adventure</SelectItem>
-                                <SelectItem value="Wellness" className="rounded-lg">Wellness</SelectItem>
-                                <SelectItem value="Nature" className="rounded-lg">Nature</SelectItem>
-                                <SelectItem value="Culture" className="rounded-lg">Culture</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="basePrice"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price (€)</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">€</span>
-                                <Input type="text" placeholder="0.00" {...field} className="pl-9 rounded-xl font-bold h-12" />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="sortOrder"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Sort Order</FormLabel>
-                            <FormControl>
-                              <Input type="number" placeholder="0" {...field} className="rounded-xl h-12" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
+                <div className="grid grid-cols-1 gap-8">
+                  <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="highlights"
+                      name="name"
                       render={({ field }) => (
-                        <FormItem className="space-y-4">
-                          <Label>What's Included (Add One by One)</Label>
-                          <div className="flex gap-2">
-                            <Input 
-                              placeholder="e.g. 7 nights accommodation" 
-                              value={newHighlight} 
-                              onChange={(e) => setNewHighlight(e.target.value)}
-                              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addHighlight())}
-                              className="rounded-xl"
-                            />
-                            <Button type="button" onClick={addHighlight} size="icon" className="rounded-xl shrink-0">
-                              <Plus className="w-5 h-5" />
-                            </Button>
-                          </div>
-                          <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto border border-border p-3 rounded-2xl bg-muted/10">
-                            {field.value?.map((h, i) => (
-                              <div key={i} className="flex items-center justify-between bg-muted/40 hover:bg-muted/70 transition-colors px-3 py-1.5 rounded-xl border border-border/40">
-                                <span className="text-sm font-medium text-foreground">{h}</span>
-                                <button 
-                                  type="button" 
-                                  onClick={() => removeHighlight(i)}
-                                  className="w-6 h-6 rounded-full hover:bg-destructive/10 hover:text-destructive flex items-center justify-center transition-colors text-muted-foreground"
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            ))}
-                            {(!field.value || field.value.length === 0) && (
-                              <p className="text-[11px] text-muted-foreground italic text-center py-4">Add the things included in this experience.</p>
-                            )}
-                          </div>
+                        <FormItem>
+                          <FormLabel>Add-on Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Yoga Class" {...field} className="rounded-xl h-12 text-lg font-semibold" />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-                    <div className="flex gap-4 pt-4">
-                      <FormField
-                        control={form.control}
-                        name="isActive"
-                        render={({ field }) => (
-                          <FormItem className="flex-1 flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-sm font-bold">Active</FormLabel>
-                              <p className="text-[10px] text-muted-foreground">Visible to guests.</p>
+                    <FormField
+                      control={form.control}
+                      name="basePrice"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Price (€)</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">€</span>
+                              <Input type="text" placeholder="0.00" {...field} className="pl-9 rounded-xl font-bold h-12" />
                             </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="isBookable"
-                        render={({ field }) => (
-                          <FormItem className="flex-1 flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-sm font-bold">Bookable</FormLabel>
-                              <p className="text-[10px] text-muted-foreground">Accepts bookings.</p>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </div>
 
-                <div className="space-y-6 pt-6 border-t">
                   <FormField
                     control={form.control}
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Description (Optional)</FormLabel>
+                        <FormLabel>Description</FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder="Describe the experience or add additional package notes..." 
+                            placeholder="Describe the experience..." 
                             className="min-h-[120px] rounded-2xl resize-none p-4" 
                             {...field} 
                           />
@@ -702,6 +489,45 @@ export default function AdminAddons() {
                       </FormItem>
                     )}
                   />
+
+                  <div className="flex gap-4">
+                    <FormField
+                      control={form.control}
+                      name="isActive"
+                      render={({ field }) => (
+                        <FormItem className="flex-1 flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-sm font-bold">Active</FormLabel>
+                            <p className="text-[10px] text-muted-foreground">Visible to guests.</p>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="isBookable"
+                      render={({ field }) => (
+                        <FormItem className="flex-1 flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-sm font-bold">Bookable</FormLabel>
+                            <p className="text-[10px] text-muted-foreground">Accepts bookings.</p>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                 </div>
 
                 <DialogFooter className="pt-8 border-t border-border">

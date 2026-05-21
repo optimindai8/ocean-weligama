@@ -49,6 +49,10 @@ tags:
     description: Blog operations
   - name: admin-blogs
     description: Admin blog management
+  - name: airport-pricing
+    description: Public airport transfer pricing information
+  - name: admin-airport-pricing
+    description: Admin airport transfer pricing management
 
 paths:
   /healthz:
@@ -969,6 +973,25 @@ paths:
         "200":
           description: Deleted
 
+  /v1/admin/airport-pricing:
+    put:
+      operationId: adminUpdateAirportPricing
+      tags: [admin-airport-pricing]
+      summary: Update airport transfer pricing settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AirportPricingInput"
+      responses:
+        "200":
+          description: Updated pricing settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirportPricing"
+
   # ADMIN PRICING
   /v1/admin/pricing:
     get:
@@ -1127,6 +1150,19 @@ paths:
       responses:
         "200":
           description: Unblocked
+
+  /v1/airport-pricing:
+    get:
+      operationId: getAirportPricing
+      tags: [airport-pricing]
+      summary: Get active airport transfer pricing
+      responses:
+        "200":
+          description: Airport transfer pricing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirportPricing"
 
   # PUBLIC BLOGS
   /v1/blogs:
@@ -2122,3 +2158,41 @@ components:
             type: string
         blockReason:
           type: string
+
+    AirportPricing:
+      type: object
+      required: [id, pickupPrice, pickupPriceGroup, dropPrice, dropPriceGroup, groupThreshold, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        pickupPrice:
+          type: string
+        pickupPriceGroup:
+          type: string
+        dropPrice:
+          type: string
+        dropPriceGroup:
+          type: string
+        groupThreshold:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    AirportPricingInput:
+      type: object
+      required: [pickupPrice, pickupPriceGroup, dropPrice, dropPriceGroup, groupThreshold]
+      properties:
+        pickupPrice:
+          type: string
+        pickupPriceGroup:
+          type: string
+        dropPrice:
+          type: string
+        dropPriceGroup:
+          type: string
+        groupThreshold:
+          type: integer

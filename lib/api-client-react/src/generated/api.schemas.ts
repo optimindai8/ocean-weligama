@@ -654,6 +654,25 @@ export interface BlockDatesInput {
   blockReason: string;
 }
 
+export interface AirportPricing {
+  id: string;
+  pickupPrice: string;
+  pickupPriceGroup: string;
+  dropPrice: string;
+  dropPriceGroup: string;
+  groupThreshold: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AirportPricingInput {
+  pickupPrice: string;
+  pickupPriceGroup: string;
+  dropPrice: string;
+  dropPriceGroup: string;
+  groupThreshold: number;
+}
+
 export type ListRoomsParams = {
   type?: ListRoomsType;
   guests?: number;

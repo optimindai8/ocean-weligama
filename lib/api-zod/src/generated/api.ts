@@ -1167,6 +1167,28 @@ export const AdminDeleteMessageParams = zod.object({
 });
 
 /**
+ * @summary Update airport transfer pricing settings
+ */
+export const AdminUpdateAirportPricingBody = zod.object({
+  pickupPrice: zod.string(),
+  pickupPriceGroup: zod.string(),
+  dropPrice: zod.string(),
+  dropPriceGroup: zod.string(),
+  groupThreshold: zod.number(),
+});
+
+export const AdminUpdateAirportPricingResponse = zod.object({
+  id: zod.string(),
+  pickupPrice: zod.string(),
+  pickupPriceGroup: zod.string(),
+  dropPrice: zod.string(),
+  dropPriceGroup: zod.string(),
+  groupThreshold: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
  * @summary List all pricing rules
  */
 export const AdminListPricingRulesResponseItem = zod.object({
@@ -1278,6 +1300,20 @@ export const UploadFileResponse = zod.object({
  */
 export const AdminUnblockDateParams = zod.object({
   id: zod.coerce.string(),
+});
+
+/**
+ * @summary Get active airport transfer pricing
+ */
+export const GetAirportPricingResponse = zod.object({
+  id: zod.string(),
+  pickupPrice: zod.string(),
+  pickupPriceGroup: zod.string(),
+  dropPrice: zod.string(),
+  dropPriceGroup: zod.string(),
+  groupThreshold: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
 });
 
 /**

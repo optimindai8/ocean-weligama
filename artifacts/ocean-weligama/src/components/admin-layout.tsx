@@ -14,6 +14,7 @@ import {
   LogOut,
   ImageIcon,
   BookOpen,
+  Plane,
 } from "lucide-react";
 
 const NAV = [
@@ -27,6 +28,7 @@ const NAV = [
   { href: "/ow-admin/pricing", label: "Pricing", icon: Star },
   { href: "/ow-admin/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/ow-admin/blogs", label: "Blogs", icon: BookOpen },
+  { href: "/ow-admin/airport", label: "Airport", icon: Plane },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

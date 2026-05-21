@@ -27,6 +27,8 @@ import type {
   AdminListMessagesParams,
   AdminLoginInput,
   AdminUser,
+  AirportPricing,
+  AirportPricingInput,
   AvailabilityDay,
   BlockDatesInput,
   Blog,
@@ -4011,6 +4013,93 @@ export const useAdminDeleteMessage = <
 };
 
 /**
+ * @summary Update airport transfer pricing settings
+ */
+export const getAdminUpdateAirportPricingUrl = () => {
+  return `/api/v1/admin/airport-pricing`;
+};
+
+export const adminUpdateAirportPricing = async (
+  airportPricingInput: AirportPricingInput,
+  options?: RequestInit,
+): Promise<AirportPricing> => {
+  return customFetch<AirportPricing>(getAdminUpdateAirportPricingUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(airportPricingInput),
+  });
+};
+
+export const getAdminUpdateAirportPricingMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminUpdateAirportPricing>>,
+    TError,
+    { data: BodyType<AirportPricingInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminUpdateAirportPricing>>,
+  TError,
+  { data: BodyType<AirportPricingInput> },
+  TContext
+> => {
+  const mutationKey = ["adminUpdateAirportPricing"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminUpdateAirportPricing>>,
+    { data: BodyType<AirportPricingInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return adminUpdateAirportPricing(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminUpdateAirportPricingMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminUpdateAirportPricing>>
+>;
+export type AdminUpdateAirportPricingMutationBody =
+  BodyType<AirportPricingInput>;
+export type AdminUpdateAirportPricingMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update airport transfer pricing settings
+ */
+export const useAdminUpdateAirportPricing = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminUpdateAirportPricing>>,
+    TError,
+    { data: BodyType<AirportPricingInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminUpdateAirportPricing>>,
+  TError,
+  { data: BodyType<AirportPricingInput> },
+  TContext
+> => {
+  return useMutation(getAdminUpdateAirportPricingMutationOptions(options));
+};
+
+/**
  * @summary List all pricing rules
  */
 export const getAdminListPricingRulesUrl = () => {
@@ -4722,6 +4811,81 @@ export const useAdminUnblockDate = <
 > => {
   return useMutation(getAdminUnblockDateMutationOptions(options));
 };
+
+/**
+ * @summary Get active airport transfer pricing
+ */
+export const getGetAirportPricingUrl = () => {
+  return `/api/v1/airport-pricing`;
+};
+
+export const getAirportPricing = async (
+  options?: RequestInit,
+): Promise<AirportPricing> => {
+  return customFetch<AirportPricing>(getGetAirportPricingUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAirportPricingQueryKey = () => {
+  return [`/api/v1/airport-pricing`] as const;
+};
+
+export const getGetAirportPricingQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAirportPricing>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAirportPricing>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAirportPricingQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAirportPricing>>
+  > = ({ signal }) => getAirportPricing({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAirportPricing>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetAirportPricingQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAirportPricing>>
+>;
+export type GetAirportPricingQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get active airport transfer pricing
+ */
+
+export function useGetAirportPricing<
+  TData = Awaited<ReturnType<typeof getAirportPricing>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAirportPricing>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetAirportPricingQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary List active blogs

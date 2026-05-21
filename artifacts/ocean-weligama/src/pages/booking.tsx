@@ -11,6 +11,8 @@ import {
   useListServices,
   useCheckAvailabilityAndPrice,
   useCreateBooking,
+  useGetAirportPricing,
+  getGetAirportPricingQueryKey,
 } from "@workspace/api-client-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -111,13 +113,15 @@ const STEPS = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helpers
+// Default fallback airport prices (used while API data loads)
 // ─────────────────────────────────────────────────────────────────────────────
-function getAirportPrices(n: number) {
-  return n >= 4
-    ? { pickup: 100, drop: 100 }
-    : { pickup: 75,  drop: 65  };
-}
+const DEFAULT_AIRPORT_PRICING = {
+  pickupPrice: "75.00",
+  pickupPriceGroup: "100.00",
+  dropPrice: "65.00",
+  dropPriceGroup: "100.00",
+  groupThreshold: 4,
+};
 
 // Slide variants — direction-aware
 const slide: any = {
@@ -264,7 +268,18 @@ export default function BookingPage() {
   const watchPickup    = form.watch("airportPickup");
   const watchDrop      = form.watch("airportDrop");
   const watchSurfboard = form.watch("bringingSurfboard");
-  const ap             = getAirportPrices(guestCount);
+
+  // ── Dynamic airport pricing from API ─────────────────────────────────────
+  const { data: airportPricingData } = useGetAirportPricing({
+    query: { queryKey: getGetAirportPricingQueryKey(), staleTime: 60_000 },
+  });
+  const apData = airportPricingData ?? DEFAULT_AIRPORT_PRICING;
+  const apThreshold = Number(apData.groupThreshold) || 4;
+  const isGroupRate = guestCount >= apThreshold;
+  const ap = {
+    pickup: parseFloat(isGroupRate ? apData.pickupPriceGroup : apData.pickupPrice),
+    drop:   parseFloat(isGroupRate ? apData.dropPriceGroup   : apData.dropPrice),
+  };
   const airportTotal   = (watchPickup ? ap.pickup : 0) + (watchDrop ? ap.drop : 0);
 
   const selectedRoom = Array.isArray(rooms) ? rooms.find(r => r.id === selectedRoomId) : undefined;
@@ -489,12 +504,12 @@ export default function BookingPage() {
                   </div>
 
                   <AnimatePresence>
-                    {guestCount >= 4 && (
+                    {guestCount >= apThreshold && (
                       <motion.p
                         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                         className="text-xs text-amber-600 font-bold bg-amber-50 border border-amber-100 px-5 py-3 rounded-full text-center mt-8"
                       >
-                        ✈️ 4+ guests — airport transfer rate: €100
+                        ✈️ {apThreshold}+ guests — group airport transfer rate: €{parseFloat(apData.pickupPriceGroup).toFixed(0)}
                       </motion.p>
                     )}
                   </AnimatePresence>
@@ -853,7 +868,9 @@ export default function BookingPage() {
                         </div>
                         <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
                           Transfer from Bandaranaike International Airport to the Surf Camp.{" "}
-                          <span className="font-semibold text-foreground/70">Up to 3 pax: €75. For 4+ pax: €100.</span>
+                          <span className="font-semibold text-foreground/70">
+                            Up to {apThreshold - 1} pax: €{parseFloat(apData.pickupPrice).toFixed(0)}. For {apThreshold}+ pax: €{parseFloat(apData.pickupPriceGroup).toFixed(0)}.
+                          </span>
                         </p>
                       </div>
                     </button>
@@ -967,7 +984,9 @@ export default function BookingPage() {
                         </div>
                         <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
                           Transfer from the Surf Camp to Bandaranaike International Airport.{" "}
-                          <span className="font-semibold text-foreground/70">Up to 3 pax: €65. For 4+ pax: €100.</span>
+                          <span className="font-semibold text-foreground/70">
+                            Up to {apThreshold - 1} pax: €{parseFloat(apData.dropPrice).toFixed(0)}. For {apThreshold}+ pax: €{parseFloat(apData.dropPriceGroup).toFixed(0)}.
+                          </span>
                         </p>
                       </div>
                     </button>
