@@ -72,7 +72,8 @@ export default function GalleryPage() {
       // 1. Upload file to Supabase via upload endpoint
       const formData = new FormData();
       formData.append("file", uploadFile);
-      const baseURL = import.meta.env.VITE_API_URL || "";
+      const isDev = import.meta.env.DEV;
+      const baseURL = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
       const uploadRes = await fetch(`${baseURL}/api/upload`, { method: "POST", body: formData });
       
       if (!uploadRes.ok) {

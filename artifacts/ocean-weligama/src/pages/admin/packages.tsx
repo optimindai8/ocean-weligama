@@ -173,7 +173,7 @@ export default function AdminPackages() {
 
     try {
       const isDev = import.meta.env.DEV;
-      const apiUrl = import.meta.env.VITE_API_URL || (isDev ? "http://localhost:8080" : "");
+      const apiUrl = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
       const response = await fetch(`${apiUrl}/api/upload`, {
         method: "POST",
         headers: {

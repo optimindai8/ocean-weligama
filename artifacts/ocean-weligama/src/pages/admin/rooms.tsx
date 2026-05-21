@@ -91,7 +91,9 @@ type RoomFormValues = z.infer<typeof roomSchema>;
 
 // Need to use fetch for POST since orval didn't generate useAdminCreateRoom properly or we just use fetch directly.
 async function createRoomAPI(token: string, data: any) {
-  const res = await fetch("/api/v1/admin/rooms", {
+  const isDev = import.meta.env.DEV;
+  const apiUrl = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
+  const res = await fetch(`${apiUrl}/api/v1/admin/rooms`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -201,7 +203,7 @@ export default function AdminRooms() {
       const fileArray = Array.from(files);
       let completed = 0;
       const isDev = import.meta.env.DEV;
-      const apiUrl = import.meta.env.VITE_API_URL || (isDev ? "http://localhost:8080" : "");
+      const apiUrl = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
       const token = localStorage.getItem("ow-admin-token") || localStorage.getItem("admin_token");
 
       for (const file of fileArray) {
