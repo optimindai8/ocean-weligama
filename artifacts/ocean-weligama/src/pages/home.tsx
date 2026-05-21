@@ -15,17 +15,35 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center pt-20 overflow-hidden">
         {/* Cinematic Video Background */}
-        <div className="absolute inset-0 z-0">
-          <video 
-            autoPlay 
-            muted 
-            loop 
-            playsInline 
+        <div className="absolute inset-0 z-0 bg-slate-950">
+          {/* Mobile video: 360p 8.7 MB — only loaded on small screens */}
+          <video
+            key="mobile-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            disablePictureInPicture
             preload="auto"
             poster="/hero-video-poster.jpg"
-            className="w-full h-full object-cover scale-105"
+            className="block md:hidden w-full h-full object-contain"
+            style={{ WebkitPlaysinline: true } as React.CSSProperties}
           >
-            <source src="/hero-video.mp4" type="video/mp4" />
+            <source src="/hero-video-mobile.mp4" type="video/mp4" />
+          </video>
+          {/* Desktop video: 480p 27 MB — only loaded on md+ screens */}
+          <video
+            key="desktop-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            disablePictureInPicture
+            preload="auto"
+            poster="/hero-video-poster.jpg"
+            className="hidden md:block w-full h-full object-cover"
+          >
+            <source src="/hero-video-desktop.mp4" type="video/mp4" />
           </video>
           {/* Multi-layered Cinematic Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
