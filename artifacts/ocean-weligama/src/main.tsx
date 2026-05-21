@@ -4,7 +4,8 @@ import App from "./App";
 import "./index.css";
 
 // Configure API base URL
-setBaseUrl(import.meta.env.VITE_API_URL || "http://localhost:8080");
+const isDev = import.meta.env.DEV;
+setBaseUrl(import.meta.env.VITE_API_URL || (isDev ? "http://localhost:8080" : ""));
 
 // Configure Admin Authentication Token
 setAuthTokenGetter(() => localStorage.getItem("ow-admin-token"));

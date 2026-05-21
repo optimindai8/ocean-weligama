@@ -200,7 +200,8 @@ export default function AdminRooms() {
     try {
       const fileArray = Array.from(files);
       let completed = 0;
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
+      const isDev = import.meta.env.DEV;
+      const apiUrl = import.meta.env.VITE_API_URL || (isDev ? "http://localhost:8080" : "");
       const token = localStorage.getItem("ow-admin-token") || localStorage.getItem("admin_token");
 
       for (const file of fileArray) {
