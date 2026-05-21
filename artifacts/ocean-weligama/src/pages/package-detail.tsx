@@ -1,6 +1,5 @@
 import { useParams, Link } from "wouter";
 import { useGetService } from "@workspace/api-client-react";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +13,6 @@ export default function PackageDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
         <div className="pt-32 container mx-auto px-4 py-16 space-y-6 max-w-3xl">
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-64 w-full rounded-3xl" />
@@ -28,7 +26,6 @@ export default function PackageDetailPage() {
   if (!service) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
         <div className="pt-32 container mx-auto px-4 text-center py-24">
           <h1 className="text-3xl font-bold text-foreground mb-4">Package not found</h1>
           <Link href="/packages">
@@ -42,7 +39,6 @@ export default function PackageDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
 
       <div className="pt-24 flex-1">
         {/* Banner Image */}

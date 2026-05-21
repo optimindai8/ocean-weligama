@@ -66,7 +66,7 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
+            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
               Your Ocean Home <br/> <span className="text-accent italic font-normal">in Weligama</span>
             </h1>
           </motion.div>
@@ -78,7 +78,7 @@ export default function Home() {
             className="relative inline-block mb-12"
           >
             <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-accent rounded-full" />
-            <p className="text-xl md:text-3xl text-white/90 max-w-3xl mx-auto leading-relaxed pl-4">
+            <p className="text-lg md:text-3xl text-white/90 max-w-3xl mx-auto leading-relaxed pl-4">
               <span className="text-white font-bold">100 steps from the ocean.</span> <br className="md:hidden"/>
               Barefoot beach living meets Sri Lankan hospitality.
             </p>
@@ -93,7 +93,7 @@ export default function Home() {
               <Button size="lg" className="
                 relative overflow-hidden
                 bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full 
-                px-16 h-16 text-xl font-bold shadow-[0_20px_50px_rgba(240,165,0,0.3)]
+                px-8 h-12 text-base sm:px-16 sm:h-16 sm:text-xl font-bold shadow-[0_20px_50px_rgba(240,165,0,0.3)]
                 hover:shadow-[0_20px_60px_rgba(240,165,0,0.5)]
                 transition-all duration-500 hover:scale-105 group
               ">
@@ -122,21 +122,21 @@ export default function Home() {
       </section>
 
       {/* High-End Reassurance Panel (Trust Bar) */}
-      <section className="relative -mt-16 z-20 container mx-auto px-4">
-        <div className="bg-white/75 hover:bg-white/85 transition-colors duration-500 backdrop-blur-2xl rounded-[3rem] p-8 md:p-12 shadow-[0_30px_100px_rgba(0,0,0,0.1)] border border-white/20">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+      <section className="relative -mt-8 md:-mt-16 z-20 container mx-auto px-4">
+        <div className="bg-white/75 hover:bg-white/85 transition-colors duration-500 backdrop-blur-2xl rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-[0_30px_100px_rgba(0,0,0,0.1)] border border-white/20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 md:gap-12">
             {[
               { icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
               ), title: "Secure Booking", desc: "Instant confirmation" },
               { icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
               ), title: "100 Steps to Beach", desc: "Prime surf location" },
               { icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.784.57-1.838-.197-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
+                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.784.57-1.838-.197-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
               ), title: "4.9 Guest Rating", desc: "Top-rated hospitality" },
               { icon: (
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.657M7 20h11a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z" /></svg>
+                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.657M7 20h11a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z" /></svg>
               ), title: "Expert Surf Hub", desc: "ISA certified team" },
             ].map((item, idx) => (
               <motion.div
@@ -148,13 +148,13 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="flex flex-col items-center text-center group cursor-default"
               >
-                <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center mb-6 transition-all duration-500 group-hover:bg-primary group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-xl group-hover:shadow-primary/20">
+                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-primary/5 flex items-center justify-center mb-3 md:mb-6 transition-all duration-500 group-hover:bg-primary group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-xl group-hover:shadow-primary/20">
                   <div className="text-primary group-hover:text-white transition-colors duration-500">
                     {item.icon}
                   </div>
                 </div>
-                <h4 className="font-bold text-foreground text-sm md:text-base mb-1 tracking-tight">{item.title}</h4>
-                <p className="text-muted-foreground text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium">{item.desc}</p>
+                <h4 className="font-bold text-foreground text-xs sm:text-sm md:text-base mb-1 tracking-tight">{item.title}</h4>
+                <p className="text-muted-foreground text-[8px] sm:text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -162,9 +162,9 @@ export default function Home() {
       </section>
 
       {/* Immersive Experience Section (Surf, Stay, Taste, Explore) */}
-      <section id="services" className="py-24 bg-white overflow-hidden">
+      <section id="services" className="py-16 md:py-24 bg-white overflow-hidden">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 md:mb-16">
             <motion.span 
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -172,7 +172,7 @@ export default function Home() {
             >
               The Ocean Air Experience
             </motion.span>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">Surf • Stay • Taste • Explore</h2>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-4">Surf • Stay • Taste • Explore</h2>
             <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
           </div>
 
@@ -213,7 +213,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: item.delay, duration: 0.6 }}
                 viewport={{ once: true }}
-                className="group relative h-[450px] rounded-3xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500"
+                className="group relative h-[320px] sm:h-[450px] rounded-3xl overflow-hidden cursor-pointer shadow-xl hover:shadow-2xl transition-all duration-500"
               >
                 <img 
                   src={item.img} 
@@ -224,15 +224,15 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
                 
-                <div className="absolute inset-0 p-8 flex flex-col justify-end transform transition-transform duration-500 group-hover:translate-y-[-10px]">
+                <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end transform transition-transform duration-500 lg:group-hover:translate-y-[-10px]">
                   <span className="text-white/70 text-xs tracking-widest uppercase mb-2 block">{item.tagline}</span>
-                  <h3 className="text-3xl font-serif font-bold text-white mb-2">{item.title}</h3>
-                  <p className="text-white/80 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 max-w-[200px]">
+                  <h3 className="text-2xl sm:text-3xl font-serif font-bold text-white mb-2">{item.title}</h3>
+                  <p className="text-white/80 text-xs sm:text-sm opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-500 max-w-[240px]">
                     {item.description}
                   </p>
                   
-                  <div className="mt-6 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 transform transition-all duration-500 group-hover:bg-primary group-hover:border-primary group-hover:scale-110">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="mt-4 md:mt-6 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 transform transition-all duration-500 group-hover:bg-primary group-hover:border-primary group-hover:scale-110">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="9 5l7 7-7 7" />
                     </svg>
                   </div>

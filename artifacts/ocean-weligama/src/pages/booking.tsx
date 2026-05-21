@@ -20,7 +20,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, ChevronRight, Check, Calendar, Users, CreditCard, Sparkles, ShieldCheck, Waves, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
 const guestSchema = z.object({
@@ -138,10 +137,9 @@ export default function BookingPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col selection:bg-primary selection:text-white">
-      <Navbar />
 
       {/* Modern Journey Stepper */}
-      <section className="pt-32 pb-12 bg-white/80 backdrop-blur-xl border-b border-border sticky top-0 z-40">
+      <section className="pt-24 pb-8 md:pt-32 md:pb-12 bg-white/80 backdrop-blur-xl border-b border-border sticky top-0 z-40">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto flex items-center justify-between relative">
             <div className="absolute top-1/2 left-0 w-full h-0.5 bg-muted -translate-y-1/2 -z-10 rounded-full overflow-hidden">
@@ -154,18 +152,18 @@ export default function BookingPage() {
             {STEPS.map((s, idx) => (
               <motion.div 
                 key={s.n}
-                className="flex flex-col items-center gap-4"
+                className="flex flex-col items-center gap-2 md:gap-4"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.1 }}
               >
-                <div className={`w-14 h-14 rounded-full flex items-center justify-center border-4 transition-all duration-500 shadow-xl ${
+                <div className={`w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center border-2 md:border-4 transition-all duration-500 shadow-xl ${
                   step === s.n ? "bg-primary border-primary text-white scale-110 shadow-primary/20" :
                   step > s.n ? "bg-green-500 border-green-500 text-white" : "bg-white border-muted text-muted-foreground"
                 }`}>
-                  {step > s.n ? <Check className="w-6 h-6" /> : <s.icon className="w-6 h-6" />}
+                  {step > s.n ? <Check className="w-4 h-4 md:w-6 md:h-6" /> : <s.icon className="w-4 h-4 md:w-6 md:h-6" />}
                 </div>
-                <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${
+                <span className={`text-[9px] md:text-[10px] font-black uppercase tracking-[0.1em] md:tracking-[0.2em] text-center ${
                   step === s.n ? "text-primary" : "text-muted-foreground"
                 }`}>{s.label}</span>
               </motion.div>
@@ -255,10 +253,10 @@ export default function BookingPage() {
                       <h2 className="text-xl font-serif font-bold">Number of Tourists</h2>
                     </div>
 
-                    <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-border/50 flex items-center justify-between max-w-sm">
+                    <div className="bg-white p-5 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] shadow-xl border border-border/50 flex items-center justify-between max-w-sm">
                       <button
                         onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
-                        className="w-14 h-14 rounded-full border-2 border-muted flex items-center justify-center text-2xl font-bold text-muted-foreground hover:bg-primary hover:border-primary hover:text-white transition-all duration-300"
+                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-muted flex items-center justify-center text-xl sm:text-2xl font-bold text-muted-foreground hover:bg-primary hover:border-primary hover:text-white transition-all duration-300"
                         data-testid="button-guests-minus"
                       >
                         —
@@ -268,7 +266,7 @@ export default function BookingPage() {
                           key={guestCount}
                           initial={{ scale: 0.8, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
-                          className="text-4xl font-bold text-primary block"
+                          className="text-3xl sm:text-4xl font-bold text-primary block"
                           data-testid="text-guest-count"
                         >
                           {guestCount}
@@ -277,7 +275,7 @@ export default function BookingPage() {
                       </div>
                       <button
                         onClick={() => setGuestCount(guestCount + 1)}
-                        className="w-14 h-14 rounded-full border-2 border-muted flex items-center justify-center text-2xl font-bold text-muted-foreground hover:bg-primary hover:border-primary hover:text-white transition-all duration-300"
+                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 border-muted flex items-center justify-center text-xl sm:text-2xl font-bold text-muted-foreground hover:bg-primary hover:border-primary hover:text-white transition-all duration-300"
                         data-testid="button-guests-plus"
                       >
                         +
@@ -328,9 +326,9 @@ export default function BookingPage() {
 
                 {/* Right: Date Portal & Summary */}
                 <div className="lg:col-span-4 space-y-8">
-                  <div className="bg-white rounded-[3rem] p-10 shadow-2xl border border-border/50 sticky top-40">
-                    <h2 className="text-2xl font-serif font-bold text-foreground mb-8 italic text-center">Island Calendar</h2>
-                    <div className="calendar-container flex justify-center scale-110 mb-8">
+                  <div className="bg-white rounded-[2rem] sm:rounded-[3rem] p-4 sm:p-6 md:p-10 shadow-2xl border border-border/50 sticky top-40 overflow-hidden">
+                    <h2 className="text-2xl font-serif font-bold text-foreground mb-4 sm:mb-8 italic text-center">Island Calendar</h2>
+                    <div className="calendar-container flex justify-center scale-[0.85] sm:scale-100 md:scale-110 mb-4 sm:mb-8 overflow-hidden">
                       <DayPicker
                         mode="range"
                         selected={dateRange as any}
@@ -397,7 +395,7 @@ export default function BookingPage() {
 
                   <Form {...form}>
                     <form className="space-y-8">
-                      <div className="bg-white p-12 rounded-[3.5rem] shadow-2xl border border-border/50 space-y-8">
+                      <div className="bg-white p-5 sm:p-8 md:p-12 rounded-[2rem] sm:rounded-[3.5rem] shadow-2xl border border-border/50 space-y-6 sm:space-y-8">
                         <FormField control={form.control} name="guestFullName" render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-[10px] font-black uppercase tracking-widest ml-4">Full Name</FormLabel>
@@ -406,7 +404,7 @@ export default function BookingPage() {
                           </FormItem>
                         )} />
                         
-                        <div className="grid grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                           <FormField control={form.control} name="guestEmail" render={({ field }) => (
                             <FormItem>
                               <FormLabel className="text-[10px] font-black uppercase tracking-widest ml-4">Email Address</FormLabel>
@@ -434,8 +432,8 @@ export default function BookingPage() {
                         )} />
                       </div>
 
-                      <div className="flex justify-between gap-6 pt-8">
-                        <Button variant="outline" onClick={() => setStep(1)} className="rounded-full px-12 h-14 font-bold border-muted text-muted-foreground hover:bg-muted">
+                      <div className="flex flex-col-reverse sm:flex-row justify-between gap-4 sm:gap-6 pt-6 sm:pt-8">
+                        <Button variant="outline" onClick={() => setStep(1)} className="w-full sm:w-auto rounded-full px-6 sm:px-12 h-14 font-bold border-muted text-muted-foreground hover:bg-muted">
                           Back to Sanctuary
                         </Button>
                         <Button
@@ -445,7 +443,7 @@ export default function BookingPage() {
                               if (valid) setStep(3);
                             });
                           }}
-                          className="bg-primary hover:bg-secondary text-white rounded-full px-16 h-14 font-bold shadow-xl flex items-center gap-3"
+                          className="w-full sm:w-auto bg-primary hover:bg-secondary text-white rounded-full px-6 sm:px-16 h-14 font-bold shadow-xl flex items-center justify-center gap-3"
                         >
                           Review & Confirm
                           <ArrowRight className="w-5 h-5" />
@@ -454,14 +452,13 @@ export default function BookingPage() {
                     </form>
                   </Form>
                 </div>
-
                 {/* Price Summary Panel */}
                 {priceData && (
                   <div className="lg:col-span-5">
                     <motion.div 
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="bg-primary rounded-[3rem] p-12 text-white shadow-2xl sticky top-40 overflow-hidden"
+                      className="bg-primary rounded-[2rem] sm:rounded-[3rem] p-6 sm:p-12 text-white shadow-2xl sticky top-40 overflow-hidden"
                     >
                       <div className="absolute top-[-10%] right-[-10%] w-40 h-40 bg-accent/20 blur-3xl rounded-full" />
                       <h3 className="text-2xl font-serif font-bold mb-8 italic">Your Island Summary</h3>
@@ -522,29 +519,29 @@ export default function BookingPage() {
                   <p className="text-muted-foreground text-lg">One final review of your sanctuary details.</p>
                 </header>
 
-                <div className="bg-white rounded-[4rem] p-12 md:p-20 shadow-2xl border border-border/50 space-y-12">
-                  <div className="grid md:grid-cols-2 gap-12 border-b border-border pb-12">
+                <div className="bg-white rounded-[2rem] sm:rounded-[4rem] p-5 sm:p-12 md:p-20 shadow-2xl border border-border/50 space-y-8 md:space-y-12">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 border-b border-border pb-8 md:pb-12">
                     <div className="space-y-6">
                       <h3 className="text-xs font-black uppercase tracking-widest text-primary">Your Sanctuary</h3>
                       <div className="space-y-2">
-                        <p className="text-3xl font-serif font-bold text-foreground">{selectedRoom?.name}</p>
-                        <p className="text-muted-foreground">{formatDate(dateRange.from)} — {formatDate(dateRange.to)}</p>
-                        <p className="text-muted-foreground">{guestCount} Guests · {priceData?.nights} Nights</p>
+                        <p className="text-2xl sm:text-3xl font-serif font-bold text-foreground">{selectedRoom?.name}</p>
+                        <p className="text-sm sm:text-base text-muted-foreground">{formatDate(dateRange.from)} — {formatDate(dateRange.to)}</p>
+                        <p className="text-sm sm:text-base text-muted-foreground">{guestCount} Guests · {priceData?.nights} Nights</p>
                       </div>
                     </div>
                     <div className="space-y-6">
                       <h3 className="text-xs font-black uppercase tracking-widest text-primary">The Guest</h3>
                       <div className="space-y-2">
-                        <p className="text-2xl font-serif font-bold text-foreground">{form.getValues("guestFullName")}</p>
-                        <p className="text-muted-foreground">{form.getValues("guestEmail")}</p>
-                        <p className="text-muted-foreground">{form.getValues("guestPhone")}</p>
+                        <p className="text-xl sm:text-2xl font-serif font-bold text-foreground">{form.getValues("guestFullName")}</p>
+                        <p className="text-sm sm:text-base text-muted-foreground">{form.getValues("guestEmail")}</p>
+                        <p className="text-sm sm:text-base text-muted-foreground">{form.getValues("guestPhone")}</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-8">
                     <h3 className="text-xs font-black uppercase tracking-widest text-primary text-center">Payment Method</h3>
-                    <div className="grid md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {[
                         { value: "bank_transfer", label: "Bank Transfer", desc: "Pay via secure wire" },
                         { value: "cash", label: "Pay on Arrival", desc: "Secure island payment" },
@@ -553,7 +550,7 @@ export default function BookingPage() {
                         <button
                           key={opt.value}
                           onClick={() => form.setValue("paymentMethod", opt.value as any)}
-                          className={`p-6 rounded-3xl border-2 transition-all duration-500 text-center ${
+                          className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-2 transition-all duration-500 text-center ${
                             form.watch("paymentMethod") === opt.value
                               ? "border-primary bg-primary/5 shadow-lg scale-105"
                               : "border-border hover:border-primary/20 bg-muted/10"
@@ -566,10 +563,10 @@ export default function BookingPage() {
                     </div>
                   </div>
 
-                  <div className="pt-12 border-t border-border flex flex-col items-center gap-8">
+                  <div className="pt-8 md:pt-12 border-t border-border flex flex-col items-center gap-6 md:gap-8">
                     <div className="flex flex-col items-center gap-2">
                       <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total Investment</span>
-                      <p className="text-6xl font-serif font-bold text-primary">€{priceData?.totalAmount}</p>
+                      <p className="text-5xl sm:text-6xl font-serif font-bold text-primary">€{priceData?.totalAmount}</p>
                     </div>
 
                     <FormField control={form.control} name="agreeTerms" render={({ field }) => (
@@ -593,10 +590,10 @@ export default function BookingPage() {
                       size="lg"
                       onClick={form.handleSubmit(onSubmit)}
                       disabled={createBooking.isPending || !form.watch("agreeTerms")}
-                      className="w-full max-w-md bg-accent text-primary hover:bg-white rounded-full h-20 text-2xl font-bold shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-4"
+                      className="w-full max-w-md bg-accent text-primary hover:bg-white rounded-full h-16 sm:h-20 text-lg sm:text-2xl font-bold shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-3 sm:gap-4"
                     >
                       {createBooking.isPending ? "Confirming..." : "Confirm My Sanctuary"}
-                      <Check className="w-8 h-8" />
+                      <Check className="w-6 h-6 sm:w-8 sm:h-8" />
                     </Button>
                   </div>
                 </div>

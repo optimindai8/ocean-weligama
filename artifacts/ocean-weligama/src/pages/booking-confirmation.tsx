@@ -41,16 +41,7 @@ export default function BookingConfirmationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5 flex flex-col">
-      {/* Header */}
-      <div className="border-b border-border bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 h-16 flex items-center">
-          <Link href="/">
-            <span className="font-serif font-bold text-xl text-primary cursor-pointer">Ocean Weligama</span>
-          </Link>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5 flex flex-col pt-24">
       <div className="flex-1 flex items-center justify-center py-16 px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -123,7 +114,7 @@ export default function BookingConfirmationPage() {
           </div>
 
           {/* CTAs */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <a
               href="https://wa.me/94771234567"
               target="_blank"

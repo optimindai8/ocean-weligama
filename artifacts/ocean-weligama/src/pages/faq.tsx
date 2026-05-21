@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ChevronDown, MessageCircle, HelpCircle, Waves, Plane, Bed } from "lucide-react";
 
@@ -57,7 +56,6 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
-      <Navbar />
       
       {/* Premium Hero Section */}
       <section className="relative pt-40 pb-24 overflow-hidden bg-primary">
@@ -90,14 +88,14 @@ export default function FAQPage() {
       <main className="flex-1 py-24 bg-muted/20">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Category Chips */}
-          <div className="flex flex-wrap justify-center gap-3 mb-20">
+          <div className="w-full flex overflow-x-auto hide-scrollbar smooth-inertia whitespace-nowrap gap-3 mb-10 pb-2 md:mb-20 justify-start md:justify-center">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-8 py-3 rounded-full text-sm font-bold transition-all duration-500 ${
+                className={`px-8 py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-500 whitespace-nowrap ${
                   activeCategory === cat 
-                    ? "bg-primary text-white shadow-xl scale-110" 
+                    ? "bg-primary text-white shadow-xl scale-105" 
                     : "bg-white text-muted-foreground hover:bg-muted border border-border"
                 }`}
               >
@@ -137,9 +135,9 @@ export default function FAQPage() {
                       >
                         <button 
                           onClick={() => setOpenIndex(isOpen ? null : id)}
-                          className="w-full px-8 py-6 flex items-center justify-between text-left"
+                          className="w-full px-5 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left"
                         >
-                          <span className={`text-lg font-bold transition-colors duration-300 ${isOpen ? "text-primary" : "text-foreground group-hover:text-primary"}`}>
+                          <span className={`text-base sm:text-lg font-bold transition-colors duration-300 ${isOpen ? "text-primary" : "text-foreground group-hover:text-primary"}`}>
                             {faq.question}
                           </span>
                           <div className={`transition-transform duration-500 ${isOpen ? "rotate-180" : ""}`}>
@@ -155,7 +153,7 @@ export default function FAQPage() {
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
                             >
-                              <div className="px-8 pb-8 text-muted-foreground leading-relaxed">
+                              <div className="px-5 pb-5 sm:px-8 sm:pb-8 text-sm sm:text-base text-muted-foreground leading-relaxed">
                                 <div className="pt-2 border-t border-muted/50">
                                   {faq.answer}
                                 </div>

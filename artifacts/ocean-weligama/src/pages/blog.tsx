@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate } from "framer-motion";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Calendar, ArrowRight, BookOpen, Search, Clock, Tag, ChevronRight, Sparkles, TrendingUp } from "lucide-react";
 import { useListBlogs, getListBlogsQueryKey } from "@workspace/api-client-react";
@@ -288,7 +287,6 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F9FB] selection:bg-[#0B3D5E] selection:text-white overflow-x-hidden">
-      <Navbar />
 
       {/* Hero */}
       <section ref={heroRef} className="relative h-[50vh] flex items-center justify-center overflow-hidden bg-[#052439]">

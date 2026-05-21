@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSubmitContact } from "@workspace/api-client-react";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,7 +74,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
-      <Navbar />
 
       {/* Cinematic Contact Hero */}
       <section className="relative pt-40 pb-24 overflow-hidden bg-primary">
@@ -98,16 +96,16 @@ export default function ContactPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-6xl md:text-8xl font-serif font-bold text-white mb-8"
+            className="text-4xl sm:text-6xl md:text-8xl font-serif font-bold text-white mb-8"
           >
-            Let's <span className="italic font-normal text-accent text-7xl md:text-9xl">Connect</span>
+            Let's <span className="italic font-normal text-accent text-5xl sm:text-7xl md:text-9xl">Connect</span>
           </motion.h1>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex items-center justify-center gap-4 text-white/80 font-serif italic text-xl"
+            className="flex items-center justify-center gap-4 text-white/80 font-serif italic text-base sm:text-xl px-4"
           >
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -138,16 +136,16 @@ export default function ContactPage() {
                     whileInView={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.1 }}
                     viewport={{ once: true }}
-                    className="group flex items-center gap-6 bg-white p-8 rounded-[2.5rem] border border-border hover:border-primary/30 hover:shadow-2xl transition-all duration-500"
+                    className="group flex items-center gap-4 sm:gap-6 bg-white p-5 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] border border-border hover:border-primary/30 hover:shadow-2xl transition-all duration-500"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center group-hover:bg-primary transition-colors duration-500">
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-primary/5 flex items-center justify-center group-hover:bg-primary transition-colors duration-500 shrink-0">
                       <method.icon className="w-6 h-6 text-primary group-hover:text-white transition-colors" />
                     </div>
                     <div className="flex-1">
                       <span className="text-[10px] font-black uppercase tracking-widest text-primary/50 group-hover:text-primary transition-colors">{method.title}</span>
-                      <p className="text-lg font-bold text-foreground block">{method.value}</p>
+                      <p className="text-sm sm:text-lg font-bold text-foreground block break-all sm:break-normal">{method.value}</p>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:rotate-12">
+                    <div className="hidden sm:flex w-10 h-10 rounded-full bg-muted items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:rotate-12">
                       <ArrowRight className="w-4 h-4 text-primary" />
                     </div>
                   </motion.a>
@@ -155,7 +153,7 @@ export default function ContactPage() {
               </div>
 
               {/* Instant Trust Badge */}
-              <div className="mt-12 p-8 bg-primary/5 rounded-[2.5rem] border border-primary/10 flex items-center gap-4">
+              <div className="mt-8 sm:mt-12 p-5 sm:p-8 bg-primary/5 rounded-[2rem] sm:rounded-[2.5rem] border border-primary/10 flex items-center gap-4">
                 <ShieldCheck className="w-8 h-8 text-primary" />
                 <div className="flex flex-col">
                   <span className="text-primary font-black text-[10px] uppercase tracking-widest">Guaranteed Response</span>
@@ -170,7 +168,7 @@ export default function ContactPage() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-[3.5rem] p-10 md:p-16 shadow-2xl border border-border/50 relative overflow-hidden"
+                className="bg-white rounded-[2rem] sm:rounded-[3.5rem] p-5 sm:p-10 md:p-16 shadow-2xl border border-border/50 relative overflow-hidden"
               >
                 {/* Visual Accent */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 blur-[60px] rounded-full" />
@@ -341,7 +339,7 @@ export default function ContactPage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="relative h-[450px] rounded-[3rem] overflow-hidden shadow-2xl border border-border/50 group"
+                className="relative h-[300px] sm:h-[450px] rounded-[2rem] sm:rounded-[3rem] overflow-hidden shadow-2xl border border-border/50 group"
               >
                 {/* Vibrant Discovery Map */}
                 <iframe
@@ -371,7 +369,7 @@ export default function ContactPage() {
                   initial={{ opacity: 0, y: 30, scale: 0.9 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ delay: 0.5, type: "spring", bounce: 0.4 }}
-                  className="absolute bottom-6 right-6 w-72 bg-white/95 backdrop-blur-2xl p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/20 z-20 group/card"
+                  className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 w-56 sm:w-72 bg-white/95 backdrop-blur-2xl p-4 sm:p-6 rounded-[1.5rem] sm:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white/20 z-20 group/card"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center">
@@ -402,7 +400,7 @@ export default function ContactPage() {
 
               {/* Social & WhatsApp Hub */}
               <div className="space-y-10">
-                <div className="bg-white p-12 rounded-[4rem] shadow-2xl border border-border/50 text-center relative overflow-hidden group">
+                <div className="bg-white p-6 sm:p-12 rounded-[2rem] sm:rounded-[4rem] shadow-2xl border border-border/50 text-center relative overflow-hidden group">
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                   <div className="relative z-10">
@@ -413,7 +411,7 @@ export default function ContactPage() {
                       href="https://wa.me/94765791763"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-4 bg-green-500 hover:bg-green-600 text-white px-12 py-5 rounded-full font-bold text-xl shadow-xl transition-all hover:scale-105"
+                      className="inline-flex items-center gap-3 sm:gap-4 bg-green-500 hover:bg-green-600 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-base sm:text-xl shadow-xl transition-all hover:scale-105"
                     >
                       Chat on WhatsApp
                     </a>

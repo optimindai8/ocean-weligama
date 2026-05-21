@@ -1,5 +1,4 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -25,7 +24,6 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
-      <Navbar />
 
       {/* Cinematic Hero Anchor */}
       <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
@@ -51,7 +49,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-6xl md:text-9xl font-serif font-bold text-white mb-8 drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+            className="text-4xl sm:text-6xl md:text-9xl font-serif font-bold text-white mb-8 drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
           >
             Ocean Air
           </motion.h1>
@@ -59,7 +57,7 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-xl md:text-3xl text-white/95 font-serif italic max-w-2xl mx-auto drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
+            className="text-base sm:text-xl md:text-3xl text-white/95 font-serif italic max-w-2xl mx-auto px-2 drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)]"
           >
             "A surfer's dream, a traveler's home, and the soul of the Southern Coast."
           </motion.p>
@@ -67,7 +65,7 @@ export default function AboutPage() {
       </section>
 
       {/* The Origin Narrative */}
-      <section className="py-32 bg-white">
+      <section className="py-16 sm:py-32 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-20 items-center max-w-6xl mx-auto">
             <motion.div
@@ -79,7 +77,7 @@ export default function AboutPage() {
               <div className="absolute -left-10 -top-10 text-[15rem] font-serif font-black text-muted/20 -z-10 select-none">
                 "
               </div>
-              <h2 className="text-4xl md:text-6xl font-serif font-bold text-primary mb-10 leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold text-primary mb-6 sm:mb-10 leading-tight">
                 Where the Sand Meets <br/> Our Story
               </h2>
               <div className="space-y-8 text-lg text-muted-foreground leading-relaxed">
@@ -107,7 +105,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="relative aspect-square rounded-[4rem] overflow-hidden shadow-2xl"
+              className="relative aspect-square rounded-[2rem] sm:rounded-[4rem] overflow-hidden shadow-2xl"
             >
               <img 
                 src="/gallery-interior.png" 
@@ -121,7 +119,7 @@ export default function AboutPage() {
       </section>
 
       {/* Barefoot Philosophy Grid */}
-      <section className="py-32 bg-muted/20">
+      <section className="py-16 sm:py-32 bg-muted/20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-24">
             <span className="text-primary font-black tracking-[0.4em] uppercase text-xs mb-4 block">Our Pillars</span>
@@ -136,7 +134,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="group relative bg-white p-12 rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border border-border"
+                className="group relative bg-white p-6 sm:p-12 rounded-[2rem] sm:rounded-[3rem] shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border border-border"
               >
                 <div className="absolute -inset-2 bg-primary/5 rounded-[3.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative z-10 text-center">
@@ -153,7 +151,7 @@ export default function AboutPage() {
       </section>
 
       {/* Discovery Guide */}
-      <section className="py-32 container mx-auto px-4">
+      <section className="py-16 sm:py-32 container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
           <div className="max-w-2xl">
             <span className="text-accent font-black tracking-[0.4em] uppercase text-xs mb-4 block">Insider Knowledge</span>
@@ -172,7 +170,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              className="bg-card p-10 rounded-[2.5rem] border border-border hover:border-primary transition-colors flex flex-col justify-between"
+              className="bg-card p-6 sm:p-10 rounded-[2rem] sm:rounded-[2.5rem] border border-border hover:border-primary transition-colors flex flex-col justify-between"
             >
               <div>
                 <place.icon className="w-10 h-10 text-accent mb-8" />
@@ -189,15 +187,15 @@ export default function AboutPage() {
       </section>
 
       {/* Final Invitation */}
-      <section className="py-40 bg-primary relative overflow-hidden text-center">
+      <section className="py-20 sm:py-40 bg-primary relative overflow-hidden text-center">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
         <div className="relative z-10 max-w-3xl mx-auto px-4">
-          <h2 className="text-4xl md:text-7xl font-serif font-bold text-white mb-8">Ready to Write <br/> Your Island Story?</h2>
+          <h2 className="text-3xl sm:text-4xl md:text-7xl font-serif font-bold text-white mb-8">Ready to Write <br/> Your Island Story?</h2>
           <p className="text-white/80 text-xl mb-12 leading-relaxed">
             The surf is clean, the air is salt-sweet, and your room is waiting. Join us for a stay that feels less like a holiday and more like a homecoming.
           </p>
           <Link href="/book">
-            <Button size="lg" className="bg-accent text-primary px-16 py-8 rounded-full font-bold text-xl shadow-2xl hover:bg-white transition-all">
+            <Button size="lg" className="bg-accent text-primary px-8 sm:px-16 py-6 sm:py-8 rounded-full font-bold text-base sm:text-xl shadow-2xl hover:bg-white transition-all">
               Book Your Experience
             </Button>
           </Link>

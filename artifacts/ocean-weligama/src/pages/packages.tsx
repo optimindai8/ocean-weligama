@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useListServices, type Service } from "@workspace/api-client-react";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -32,7 +31,6 @@ export default function PackagesPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#0B3D5E] overflow-hidden">
-      <Navbar />
 
       {/* Hero */}
       <section className="relative pt-44 pb-28 bg-[#0B3D5E] overflow-hidden">
@@ -189,12 +187,12 @@ export default function PackagesPage() {
             </p>
 
             {/* Premium Interactive Tabs */}
-            <div className="flex flex-wrap justify-center gap-2 md:gap-4 pt-6">
+            <div className="w-full flex overflow-x-auto hide-scrollbar smooth-inertia whitespace-nowrap gap-2 md:justify-center md:gap-4 pt-6 pb-2">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border ${
+                  className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap ${
                     activeCategory === cat.id
                       ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/10"
                       : "bg-white text-muted-foreground hover:text-[#0B3D5E] hover:border-[#0B3D5E]/30 border-[#0B3D5E]/10"

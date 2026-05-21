@@ -33,6 +33,17 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
     build: {
       outDir: path.resolve(import.meta.dirname, "dist/public"),
       emptyOutDir: true,
+      rollupOptions: {
+        onLog(level, log, handler) {
+          if (
+            log.code === "SOURCEMAP_ERROR" &&
+            log.message.includes("Can't resolve original location")
+          ) {
+            return;
+          }
+          handler(level, log);
+        },
+      },
     },
     server: {
       port,

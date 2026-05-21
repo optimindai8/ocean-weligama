@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useParams, Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetRoom } from "@workspace/api-client-react";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +16,11 @@ export default function RoomDetailPage() {
   
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [mobileIdx, setMobileIdx] = useState(0);
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
         <div className="pt-20 container mx-auto px-4 py-16 space-y-8">
           <Skeleton className="h-96 rounded-3xl w-full" />
           <Skeleton className="h-8 w-64" />
@@ -35,7 +34,6 @@ export default function RoomDetailPage() {
   if (!room) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
         <div className="pt-32 container mx-auto px-4 text-center py-24">
           <h1 className="text-3xl font-bold text-foreground mb-4">Room not found</h1>
           <Link href="/rooms">
@@ -62,8 +60,7 @@ export default function RoomDetailPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
-      <Navbar />
+    <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white pb-24 lg:pb-0">
 
       <div className="pt-24 pb-12">
         <div className="container mx-auto px-4">
@@ -91,46 +88,112 @@ export default function RoomDetailPage() {
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6">{room.name}</h1>
         </div>
 
-        {/* Dynamic Gallery Grid (Bento Box style) */}
+        {/* Dynamic Gallery Grid (Bento Box / Swipeable Carousel style) */}
         <div className="container mx-auto px-4 mb-12">
           {images.length === 0 ? (
-            <div className="w-full h-[50vh] rounded-[2rem] bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
+            <div className="w-full h-[35vh] sm:h-[50vh] rounded-[2rem] bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center">
               <BedDouble className="w-16 h-16 text-primary/20" />
             </div>
           ) : images.length === 1 ? (
             <div 
-              className="w-full h-[50vh] md:h-[60vh] rounded-[2rem] overflow-hidden cursor-pointer relative group"
+              className="w-full h-[35vh] sm:h-[50vh] md:h-[60vh] rounded-[2rem] overflow-hidden cursor-pointer relative group"
               onClick={() => setIsGalleryOpen(true)}
             >
               <img src={images[0]} alt={room.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-[50vh] md:h-[60vh] rounded-[2rem] overflow-hidden">
-              <div 
-                className="md:col-span-2 row-span-2 relative cursor-pointer group overflow-hidden"
-                onClick={() => { setCurrentImageIdx(0); setIsGalleryOpen(true); }}
-              >
-                <img src={images[0]} alt="Primary" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-              </div>
-              
-              {images.slice(1, 5).map((img, idx) => (
+            <>
+              {/* Desktop Bento Grid */}
+              <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-4 h-[60vh] rounded-[2rem] overflow-hidden">
                 <div 
-                  key={idx} 
-                  className={`relative cursor-pointer group overflow-hidden hidden md:block ${images.length === 2 ? 'col-span-2 row-span-2' : ''}`}
-                  onClick={() => { setCurrentImageIdx(idx + 1); setIsGalleryOpen(true); }}
+                  className="col-span-2 row-span-2 relative cursor-pointer group overflow-hidden"
+                  onClick={() => { setCurrentImageIdx(0); setIsGalleryOpen(true); }}
                 >
-                  <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src={images[0]} alt="Primary" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-                  
-                  {idx === 3 && images.length > 5 && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
-                      <span className="text-white font-bold text-lg">+{images.length - 5} photos</span>
-                    </div>
-                  )}
                 </div>
-              ))}
-            </div>
+                
+                {images.slice(1, 5).map((img, idx) => (
+                  <div 
+                    key={idx} 
+                    className={`relative cursor-pointer group overflow-hidden ${images.length === 2 ? 'col-span-2 row-span-2' : ''}`}
+                    onClick={() => { setCurrentImageIdx(idx + 1); setIsGalleryOpen(true); }}
+                  >
+                    <img src={img} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
+                    
+                    {idx === 3 && images.length > 5 && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
+                        <span className="text-white font-bold text-lg">+{images.length - 5} photos</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Mobile Swipeable Carousel */}
+              <div className="block md:hidden relative w-full h-[40vh] rounded-[2rem] overflow-hidden bg-muted">
+                <motion.div
+                  className="flex h-full w-full"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={(e, info) => {
+                    const swipeThreshold = 50;
+                    if (info.offset.x < -swipeThreshold && mobileIdx < images.length - 1) {
+                      setMobileIdx(prev => prev + 1);
+                    } else if (info.offset.x > swipeThreshold && mobileIdx > 0) {
+                      setMobileIdx(prev => prev - 1);
+                    }
+                  }}
+                >
+                  <AnimatePresence initial={false} mode="wait">
+                    <motion.img
+                      key={mobileIdx}
+                      src={images[mobileIdx]}
+                      alt={`Room image ${mobileIdx + 1}`}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -50 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full h-full object-cover cursor-pointer shrink-0"
+                      onClick={() => { setCurrentImageIdx(mobileIdx); setIsGalleryOpen(true); }}
+                    />
+                  </AnimatePresence>
+                </motion.div>
+                
+                {/* Dots Indicator */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-10 pointer-events-none">
+                  {images.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${mobileIdx === i ? 'bg-white w-5 shadow' : 'bg-white/40'}`}
+                    />
+                  ))}
+                </div>
+                
+                {/* Glassmorphic Arrows */}
+                {images.length > 1 && (
+                  <>
+                    {mobileIdx > 0 && (
+                      <button
+                        onClick={() => setMobileIdx(prev => prev - 1)}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white active:scale-95 transition-transform"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                    )}
+                    {mobileIdx < images.length - 1 && (
+                      <button
+                        onClick={() => setMobileIdx(prev => prev + 1)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white active:scale-95 transition-transform"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            </>
           )}
         </div>
 
@@ -330,6 +393,25 @@ export default function RoomDetailPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Mobile Sticky Booking CTA Bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-[40] bg-white/95 backdrop-blur-xl border-t border-border/80 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] px-6 py-4 pb-6 md:pb-4 flex items-center justify-between lg:hidden">
+        <div className="flex flex-col">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1A6B8A] mb-0.5">Starting from</span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-xl font-extrabold text-foreground">{formatPrice(room.basePricePerNight)}</span>
+            <span className="text-xs text-muted-foreground font-medium">/night</span>
+          </div>
+        </div>
+        <Link href={`/book?room=${room.id}`}>
+          <Button
+            className="bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full px-6 h-12 font-bold shadow-md active:scale-95 transition-transform"
+            data-testid="button-book-room-mobile"
+          >
+            Book Now
+          </Button>
+        </Link>
+      </div>
 
       <Footer />
     </div>

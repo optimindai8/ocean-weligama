@@ -193,7 +193,7 @@ export function Testimonials() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 30 }}
-              className="relative w-full max-w-lg bg-white rounded-[2.5rem] p-10 shadow-2xl overflow-hidden"
+              className="relative w-full max-w-lg bg-white rounded-[2rem] sm:rounded-[2.5rem] p-5 sm:p-10 shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
             >
               <button 
                 onClick={() => { setIsFormOpen(false); setSubmitted(false); }}
@@ -235,7 +235,7 @@ export function Testimonials() {
                     </div>
 
                     <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <Input 
                           placeholder="Your Name" 
                           value={name}
@@ -319,7 +319,7 @@ export function Testimonials() {
 
 function ReviewCard({ review }: { review: any }) {
   return (
-    <div className="w-[320px] md:w-[380px] bg-white rounded-3xl p-8 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-border/40 shrink-0 group hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-500">
+    <div className="w-[280px] sm:w-[320px] md:w-[380px] bg-white rounded-3xl p-5 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-border/40 shrink-0 group hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-500">
       <div className="flex items-center gap-4 mb-6">
         <div className="w-12 h-12 rounded-full overflow-hidden border border-border/50 flex items-center justify-center bg-muted/30">
           {review.guestAvatarUrl ? (

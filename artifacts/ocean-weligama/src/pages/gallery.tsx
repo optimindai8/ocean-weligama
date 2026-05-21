@@ -5,7 +5,6 @@ import {
   useCreateGalleryItem,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { X, Maximize2, Camera, Upload, Plus, Check, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -116,7 +115,6 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background overflow-hidden">
-      <Navbar />
 
       {/* Parallax Hero */}
       <section className="relative h-[60vh] md:h-[70vh] flex items-center justify-center overflow-hidden bg-primary pt-24">
@@ -200,14 +198,14 @@ export default function GalleryPage() {
           </div>
 
           {/* Filter Bar */}
-          <div className="relative flex flex-wrap justify-center gap-3 mb-20 p-2 bg-white/5 backdrop-blur-xl rounded-[2.5rem] max-w-fit mx-auto border border-white/10 shadow-2xl">
+          <div className="w-full flex overflow-x-auto hide-scrollbar smooth-inertia whitespace-nowrap gap-3 mb-10 pb-2 md:mb-20 p-2 bg-white/5 backdrop-blur-xl rounded-full md:max-w-fit mx-auto border border-white/10 shadow-2xl justify-start md:justify-center">
             {CATEGORIES.map((cat) => {
               const isActive = activeCategory === cat;
               return (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`relative px-8 py-3.5 rounded-full text-sm font-bold transition-all duration-500 z-10 tracking-widest uppercase ${
+                  className={`relative px-8 py-3.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-500 z-10 tracking-widest uppercase whitespace-nowrap ${
                     isActive ? "text-white" : "text-muted-foreground hover:text-primary"
                   }`}
                 >
@@ -297,7 +295,7 @@ export default function GalleryPage() {
               initial={{ scale: 0.9, y: 30 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 30 }}
-              className="bg-card rounded-[2.5rem] p-8 md:p-12 max-w-lg w-full shadow-2xl border border-border"
+              className="bg-card rounded-[2.5rem] p-5 sm:p-8 md:p-12 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-border"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-8">

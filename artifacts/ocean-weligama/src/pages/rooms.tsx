@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useListRooms, ListRoomsType } from "@workspace/api-client-react";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,7 +29,6 @@ export default function RoomsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
-      <Navbar />
 
       {/* Cinematic Mood Hero */}
       <section className="relative pt-40 pb-24 overflow-hidden bg-primary">
@@ -70,15 +68,15 @@ export default function RoomsPage() {
       </section>
 
       {/* Interactive Mood Filters */}
-      <section className="relative z-20 px-4 py-8 -mb-12 mt-4">
-        <div className="container mx-auto max-w-fit bg-white/70 backdrop-blur-3xl border border-white/40 shadow-2xl rounded-full p-2 flex gap-1 overflow-x-auto hide-scrollbar">
+      <section className="relative z-20 px-4 py-8 -mb-12 mt-4 max-w-full overflow-hidden">
+        <div className="w-full max-w-md md:max-w-fit mx-auto bg-white/70 backdrop-blur-3xl border border-white/40 shadow-2xl rounded-full p-2 flex gap-1 overflow-x-auto hide-scrollbar whitespace-nowrap smooth-inertia justify-start md:justify-center">
           {ROOM_CATEGORIES.map((t) => {
             const isActive = activeCategory === t.value;
             return (
               <button
                 key={t.value}
                 onClick={() => setActiveCategory(t.value)}
-                className={`relative px-6 py-2.5 rounded-full text-sm font-bold transition-colors duration-300 ${
+                className={`relative px-6 py-2.5 rounded-full text-sm font-bold transition-colors duration-300 whitespace-nowrap ${
                   isActive ? "text-white" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -139,7 +137,7 @@ export default function RoomsPage() {
                     )}
 
                     {/* Adaptive Disclosure Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-95 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-700" />
                     
                     {/* Top Badges */}
                     <div className="absolute top-8 left-8 flex flex-col gap-2">
@@ -153,15 +151,15 @@ export default function RoomsPage() {
                       )}
                     </div>
 
-                    <div className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-500 capitalize text-[10px] font-bold">
+                    <div className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-500 capitalize text-[10px] font-bold">
                       {room.type}
                     </div>
 
                     {/* Reveal Content */}
-                    <div className="absolute inset-0 p-10 flex flex-col justify-end transform translate-y-10 group-hover:translate-y-0 transition-transform duration-700">
+                    <div className="absolute inset-0 p-6 sm:p-10 flex flex-col justify-end transform translate-y-0 lg:translate-y-10 lg:group-hover:translate-y-0 transition-transform duration-700">
                       
                       {room.highlights && room.highlights.length > 0 && (
-                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 mb-4">
+                        <div className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-700 delay-100 mb-4">
                           <ul className="text-white/80 text-xs font-medium space-y-1">
                             {room.highlights.slice(0, 3).map((h: string, i: number) => (
                               <li key={i} className="flex items-center gap-2">
@@ -176,31 +174,31 @@ export default function RoomsPage() {
                         </div>
                       )}
 
-                      <h3 className="text-2xl md:text-3xl font-serif font-bold text-white mb-6 leading-tight">
+                      <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white mb-4 sm:mb-6 leading-tight">
                         {room.name}
                       </h3>
 
-                      <div className="flex flex-wrap gap-4 text-white/70 text-[10px] font-bold uppercase tracking-widest mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-200">
+                      <div className="flex flex-wrap gap-4 text-white/70 text-[10px] font-bold uppercase tracking-widest mb-4 sm:mb-6 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-700 delay-200">
                         <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-accent" />{room.maxGuests} Guests</span>
                         <span className="flex items-center gap-1.5"><BedDouble className="w-3.5 h-3.5 text-accent" />{room.bedrooms} Bed</span>
                       </div>
 
-                      <div className="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-300">
+                      <div className="flex items-center justify-between opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-700 delay-300">
                         <div className="flex flex-col">
                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">Starting from</span>
-                          <span className="text-2xl font-bold text-white">{formatPrice(room.basePricePerNight)}<span className="text-sm font-normal text-white/60">/night</span></span>
+                          <span className="text-xl sm:text-2xl font-bold text-white">{formatPrice(room.basePricePerNight)}<span className="text-xs sm:text-sm font-normal text-white/60">/night</span></span>
                         </div>
                         <Link href={`/rooms/${room.slug}`}>
-                          <button className="bg-accent text-primary w-14 h-14 rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all shadow-2xl">
-                            <ArrowRight className="w-5 h-5" />
+                          <button className="bg-accent text-primary w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all shadow-2xl">
+                            <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
                         </Link>
                       </div>
                     </div>
                   </div>
 
-                  {/* Clean Background Text (Visible by default) */}
-                  <div className="mt-8 px-4 text-center group-hover:opacity-0 transition-opacity duration-500">
+                  {/* Clean Background Text (Visible by default on desktop) */}
+                  <div className="hidden lg:block mt-8 px-4 text-center group-hover:opacity-0 transition-opacity duration-500">
                     <h4 className="text-xl font-serif font-bold text-foreground">{room.name}</h4>
                     <p className="text-primary text-sm font-black mt-2">{formatPrice(room.basePricePerNight)} / night</p>
                   </div>

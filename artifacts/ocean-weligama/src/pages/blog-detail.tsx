@@ -1,6 +1,5 @@
 import { useGetBlog, getGetBlogQueryKey } from "@workspace/api-client-react";
 import { useRoute } from "wouter";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -32,7 +31,6 @@ export default function BlogDetailPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
         <div className="flex-1 mt-24 container mx-auto px-4 max-w-4xl space-y-8">
           <Skeleton className="h-12 w-3/4 rounded-2xl" />
           <Skeleton className="h-96 w-full rounded-[2.5rem]" />
@@ -50,7 +48,6 @@ export default function BlogDetailPage() {
   if (isError || !blog) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center">
           <h1 className="text-4xl font-serif font-bold mb-4">Story Not Found</h1>
           <Link href="/blog">
@@ -66,7 +63,6 @@ export default function BlogDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
-      <Navbar />
 
       <article className="flex-1">
         {/* Hero Section */}
