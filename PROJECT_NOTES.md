@@ -78,20 +78,5 @@ Password: OceanAdmin2025!
 
 lsof -ti :8080 | xargs kill -9
 
-Hey i want to do another changes I want to make gallery page under this Complete Collection
-Explore Weligama
-all
-rooms
-beach
-food
-activities
-property
 
-exsit images store on the database. please make it cleanly and production grade. Other thing is in here give option fot add the images under this categories
-this process also must be very clean and very accurately happend. when some tourist upload the image it sotre on the database and show in here. But keep in mind please make a page for 'gallery' on the admin panel. when some tourist upload the image then it firstly show on the admin pannel in here can be delete that image then must delete from the frontend also database that image. also admin must give approve show that image on the galeery. so please add for button give approve. Make these stuff production grade and very clean. also very smooth.
-all
-rooms
-beach
-food
-activities
-property
+Other main Issue is not correctly calculate the Booking Price Please make it correct. I want to accurately calculate the what guest Booking. Also all thecorrect pricing show on the Admin panel Bookings table also booking details Window and dasboard. Room Price also Must be calulate. All service price must be calculate

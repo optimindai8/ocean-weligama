@@ -14,6 +14,9 @@ export default function PackagesPage() {
   
   // Tab control for Optional Packages
   const [activeCategory, setActiveCategory] = useState("Beginner Surf Packages");
+  // Expanded state for main package highlights (keyed by pkg.id)
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+  const toggleCard = (id: string) => setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }));
 
   // Separate main packages vs optional packages
   const mainPackages = services?.filter(s => s.type === "main" && s.isActive) || [];
@@ -103,16 +106,28 @@ export default function PackagesPage() {
 
                     {pkg.highlights && pkg.highlights.length > 0 && (
                       <div className="border-t border-[#0B3D5E]/10 pt-4 space-y-2.5">
-                        {pkg.highlights.slice(0, 6).map((item, index) => (
-                          <div key={index} className="flex items-start gap-2.5 text-xs text-foreground/80">
+                        {(expandedCards[pkg.id] ? pkg.highlights : pkg.highlights.slice(0, 6)).map((item, index) => (
+                          <motion.div
+                            key={index}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="flex items-start gap-2.5 text-xs text-foreground/80"
+                          >
                             <Check className="w-4 h-4 text-[#4BBCCC] flex-shrink-0 mt-0.5" />
                             <span className="font-medium">{item}</span>
-                          </div>
+                          </motion.div>
                         ))}
                         {pkg.highlights.length > 6 && (
-                          <p className="text-[10px] text-[#1A6B8A] font-semibold italic pl-6">
-                            + {pkg.highlights.length - 6} more highlights
-                          </p>
+                          <button
+                            onClick={() => toggleCard(pkg.id)}
+                            className="text-[10px] text-[#1A6B8A] font-semibold italic pl-6 hover:text-[#0B3D5E] transition-colors underline underline-offset-2 cursor-pointer"
+                          >
+                            {expandedCards[pkg.id]
+                              ? "Show less"
+                              : `+ ${pkg.highlights.length - 6} more highlights`}
+                          </button>
                         )}
                       </div>
                     )}
