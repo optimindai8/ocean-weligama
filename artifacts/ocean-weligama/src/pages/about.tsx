@@ -616,8 +616,8 @@ export default function AboutPage() {
                     {!sunsetMode ? (
                       <motion.img
                         key="day-view"
-                        src="/assets/food.png"
-                        alt="Rooftop Cafe Breakfast and Drinks at Ocean Air"
+                        src="/morning-vibe.png"
+                        alt="Golden morning surf vibe at Ocean Weligama beach"
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.05 }}

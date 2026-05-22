@@ -14,6 +14,7 @@ import ContactPage from "@/pages/contact";
 import BookingPage from "@/pages/booking";
 import BookingConfirmationPage from "@/pages/booking-confirmation";
 import FAQPage from "@/pages/faq";
+import CancellationPolicyPage from "@/pages/cancellation-policy";
 import BlogPage from "@/pages/blog";
 import BlogDetailPage from "@/pages/blog-detail";
 import NotFound from "@/pages/not-found";
@@ -74,6 +75,7 @@ function App() {
               <Route path="/book" component={BookingPage} />
               <Route path="/book/confirmation" component={BookingConfirmationPage} />
               <Route path="/faq" component={FAQPage} />
+              <Route path="/cancellation-policy" component={CancellationPolicyPage} />
               <Route path="/blog" component={BlogPage} />
               <Route path="/blog/:id" component={BlogDetailPage} />
 

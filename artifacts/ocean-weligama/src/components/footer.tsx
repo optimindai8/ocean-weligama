@@ -69,6 +69,7 @@ export function Footer() {
           <div className="flex flex-col gap-2">
             <Link href="/about"><span className="text-primary-foreground/80 hover:text-white cursor-pointer">Our Story</span></Link>
             <Link href="/contact"><span className="text-primary-foreground/80 hover:text-white cursor-pointer">Contact</span></Link>
+            <Link href="/cancellation-policy"><span className="text-primary-foreground/80 hover:text-white cursor-pointer">Cancellation Policy</span></Link>
           </div>
         </div>
         <div>
