@@ -21,7 +21,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Calendar, DollarSign, Users, TrendingUp, Mail, Clock } from "lucide-react";
+import { Calendar, Euro, Users, TrendingUp, Mail, Clock } from "lucide-react";
 
 export default function AdminDashboard() {
   const { data: dashboard, isLoading: dashLoading } = useAdminGetDashboard({
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
 
   const METRICS = [
     { label: "Today's Bookings", value: dash?.todayBookings ?? 0, icon: Calendar, color: "text-blue-500" },
-    { label: "Month Revenue", value: `$${dash?.monthRevenue ?? "0"}`, icon: DollarSign, color: "text-green-500" },
+    { label: "Month Revenue", value: `€${dash?.monthRevenue ?? "0"}`, icon: Euro, color: "text-green-500" },
     { label: "Active Guests", value: dash?.activeGuests ?? 0, icon: Users, color: "text-purple-500" },
     { label: "Total Bookings", value: dash?.totalBookings ?? 0, icon: TrendingUp, color: "text-orange-500" },
   ];
@@ -177,7 +177,7 @@ export default function AdminDashboard() {
                       <td className="py-3">
                         <Badge className="capitalize text-xs" variant="outline">{b.status}</Badge>
                       </td>
-                      <td className="py-3 font-medium">${b.totalAmount} {b.currency}</td>
+                      <td className="py-3 font-medium">€{b.totalAmount}</td>
                     </tr>
                   ))}
                 </tbody>

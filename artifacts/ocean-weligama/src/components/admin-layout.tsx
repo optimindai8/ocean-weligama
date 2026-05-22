@@ -25,7 +25,6 @@ const NAV = [
   { href: "/ow-admin/addons", label: "Experiences", icon: Tag },
   { href: "/ow-admin/reviews", label: "Reviews", icon: Star },
   { href: "/ow-admin/messages", label: "Messages", icon: MessageSquare },
-  { href: "/ow-admin/pricing", label: "Pricing", icon: Star },
   { href: "/ow-admin/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/ow-admin/blogs", label: "Blogs", icon: BookOpen },
   { href: "/ow-admin/airport", label: "Airport", icon: Plane },

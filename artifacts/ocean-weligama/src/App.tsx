@@ -27,7 +27,6 @@ import AdminPackages from "@/pages/admin/packages";
 import AdminAddons from "@/pages/admin/addons";
 import AdminReviews from "@/pages/admin/reviews";
 import AdminMessages from "@/pages/admin/messages";
-import AdminPricing from "@/pages/admin/pricing";
 import AdminGallery from "@/pages/admin/gallery";
 import AdminBlogs from "@/pages/admin/blogs";
 import AdminAirport from "@/pages/admin/airport";
@@ -88,7 +87,6 @@ function App() {
               <Route path="/ow-admin/addons" component={AdminAddons} />
               <Route path="/ow-admin/reviews" component={AdminReviews} />
               <Route path="/ow-admin/messages" component={AdminMessages} />
-              <Route path="/ow-admin/pricing" component={AdminPricing} />
               <Route path="/ow-admin/gallery" component={AdminGallery} />
               <Route path="/ow-admin/blogs" component={AdminBlogs} />
               <Route path="/ow-admin/airport" component={AdminAirport} />
