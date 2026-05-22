@@ -691,42 +691,61 @@ export default function BookingPage() {
                   className="grid md:grid-cols-2 gap-6"
                 >
                   {packages.map(pkg => {
-                    const Icon = getServiceIcon(pkg.name);
                     const isSel = selectedDbServiceIds.includes(pkg.id);
                     const tag = getServiceTag(pkg.category);
                     const price = `€${parseInt(pkg.basePrice)}`;
-                    
+
                     return (
                       <button
                         key={pkg.id}
                         onClick={() => toggleService(pkg.id)}
-                        className={`text-left p-8 rounded-[2rem] border-2 transition-all duration-400 relative ${
+                        className={`group text-left rounded-[2rem] border-2 transition-all duration-400 relative overflow-hidden ${
                           isSel
-                            ? "border-emerald-500 bg-emerald-50/30 shadow-xl shadow-emerald-100 scale-[1.02]"
+                            ? "border-emerald-500 bg-white shadow-2xl shadow-emerald-100 scale-[1.02]"
                             : "border-white bg-white shadow-lg hover:border-emerald-200 hover:shadow-xl hover:scale-[1.01]"
                         }`}
                       >
-                        {isSel && (
-                          <motion.div
-                            initial={{ scale: 0 }} animate={{ scale: 1 }}
-                            className="absolute top-5 right-5 w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center"
-                          >
-                            <Check className="w-4 h-4 text-white" />
-                          </motion.div>
-                        )}
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 transition-all ${isSel ? "bg-emerald-500 text-white" : "bg-emerald-100 text-emerald-600"}`}>
-                          <Icon className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-xl font-serif font-bold text-foreground mb-2">{pkg.name}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed mb-6">{pkg.description || pkg.highlights?.[0]}</p>
-                        <div className="flex items-center justify-between pt-4 border-t border-dashed border-muted">
-                          <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${TAG_COLORS[tag] || TAG_COLORS.Adventure}`}>
+                        {/* Image */}
+                        <div className="relative w-full h-44 overflow-hidden bg-emerald-50">
+                          {pkg.imageUrl ? (
+                            <img src={pkg.imageUrl} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Award className="w-12 h-12 text-emerald-200" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                          {/* Category tag overlaid on image */}
+                          <span className={`absolute bottom-3 left-3 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${TAG_COLORS[tag] || TAG_COLORS.Adventure}`}>
                             {tag}
                           </span>
-                          <span className={`text-sm font-bold ${isSel ? "text-emerald-600" : "text-muted-foreground"}`}>
-                            {price}
-                          </span>
+                          {/* Selected check */}
+                          {isSel && (
+                            <motion.div
+                              initial={{ scale: 0 }} animate={{ scale: 1 }}
+                              className="absolute top-3 right-3 w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg"
+                            >
+                              <Check className="w-4 h-4 text-white" />
+                            </motion.div>
+                          )}
                         </div>
+
+                        {/* Content */}
+                        <div className="p-6">
+                          <h3 className="text-xl font-serif font-bold text-foreground mb-2 leading-tight">{pkg.name}</h3>
+                          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 mb-5">
+                            {pkg.description || pkg.highlights?.[0]}
+                          </p>
+                          <div className="flex items-center justify-between pt-4 border-t border-dashed border-muted">
+                            <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500">Per Person</p>
+                            <span className={`text-2xl font-bold ${isSel ? "text-emerald-600" : "text-foreground"}`}>
+                              {price}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* hover shimmer */}
+                        <div className="absolute inset-0 bg-emerald-500/3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2rem]" />
                       </button>
                     );
                   })}
@@ -763,7 +782,6 @@ export default function BookingPage() {
                   className="grid sm:grid-cols-2 md:grid-cols-3 gap-5"
                 >
                   {experiences.map(exp => {
-                    const Icon = getServiceIcon(exp.name);
                     const isSel = selectedDbServiceIds.includes(exp.id);
                     const tag = getServiceTag(exp.category);
                     const price = `€${parseInt(exp.basePrice)}`;
@@ -772,33 +790,50 @@ export default function BookingPage() {
                       <button
                         key={exp.id}
                         onClick={() => toggleService(exp.id)}
-                        className={`text-left p-6 rounded-[1.5rem] border-2 transition-all duration-400 relative ${
+                        className={`group text-left rounded-[1.5rem] border-2 transition-all duration-400 relative overflow-hidden ${
                           isSel
-                            ? "border-purple-400 bg-purple-50/40 shadow-lg shadow-purple-100 scale-[1.02]"
+                            ? "border-purple-400 bg-white shadow-lg shadow-purple-100 scale-[1.02]"
                             : "border-white bg-white shadow-md hover:border-purple-200 hover:shadow-lg hover:scale-[1.01]"
                         }`}
                       >
-                        {isSel && (
-                          <motion.div
-                            initial={{ scale: 0 }} animate={{ scale: 1 }}
-                            className="absolute top-4 right-4 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center"
-                          >
-                            <Check className="w-3 h-3 text-white" />
-                          </motion.div>
-                        )}
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-all ${isSel ? "bg-purple-500 text-white" : "bg-purple-100 text-purple-600"}`}>
-                          <Icon className="w-5 h-5" />
-                        </div>
-                        <h3 className="text-base font-serif font-bold text-foreground mb-1.5">{exp.name}</h3>
-                        <p className="text-xs text-muted-foreground leading-relaxed mb-4">{exp.description || exp.highlights?.[0]}</p>
-                        <div className="flex items-center justify-between">
-                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${TAG_COLORS[tag] || TAG_COLORS.Wellness}`}>
+                        {/* Image */}
+                        <div className="relative w-full h-36 overflow-hidden bg-purple-50">
+                          {exp.imageUrl ? (
+                            <img src={exp.imageUrl} alt={exp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Sparkles className="w-10 h-10 text-purple-200" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                          <span className={`absolute bottom-2 left-2 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${TAG_COLORS[tag] || TAG_COLORS.Wellness}`}>
                             {tag}
                           </span>
-                          <span className="text-[9px] font-bold text-purple-600 uppercase tracking-widest">
-                            {price}
-                          </span>
+                          {isSel && (
+                            <motion.div
+                              initial={{ scale: 0 }} animate={{ scale: 1 }}
+                              className="absolute top-2 right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center shadow-lg"
+                            >
+                              <Check className="w-3 h-3 text-white" />
+                            </motion.div>
+                          )}
                         </div>
+
+                        {/* Content */}
+                        <div className="p-5">
+                          <h3 className="text-base font-serif font-bold text-foreground mb-1.5 leading-tight">{exp.name}</h3>
+                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-4">
+                            {exp.description || exp.highlights?.[0]}
+                          </p>
+                          <div className="flex items-center justify-between pt-3 border-t border-dashed border-muted">
+                            <p className="text-[8px] font-black uppercase tracking-widest text-purple-400">Per Person</p>
+                            <span className={`text-lg font-bold ${isSel ? "text-purple-600" : "text-foreground"}`}>
+                              {price}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="absolute inset-0 bg-purple-500/3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[1.5rem]" />
                       </button>
                     );
                   })}

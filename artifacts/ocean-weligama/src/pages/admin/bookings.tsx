@@ -4,6 +4,8 @@ import {
   useAdminUpdateBooking,
   useAdminDeleteBooking,
   getAdminListBookingsQueryKey,
+  useAdminListRooms,
+  useAdminListServices,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
@@ -52,6 +54,11 @@ export default function AdminBookings() {
     query: { queryKey: getAdminListBookingsQueryKey(params) },
   });
 
+  const { data: roomsResponse } = useAdminListRooms();
+  const { data: servicesResponse } = useAdminListServices();
+  const roomsList = roomsResponse as any[] | undefined;
+  const servicesList = servicesResponse as any[] | undefined;
+
   const updateBooking = useAdminUpdateBooking();
   const deleteBooking = useAdminDeleteBooking();
 
@@ -64,6 +71,7 @@ export default function AdminBookings() {
       guestPhone: string;
       guestNationality: string;
       specialRequests: string;
+      roomId: string;
       roomName: string;
       checkIn: string;
       checkOut: string;
@@ -154,8 +162,8 @@ export default function AdminBookings() {
               <table className="w-full text-sm">
                 <thead className="border-b border-border bg-muted/30">
                   <tr>
-                    {["Reference", "Guest", "Check-in", "Check-out", "Nights", "Status", "Payment", "Total", "Actions"].map((h) => (
-                      <th key={h} className="text-left px-4 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wide">{h}</th>
+                    {["Reference", "Name", "Email", "Phone", "Check-in", "Check-out", "Nights", "Status", "Payment", "Total", "Actions"].map((h) => (
+                      <th key={h} className="text-left px-4 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wide whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -168,12 +176,13 @@ export default function AdminBookings() {
                       data-testid={`row-booking-${b.id}`}
                     >
                       <td className="px-4 py-3 font-mono text-xs text-primary font-bold">{b.reference}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 whitespace-nowrap">
                         <p className="font-medium text-foreground">{b.guestFullName}</p>
-                        <p className="text-xs text-muted-foreground">{b.guestEmail}</p>
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground">{b.checkIn}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{b.checkOut}</td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground">{b.guestEmail}</td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{b.guestPhone || "N/A"}</td>
+                      <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{b.checkIn}</td>
+                      <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{b.checkOut}</td>
                       <td className="px-4 py-3 text-center">{b.nights}n</td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded-lg text-xs font-medium border capitalize ${STATUS_COLORS[b.status] ?? ""}`}>
@@ -274,20 +283,30 @@ export default function AdminBookings() {
                     <h3 className="text-sm font-black uppercase tracking-widest text-primary mb-4 flex items-center gap-2">
                       <Home className="w-4 h-4" /> Stay Details
                     </h3>
-                    <div className="grid sm:grid-cols-2 gap-6">
-                      <div>
-                        <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Room</p>
-                        <p className="font-bold text-foreground text-lg">{selectedBooking.roomName}</p>
-                        <p className="text-sm text-muted-foreground mt-1">{selectedBooking.guestCount} {selectedBooking.guestCount === 1 ? 'Guest' : 'Guests'}</p>
+                    <div className="grid md:grid-cols-2 gap-6 items-center">
+                      <div className="flex gap-4 items-center">
+                        {(() => {
+                           const r = roomsList?.find(x => x.id === selectedBooking.roomId);
+                           const img = r?.heroImageUrl || (r?.gallery && r.gallery[0]);
+                           if (img) {
+                             return <img src={img} alt={selectedBooking.roomName} className="w-24 h-24 object-cover rounded-xl shadow-sm" />;
+                           }
+                           return null;
+                        })()}
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Room</p>
+                          <p className="font-bold text-foreground text-lg leading-tight mb-1">{selectedBooking.roomName}</p>
+                          <p className="text-sm text-muted-foreground">{selectedBooking.guestCount} {selectedBooking.guestCount === 1 ? 'Guest' : 'Guests'}</p>
+                        </div>
                       </div>
-                      <div className="flex gap-6">
+                      <div className="flex gap-6 md:justify-end">
                         <div>
                           <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Check-in</p>
-                          <p className="font-bold">{selectedBooking.checkIn}</p>
+                          <p className="font-bold text-lg">{selectedBooking.checkIn}</p>
                         </div>
                         <div>
                           <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Check-out</p>
-                          <p className="font-bold">{selectedBooking.checkOut}</p>
+                          <p className="font-bold text-lg">{selectedBooking.checkOut}</p>
                         </div>
                       </div>
                     </div>
@@ -300,15 +319,22 @@ export default function AdminBookings() {
                         <Sparkles className="w-4 h-4" /> Add-Ons & Packages
                       </h3>
                       <div className="space-y-3">
-                        {selectedBooking.services.map((s: any, idx: number) => (
-                          <div key={idx} className="flex justify-between items-center p-3 rounded-xl bg-emerald-50/50 border border-emerald-100">
-                            <div>
-                              <p className="font-bold text-emerald-900">{s.serviceName}</p>
-                              <p className="text-xs text-emerald-700 mt-0.5">Quantity: {s.quantity}</p>
+                        {selectedBooking.services.map((s: any, idx: number) => {
+                          const srv = servicesList?.find(x => x.id === s.serviceId);
+                          return (
+                            <div key={idx} className="flex gap-4 p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 items-center">
+                              {srv?.heroImageUrl && (
+                                <img src={srv.heroImageUrl} alt={srv.name || s.serviceName} className="w-16 h-16 rounded-lg object-cover shadow-sm" />
+                              )}
+                              <div className="flex-1">
+                                <p className="font-bold text-emerald-900 text-base">{s.serviceName}</p>
+                                {srv?.shortDesc && <p className="text-xs text-emerald-700/80 mt-1 line-clamp-1">{srv.shortDesc}</p>}
+                                <p className="text-xs text-emerald-700 font-bold mt-2">Quantity: {s.quantity}</p>
+                              </div>
+                              <span className="font-bold text-lg text-emerald-700">${s.subtotal}</span>
                             </div>
-                            <span className="font-bold text-emerald-700">${s.subtotal}</span>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
