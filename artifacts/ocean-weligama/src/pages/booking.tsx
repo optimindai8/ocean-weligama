@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
   Check,
@@ -236,6 +237,7 @@ export default function BookingPage() {
   const [selectedRoomId,        setSelectedRoomId]        = useState<string | null>(null);
   const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>([]);
   const [priceData,             setPriceData]             = useState<any>(null);
+  const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
 
   const { data: rooms,    isLoading: roomsLoading } = useListRooms();
   const { data: services }                           = useListServices();
@@ -688,7 +690,7 @@ export default function BookingPage() {
 
                 <motion.div
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-                  className="grid md:grid-cols-2 gap-6"
+                  className="grid md:grid-cols-2 gap-8"
                 >
                   {packages.map(pkg => {
                     const isSel = selectedDbServiceIds.includes(pkg.id);
@@ -696,34 +698,36 @@ export default function BookingPage() {
                     const price = `€${parseInt(pkg.basePrice)}`;
 
                     return (
-                      <button
+                      <div
                         key={pkg.id}
                         onClick={() => toggleService(pkg.id)}
-                        className={`group text-left rounded-[2rem] border-2 transition-all duration-400 relative overflow-hidden ${
+                        className={`group bg-white rounded-[2.5rem] border-2 transition-all duration-400 relative overflow-hidden flex flex-col h-full cursor-pointer ${
                           isSel
-                            ? "border-emerald-500 bg-white shadow-2xl shadow-emerald-100 scale-[1.02]"
-                            : "border-white bg-white shadow-lg hover:border-emerald-200 hover:shadow-xl hover:scale-[1.01]"
+                            ? "border-emerald-500 shadow-2xl shadow-emerald-100 scale-[1.02]"
+                            : "border-slate-100 shadow-lg hover:border-emerald-200 hover:shadow-xl hover:scale-[1.01]"
                         }`}
                       >
                         {/* Image */}
-                        <div className="relative w-full h-44 overflow-hidden bg-emerald-50">
+                        <div className="relative w-full h-56 overflow-hidden bg-emerald-50 shrink-0 rounded-t-[2.5rem]">
                           {pkg.imageUrl ? (
                             <img src={pkg.imageUrl} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Award className="w-12 h-12 text-emerald-200" />
+                              <Award className="w-16 h-16 text-emerald-200" />
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                          {/* Category tag overlaid on image */}
-                          <span className={`absolute bottom-3 left-3 text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full ${TAG_COLORS[tag] || TAG_COLORS.Adventure}`}>
-                            {tag}
-                          </span>
-                          {/* Selected check */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                          
+                          {/* Top-Right Badge (e.g. SURF MAIN) */}
+                          <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm text-[#0B3D5E] font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-full shadow-md z-10 border border-white/20">
+                            {tag} {pkg.type?.toUpperCase()}
+                          </div>
+
+                          {/* Selected check overlay */}
                           {isSel && (
                             <motion.div
                               initial={{ scale: 0 }} animate={{ scale: 1 }}
-                              className="absolute top-3 right-3 w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg"
+                              className="absolute top-4 left-4 w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg z-10"
                             >
                               <Check className="w-4 h-4 text-white" />
                             </motion.div>
@@ -731,22 +735,76 @@ export default function BookingPage() {
                         </div>
 
                         {/* Content */}
-                        <div className="p-6">
-                          <h3 className="text-xl font-serif font-bold text-foreground mb-2 leading-tight">{pkg.name}</h3>
-                          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 mb-5">
-                            {pkg.description || pkg.highlights?.[0]}
+                        <div className="p-8 flex flex-col flex-1">
+                          <h3 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 leading-tight px-1">
+                            {pkg.name}
+                          </h3>
+                          <p className="text-3xl font-extrabold text-[#0B3D5E] mb-1 px-1">
+                            {price}.00
                           </p>
-                          <div className="flex items-center justify-between pt-4 border-t border-dashed border-muted">
-                            <p className="text-[9px] font-black uppercase tracking-widest text-emerald-500">Per Person</p>
-                            <span className={`text-2xl font-bold ${isSel ? "text-emerald-600" : "text-foreground"}`}>
-                              {price}
-                            </span>
+                          <p className="text-xs text-slate-400 font-mono mb-4 px-1">
+                            {pkg.slug}
+                          </p>
+                          
+                          <hr className="border-slate-100 my-4" />
+
+                          {/* Highlights */}
+                          {pkg.highlights && pkg.highlights.length > 0 && (
+                            <div className="space-y-3 mb-6 flex-1 px-1">
+                              {(() => {
+                                const isExpanded = expandedPkgs[pkg.id];
+                                const visibleHighlights = isExpanded ? pkg.highlights : pkg.highlights.slice(0, 6);
+                                const hasMore = pkg.highlights.length > 6;
+
+                                return (
+                                  <>
+                                    {visibleHighlights.map((hl, i) => (
+                                      <div key={i} className="flex items-start gap-2.5">
+                                        <Check className="w-4 h-4 text-[#4BBCCC] shrink-0 mt-0.5" />
+                                        <span className="text-slate-600 font-medium text-sm leading-relaxed">{hl}</span>
+                                      </div>
+                                    ))}
+                                    
+                                    {hasMore && (
+                                      <button
+                                        type="button"
+                                        onClick={(e: React.MouseEvent) => {
+                                          e.stopPropagation();
+                                          setExpandedPkgs(prev => ({ ...prev, [pkg.id]: !prev[pkg.id] }));
+                                        }}
+                                        className="text-[#4BBCCC] hover:text-[#4BBCCC]/80 font-extrabold text-xs italic hover:underline mt-2 inline-block cursor-pointer"
+                                      >
+                                        {isExpanded ? "show less highlights" : `+ ${pkg.highlights.length - 6} more highlights`}
+                                      </button>
+                                    )}
+                                  </>
+                                );
+                              })()}
+                            </div>
+                          )}
+
+                          {/* Selection Button */}
+                          <div className="mt-auto pt-6 px-1">
+                            <Button
+                              type="button"
+                              onClick={(e: React.MouseEvent) => {
+                                e.stopPropagation();
+                                toggleService(pkg.id);
+                              }}
+                              className={`w-full py-4 h-12 rounded-full font-bold transition-all duration-300 shadow-md ${
+                                isSel
+                                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-200"
+                                  : "bg-[#0B3D5E] hover:bg-[#0B3D5E]/90 text-white shadow-blue-900/10"
+                              }`}
+                            >
+                              {isSel ? "Package Selected" : "Select Package"}
+                            </Button>
                           </div>
                         </div>
 
                         {/* hover shimmer */}
-                        <div className="absolute inset-0 bg-emerald-500/3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2rem]" />
-                      </button>
+                        <div className="absolute inset-0 bg-emerald-500/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2.5rem]" />
+                      </div>
                     );
                   })}
                 </motion.div>
