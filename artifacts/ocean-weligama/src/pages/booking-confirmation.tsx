@@ -118,7 +118,7 @@ export default function BookingConfirmationPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-xl w-full"
+          className="max-w-4xl w-full"
         >
           {/* Success icon */}
           <div className="text-center mb-8">
