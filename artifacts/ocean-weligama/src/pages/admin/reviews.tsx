@@ -25,6 +25,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminReviews() {
   const { toast } = useToast();
@@ -110,14 +111,35 @@ export default function AdminReviews() {
             {[1, 2, 3].map((i) => <Skeleton key={i} className="h-48 rounded-2xl" />)}
           </div>
         ) : reviewList && reviewList.length > 0 ? (
-          <div className="space-y-4">
-            {reviewList.map((review) => (
-              <div
-                key={review.id}
-                className="bg-card rounded-2xl border border-border p-6"
-                data-testid={`card-review-${review.id}`}
-              >
-                <div className="flex items-start justify-between mb-4">
+          <motion.div 
+            className="space-y-4"
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            initial="hidden"
+            animate="show"
+          >
+            <AnimatePresence mode="popLayout">
+              {reviewList.map((review) => (
+                <motion.div
+                  key={review.id}
+                  layout
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    show: { opacity: 1, y: 0 }
+                  }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="bg-card rounded-[2rem] border border-border/60 p-6 shadow-sm hover:shadow-xl hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 relative group overflow-hidden"
+                  data-testid={`card-review-${review.id}`}
+                >
+                  {/* Subtle gradient background on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  
+                  <div className="relative z-10 flex items-start justify-between mb-4">
                   <div className="flex gap-4">
                     <div className="w-12 h-12 rounded-full overflow-hidden border border-border/50 flex items-center justify-center bg-muted/30 shrink-0">
                       {review.guestAvatarUrl ? (
@@ -144,9 +166,9 @@ export default function AdminReviews() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="relative z-10 flex items-center gap-2">
                     {review.isApproved ? (
-                      <Badge className="bg-green-100 text-green-700 border-0">Approved</Badge>
+                      <Badge className="bg-green-100 text-green-700 border-0 shadow-sm">Approved</Badge>
                     ) : (
                       <Badge className="bg-yellow-100 text-yellow-700 border-0">Pending</Badge>
                     )}
@@ -155,6 +177,8 @@ export default function AdminReviews() {
                     )}
                   </div>
                 </div>
+
+                <div className="relative z-10">
 
                 {review.title && (
                   <h3 className="text-lg font-bold text-foreground mb-2 italic">"{review.title}"</h3>
@@ -170,11 +194,13 @@ export default function AdminReviews() {
                   </div>
                 )}
 
-                <div className="flex gap-2 flex-wrap">
+                </div>
+
+                <div className="relative z-10 flex gap-2 flex-wrap">
                   {!review.isApproved ? (
                     <Button
                       size="sm"
-                      className="bg-green-500 hover:bg-green-600 text-white rounded-full gap-1"
+                      className="bg-green-500 hover:bg-green-600 text-white rounded-full gap-1 hover:scale-105 transition-transform"
                       onClick={() => update(review.id, { isApproved: true })}
                       data-testid={`button-approve-review-${review.id}`}
                     >
@@ -184,7 +210,7 @@ export default function AdminReviews() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="rounded-full gap-1 text-red-600 border-red-200 hover:bg-red-50"
+                      className="rounded-full gap-1 text-red-600 border-red-200 hover:bg-red-50 hover:scale-105 transition-transform"
                       onClick={() => update(review.id, { isApproved: false })}
                       data-testid={`button-unapprove-review-${review.id}`}
                     >
@@ -194,7 +220,7 @@ export default function AdminReviews() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="rounded-full gap-1"
+                    className="rounded-full gap-1 hover:scale-105 transition-transform"
                     onClick={() => update(review.id, { isFeatured: !review.isFeatured })}
                     data-testid={`button-feature-review-${review.id}`}
                   >
@@ -203,7 +229,7 @@ export default function AdminReviews() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="rounded-full gap-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 ml-auto"
+                    className="rounded-full gap-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 ml-auto hover:scale-105 transition-transform"
                     onClick={() => setDeleteId(review.id)}
                     data-testid={`button-delete-review-${review.id}`}
                   >
@@ -211,16 +237,29 @@ export default function AdminReviews() {
                   </Button>
                 </div>
 
-                <p className="text-xs text-muted-foreground mt-3">
+                <p className="relative z-10 text-xs text-muted-foreground mt-3">
                   {new Date(review.createdAt).toLocaleDateString()}
                 </p>
-              </div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         ) : (
-          <div className="bg-card rounded-2xl border border-border flex items-center justify-center h-48">
-            <p className="text-muted-foreground text-sm">No reviews yet</p>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-card rounded-[3rem] border border-dashed border-border/60 flex flex-col items-center justify-center py-32 text-center"
+          >
+            <motion.div 
+              animate={{ y: [0, -10, 0] }} 
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+              className="w-20 h-20 rounded-3xl bg-muted/30 flex items-center justify-center mb-6"
+            >
+              <MessageSquare className="w-10 h-10 text-muted-foreground/30" />
+            </motion.div>
+            <h3 className="text-xl font-bold text-foreground mb-2 italic">Quiet waters...</h3>
+            <p className="text-muted-foreground text-sm max-w-xs">No reviews match your current filter. Check back later!</p>
+          </motion.div>
         )}
 
         <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>

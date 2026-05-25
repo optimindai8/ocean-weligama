@@ -148,17 +148,24 @@ export default function AdminMessages() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-2xl border border-border/50">
+              <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-2xl border border-border/50 relative">
                 {(["all", "unread", "replied"] as const).map((f) => (
                   <Button
                     key={f}
-                    variant={filter === f ? "default" : "ghost"}
+                    variant="ghost"
                     size="sm"
                     onClick={() => setFilter(f)}
-                    className={`rounded-xl px-6 capitalize text-xs font-bold transition-all ${
-                      filter === f ? "shadow-lg scale-105" : "text-muted-foreground"
+                    className={`rounded-xl px-6 capitalize text-xs font-bold transition-all relative z-10 ${
+                      filter === f ? "text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
                   >
+                    {filter === f && (
+                      <motion.div
+                        layoutId="active-filter-bg-messages"
+                        className="absolute inset-0 bg-background rounded-xl shadow-sm border border-border/50"
+                        style={{ zIndex: -1 }}
+                      />
+                    )}
                     {f}
                   </Button>
                 ))}
@@ -192,16 +199,20 @@ export default function AdminMessages() {
                 {messageList.map((msg: any, idx: number) => (
                   <motion.div
                     key={msg.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
                     onClick={() => setSelectedMessage(msg)}
                     className={`
-                      flex items-center justify-between p-5 cursor-pointer transition-all duration-300
-                      hover:bg-primary/[0.02] active:bg-primary/[0.04]
+                      relative group flex items-center justify-between p-5 cursor-pointer transition-all duration-300
+                      hover:bg-primary/[0.03] active:bg-primary/[0.05]
                       ${!msg.isRead ? "bg-primary/[0.01]" : ""}
                     `}
                   >
+                    {/* Hover gradient border line left */}
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="flex items-center gap-4 overflow-hidden">
                       <div className={`
                         w-10 h-10 rounded-xl flex items-center justify-center shrink-0
@@ -259,9 +270,13 @@ export default function AdminMessages() {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-card rounded-[3rem] border border-dashed border-border/60 flex flex-col items-center justify-center py-32 text-center"
           >
-            <div className="w-20 h-20 rounded-3xl bg-muted/30 flex items-center justify-center mb-6">
+            <motion.div 
+              animate={{ y: [0, -10, 0] }} 
+              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+              className="w-20 h-20 rounded-3xl bg-muted/30 flex items-center justify-center mb-6"
+            >
               <Mail className="w-10 h-10 text-muted-foreground/30" />
-            </div>
+            </motion.div>
             <h3 className="text-xl font-bold text-foreground mb-2 italic">Quiet waters...</h3>
             <p className="text-muted-foreground text-sm max-w-xs">No messages match your current filter. Check back later!</p>
             <Button
@@ -277,10 +292,15 @@ export default function AdminMessages() {
 
         {/* Message Detail Dialog */}
         <Dialog open={!!selectedMessage} onOpenChange={(open) => !open && setSelectedMessage(null)}>
-          <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-primary/10 p-0 overflow-hidden shadow-2xl">
+          <DialogContent className="sm:max-w-2xl rounded-[2.5rem] border-primary/20 p-0 overflow-hidden shadow-2xl bg-white/95 backdrop-blur-xl">
             {selectedMessage && (
-              <div className="flex flex-col">
-                <div className="bg-primary/5 p-8 border-b border-primary/10">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ staggerChildren: 0.1 }}
+                className="flex flex-col"
+              >
+                <div className="bg-gradient-to-r from-primary/10 to-transparent p-8 border-b border-primary/10">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex gap-4">
                       <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20">
@@ -371,7 +391,7 @@ export default function AdminMessages() {
                     </a>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )}
           </DialogContent>
         </Dialog>

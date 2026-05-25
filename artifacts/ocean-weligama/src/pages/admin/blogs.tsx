@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -180,12 +181,34 @@ export default function AdminBlogs() {
             {[1, 2, 3].map((i) => <Skeleton key={i} className="h-64 rounded-2xl" />)}
           </div>
         ) : blogList && blogList.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            initial="hidden"
+            animate="show"
+          >
+            <AnimatePresence mode="popLayout">
             {blogList.map((blog) => (
-              <div key={blog.id} className="bg-card rounded-[2rem] border border-border overflow-hidden hover:shadow-xl transition-all group">
+              <motion.div 
+                key={blog.id} 
+                layout
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  show: { opacity: 1, y: 0 }
+                }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-card rounded-[2rem] border border-border overflow-hidden shadow-sm hover:shadow-2xl hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 group"
+              >
                 <div className="aspect-[4/3] relative overflow-hidden bg-muted">
-                  <img src={blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-xs font-bold px-3 py-1 rounded-full text-primary uppercase tracking-wider">
+                  <img src={blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-[10px] font-black px-3 py-1.5 rounded-full text-primary uppercase tracking-widest shadow-lg">
                     {blog.category}
                   </div>
                 </div>
@@ -193,30 +216,39 @@ export default function AdminBlogs() {
                   <p className="text-xs text-muted-foreground font-bold mb-2">
                     {new Date(blog.date).toLocaleDateString()}
                   </p>
-                  <h3 className="text-xl font-serif font-bold mb-2 line-clamp-1">{blog.title}</h3>
+                  <h3 className="text-xl font-serif font-bold mb-2 line-clamp-1 group-hover:text-primary transition-colors">{blog.title}</h3>
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-6">{blog.description}</p>
                   
-                  <div className="flex items-center gap-2 pt-4 border-t border-border">
-                    <Button variant="outline" size="sm" className="flex-1 rounded-full gap-2" onClick={() => handleOpenDialog(blog)}>
+                  <div className="flex items-center gap-2 pt-4 border-t border-border/50">
+                    <Button variant="outline" size="sm" className="flex-1 rounded-xl gap-2 hover:bg-primary/5 hover:border-primary/30 transition-all hover:scale-[1.02]" onClick={() => handleOpenDialog(blog)}>
                       <Edit2 className="w-3.5 h-3.5" /> Edit
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1 rounded-full gap-2 text-red-600 border-red-200 hover:bg-red-50" onClick={() => setDeleteId(blog.id)}>
+                    <Button variant="outline" size="sm" className="flex-1 rounded-xl gap-2 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 transition-all hover:scale-[1.02]" onClick={() => setDeleteId(blog.id)}>
                       <Trash2 className="w-3.5 h-3.5" /> Delete
                     </Button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+            </AnimatePresence>
+          </motion.div>
         ) : (
-          <div className="bg-card rounded-2xl border border-border flex flex-col items-center justify-center h-64 text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-card rounded-[3rem] border border-dashed border-border flex flex-col items-center justify-center h-[400px] text-center"
+          >
+            <motion.div 
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              className="w-20 h-20 rounded-[2rem] bg-primary/5 flex items-center justify-center mb-6 border border-primary/10"
+            >
               <Plus className="w-8 h-8 text-primary" />
-            </div>
-            <h3 className="text-xl font-bold mb-2">No Stories Yet</h3>
-            <p className="text-muted-foreground mb-4">Share your first story with the world.</p>
-            <Button onClick={() => handleOpenDialog()} variant="outline" className="rounded-full">Create Story</Button>
-          </div>
+            </motion.div>
+            <h3 className="text-xl font-bold mb-2 text-foreground">No Stories Yet</h3>
+            <p className="text-muted-foreground mb-6">Share your first story with the world.</p>
+            <Button onClick={() => handleOpenDialog()} className="rounded-full px-8 shadow-lg hover:shadow-xl hover:scale-105 transition-all">Create Story</Button>
+          </motion.div>
         )}
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
