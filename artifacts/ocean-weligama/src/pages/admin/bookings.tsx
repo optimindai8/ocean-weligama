@@ -112,7 +112,7 @@ export default function AdminBookings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("pending");
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
   const [expandedPkgs, setExpandedPkgs] = useState<Record<string, boolean>>({});
@@ -237,7 +237,7 @@ export default function AdminBookings() {
               <table className="w-full text-sm">
                 <thead className="border-b border-border bg-muted/30">
                   <tr>
-                    {["Reference", "Name", "Email", "Phone", "Check-in", "Check-out", "Nights", "Status", "Payment", "Total", "Actions"].map((h) => (
+                    {["Reference", "Name", "Email", "Phone", "Check-in", "Check-out", "Nights", "Status", "Total", "Actions"].map((h) => (
                       <th key={h} className="text-left px-4 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wide whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -246,11 +246,26 @@ export default function AdminBookings() {
                   {bookingsData.bookings.map((b) => (
                     <tr 
                       key={b.id} 
-                      className="hover:bg-muted/20 transition-colors cursor-pointer" 
+                      className={`transition-colors cursor-pointer ${
+                        b.status === "pending" 
+                          ? "bg-blue-50/60 hover:bg-blue-100/60" 
+                          : b.status === "confirmed"
+                          ? "bg-emerald-50/30 hover:bg-emerald-100/30"
+                          : "hover:bg-muted/20"
+                      }`}
                       onClick={() => setSelectedBooking(b)}
                       data-testid={`row-booking-${b.id}`}
                     >
-                      <td className="px-4 py-3 font-mono text-xs text-primary font-bold">{b.reference}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-primary font-bold">
+                        <div className="flex items-center gap-2">
+                          {b.reference}
+                          {b.status === "pending" && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-black bg-blue-500 text-white shadow-sm">
+                              New
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="px-4 py-3 whitespace-nowrap">
                         <p className="font-medium text-foreground">{b.guestFullName}</p>
                       </td>
@@ -262,11 +277,6 @@ export default function AdminBookings() {
                       <td className="px-4 py-3">
                         <span className={`px-2 py-1 rounded-lg text-xs font-medium border capitalize ${STATUS_COLORS[b.status] ?? ""}`}>
                           {b.status.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-lg text-xs font-medium capitalize ${PAYMENT_COLORS[b.paymentStatus] ?? ""}`}>
-                          {b.paymentStatus}
                         </span>
                       </td>
                       <td className="px-4 py-3">
