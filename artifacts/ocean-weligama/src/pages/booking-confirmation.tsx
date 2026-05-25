@@ -1,10 +1,76 @@
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { useGetBookingByReference, getGetBookingByReferenceQueryKey } from "@workspace/api-client-react";
+import { useGetBookingByReference, getGetBookingByReferenceQueryKey, useListRooms, useListServices } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
-import { Check, MessageCircle, Calendar, Users, ArrowRight } from "lucide-react";
+import { Check, MessageCircle, Calendar, Users, ArrowRight, Home, Plane, MessageSquare, CreditCard, Award, Sparkles, Clock } from "lucide-react";
+
+function parseSpecialRequests(text: string) {
+  if (!text) return { pickup: null, drop: null, message: "" };
+  let pickup: any = null;
+  let drop: any = null;
+  const lines = text.split("\n");
+  const remainingLines: string[] = [];
+  
+  let inPickupSection = false;
+  let inDropSection = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.startsWith("[Airport Pick-up:")) {
+      inPickupSection = true;
+      inDropSection = false;
+      const priceMatch = line.match(/€(\d+(\.\d+)?)/);
+      const price = priceMatch ? priceMatch[1] : "0";
+      pickup = { price, flightNumber: "", flightDate: "", flightTime: "", bringingSurfboard: "No" };
+      continue;
+    }
+    
+    if (line.startsWith("[Airport Drop:")) {
+      inPickupSection = false;
+      inDropSection = true;
+      const priceMatch = line.match(/€(\d+(\.\d+)?)/);
+      const price = priceMatch ? priceMatch[1] : "0";
+      drop = { price };
+      continue;
+    }
+    
+    if (inPickupSection) {
+      if (line.startsWith("Flight:")) {
+        const match = line.match(/Flight:\s*([^,]+),\s*Date:\s*([^,]+),\s*Time:\s*(.+)/);
+        if (match) {
+          pickup.flightNumber = match[1].trim();
+          pickup.flightDate = match[2].trim();
+          pickup.flightTime = match[3].trim();
+        }
+        continue;
+      } else if (line.startsWith("Surfboard:")) {
+        const match = line.match(/Surfboard:\s*(.+)/);
+        if (match) {
+          pickup.bringingSurfboard = match[1].trim();
+        }
+        continue;
+      } else {
+        inPickupSection = false;
+      }
+    }
+    
+    if (inDropSection) {
+      inDropSection = false;
+    }
+    
+    if (!inPickupSection && !inDropSection) {
+      if (line !== "" || (remainingLines.length > 0 && remainingLines[remainingLines.length - 1] !== "")) {
+        remainingLines.push(lines[i]);
+      }
+    }
+  }
+  
+  return { pickup, drop, message: remainingLines.join("\n").trim() };
+}
+
 
 export default function BookingConfirmationPage() {
   const [location] = useLocation();
@@ -16,6 +82,12 @@ export default function BookingConfirmationPage() {
       queryKey: getGetBookingByReferenceQueryKey(ref),
     },
   });
+
+  const { data: roomsResponse } = useListRooms();
+  const { data: servicesResponse } = useListServices();
+  const roomsList = roomsResponse as any[] | undefined;
+  const servicesList = servicesResponse as any[] | undefined;
+  const [expandedPkgs, setExpandedPkgs] = useState<Record<string, boolean>>({});
 
   if (!ref) {
     return (
