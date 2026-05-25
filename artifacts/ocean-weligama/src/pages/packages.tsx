@@ -174,20 +174,22 @@ export default function PackagesPage() {
             </p>
 
             {/* Premium Interactive Tabs */}
-            <div className="w-full flex overflow-x-auto hide-scrollbar smooth-inertia whitespace-nowrap gap-2 md:justify-center md:gap-4 pt-6 pb-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap ${
-                    activeCategory === cat.id
-                      ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/10"
-                      : "bg-white text-muted-foreground hover:text-[#0B3D5E] hover:border-[#0B3D5E]/30 border-[#0B3D5E]/10"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
+            <div className="w-full overflow-x-auto hide-scrollbar smooth-inertia pt-6 pb-2">
+              <div className="flex w-max mx-auto gap-2 md:gap-4 px-4">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.id)}
+                    className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap ${
+                      activeCategory === cat.id
+                        ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/10"
+                        : "bg-white text-muted-foreground hover:text-[#0B3D5E] hover:border-[#0B3D5E]/30 border-[#0B3D5E]/10"
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

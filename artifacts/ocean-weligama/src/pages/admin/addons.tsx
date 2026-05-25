@@ -333,9 +333,9 @@ export default function AdminAddons() {
               <Skeleton key={i} className="h-64 rounded-3xl" />
             ))}
           </div>
-        ) : services && (services as Service[]).filter(s => s.type === "optional").length > 0 ? (
+        ) : services && (services as Service[]).filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package")).length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(services as Service[]).filter(s => s.type === "optional").map((service) => (
+            {(services as Service[]).filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package")).map((service) => (
               <div 
                 key={service.id} 
                 className="group relative bg-card hover:bg-accent/5 border border-border rounded-3xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 flex flex-col"
