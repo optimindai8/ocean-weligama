@@ -6,12 +6,15 @@ import {
   getAdminListBookingsQueryKey,
   useAdminListRooms,
   useAdminListServices,
+  useAdminMarkNotificationsRead,
+  getAdminGetNotificationCountsQueryKey,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, ChevronRight, Filter, Trash2, Eye, User, Phone, Mail, Globe, Home, Calendar, Sparkles, CreditCard, MessageSquare, Clock, Check, Award, Plane } from "lucide-react";
 import {
@@ -113,6 +116,16 @@ export default function AdminBookings() {
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
   const [expandedPkgs, setExpandedPkgs] = useState<Record<string, boolean>>({});
+
+  const markRead = useAdminMarkNotificationsRead();
+
+  useEffect(() => {
+    markRead.mutate({ data: { type: "bookings" } }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
+      }
+    });
+  }, []);
 
   const params = { page, limit: 20, ...(statusFilter ? { status: statusFilter } : {}) };
   const { data, isLoading } = useAdminListBookings(params, {

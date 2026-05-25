@@ -13,7 +13,7 @@ export default function PackagesPage() {
   const services = rawServices as Service[] | undefined;
   
   // Tab control for Optional Packages
-  const [activeCategory, setActiveCategory] = useState("Beginner Surf Packages");
+  const [activeCategory, setActiveCategory] = useState("All");
   // Expanded state for main package highlights (keyed by pkg.id)
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
   const toggleCard = (id: string) => setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }));
@@ -23,11 +23,12 @@ export default function PackagesPage() {
   const optionalPackages = services?.filter(s => s.type === "optional" && s.isActive) || [];
 
   // Filter optional packages by active tab category
-  const filteredOptionalPackages = optionalPackages.filter(
-    s => s.category === activeCategory
-  );
+  const filteredOptionalPackages = activeCategory === "All"
+    ? optionalPackages
+    : optionalPackages.filter(s => s.category === activeCategory);
 
   const categories = [
+    { id: "All", label: "All" },
     { id: "Beginner Surf Packages", label: "Beginner Surf" },
     { id: "Advance Surf Packages", label: "Advanced Surf" },
     { id: "Yoga Retreat Packages", label: "Yoga Retreats" }
@@ -243,16 +244,16 @@ export default function PackagesPage() {
                       )}
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-border flex items-center gap-4">
+                    <div className="pt-4 mt-6 border-t border-[#0B3D5E]/10 flex items-center gap-3">
                       <Link href={`/packages/${pkg.slug}`} className="flex-1">
-                        <Button variant="outline" className="w-full rounded-full border-[#0B3D5E]/20 text-[#0B3D5E] hover:bg-[#0B3D5E] hover:text-white transition-all duration-300">
-                          More Info
+                        <Button className="w-full rounded-full bg-[#0B3D5E] hover:bg-[#1A6B8A] text-white font-semibold py-6 shadow-md transition-all duration-300">
+                          View Details
                         </Button>
                       </Link>
                       {pkg.isBookable && (
                         <Link href={`/book?service=${pkg.slug}`}>
-                          <Button className="rounded-full bg-[#1A6B8A] hover:bg-[#1A6B8A]/90 text-white font-semibold">
-                            Add
+                          <Button variant="outline" size="icon" className="rounded-full border-[#0B3D5E]/20 w-12 h-12 text-[#0B3D5E] hover:bg-[#0B3D5E] hover:text-white transition-all duration-300" title="Book Now">
+                            <ArrowRight className="w-5 h-5" />
                           </Button>
                         </Link>
                       )}

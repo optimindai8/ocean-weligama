@@ -1028,6 +1028,27 @@ export const AdminDeleteGalleryItemParams = zod.object({
 });
 
 /**
+ * @summary Get unread notification counts
+ */
+export const AdminGetNotificationCountsResponse = zod.object({
+  bookings: zod.number(),
+  reviews: zod.number(),
+  messages: zod.number(),
+  gallery: zod.number(),
+});
+
+/**
+ * @summary Mark notifications as read for a specific category
+ */
+export const AdminMarkNotificationsReadBody = zod.object({
+  type: zod.enum(["bookings", "reviews", "messages", "gallery"]),
+});
+
+export const AdminMarkNotificationsReadResponse = zod.object({
+  ok: zod.boolean().optional(),
+});
+
+/**
  * @summary Get dashboard metrics
  */
 export const AdminGetDashboardResponse = zod.object({

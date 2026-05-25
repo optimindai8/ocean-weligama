@@ -7,6 +7,8 @@ import {
   contactMessages,
   pricingRules,
   availability,
+  bookings,
+  gallery,
 } from "@workspace/db";
 import { eq, and, isNull, desc, ne } from "drizzle-orm";
 import { requireAdmin } from "../lib/auth";
@@ -429,6 +431,54 @@ router.delete("/v1/admin/availability/:id", requireAdmin, async (req, res) => {
   } catch (err) {
     req.log.error(err);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Admin Notifications
+router.get("/v1/admin/notifications/counts", requireAdmin, async (req, res) => {
+  try {
+    const unreadBookings = await db.select({ id: bookings.id }).from(bookings).where(eq(bookings.isRead, false));
+    const unreadReviews = await db.select({ id: reviews.id }).from(reviews).where(eq(reviews.isRead, false));
+    const unreadMessages = await db.select({ id: contactMessages.id }).from(contactMessages).where(eq(contactMessages.isRead, false));
+    const unreadGallery = await db.select({ id: gallery.id }).from(gallery).where(eq(gallery.isRead, false));
+
+    return res.json({
+      bookings: unreadBookings.length,
+      reviews: unreadReviews.length,
+      messages: unreadMessages.length,
+      gallery: unreadGallery.length,
+    });
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/v1/admin/notifications/mark-read", requireAdmin, async (req, res) => {
+  try {
+    const { type } = req.body;
+    
+    switch (type) {
+      case "bookings":
+        await db.update(bookings).set({ isRead: true }).where(eq(bookings.isRead, false));
+        break;
+      case "reviews":
+        await db.update(reviews).set({ isRead: true }).where(eq(reviews.isRead, false));
+        break;
+      case "messages":
+        await db.update(contactMessages).set({ isRead: true }).where(eq(contactMessages.isRead, false));
+        break;
+      case "gallery":
+        await db.update(gallery).set({ isRead: true }).where(eq(gallery.isRead, false));
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid type" });
+    }
+    
+    return res.json({ ok: true });
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

@@ -26,6 +26,7 @@ import type {
   AdminListBookingsParams,
   AdminListMessagesParams,
   AdminLoginInput,
+  AdminMarkNotificationsRead200,
   AdminUser,
   AirportPricing,
   AirportPricingInput,
@@ -58,7 +59,9 @@ import type {
   ListReviewsParams,
   ListRoomsParams,
   ListServicesParams,
+  MarkNotificationsReadInput,
   MessageUpdate,
+  NotificationCounts,
   PageViewInput,
   PricingRule,
   PricingRuleInput,
@@ -3488,6 +3491,172 @@ export const useAdminDeleteGalleryItem = <
   TContext
 > => {
   return useMutation(getAdminDeleteGalleryItemMutationOptions(options));
+};
+
+/**
+ * @summary Get unread notification counts
+ */
+export const getAdminGetNotificationCountsUrl = () => {
+  return `/api/v1/admin/notifications/counts`;
+};
+
+export const adminGetNotificationCounts = async (
+  options?: RequestInit,
+): Promise<NotificationCounts> => {
+  return customFetch<NotificationCounts>(getAdminGetNotificationCountsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminGetNotificationCountsQueryKey = () => {
+  return [`/api/v1/admin/notifications/counts`] as const;
+};
+
+export const getAdminGetNotificationCountsQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminGetNotificationCounts>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetNotificationCounts>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getAdminGetNotificationCountsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminGetNotificationCounts>>
+  > = ({ signal }) => adminGetNotificationCounts({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetNotificationCounts>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminGetNotificationCountsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminGetNotificationCounts>>
+>;
+export type AdminGetNotificationCountsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get unread notification counts
+ */
+
+export function useAdminGetNotificationCounts<
+  TData = Awaited<ReturnType<typeof adminGetNotificationCounts>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetNotificationCounts>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminGetNotificationCountsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Mark notifications as read for a specific category
+ */
+export const getAdminMarkNotificationsReadUrl = () => {
+  return `/api/v1/admin/notifications/mark-read`;
+};
+
+export const adminMarkNotificationsRead = async (
+  markNotificationsReadInput: MarkNotificationsReadInput,
+  options?: RequestInit,
+): Promise<AdminMarkNotificationsRead200> => {
+  return customFetch<AdminMarkNotificationsRead200>(
+    getAdminMarkNotificationsReadUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(markNotificationsReadInput),
+    },
+  );
+};
+
+export const getAdminMarkNotificationsReadMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminMarkNotificationsRead>>,
+    TError,
+    { data: BodyType<MarkNotificationsReadInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminMarkNotificationsRead>>,
+  TError,
+  { data: BodyType<MarkNotificationsReadInput> },
+  TContext
+> => {
+  const mutationKey = ["adminMarkNotificationsRead"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminMarkNotificationsRead>>,
+    { data: BodyType<MarkNotificationsReadInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return adminMarkNotificationsRead(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminMarkNotificationsReadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminMarkNotificationsRead>>
+>;
+export type AdminMarkNotificationsReadMutationBody =
+  BodyType<MarkNotificationsReadInput>;
+export type AdminMarkNotificationsReadMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Mark notifications as read for a specific category
+ */
+export const useAdminMarkNotificationsRead = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminMarkNotificationsRead>>,
+    TError,
+    { data: BodyType<MarkNotificationsReadInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminMarkNotificationsRead>>,
+  TError,
+  { data: BodyType<MarkNotificationsReadInput> },
+  TContext
+> => {
+  return useMutation(getAdminMarkNotificationsReadMutationOptions(options));
 };
 
 /**

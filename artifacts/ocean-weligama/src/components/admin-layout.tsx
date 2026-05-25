@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { useAdminLogout, useAdminGetMe, getAdminGetMeQueryKey } from "@workspace/api-client-react";
+import { useAdminLogout, useAdminGetMe, getAdminGetMeQueryKey, useAdminGetNotificationCounts } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { TransparentLogo } from "./transparent-logo";
 import {
@@ -41,6 +41,12 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     },
   });
 
+  const { data: notifications } = useAdminGetNotificationCounts({
+    query: {
+      refetchInterval: 30000,
+    }
+  });
+
   useEffect(() => {
     const token = localStorage.getItem("ow-admin-token");
     if (!token || (isError && (error as any)?.status === 401)) {
@@ -78,18 +84,33 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         <nav className="flex-1 p-4 space-y-1">
           {NAV.map((item) => {
             const active = location === item.href || location.startsWith(item.href + "/");
+            let badgeCount = 0;
+            if (notifications) {
+              if (item.label === "Bookings") badgeCount = notifications.bookings || 0;
+              if (item.label === "Reviews") badgeCount = notifications.reviews || 0;
+              if (item.label === "Messages") badgeCount = notifications.messages || 0;
+              if (item.label === "Gallery") badgeCount = notifications.gallery || 0;
+            }
+
             return (
               <Link key={item.href} href={item.href}>
                 <div
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
                     active
                       ? "bg-white/15 text-white"
                       : "text-white/60 hover:bg-white/10 hover:text-white"
                   }`}
                   data-testid={`nav-admin-${item.label.toLowerCase()}`}
                 >
-                  <item.icon className="w-4 h-4 flex-shrink-0" />
-                  {item.label}
+                  <div className="flex items-center gap-3">
+                    <item.icon className="w-4 h-4 flex-shrink-0" />
+                    {item.label}
+                  </div>
+                  {badgeCount > 0 && (
+                    <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                      {badgeCount}
+                    </span>
+                  )}
                 </div>
               </Link>
             );

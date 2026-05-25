@@ -24,6 +24,7 @@ export const reviews = pgTable("reviews", {
   isApproved: boolean("is_approved").default(false),
   isFeatured: boolean("is_featured").default(false),
   source: text("source").default("website"),
+  isRead: boolean("is_read").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

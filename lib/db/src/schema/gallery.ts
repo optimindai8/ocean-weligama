@@ -28,6 +28,7 @@ export const gallery = pgTable("gallery", {
   uploadedBy: uuid("uploaded_by"),
   fileSize: text("file_size"),
   dimensions: text("dimensions"),
+  isRead: boolean("is_read").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

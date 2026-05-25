@@ -88,6 +88,7 @@ export const bookings = pgTable("bookings", {
   languageUsed: text("language_used").default("en"),
   adminNotes: text("admin_notes"),
   isConfirmedEmail: boolean("is_confirmed_email").default(false),
+  isRead: boolean("is_read").default(false),
 
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()

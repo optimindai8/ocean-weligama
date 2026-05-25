@@ -705,6 +705,27 @@ export interface AirportPricingInput {
   groupThreshold: number;
 }
 
+export interface NotificationCounts {
+  bookings: number;
+  reviews: number;
+  messages: number;
+  gallery: number;
+}
+
+export type MarkNotificationsReadInputType =
+  (typeof MarkNotificationsReadInputType)[keyof typeof MarkNotificationsReadInputType];
+
+export const MarkNotificationsReadInputType = {
+  bookings: "bookings",
+  reviews: "reviews",
+  messages: "messages",
+  gallery: "gallery",
+} as const;
+
+export interface MarkNotificationsReadInput {
+  type: MarkNotificationsReadInputType;
+}
+
 export type ListRoomsParams = {
   type?: ListRoomsType;
   guests?: number;
@@ -767,6 +788,10 @@ export type AdminListBookingsParams = {
 };
 
 export type AdminDeleteService200 = {
+  ok?: boolean;
+};
+
+export type AdminMarkNotificationsRead200 = {
   ok?: boolean;
 };
 

@@ -163,7 +163,7 @@ function StepHeader({
       <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-2">
         Step {n} of 7
       </p>
-      <h1 className="text-4xl md:text-5xl font-serif font-bold italic text-foreground mb-3">
+      <h1 className="text-3xl md:text-5xl font-serif font-bold italic text-foreground mb-3 px-2">
         {title}
       </h1>
       <p className="text-muted-foreground text-base max-w-sm mx-auto">{sub}</p>
@@ -184,21 +184,21 @@ function StepNav({
   onSkip?: () => void;
 }) {
   return (
-    <div className="flex justify-between items-center mt-10 pt-6">
+    <div className="flex flex-col-reverse sm:flex-row justify-between items-center mt-10 pt-6 gap-4 sm:gap-0">
       {onBack ? (
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors px-5 py-3 rounded-full hover:bg-muted"
+          className="flex items-center justify-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors px-5 py-3 rounded-full hover:bg-muted w-full sm:w-auto"
         >
           <ChevronLeft className="w-4 h-4" /> Back
         </button>
-      ) : <div />}
+      ) : <div className="hidden sm:block" />}
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
         {skipLabel && onSkip && (
           <button
             onClick={onSkip}
-            className="text-sm font-bold text-muted-foreground hover:text-foreground px-5 py-3 rounded-full hover:bg-muted transition-colors"
+            className="text-sm font-bold text-muted-foreground hover:text-foreground px-5 py-3 rounded-full hover:bg-muted transition-colors w-full sm:w-auto text-center"
           >
             {skipLabel}
           </button>
@@ -206,7 +206,7 @@ function StepNav({
         <button
           onClick={onContinue}
           disabled={disabled || loading}
-          className="flex items-center gap-2.5 bg-primary hover:bg-primary/90 text-white font-bold px-8 py-4 rounded-full shadow-xl shadow-primary/20 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
+          className="flex items-center justify-center gap-2.5 bg-primary hover:bg-primary/90 text-white font-bold px-8 py-4 rounded-full shadow-xl shadow-primary/20 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed w-full sm:w-auto"
         >
           {loading ? (
             <>
@@ -377,8 +377,8 @@ export default function BookingPage() {
     step > 6 && (watchPickup || watchDrop) ? "✈️ Airport Transfer" : null,
   ].filter(Boolean) as string[];
 
-  const packages = Array.isArray(services) ? services.filter(s => s.type === "main" || s.category?.toLowerCase() === "package") : [];
-  const experiences = Array.isArray(services) ? services.filter(s => s.type !== "main" && s.category?.toLowerCase() !== "package") : [];
+  const packages = Array.isArray(services) ? services.filter(s => s.type === "main" || s.type === "optional" || s.category?.toLowerCase() === "package") : [];
+  const experiences = Array.isArray(services) ? services.filter(s => s.type !== "main" && s.type !== "optional" && s.category?.toLowerCase() !== "package") : [];
 
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER
@@ -479,9 +479,9 @@ export default function BookingPage() {
 
                 <motion.div
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
-                  className="bg-white rounded-[2.5rem] p-10 shadow-2xl shadow-slate-100/80 border border-slate-100"
+                  className="bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl shadow-slate-100/80 border border-slate-100"
                 >
-                  <div className="flex items-center justify-center gap-10">
+                  <div className="flex items-center justify-center gap-6 md:gap-10">
                     <button
                       onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
                       className="w-16 h-16 rounded-full border-2 border-sky-100 text-2xl font-bold text-sky-400 hover:bg-sky-500 hover:border-sky-500 hover:text-white transition-all duration-300 shadow-md flex items-center justify-center"
@@ -549,9 +549,9 @@ export default function BookingPage() {
 
                 <motion.div
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
-                  className="bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl shadow-slate-100/80 border border-slate-100"
+                  className="bg-white rounded-[2.5rem] p-4 md:p-10 shadow-2xl shadow-slate-100/80 border border-slate-100"
                 >
-                  <div className="flex justify-center">
+                  <div className="flex justify-center overflow-x-auto pb-4">
                     <DayPicker
                       mode="range"
                       selected={dateRange as any}
@@ -629,7 +629,7 @@ export default function BookingPage() {
                       <button
                         key={room.id}
                         onClick={() => setSelectedRoomId(room.id)}
-                        className={`group text-left p-8 rounded-[2rem] border-2 transition-all duration-400 relative overflow-hidden ${
+                        className={`group text-left p-6 md:p-8 rounded-[2rem] border-2 transition-all duration-400 relative overflow-hidden ${
                           selectedRoomId === room.id
                             ? "border-primary bg-white shadow-2xl shadow-primary/10 scale-[1.02]"
                             : "border-white bg-white shadow-lg hover:border-amber-200 hover:shadow-xl hover:scale-[1.01]"
@@ -745,7 +745,7 @@ export default function BookingPage() {
                         </div>
 
                         {/* Content */}
-                        <div className="p-8 flex flex-col flex-1">
+                        <div className="p-6 md:p-8 flex flex-col flex-1">
                           <h3 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 leading-tight px-1">
                             {pkg.name}
                           </h3>
@@ -944,7 +944,7 @@ export default function BookingPage() {
                     <button
                       type="button"
                       onClick={() => form.setValue("airportPickup", !watchPickup)}
-                      className="w-full text-left p-7 flex items-start gap-5"
+                      className="w-full text-left p-5 md:p-7 flex items-start gap-4 md:gap-5"
                     >
                       <div className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
                         watchPickup ? "bg-primary border-primary" : "border-muted-foreground/30"
@@ -981,7 +981,7 @@ export default function BookingPage() {
                     {/* Expanded: surfboard + flight info */}
                     {watchPickup && (
                       <div className="border-t border-border/30">
-                        <div className="p-7 space-y-6">
+                        <div className="p-5 md:p-7 space-y-6">
                           {/* Surfboard */}
                           <div className="flex items-center justify-between bg-sky-50 border border-sky-100 rounded-2xl p-5">
                             <div>
@@ -1060,7 +1060,7 @@ export default function BookingPage() {
                     <button
                       type="button"
                       onClick={() => form.setValue("airportDrop", !watchDrop)}
-                      className="w-full text-left p-7 flex items-start gap-5"
+                      className="w-full text-left p-5 md:p-7 flex items-start gap-4 md:gap-5"
                     >
                       <div className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
                         watchDrop ? "bg-primary border-primary" : "border-muted-foreground/30"
@@ -1159,7 +1159,7 @@ export default function BookingPage() {
                   >
                     <form className="space-y-5">
                       {/* Details card */}
-                        <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-6">
+                        <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-6">
                           <p className="text-[10px] font-black uppercase tracking-widest text-primary">Your Details</p>
 
                           <FormField control={form.control} name="guestFullName" render={({ field }) => (
@@ -1215,9 +1215,9 @@ export default function BookingPage() {
                         </div>
 
                         {/* Payment card */}
-                        <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-5">
+                        <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-5">
                           <p className="text-[10px] font-black uppercase tracking-widest text-primary">Payment Method</p>
-                          <div className="grid grid-cols-3 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             {[
                               { v: "bank_transfer", label: "Bank Transfer",  desc: "Secure wire"     },
                               { v: "cash",          label: "Pay on Arrival", desc: "Island payment"  },
@@ -1241,7 +1241,7 @@ export default function BookingPage() {
                         </div>
 
                         {/* Terms + Submit card */}
-                        <div className="bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-6">
+                        <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-6">
                           <FormField control={form.control} name="agreeTerms" render={({ field }) => (
                             <FormItem>
                               <FormControl>

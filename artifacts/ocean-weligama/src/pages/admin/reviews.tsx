@@ -3,6 +3,8 @@ import {
   useAdminUpdateReview,
   useAdminDeleteReview,
   getAdminListReviewsQueryKey,
+  useAdminMarkNotificationsRead,
+  getAdminGetNotificationCountsQueryKey,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
@@ -22,12 +24,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AdminReviews() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  const markRead = useAdminMarkNotificationsRead();
+
+  useEffect(() => {
+    markRead.mutate({ data: { type: "reviews" } }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
+      }
+    });
+  }, []);
 
   const { data: reviews, isLoading } = useAdminListReviews({
     query: { queryKey: getAdminListReviewsQueryKey() },

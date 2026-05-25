@@ -45,6 +45,8 @@ tags:
     description: Admin availability management
   - name: admin-gallery
     description: Admin gallery moderation
+  - name: admin-notifications
+    description: Admin notifications
   - name: blogs
     description: Blog operations
   - name: admin-blogs
@@ -858,6 +860,42 @@ paths:
       responses:
         "200":
           description: Deleted
+
+  # ADMIN NOTIFICATIONS
+  /v1/admin/notifications/counts:
+    get:
+      operationId: adminGetNotificationCounts
+      tags: [admin-notifications]
+      summary: Get unread notification counts
+      responses:
+        "200":
+          description: Counts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationCounts"
+
+  /v1/admin/notifications/mark-read:
+    post:
+      operationId: adminMarkNotificationsRead
+      tags: [admin-notifications]
+      summary: Mark notifications as read for a specific category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MarkNotificationsReadInput"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
 
   # ADMIN ANALYTICS
   /v1/admin/analytics/dashboard:
@@ -2205,3 +2243,24 @@ components:
           type: string
         groupThreshold:
           type: integer
+
+    NotificationCounts:
+      type: object
+      required: [bookings, reviews, messages, gallery]
+      properties:
+        bookings:
+          type: integer
+        reviews:
+          type: integer
+        messages:
+          type: integer
+        gallery:
+          type: integer
+
+    MarkNotificationsReadInput:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [bookings, reviews, messages, gallery]

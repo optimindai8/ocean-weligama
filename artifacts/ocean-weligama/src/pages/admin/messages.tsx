@@ -3,6 +3,8 @@ import {
   useAdminUpdateMessage,
   useAdminDeleteMessage,
   getAdminListMessagesQueryKey,
+  useAdminMarkNotificationsRead,
+  getAdminGetNotificationCountsQueryKey,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
@@ -24,7 +26,7 @@ import {
   ChevronRight,
   RefreshCcw
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
@@ -51,6 +53,16 @@ export default function AdminMessages() {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
+
+  const markReadNotifications = useAdminMarkNotificationsRead();
+
+  useEffect(() => {
+    markReadNotifications.mutate({ data: { type: "messages" } }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
+      }
+    });
+  }, []);
 
   const { data: messages, isLoading } = useAdminListMessages({ limit: 100 }, {
     query: { queryKey: getAdminListMessagesQueryKey({ limit: 100 }) },
