@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import {
   useAdminListRooms,
+  useAdminCreateRoom,
   useAdminUpdateRoom,
   useAdminDeleteRoom,
   getAdminListRoomsQueryKey,
@@ -89,21 +90,7 @@ const roomSchema = z.object({
 
 type RoomFormValues = z.infer<typeof roomSchema>;
 
-// Need to use fetch for POST since orval didn't generate useAdminCreateRoom properly or we just use fetch directly.
-async function createRoomAPI(token: string, data: any) {
-  const isDev = import.meta.env.DEV;
-  const apiUrl = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
-  const res = await fetch(`${apiUrl}/api/v1/admin/rooms`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error("Failed to create room");
-  return res.json();
-}
+// useAdminCreateRoom hook is used directly below — no manual fetch needed.
 
 export default function AdminRooms() {
   const { toast } = useToast();
@@ -121,6 +108,7 @@ export default function AdminRooms() {
     query: { queryKey: getAdminListRoomsQueryKey() },
   });
 
+  const createRoom = useAdminCreateRoom();
   const updateRoom = useAdminUpdateRoom();
   const deleteRoom = useAdminDeleteRoom();
 
@@ -266,9 +254,6 @@ export default function AdminRooms() {
 
   async function onSubmit(values: RoomFormValues) {
     try {
-      const token = localStorage.getItem("admin_token");
-      if (!token) throw new Error("No admin token");
-
       const filteredHighlights = values.highlights.filter((h) => h.trim() !== "");
       
       const generatedSlug = values.slug || values.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
@@ -284,7 +269,7 @@ export default function AdminRooms() {
         await updateRoom.mutateAsync({ id: editingRoom.id, data: payload as any });
         toast({ title: "Room updated successfully" });
       } else {
-        await createRoomAPI(token, payload);
+        await createRoom.mutateAsync({ data: payload as any });
         toast({ title: "Room created successfully" });
       }
 
@@ -471,7 +456,7 @@ export default function AdminRooms() {
                       <FormField control={form.control} name="category" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Category</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl><SelectTrigger className="rounded-xl"><SelectValue placeholder="Select category" /></SelectTrigger></FormControl>
                             <SelectContent>
                               {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>)}
@@ -498,7 +483,32 @@ export default function AdminRooms() {
                       <h3 className="text-lg font-bold">Capacity & Pricing</h3>
                     </div>
                     
-                    <div className="grid md:grid-cols-4 gap-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField control={form.control} name="type" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Room Type</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl><SelectTrigger className="rounded-xl"><SelectValue placeholder="Select type" /></SelectTrigger></FormControl>
+                            <SelectContent>
+                              <SelectItem value="room">Room</SelectItem>
+                              <SelectItem value="villa">Villa</SelectItem>
+                              <SelectItem value="dormitory">Dormitory</SelectItem>
+                              <SelectItem value="suite">Suite</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="basePricePerNight" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Price / Night (EUR)</FormLabel>
+                          <FormControl><Input type="text" placeholder="e.g. 150" {...field} className="rounded-xl" /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-6">
                       <FormField control={form.control} name="maxGuests" render={({ field }) => (
                         <FormItem>
                           <FormLabel>Max Guests</FormLabel>
@@ -517,13 +527,6 @@ export default function AdminRooms() {
                         <FormItem>
                           <FormLabel>Bathrooms</FormLabel>
                           <FormControl><Input type="number" min="0" {...field} className="rounded-xl" /></FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )} />
-                      <FormField control={form.control} name="basePricePerNight" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Price / Night (EUR)</FormLabel>
-                          <FormControl><Input type="text" placeholder="e.g. 150" {...field} className="rounded-xl" /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
