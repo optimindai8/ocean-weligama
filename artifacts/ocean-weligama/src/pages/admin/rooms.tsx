@@ -88,10 +88,7 @@ const roomSchema = z.object({
   status: z.enum(["active", "maintenance", "hidden"]).default("active"),
   isFeatured: z.boolean().default(false),
   gallery: z.array(z.string()).default([]),
-  highlights: z.array(z.string()).default([]).refine(
-    arr => arr.filter(h => h.trim()).length > 0,
-    "Add at least one feature"
-  ),
+  highlights: z.array(z.string()).default([]),
 });
 
 type RoomFormValues = z.infer<typeof roomSchema>;
@@ -267,11 +264,6 @@ export default function AdminRooms() {
   async function onSubmit(values: RoomFormValues) {
     try {
       const filteredHighlights = values.highlights.filter((h) => h.trim() !== "");
-      
-      if (filteredHighlights.length === 0) {
-        toast({ variant: "destructive", title: "Validation Error", description: "Add at least one feature" });
-        return;
-      }
       
       const generatedSlug = values.slug || values.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
       
@@ -720,7 +712,7 @@ export default function AdminRooms() {
                     <Button 
                       type="submit" 
                       className="rounded-full px-8 bg-primary hover:bg-primary/90"
-                      disabled={createRoom.isPending || updateRoom.isPending}
+                      disabled={createRoom.isPending || updateRoom.isPending || (editingRoom ? !form.formState.isDirty : false)}
                     >
                       {createRoom.isPending || updateRoom.isPending ? (
                         <>
