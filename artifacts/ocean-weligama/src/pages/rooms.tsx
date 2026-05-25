@@ -108,7 +108,7 @@ export default function RoomsPage() {
                     )}
 
                     {/* Adaptive Disclosure Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-95 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-95 transition-all duration-700" />
                     
                     {/* Top Badges */}
                     <div className="absolute top-8 left-8 flex flex-col gap-2">
@@ -122,15 +122,15 @@ export default function RoomsPage() {
                       )}
                     </div>
 
-                    <div className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-500 capitalize text-[10px] font-bold">
+                    <div className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white opacity-100 transition-all duration-500 capitalize text-[10px] font-bold">
                       {room.type}
                     </div>
 
                     {/* Reveal Content */}
-                    <div className="absolute inset-0 p-6 sm:p-10 flex flex-col justify-end transform translate-y-0 lg:translate-y-10 lg:group-hover:translate-y-0 transition-transform duration-700">
+                    <div className="absolute inset-0 p-6 sm:p-10 flex flex-col justify-end transition-transform duration-700">
                       
                       {room.highlights && room.highlights.length > 0 && (
-                        <div className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-700 delay-100 mb-4">
+                        <div className="opacity-100 transition-opacity duration-700 delay-100 mb-4">
                           <ul className="text-white/80 text-xs font-medium space-y-1">
                             {room.highlights.slice(0, 3).map((h: string, i: number) => (
                               <li key={i} className="flex items-center gap-2">
@@ -145,12 +145,12 @@ export default function RoomsPage() {
                         </div>
                       )}
 
-                      <div className="flex flex-wrap gap-4 text-white/70 text-[10px] font-bold uppercase tracking-widest mb-4 sm:mb-6 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-700 delay-200">
+                      <div className="flex flex-wrap gap-4 text-white/70 text-[10px] font-bold uppercase tracking-widest mb-4 sm:mb-6 opacity-100 transition-opacity duration-700 delay-200">
                         <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-accent" />{room.maxGuests} Guests</span>
                         <span className="flex items-center gap-1.5"><BedDouble className="w-3.5 h-3.5 text-accent" />{room.bedrooms} Bed</span>
                       </div>
 
-                      <div className="flex items-center justify-between opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-700 delay-300">
+                      <div className="flex items-center justify-between opacity-100 transition-opacity duration-700 delay-300">
                         <div className="flex flex-col">
                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">Starting from</span>
                           <span className="text-xl sm:text-2xl font-bold text-white">{formatPrice(room.basePricePerNight)}<span className="text-xs sm:text-sm font-normal text-white/60">/night</span></span>
