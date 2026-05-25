@@ -238,7 +238,7 @@ export default function Home() {
                 title: "Explore", 
                 tagline: "Local traditions", 
                 description: "From beach life to hidden island gems.", 
-                img: "/service-explore.png",
+                img: "/service-explore.jpg",
                 delay: 0.4
               }
             ].map((item) => (
