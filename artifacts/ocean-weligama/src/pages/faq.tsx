@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Footer } from "@/components/footer";
-import { ChevronDown, MessageCircle, HelpCircle, Waves, Plane, Bed, Wifi, CreditCard, Search, Map, Sun, Surfboard, CalendarCheck, ShieldCheck, Sparkles } from "lucide-react";
+import { ChevronDown, MessageCircle, HelpCircle, Waves, Plane, Bed, Wifi, CreditCard, Search, Map, Sun, CalendarCheck, ShieldCheck, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 
 const FAQ_DATA = [
@@ -52,7 +52,7 @@ const FAQ_DATA = [
       },
       {
         question: "Do I need to bring my own surfboard?",
-        icon: Surfboard,
+        icon: Waves,
         answer: "Not at all. We have a comprehensive quiver of high-quality surfboards for rent, ranging from soft-top longboards for beginners to performance shortboards for advanced riders. You can rent them daily or include them in your package."
       },
       {
