@@ -205,35 +205,74 @@ export default function BookingConfirmationPage() {
                         const type = srv?.type ? srv.type.toUpperCase() : "MAIN";
                         
                         return (
-                          <div key={idx} className="bg-white rounded-3xl border-2 border-slate-100 shadow-sm overflow-hidden flex flex-col md:flex-row gap-6 p-6">
-                            <div className="relative w-full md:w-44 h-44 md:h-36 shrink-0 rounded-2xl overflow-hidden bg-emerald-50">
+                          <div key={idx} className="bg-white rounded-[2.5rem] border-2 border-slate-100 shadow-sm overflow-hidden flex flex-col w-full max-w-md mx-auto mb-6">
+                            <div className="relative w-full h-64 shrink-0 bg-emerald-50">
                               {srv?.imageUrl || srv?.heroImageUrl ? (
                                 <img src={srv.imageUrl || srv?.heroImageUrl} alt={s.serviceName} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <Award className="w-12 h-12 text-emerald-200" />
+                                  <Award className="w-16 h-16 text-emerald-200" />
                                 </div>
                               )}
-                              <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm text-[#0B3D5E] font-black text-[8px] uppercase tracking-wider px-2.5 py-1.5 rounded-full shadow-sm z-10 border border-slate-100">
+                              <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm text-[#0B3D5E] font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-full shadow-md z-10 border border-white/20">
                                 {tag} {type}
                               </div>
                             </div>
-                            <div className="flex-1 flex flex-col justify-between">
-                              <div>
-                                <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
-                                  <h4 className="text-xl font-serif font-black text-[#0B3D5E] leading-tight">{s.serviceName}</h4>
-                                  <span className="font-black text-2xl text-[#0B3D5E]">{currencySymbol}{s.subtotal}</span>
+                            
+                            <div className="p-6 md:p-8 flex flex-col flex-1">
+                              <h4 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 leading-tight px-1">
+                                {s.serviceName}
+                              </h4>
+                              <p className="text-3xl font-extrabold text-[#0B3D5E] mb-1 px-1">
+                                {currencySymbol}{s.subtotal}
+                              </p>
+                              <p className="text-xs text-slate-400 font-mono mb-4 px-1">
+                                {srv?.slug || s.serviceName.toLowerCase().replace(/ /g, "-")}
+                              </p>
+                              
+                              <hr className="border-slate-100 my-4" />
+                              
+                              {srv?.highlights && srv.highlights.length > 0 && (
+                                <div className="space-y-3 mb-6 flex-1 px-1">
+                                  {(() => {
+                                    const isExpanded = expandedPkgs[idx.toString()];
+                                    const visibleHighlights = isExpanded ? srv.highlights : srv.highlights.slice(0, 6);
+                                    const hasMore = srv.highlights.length > 6;
+
+                                    return (
+                                      <>
+                                        {visibleHighlights.map((hl: string, i: number) => (
+                                          <div key={i} className="flex items-start gap-2.5">
+                                            <Check className="w-4 h-4 text-[#4BBCCC] shrink-0 mt-0.5" />
+                                            <span className="text-slate-600 font-medium text-sm leading-relaxed">{hl}</span>
+                                          </div>
+                                        ))}
+                                        
+                                        {hasMore && (
+                                          <button
+                                            type="button"
+                                            onClick={(e) => {
+                                              e.preventDefault();
+                                              setExpandedPkgs(prev => ({ ...prev, [idx.toString()]: !prev[idx.toString()] }));
+                                            }}
+                                            className="text-[#4BBCCC] hover:text-[#4BBCCC]/80 font-extrabold text-xs italic hover:underline mt-2 inline-block cursor-pointer"
+                                          >
+                                            {isExpanded ? "show less highlights" : `+ ${srv.highlights.length - 6} more highlights`}
+                                          </button>
+                                        )}
+                                      </>
+                                    );
+                                  })()}
                                 </div>
-                                <p className="text-xs text-slate-400 font-mono mb-2">
-                                  {srv?.slug || s.serviceName.toLowerCase().replace(/ /g, "-")}
+                              )}
+                              
+                              {!srv?.highlights?.length && srv?.description && (
+                                <p className="text-sm text-slate-600 mb-6 leading-relaxed px-1">
+                                  {srv.description}
                                 </p>
-                                {srv?.description && (
-                                  <p className="text-xs text-slate-600 mb-3 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100/50 italic font-medium">
-                                    {srv.description}
-                                  </p>
-                                )}
-                              </div>
-                              <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 font-bold">
+                              )}
+                              
+                              <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 font-bold px-1">
                                 <span>Quantity: {s.quantity}</span>
                                 <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold">Main Package</div>
                               </div>
