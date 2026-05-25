@@ -81,7 +81,14 @@ router.post("/v1/bookings/check", async (req, res) => {
       for (const sId of serviceIds) {
         const service = addons.find((s) => s.id === sId);
         if (service) {
-          servicesSubtotal += parseFloat(service.basePrice);
+          const price = parseFloat(service.basePrice);
+          let qty = 1;
+          if (service.unit === "per_person") {
+            qty = guestCount;
+          } else if (service.unit === "per_day") {
+            qty = nights;
+          }
+          servicesSubtotal += price * qty;
         }
       }
     }
@@ -142,6 +149,7 @@ router.post("/v1/bookings", async (req, res) => {
       serviceId: string;
       unitPrice: number;
       subtotal: number;
+      quantity: number;
     }> = [];
 
     if (serviceIds.length > 0) {
@@ -154,11 +162,19 @@ router.post("/v1/bookings", async (req, res) => {
         const service = addons.find((s) => s.id === sId);
         if (service) {
           const price = parseFloat(service.basePrice);
-          servicesSubtotal += price;
+          let qty = 1;
+          if (service.unit === "per_person") {
+            qty = guestCount;
+          } else if (service.unit === "per_day") {
+            qty = nights;
+          }
+          const subtotal = price * qty;
+          servicesSubtotal += subtotal;
           serviceDetails.push({
             serviceId: service.id,
             unitPrice: price,
-            subtotal: price,
+            subtotal: subtotal,
+            quantity: qty,
           });
         }
       }
@@ -200,7 +216,7 @@ router.post("/v1/bookings", async (req, res) => {
         serviceDetails.map((sd) => ({
           bookingId: booking.id,
           serviceId: sd.serviceId,
-          quantity: 1,
+          quantity: sd.quantity,
           unitPrice: sd.unitPrice.toFixed(2),
           subtotal: sd.subtotal.toFixed(2),
         }))

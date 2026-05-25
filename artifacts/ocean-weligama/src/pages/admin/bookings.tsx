@@ -390,7 +390,7 @@ export default function AdminBookings() {
                             const srv = servicesList?.find(
                               x => x.id === s.serviceId || x.name?.toLowerCase() === s.serviceName?.toLowerCase()
                             );
-                            const isPackage = srv?.type === "main" || srv?.category?.toLowerCase() === "package";
+                            const isPackage = srv?.type === "main" || srv?.category?.toLowerCase()?.includes("package");
                             const currencySymbol = "€";
                             const srvIdKey = srv?.id || s.serviceId;
                             

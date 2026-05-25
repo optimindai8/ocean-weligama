@@ -102,6 +102,7 @@ export default function AdminPackages() {
   const [isUploading, setIsUploading] = useState(false);
   const [newHighlight, setNewHighlight] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activeTab, setActiveTab] = useState<"main" | "optional">("main");
 
   const { data: services, isLoading } = useAdminListServices({
     query: { queryKey: getAdminListServicesQueryKey() },
@@ -110,6 +111,26 @@ export default function AdminPackages() {
   const createService = useAdminCreateService();
   const updateService = useAdminUpdateService();
   const deleteService = useAdminDeleteService();
+
+  const getCategoryLabel = (cat: string | null | undefined): string => {
+    if (!cat) return "Main Package";
+    if (cat === "Beginner Surf Packages") return "Beginning Surf";
+    if (cat === "Advance Surf Packages") return "Advance Surf";
+    if (cat === "Yoga Retreat Packages") return "Yoga Surf";
+    return cat;
+  };
+
+  const filteredServices = (services as Service[] || []).filter((s) => {
+    if (activeTab === "main") {
+      return s.type === "main";
+    } else {
+      return s.type === "optional" && [
+        "Beginner Surf Packages",
+        "Advance Surf Packages",
+        "Yoga Retreat Packages"
+      ].includes(s.category || "");
+    }
+  });
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
@@ -323,15 +344,38 @@ export default function AdminPackages() {
           </Button>
         </div>
 
+        <div className="flex border-b border-border mb-8 gap-2">
+          <button
+            onClick={() => setActiveTab("main")}
+            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all ${
+              activeTab === "main"
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Surf Main Packages
+          </button>
+          <button
+            onClick={() => setActiveTab("optional")}
+            className={`pb-3 px-4 text-sm font-bold border-b-2 transition-all ${
+              activeTab === "optional"
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Optional Packages
+          </button>
+        </div>
+
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <Skeleton key={i} className="h-64 rounded-3xl" />
             ))}
           </div>
-        ) : services && (services as Service[]).filter(s => s.type === "main").length > 0 ? (
+        ) : filteredServices.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(services as Service[]).filter(s => s.type === "main").map((service) => (
+            {filteredServices.map((service) => (
               <div 
                 key={service.id} 
                 className="group relative bg-card hover:bg-accent/5 border border-border rounded-3xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 flex flex-col"
@@ -347,8 +391,8 @@ export default function AdminPackages() {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="default" className="rounded-full">
-                      Main
+                    <Badge variant="default" className="rounded-full capitalize">
+                      {service.type === "main" ? "Main" : "Optional"}
                     </Badge>
                     <Badge variant={service.isActive ? "default" : "secondary"} className="rounded-full">
                       {service.isActive ? "Active" : "Inactive"}
@@ -381,7 +425,7 @@ export default function AdminPackages() {
                   <h3 className="text-xl font-bold mb-1">{service.name}</h3>
                   <div className="flex items-center gap-2 mb-3">
                     <Badge variant="outline" className="text-[10px] uppercase tracking-wider bg-muted/50 border-none rounded-md px-1.5 py-0.5">
-                      {service.category || "Main Package"}
+                      {getCategoryLabel(service.category)}
                     </Badge>
                     <span className="text-xs text-muted-foreground font-mono">/{service.slug}</span>
                   </div>
@@ -544,8 +588,65 @@ export default function AdminPackages() {
                   {/* Right Column: Configuration */}
                   <div className="space-y-8">
                     <div className="grid grid-cols-1 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Package Type</FormLabel>
+                            <Select
+                              onValueChange={(val) => {
+                                field.onChange(val);
+                                if (val === "main") {
+                                  form.setValue("category", "Main Package");
+                                } else {
+                                  form.setValue("category", "Beginner Surf Packages");
+                                }
+                              }}
+                              value={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="rounded-xl h-12">
+                                  <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="rounded-xl">
+                                <SelectItem value="main">Surf Main Package</SelectItem>
+                                <SelectItem value="optional">Optional Package</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-
+                      {form.watch("type") === "optional" && (
+                        <FormField
+                          control={form.control}
+                          name="category"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Optional Package Sub-type</FormLabel>
+                              <Select
+                                onValueChange={field.onChange}
+                                value={field.value || "Beginner Surf Packages"}
+                              >
+                                <FormControl>
+                                  <SelectTrigger className="rounded-xl h-12">
+                                    <SelectValue placeholder="Select sub-type" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent className="rounded-xl">
+                                  <SelectItem value="Beginner Surf Packages">Beginning Surf</SelectItem>
+                                  <SelectItem value="Advance Surf Packages">Advance Surf</SelectItem>
+                                  <SelectItem value="Yoga Retreat Packages">Yoga Surf</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">

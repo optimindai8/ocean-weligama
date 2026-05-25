@@ -250,7 +250,16 @@ export default function BookingPage() {
     if (Array.isArray(services)) {
       for (const svcId of selectedDbServiceIds) {
         const svc = services.find(s => s.id === svcId);
-        if (svc) t += parseFloat(svc.basePrice || "0");
+        if (svc) {
+          const price = parseFloat(svc.basePrice || "0");
+          let qty = 1;
+          if (svc.unit === "per_person") {
+            qty = guestCount;
+          } else if (svc.unit === "per_day") {
+            qty = nights;
+          }
+          t += price * qty;
+        }
       }
     }
     return t.toFixed(2);

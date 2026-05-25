@@ -22,7 +22,14 @@ export const services = pgTable("services", {
   iconEmoji: text("icon_emoji"),
   imageUrl: text("image_url"),
   highlights: text("highlights").array(),
+  // Category field:
+  // - For Main Packages: "Main Package"
+  // - For Optional Packages: "Beginner Surf Packages" | "Advance Surf Packages" | "Yoga Retreat Packages"
+  // - For Experiences/Add-ons: "Adventure" | "activities" | "tours" | "wellness"
   category: text("category").notNull(),
+  // Type field:
+  // - "main" for Surf Main Packages
+  // - "optional" for Optional Packages and Add-on Experiences
   type: text("type").default("main").notNull(), // 'main' or 'optional'
   basePrice: decimal("base_price", { precision: 10, scale: 2 }).notNull(),
   unit: serviceUnitEnum("unit").notNull(),
