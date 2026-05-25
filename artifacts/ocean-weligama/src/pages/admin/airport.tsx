@@ -202,10 +202,8 @@ export default function AdminAirport() {
 
   function validate() {
     const fields = [
-      { name: "Standard Pickup", val: form.pickupPrice },
-      { name: "Group Pickup", val: form.pickupPriceGroup },
-      { name: "Standard Drop", val: form.dropPrice },
-      { name: "Group Drop", val: form.dropPriceGroup },
+      { name: "Pickup Rate", val: form.pickupPrice },
+      { name: "Drop Rate", val: form.dropPrice },
     ];
     for (const f of fields) {
       const n = parseFloat(f.val);
@@ -213,11 +211,6 @@ export default function AdminAirport() {
         toast({ variant: "destructive", title: `${f.name} must be a positive number.` });
         return false;
       }
-    }
-    const t = parseInt(form.groupThreshold, 10);
-    if (isNaN(t) || t < 2) {
-      toast({ variant: "destructive", title: "Group threshold must be at least 2." });
-      return false;
     }
     return true;
   }
@@ -297,7 +290,6 @@ export default function AdminAirport() {
           <Info className="w-4 h-4 text-[#1A6B8A] shrink-0 mt-0.5" />
           <p className="text-sm text-[#0B3D5E]/80 leading-relaxed">
             Prices set here are applied <span className="font-semibold">immediately</span> to the booking page.
-            Standard rates apply below the group threshold; group rates apply at or above it.
             All prices are in <span className="font-semibold">Euros (€)</span> and are collected on arrival.
           </p>
         </div>
@@ -317,20 +309,13 @@ export default function AdminAirport() {
               title="Airport Pick-up"
               subtitle="Bandaranaike International Airport → Surf Camp"
             >
-              <div className="grid sm:grid-cols-2 gap-5">
+              <div className="max-w-xs">
                 <PriceField
                   label="Standard Rate"
-                  description={`Applies for bookings with fewer than ${threshold} guests`}
+                  description="Applies to all airport pick-up bookings."
                   value={form.pickupPrice}
                   onChange={(v) => updateField("pickupPrice", v)}
                   testId="input-pickup-price"
-                />
-                <PriceField
-                  label="Group Rate"
-                  description={`Applies for bookings with ${threshold} or more guests`}
-                  value={form.pickupPriceGroup}
-                  onChange={(v) => updateField("pickupPriceGroup", v)}
-                  testId="input-pickup-price-group"
                 />
               </div>
             </SectionCard>
@@ -342,40 +327,13 @@ export default function AdminAirport() {
               title="Airport Drop"
               subtitle="Surf Camp → Bandaranaike International Airport"
             >
-              <div className="grid sm:grid-cols-2 gap-5">
+              <div className="max-w-xs">
                 <PriceField
                   label="Standard Rate"
-                  description={`Applies for bookings with fewer than ${threshold} guests`}
+                  description="Applies to all airport drop-off bookings."
                   value={form.dropPrice}
                   onChange={(v) => updateField("dropPrice", v)}
                   testId="input-drop-price"
-                />
-                <PriceField
-                  label="Group Rate"
-                  description={`Applies for bookings with ${threshold} or more guests`}
-                  value={form.dropPriceGroup}
-                  onChange={(v) => updateField("dropPriceGroup", v)}
-                  testId="input-drop-price-group"
-                />
-              </div>
-            </SectionCard>
-
-            {/* ── Group Threshold ── */}
-            <SectionCard
-              icon={<Users className="w-5 h-5 text-[#0B3D5E]" />}
-              iconBg="bg-violet-100"
-              title="Group Threshold"
-              subtitle="Minimum guest count to qualify for group pricing"
-            >
-              <div className="max-w-xs">
-                <PriceField
-                  label="Group Threshold (guests)"
-                  description="Guests at or above this count will be charged the group rate."
-                  value={form.groupThreshold}
-                  onChange={(v) => updateField("groupThreshold", v)}
-                  prefix=""
-                  type="number"
-                  testId="input-group-threshold"
                 />
               </div>
             </SectionCard>
@@ -386,18 +344,12 @@ export default function AdminAirport() {
                 <span className="w-1 h-4 bg-[#4BBCCC] rounded-full inline-block" />
                 Live Preview — How guests will see it
               </p>
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="max-w-xs">
                 <PreviewCard
                   label="Standard Booking"
-                  pax={standardPax}
+                  pax="All bookings"
                   pickup={parseFloat(form.pickupPrice || "0").toFixed(2)}
                   drop={parseFloat(form.dropPrice || "0").toFixed(2)}
-                />
-                <PreviewCard
-                  label="Group Booking"
-                  pax={groupPax}
-                  pickup={parseFloat(form.pickupPriceGroup || "0").toFixed(2)}
-                  drop={parseFloat(form.dropPriceGroup || "0").toFixed(2)}
                 />
               </div>
             </div>
