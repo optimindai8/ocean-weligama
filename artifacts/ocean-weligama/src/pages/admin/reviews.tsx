@@ -31,15 +31,7 @@ export default function AdminReviews() {
   const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const markRead = useAdminMarkNotificationsRead();
 
-  useEffect(() => {
-    markRead.mutate({ data: { type: "reviews" } }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
-      }
-    });
-  }, []);
 
   const { data: reviews, isLoading } = useAdminListReviews({
     query: { queryKey: getAdminListReviewsQueryKey() },
@@ -57,6 +49,7 @@ export default function AdminReviews() {
         onSuccess: () => {
           toast({ title: "Review updated" });
           queryClient.invalidateQueries({ queryKey: getAdminListReviewsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
         },
         onError: () => toast({ variant: "destructive", title: "Update failed" }),
       }
@@ -72,6 +65,7 @@ export default function AdminReviews() {
           toast({ title: "Review deleted permanently" });
           setDeleteId(null);
           queryClient.invalidateQueries({ queryKey: getAdminListReviewsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
         },
         onError: (err: any) => {
           console.error("Delete review error:", err);

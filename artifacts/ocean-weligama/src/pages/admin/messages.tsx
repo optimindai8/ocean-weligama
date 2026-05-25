@@ -56,13 +56,7 @@ export default function AdminMessages() {
 
   const markReadNotifications = useAdminMarkNotificationsRead();
 
-  useEffect(() => {
-    markReadNotifications.mutate({ data: { type: "messages" } }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
-      }
-    });
-  }, []);
+
 
   const { data: messages, isLoading } = useAdminListMessages({ limit: 100 }, {
     query: { queryKey: getAdminListMessagesQueryKey({ limit: 100 }) },
@@ -87,6 +81,7 @@ export default function AdminMessages() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getAdminListMessagesQueryKey({ limit: 100 }) });
+          queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
         },
         onError: () => toast({ variant: "destructive", title: "Update failed" }),
       }
@@ -100,6 +95,7 @@ export default function AdminMessages() {
         onSuccess: () => {
           toast({ title: "Marked as replied" });
           queryClient.invalidateQueries({ queryKey: getAdminListMessagesQueryKey({ limit: 100 }) });
+          queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
         },
         onError: () => toast({ variant: "destructive", title: "Update failed" }),
       }
@@ -115,6 +111,7 @@ export default function AdminMessages() {
           toast({ title: "Message deleted permanently" });
           setDeleteId(null);
           queryClient.invalidateQueries({ queryKey: getAdminListMessagesQueryKey({ limit: 100 }) });
+          queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
         },
         onError: (err: any) => {
           console.error("Delete message error:", err);

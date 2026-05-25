@@ -437,10 +437,10 @@ router.delete("/v1/admin/availability/:id", requireAdmin, async (req, res) => {
 // Admin Notifications
 router.get("/v1/admin/notifications/counts", requireAdmin, async (req, res) => {
   try {
-    const unreadBookings = await db.select({ id: bookings.id }).from(bookings).where(eq(bookings.isRead, false));
-    const unreadReviews = await db.select({ id: reviews.id }).from(reviews).where(eq(reviews.isRead, false));
-    const unreadMessages = await db.select({ id: contactMessages.id }).from(contactMessages).where(eq(contactMessages.isRead, false));
-    const unreadGallery = await db.select({ id: gallery.id }).from(gallery).where(eq(gallery.isRead, false));
+    const unreadBookings = await db.select({ id: bookings.id }).from(bookings).where(and(eq(bookings.status, "pending"), isNull(bookings.deletedAt)));
+    const unreadReviews = await db.select({ id: reviews.id }).from(reviews).where(and(eq(reviews.isApproved, false), isNull(reviews.deletedAt)));
+    const unreadMessages = await db.select({ id: contactMessages.id }).from(contactMessages).where(and(eq(contactMessages.isRead, false), isNull(contactMessages.deletedAt)));
+    const unreadGallery = await db.select({ id: gallery.id }).from(gallery).where(and(eq(gallery.status, "pending"), isNull(gallery.deletedAt)));
 
     return res.json({
       bookings: unreadBookings.length,

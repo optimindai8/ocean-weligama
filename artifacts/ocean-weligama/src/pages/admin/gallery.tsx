@@ -5,6 +5,7 @@ import {
   useAdminListGallery,
   useAdminUpdateGalleryStatus,
   useAdminDeleteGalleryItem,
+  getAdminGetNotificationCountsQueryKey,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
 import {
@@ -51,6 +52,7 @@ export default function AdminGallery() {
     try {
       await updateStatus.mutateAsync({ id, data: { status } });
       queryClient.invalidateQueries({ queryKey: ["/api/v1/admin/gallery"] });
+      queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
     } catch (err) {
       console.error(err);
     }
@@ -60,6 +62,7 @@ export default function AdminGallery() {
     try {
       await deleteItem.mutateAsync({ id });
       queryClient.invalidateQueries({ queryKey: ["/api/v1/admin/gallery"] });
+      queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
       setConfirmDelete(null);
     } catch (err) {
       console.error(err);

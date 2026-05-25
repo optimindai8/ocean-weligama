@@ -117,15 +117,7 @@ export default function AdminBookings() {
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
   const [expandedPkgs, setExpandedPkgs] = useState<Record<string, boolean>>({});
 
-  const markRead = useAdminMarkNotificationsRead();
 
-  useEffect(() => {
-    markRead.mutate({ data: { type: "bookings" } }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
-      }
-    });
-  }, []);
 
   const params = { page, limit: 20, ...(statusFilter ? { status: statusFilter } : {}) };
   const { data, isLoading } = useAdminListBookings(params, {
@@ -182,6 +174,7 @@ export default function AdminBookings() {
         onSuccess: () => {
           toast({ title: "Status updated" });
           queryClient.invalidateQueries({ queryKey: getAdminListBookingsQueryKey(params) });
+          queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
           setSelectedBookingId(null);
         },
         onError: () => toast({ variant: "destructive", title: "Update failed" }),
