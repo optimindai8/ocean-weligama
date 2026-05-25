@@ -88,3 +88,5 @@ Also can you do bellow mention thing above for it have one galery page
 this menu section include on the gallery page but I want to change it as tab name as seprate without one line bar also front of the tab name want accurately show how many image have under the category please make these thing accurately.
 
 Also make another thing of booking page can be selecting multiple rooms. But currently can't do it
+
+Still not shown booking on the admin panel bookings page Please make it apear please. 

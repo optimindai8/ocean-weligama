@@ -363,26 +363,32 @@ export default function AdminPackages() {
         >
           <button
             onClick={() => setActiveTab("main")}
-            className={`pb-4 px-2 text-sm font-black tracking-wide uppercase transition-all relative ${
+            className={`pb-4 px-2 text-sm font-black tracking-wide uppercase transition-all relative flex items-center gap-2 group ${
               activeTab === "main"
                 ? "text-[#0B3D5E]"
                 : "text-slate-400 hover:text-slate-600"
             }`}
           >
-            Surf Main Packages
+            <span>Surf Main Packages</span>
+            <span className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] transition-colors ${activeTab === "main" ? "bg-[#0B3D5E]/10 text-[#0B3D5E]" : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"}`}>
+              {(services as Service[] || []).filter(s => s.type === "main").length}
+            </span>
             {activeTab === "main" && (
               <motion.div layoutId="packageTabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-[#0B3D5E] rounded-t-full" />
             )}
           </button>
           <button
             onClick={() => setActiveTab("optional")}
-            className={`pb-4 px-2 text-sm font-black tracking-wide uppercase transition-all relative ${
+            className={`pb-4 px-2 text-sm font-black tracking-wide uppercase transition-all relative flex items-center gap-2 group ${
               activeTab === "optional"
                 ? "text-[#0B3D5E]"
                 : "text-slate-400 hover:text-slate-600"
             }`}
           >
-            Optional Packages
+            <span>Optional Packages</span>
+            <span className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] transition-colors ${activeTab === "optional" ? "bg-[#0B3D5E]/10 text-[#0B3D5E]" : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"}`}>
+              {(services as Service[] || []).filter(s => s.type === "optional" && ["Beginner Surf Packages", "Advance Surf Packages", "Yoga Retreat Packages"].includes(s.category || "")).length}
+            </span>
             {activeTab === "optional" && (
               <motion.div layoutId="packageTabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-[#0B3D5E] rounded-t-full" />
             )}

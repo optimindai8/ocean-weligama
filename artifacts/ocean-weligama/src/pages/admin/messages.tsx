@@ -65,6 +65,14 @@ export default function AdminMessages() {
   const updateMessage = useAdminUpdateMessage();
   const deleteMessage = useAdminDeleteMessage();
 
+  const getMsgCount = (f: string) => {
+    const allMsgs = messages as any[] || [];
+    if (f === "all") return allMsgs.length;
+    if (f === "unread") return allMsgs.filter(m => !m.isRead).length;
+    if (f === "replied") return allMsgs.filter(m => m.isReplied).length;
+    return 0;
+  };
+
   const messageList = (messages as any[])?.filter(msg => {
     // Apply status filter
     const statusMatch = filter === "unread" ? !msg.isRead : filter === "replied" ? msg.isReplied : true;
@@ -155,7 +163,7 @@ export default function AdminMessages() {
                     variant="ghost"
                     size="sm"
                     onClick={() => setFilter(f)}
-                    className={`rounded-xl px-6 capitalize text-xs font-bold transition-all relative z-10 ${
+                    className={`rounded-xl px-6 capitalize text-xs font-bold transition-all relative z-10 flex items-center gap-2 group ${
                       filter === f ? "text-primary" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
                   >
@@ -166,7 +174,10 @@ export default function AdminMessages() {
                         style={{ zIndex: -1 }}
                       />
                     )}
-                    {f}
+                    <span>{f}</span>
+                    <span className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] transition-colors ${filter === f ? "bg-primary/10 text-primary" : "bg-muted-foreground/10 text-muted-foreground group-hover:bg-muted-foreground/20"}`}>
+                      {getMsgCount(f)}
+                    </span>
                   </Button>
                 ))}
               </div>

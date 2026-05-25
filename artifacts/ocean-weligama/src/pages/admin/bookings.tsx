@@ -198,6 +198,15 @@ export default function AdminBookings() {
     }
   }
 
+  const { data: allBookingsRes } = useAdminListBookings({ limit: 1000 }, {
+    query: { queryKey: getAdminListBookingsQueryKey({ limit: 1000 }) },
+  });
+  const allBookings = (allBookingsRes as any)?.bookings || [];
+  const getCount = (s: string) => {
+    if (!s) return (allBookingsRes as any)?.total || allBookings.length;
+    return allBookings.filter((b: any) => b.status === s).length;
+  };
+
   const totalPages = Math.ceil((bookingsData?.total ?? 0) / 20);
 
   return (
@@ -229,11 +238,14 @@ export default function AdminBookings() {
               key={s}
               onClick={() => { setStatusFilter(s); setPage(1); }}
               data-testid={`filter-status-${s || "all"}`}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all capitalize tracking-wide ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all capitalize tracking-wide ${
                 statusFilter === s ? "bg-[#0B3D5E] text-white shadow-md shadow-[#0B3D5E]/20" : "bg-transparent text-slate-500 hover:bg-slate-50 hover:text-[#0B3D5E]"
               }`}
             >
-              {s || "All"}
+              <span>{s.replace("_", " ") || "All"}</span>
+              <span className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] transition-colors ${statusFilter === s ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"}`}>
+                {getCount(s)}
+              </span>
             </button>
           ))}
         </motion.div>
