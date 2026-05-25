@@ -343,17 +343,17 @@ export default function AdminRooms() {
 
   return (
     <AdminLayout>
-      <div classNa
-            onClick={openCreateDialog} 
-            className="rounded-full px-6 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all"
-            disabled={isLoading || createRoom.isPending || updateRoom.isPending}
-          
+      <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Rooms & Villas</h1>
             <p className="text-muted-foreground mt-1">Manage accommodation options and packages.</p>
           </div>
-          <Button onClick={openCreateDialog} className="rounded-full px-6 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all">
+          <Button 
+            onClick={openCreateDialog} 
+            className="rounded-full px-6 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all"
+            disabled={isLoading || createRoom.isPending || updateRoom.isPending}
+          >
             <Plus className="w-4 h-4" /> Add New Room
           </Button>
         </div>
