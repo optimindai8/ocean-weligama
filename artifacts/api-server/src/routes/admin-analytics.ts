@@ -25,7 +25,7 @@ router.get("/v1/admin/analytics/dashboard", requireAdmin, async (req, res) => {
         and(
           isNull(bookings.deletedAt),
           gte(bookings.createdAt, monthStart),
-          eq(bookings.paymentStatus, "paid")
+          sql`${bookings.status} NOT IN ('cancelled', 'no_show')`
         )
       );
 
@@ -83,7 +83,13 @@ router.get("/v1/admin/analytics/bookings-trend", requireAdmin, async (req, res) 
         totalAmount: bookings.totalAmount,
       })
       .from(bookings)
-      .where(and(isNull(bookings.deletedAt), gte(bookings.createdAt, since)))
+      .where(
+        and(
+          isNull(bookings.deletedAt),
+          gte(bookings.createdAt, since),
+          sql`${bookings.status} NOT IN ('cancelled', 'no_show')`
+        )
+      )
       .orderBy(bookings.createdAt);
 
     // Group by date

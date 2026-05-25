@@ -144,6 +144,10 @@ export default function AdminBookings() {
       guestCount: number;
       status: string;
       paymentStatus: string;
+      roomRatePerNight: string;
+      roomSubtotal: string;
+      servicesSubtotal: string;
+      cleaningFee: string;
       totalAmount: string;
       currency: string;
       createdAt: string;
@@ -259,7 +263,14 @@ export default function AdminBookings() {
                           {b.paymentStatus}
                         </span>
                       </td>
-                      <td className="px-4 py-3 font-bold">€{b.totalAmount}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-col">
+                          <span className="font-bold text-foreground">€{b.totalAmount}</span>
+                          <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                            Room: €{b.roomSubtotal} | Add-ons: €{b.servicesSubtotal}
+                          </span>
+                        </div>
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                           <select
@@ -582,11 +593,31 @@ export default function AdminBookings() {
                       <h3 className="text-sm font-black uppercase tracking-widest text-slate-700 mb-4 flex items-center gap-2">
                         <CreditCard className="w-4 h-4" /> Payment Summary
                       </h3>
-                      <div className="flex justify-between items-center py-3 border-b border-border">
-                        <span className="text-muted-foreground">Payment Status</span>
-                        <Badge className={PAYMENT_COLORS[selectedBooking.paymentStatus] || "bg-muted text-muted-foreground"} variant="outline">
-                          {selectedBooking.paymentStatus}
-                        </Badge>
+                      <div className="space-y-2.5 pb-4 border-b border-border text-sm">
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted-foreground">Room Price ({selectedBooking.nights} nights)</span>
+                          <span className="font-semibold text-foreground">
+                            €{selectedBooking.roomRatePerNight} × {selectedBooking.nights} = €{selectedBooking.roomSubtotal}
+                          </span>
+                        </div>
+                        {parseFloat(selectedBooking.cleaningFee || "0") > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-muted-foreground">Cleaning Fee</span>
+                            <span className="font-semibold text-foreground">€{selectedBooking.cleaningFee}</span>
+                          </div>
+                        )}
+                        {parseFloat(selectedBooking.servicesSubtotal || "0") > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-muted-foreground">Add-ons & Packages Subtotal</span>
+                            <span className="font-semibold text-foreground">€{selectedBooking.servicesSubtotal}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between items-center pt-1.5">
+                          <span className="text-muted-foreground">Payment Status</span>
+                          <Badge className={PAYMENT_COLORS[selectedBooking.paymentStatus] || "bg-muted text-muted-foreground"} variant="outline">
+                            {selectedBooking.paymentStatus}
+                          </Badge>
+                        </div>
                       </div>
                       <div className="flex justify-between items-center pt-4">
                         <span className="font-bold text-lg text-foreground">Total</span>

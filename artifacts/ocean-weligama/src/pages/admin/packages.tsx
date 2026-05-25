@@ -247,6 +247,7 @@ export default function AdminPackages() {
       description: values.description || null,
       imageUrl: values.imageUrl || null,
       category: values.category || "Main Package",
+      unit: "flat_rate" as const,
       sortOrder: values.sortOrder ? parseInt(values.sortOrder, 10) || 0 : 0,
     };
 

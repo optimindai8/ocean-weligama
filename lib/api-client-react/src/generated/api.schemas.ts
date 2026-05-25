@@ -203,6 +203,15 @@ export const ServiceType = {
   optional: "optional",
 } as const;
 
+export type ServiceUnit = (typeof ServiceUnit)[keyof typeof ServiceUnit];
+
+export const ServiceUnit = {
+  per_person: "per_person",
+  per_day: "per_day",
+  per_session: "per_session",
+  flat_rate: "flat_rate",
+} as const;
+
 export interface Service {
   id: string;
   slug: string;
@@ -213,6 +222,7 @@ export interface Service {
   /** @nullable */
   category?: string | null;
   basePrice: string;
+  unit: ServiceUnit;
   isActive: boolean;
   isBookable?: boolean;
   sortOrder?: number;
@@ -229,6 +239,16 @@ export const ServiceInputType = {
   optional: "optional",
 } as const;
 
+export type ServiceInputUnit =
+  (typeof ServiceInputUnit)[keyof typeof ServiceInputUnit];
+
+export const ServiceInputUnit = {
+  per_person: "per_person",
+  per_day: "per_day",
+  per_session: "per_session",
+  flat_rate: "flat_rate",
+} as const;
+
 export interface ServiceInput {
   slug: string;
   /** @nullable */
@@ -238,6 +258,7 @@ export interface ServiceInput {
   /** @nullable */
   category?: string | null;
   basePrice: string;
+  unit: ServiceInputUnit;
   isActive?: boolean;
   isBookable?: boolean;
   name: string;
@@ -253,6 +274,16 @@ export const ServiceUpdateType = {
   optional: "optional",
 } as const;
 
+export type ServiceUpdateUnit =
+  (typeof ServiceUpdateUnit)[keyof typeof ServiceUpdateUnit];
+
+export const ServiceUpdateUnit = {
+  per_person: "per_person",
+  per_day: "per_day",
+  per_session: "per_session",
+  flat_rate: "flat_rate",
+} as const;
+
 export interface ServiceUpdate {
   slug?: string;
   /** @nullable */
@@ -262,6 +293,7 @@ export interface ServiceUpdate {
   /** @nullable */
   category?: string | null;
   basePrice?: string;
+  unit?: ServiceUpdateUnit;
   isActive?: boolean;
   isBookable?: boolean;
   name?: string;

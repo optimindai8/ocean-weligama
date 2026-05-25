@@ -239,6 +239,9 @@ export default function BookingPage() {
   const [priceData,             setPriceData]             = useState<any>(null);
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
 
+  const nights = dateRange.from && dateRange.to
+    ? Math.round((dateRange.to.getTime() - dateRange.from.getTime()) / 86400000) : 0;
+
   const { data: rooms,    isLoading: roomsLoading } = useListRooms();
   const { data: services }                           = useListServices();
   const checkAvail = useCheckAvailabilityAndPrice();
@@ -294,8 +297,6 @@ export default function BookingPage() {
   const airportTotal   = (watchPickup ? ap.pickup : 0) + (watchDrop ? ap.drop : 0);
 
   const selectedRoom = Array.isArray(rooms) ? rooms.find(r => r.id === selectedRoomId) : undefined;
-  const nights = dateRange.from && dateRange.to
-    ? Math.round((dateRange.to.getTime() - dateRange.from.getTime()) / 86400000) : 0;
 
   // ── Navigation helpers ─────────────────────────────────────────────────────
   function goTo(n: number) { setDir(n > step ? 1 : -1); setStep(n); }
@@ -1291,7 +1292,7 @@ export default function BookingPage() {
 
                       <h3 className="text-xl font-serif font-bold italic">Your Island Journey</h3>
 
-                      {/* Booking basics */}
+                      {/* Booking basics & Room Price */}
                       <div className="space-y-3 pb-5 border-b border-white/15 text-sm">
                         <div className="flex justify-between">
                           <span className="text-white/60">Room</span>
@@ -1302,21 +1303,54 @@ export default function BookingPage() {
                           <span className="font-bold">{fmt(dateRange.from)} → {fmt(dateRange.to)}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-white/60">Guests × Nights</span>
-                          <span className="font-bold">{guestCount} × {nights}</span>
+                          <span className="text-white/60">Guests × Stay</span>
+                          <span className="font-bold">{guestCount} {guestCount === 1 ? "guest" : "guests"} · {nights} {nights === 1 ? "night" : "nights"}</span>
                         </div>
+                        {selectedRoom && (
+                          <>
+                            <div className="flex justify-between text-xs text-white/80 pt-1.5 border-t border-white/5">
+                              <span className="text-white/60">Room Rate</span>
+                              <span>€{parseFloat(selectedRoom.basePricePerNight).toFixed(2)} / night</span>
+                            </div>
+                            <div className="flex justify-between text-xs text-white/80">
+                              <span className="text-white/60">Room Subtotal</span>
+                              <span className="font-bold">€{(parseFloat(selectedRoom.basePricePerNight) * nights).toFixed(2)}</span>
+                            </div>
+                            {parseFloat(selectedRoom.cleaningFee || "0") > 0 && (
+                              <div className="flex justify-between text-xs text-white/80">
+                                <span className="text-white/60">Cleaning Fee</span>
+                                <span>€{parseFloat(selectedRoom.cleaningFee || "0").toFixed(2)}</span>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
 
                       {/* Packages & Add-ons */}
                       {selectedDbServiceIds.length > 0 && (
-                        <div className="space-y-2 pb-5 border-b border-white/15 text-sm">
+                        <div className="space-y-2.5 pb-5 border-b border-white/15 text-sm">
                           <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Packages & Experiences</p>
                           {selectedDbServiceIds.map(id => {
                             const svc = Array.isArray(services) ? services.find(s => s.id === id) : null;
+                            if (!svc) return null;
+                            const basePrice = parseFloat(svc.basePrice || "0");
+                            let qty = 1;
+                            let calculationText = "";
+                            if (svc.unit === "per_person") {
+                              qty = guestCount;
+                              calculationText = ` (€${basePrice.toFixed(0)} × ${guestCount} guests)`;
+                            } else if (svc.unit === "per_day") {
+                              qty = nights;
+                              calculationText = ` (€${basePrice.toFixed(0)} × ${nights} nights)`;
+                            }
+                            const svcSubtotal = basePrice * qty;
                             return (
-                              <div key={id} className="flex justify-between">
-                                <span className="text-white/80">{svc?.name}</span>
-                                <span className="font-bold">€{svc ? parseInt(svc.basePrice) : 0}</span>
+                              <div key={id} className="flex justify-between items-baseline gap-2">
+                                <span className="text-white/80 text-xs leading-tight">
+                                  {svc.name}
+                                  <span className="text-[10px] text-white/50 font-normal">{calculationText}</span>
+                                </span>
+                                <span className="font-bold shrink-0">€{svcSubtotal.toFixed(2)}</span>
                               </div>
                             );
                           })}

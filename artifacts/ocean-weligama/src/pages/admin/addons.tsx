@@ -229,6 +229,7 @@ export default function AdminAddons() {
       description: values.description || null,
       imageUrl: null,
       category: "Adventure",
+      unit: "flat_rate" as const,
       sortOrder: 0,
     };
 

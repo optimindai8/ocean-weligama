@@ -1494,7 +1494,7 @@ components:
 
     Service:
       type: object
-      required: [id, slug, basePrice, isActive, name, type]
+      required: [id, slug, basePrice, isActive, name, type, unit]
       properties:
         id:
           type: string
@@ -1513,6 +1513,9 @@ components:
           type: ["string", "null"]
         basePrice:
           type: string
+        unit:
+          type: string
+          enum: [per_person, per_day, per_session, flat_rate]
         isActive:
           type: boolean
         isBookable:
@@ -1526,7 +1529,7 @@ components:
 
     ServiceInput:
       type: object
-      required: [slug, basePrice, name, type]
+      required: [slug, basePrice, name, type, unit]
       properties:
         slug:
           type: string
@@ -1543,6 +1546,9 @@ components:
           type: ["string", "null"]
         basePrice:
           type: string
+        unit:
+          type: string
+          enum: [per_person, per_day, per_session, flat_rate]
         isActive:
           type: boolean
         isBookable:
@@ -1570,6 +1576,9 @@ components:
           type: ["string", "null"]
         basePrice:
           type: string
+        unit:
+          type: string
+          enum: [per_person, per_day, per_session, flat_rate]
         isActive:
           type: boolean
         isBookable:
