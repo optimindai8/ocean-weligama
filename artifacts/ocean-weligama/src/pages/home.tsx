@@ -4,8 +4,19 @@ import { Testimonials } from "@/components/testimonials";
 import { useListServices, useListFeaturedRooms } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { Badge } from "@/components/ui/badge";
+import { Users, BedDouble, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/components/LanguageContext";
+
+const ROOM_CATEGORIES = [
+  { value: "", label: "All Spaces" },
+  { value: "solo", label: "Solo Traveler Packages" },
+  { value: "couples", label: "Two Person Packages" },
+  { value: "family", label: "Family Accommodation" },
+];
 
 export default function Home() {
+  const { formatPrice } = useLanguage();
   const { data: services } = useListServices();
   const { data: rooms } = useListFeaturedRooms();
 
@@ -272,23 +283,102 @@ export default function Home() {
         <div className="text-center mb-16">
           <h2 className="text-4xl font-serif font-bold text-primary mb-4">Your Private Sanctuary</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {Array.isArray(rooms) && rooms.map(room => (
-            <div key={room.id} className="bg-card rounded-2xl overflow-hidden shadow-sm hover-elevate">
-              {room.heroImageUrl && <img src={room.heroImageUrl} alt={room.name} loading="lazy" decoding="async" className="w-full h-64 object-cover" />}
-              <div className="p-8">
-                <h3 className="text-xl font-bold text-foreground mb-2">{room.name}</h3>
-                <p className="text-muted-foreground mb-4 line-clamp-2">{room.shortDesc || room.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-lg">{room.basePricePerNight} {room.currency}/night</span>
-                  <Link href={`/rooms/${room.slug}`}>
-                    <Button variant="outline" className="rounded-full">View Room</Button>
-                  </Link>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+          {Array.isArray(rooms) && rooms.length > 0 ? rooms.map((room: any, idx) => {
+            const coverImg = (room.gallery && room.gallery.length > 0) ? room.gallery[0] : room.heroImageUrl;
+            const catLabel = ROOM_CATEGORIES.find(c => c.value === room.category)?.label || "Room";
+            
+            return (
+              <motion.div
+                key={room.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.6, delay: idx * 0.05 }}
+                className="group relative"
+              >
+                {/* Luxury Reveal Card */}
+                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-xl group-hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] transition-all duration-700 bg-muted">
+                  {coverImg ? (
+                    <img
+                      src={coverImg}
+                      alt={room.name}
+                      className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-accent/10">
+                      <BedDouble className="w-16 h-16 text-primary/20" />
+                    </div>
+                  )}
+
+                  {/* Adaptive Disclosure Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent opacity-95 transition-all duration-700" />
+                  
+                  {/* Top Badges */}
+                  <div className="absolute top-8 left-8 flex flex-col gap-2">
+                    <Badge className="bg-white text-primary border-none font-black text-[9px] uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
+                      {catLabel}
+                    </Badge>
+                    {room.isFeatured && (
+                      <Badge className="bg-accent text-primary border-none font-black text-[9px] uppercase tracking-widest px-3 py-1 rounded-full w-fit shadow-lg">
+                        Featured
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white opacity-100 transition-all duration-500 capitalize text-[10px] font-bold">
+                    {room.type}
+                  </div>
+
+                  {/* Reveal Content */}
+                  <div className="absolute inset-0 p-6 sm:p-10 flex flex-col justify-end transition-transform duration-700">
+                    
+                    {room.highlights && room.highlights.length > 0 && (
+                      <div className="opacity-100 transition-opacity duration-700 delay-100 mb-4">
+                        <ul className="text-white/80 text-xs font-medium space-y-1">
+                          {room.highlights.slice(0, 3).map((h: string, i: number) => (
+                            <li key={i} className="flex items-center gap-2">
+                              <div className="w-1 h-1 rounded-full bg-accent" />
+                              {h}
+                            </li>
+                          ))}
+                          {room.highlights.length > 3 && (
+                            <li className="text-white/50 text-[10px] italic pt-1">+ {room.highlights.length - 3} more</li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-4 text-white/70 text-[10px] font-bold uppercase tracking-widest mb-4 sm:mb-6 opacity-100 transition-opacity duration-700 delay-200">
+                      <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-accent" />{room.maxGuests} Guests</span>
+                      <span className="flex items-center gap-1.5"><BedDouble className="w-3.5 h-3.5 text-accent" />{room.bedrooms} Bed</span>
+                    </div>
+
+                    <div className="flex items-center justify-between opacity-100 transition-opacity duration-700 delay-300">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">Starting from</span>
+                        <span className="text-xl sm:text-2xl font-bold text-white">{formatPrice(room.basePricePerNight)}<span className="text-xs sm:text-sm font-normal text-white/60">/night</span></span>
+                      </div>
+                      <Link href={`/rooms/${room.slug}`}>
+                        <button className="bg-accent text-primary w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all shadow-2xl">
+                          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </button>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-          {!Array.isArray(rooms) && <p className="text-center col-span-full py-12 text-muted-foreground">No rooms found.</p>}
+
+                {/* Clean Background Text */}
+                <div className="block mt-6 px-2 text-center transition-opacity duration-500">
+                  <h4 className="text-lg md:text-xl font-serif font-bold text-foreground line-clamp-2 mb-1">{room.name}</h4>
+                  <p className="text-primary text-sm font-black">{formatPrice(room.basePricePerNight)} / night</p>
+                </div>
+              </motion.div>
+            );
+          }) : (
+            <p className="text-center col-span-full py-12 text-muted-foreground">No rooms found.</p>
+          )}
         </div>
       </section>
 
