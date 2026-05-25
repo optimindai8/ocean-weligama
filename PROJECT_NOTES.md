@@ -82,3 +82,7 @@ lsof -ti :8080 | xargs kill -9
 Other main Issue is not correctly calculate the Booking Price Please make it correct. I want to accurately calculate the what guest Booking. Also all thecorrect pricing show on the Admin panel Bookings table also booking details Window and dasboard. Room Price also Must be calulate. All service price must be calculate
 
 Also I want to add other tab for the Optional Packages section in the main website Package page. Pecause I want to show here all the optional packages one tabe so add to it 'All' tab in this tab must be show all the Optional packages. Also other thing is Optional package cart must be same like main  surf package. on the car mention button can you convert to like this View Details and arrow button same like main surf package have. Also another issue Is this optional packages show on the booking process in the Eperiences step but I want to it show on the pakcages step also please make it correct. please make those all the issus without hit the limit.
+
+
+Also can you do bellow mention thing above for it have one galery page 
+this menu section include on the gallery page but I want to change it as tab name as seprate without one line bar also front of the tab name want accurately show how many image have under the category please make these thing accurately.

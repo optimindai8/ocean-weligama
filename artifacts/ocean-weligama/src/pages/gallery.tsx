@@ -44,9 +44,13 @@ export default function GalleryPage() {
 
 
 
-  const { data: dbItems = [], isLoading } = useListGallery(
-    activeCategory !== "all" ? { category: activeCategory, limit: 96 } : { limit: 96 }
-  );
+  const { data: dbItems = [], isLoading } = useListGallery({ limit: 96 });
+
+  const getCount = (catValue: Category) => {
+    if (!dbItems || !Array.isArray(dbItems)) return 0;
+    if (catValue === "all") return dbItems.length;
+    return dbItems.filter(item => item.category === catValue).length;
+  };
 
   const createMutation = useCreateGalleryItem();
 
@@ -172,27 +176,24 @@ export default function GalleryPage() {
           </div>
 
           {/* Filter Bar */}
-          <div className="w-full flex overflow-x-auto hide-scrollbar smooth-inertia whitespace-nowrap gap-3 mb-10 pb-2 md:mb-20 p-2 bg-white/5 backdrop-blur-xl rounded-full md:max-w-fit mx-auto border border-white/10 shadow-2xl justify-start md:justify-center">
+          <div className="flex flex-wrap gap-4 justify-center mb-10 md:mb-20">
             {CATEGORIES.map((cat) => {
               const isActive = activeCategory === cat;
+              const count = getCount(cat);
               return (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`relative px-8 py-3.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-500 z-10 tracking-widest uppercase whitespace-nowrap ${
-                    isActive ? "text-white" : "text-muted-foreground hover:text-primary"
+                  className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border ${
+                    isActive 
+                      ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105" 
+                      : "bg-white/80 backdrop-blur-md text-muted-foreground border-border/60 hover:border-primary/30 hover:text-foreground hover:bg-white"
                   }`}
                 >
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeFilter"
-                      className="absolute inset-0 bg-primary rounded-full shadow-[0_20px_50px_-10px_rgba(var(--primary-rgb),0.6)]"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.8 }}
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-tr from-white/30 to-transparent rounded-full" />
-                    </motion.div>
-                  )}
-                  <span className="relative z-20">{CATEGORY_LABELS[cat]}</span>
+                  <span className={`flex items-center justify-center w-6 h-6 rounded-full text-[11px] transition-colors ${isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
+                    {count}
+                  </span>
+                  <span>{CATEGORY_LABELS[cat]}</span>
                 </button>
               );
             })}
