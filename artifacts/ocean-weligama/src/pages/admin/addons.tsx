@@ -308,71 +308,83 @@ export default function AdminAddons() {
 
   return (
     <AdminLayout>
-      <div className="p-8 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-serif font-bold text-foreground mb-1">
+      <div className="p-8 md:p-12 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h1 className="text-4xl font-serif font-black text-[#0B3D5E]">
               Experiences & Add-ons
             </h1>
-            <p className="text-muted-foreground text-sm mt-1">
+            <p className="text-slate-500 font-medium mt-2 text-sm">
               Manage extra experiences, optional lessons, and rentals like Yoga, Safari, and Scooters.
             </p>
-          </div>
-          <Button 
-            onClick={() => handleOpenDialog()} 
-            className="rounded-full shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 transition-all gap-2"
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
           >
-            <Plus className="w-5 h-5" />
-            Add New Experience
-          </Button>
+            <Button 
+              onClick={() => handleOpenDialog()} 
+              className="rounded-full px-6 gap-2 bg-[#0B3D5E] hover:bg-[#0B3D5E]/90 text-white shadow-lg shadow-[#0B3D5E]/20 hover:shadow-xl hover:shadow-[#0B3D5E]/30 hover:-translate-y-0.5 transition-all"
+            >
+              <Plus className="w-5 h-5" />
+              Add New Experience
+            </Button>
+          </motion.div>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} className="h-64 rounded-3xl" />
+              <Skeleton key={i} className="h-[22rem] rounded-[2.5rem]" />
             ))}
           </div>
         ) : services && (services as Service[]).filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package")).length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {(services as Service[]).filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package")).map((service) => (
-              <div 
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(services as Service[]).filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package")).map((service, idx) => (
+              <motion.div 
                 key={service.id} 
-                className="group relative bg-card hover:bg-accent/5 border border-border rounded-3xl p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 flex flex-col"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="group relative bg-white border border-slate-100 rounded-[2.5rem] p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 flex flex-col"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden border border-border group-hover:scale-110 transition-transform">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-16 h-16 rounded-[1.2rem] overflow-hidden shadow-md shadow-slate-200/50 group-hover:scale-105 transition-transform bg-slate-50">
                     {service.imageUrl ? (
                       <img src={service.imageUrl} alt={service.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-accent/10 flex items-center justify-center text-accent">
+                      <div className="w-full h-full bg-[#0B3D5E]/5 flex items-center justify-center text-[#0B3D5E]/30">
                         <Sparkles className="w-6 h-6" />
                       </div>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="rounded-full">
+                    <Badge variant="outline" className="rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-slate-200 text-slate-500">
                       Optional
                     </Badge>
-                    <Badge variant={service.isActive ? "default" : "secondary"} className="rounded-full">
+                    <Badge className={`rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 ${service.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-500"}`}>
                       {service.isActive ? "Active" : "Inactive"}
                     </Badge>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[#0B3D5E] opacity-0 group-hover:opacity-100 transition-all">
                           <MoreVertical className="w-4 h-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="rounded-2xl p-2 min-w-[160px]">
-                        <DropdownMenuItem onClick={() => handleOpenDialog(service)} className="rounded-xl gap-2 cursor-pointer">
+                      <DropdownMenuContent align="end" className="w-48 rounded-2xl shadow-xl border-slate-100 p-2">
+                        <DropdownMenuItem onClick={() => handleOpenDialog(service)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
                           <Pencil className="w-4 h-4" /> Edit Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toggleActive(service)} className="rounded-xl gap-2 cursor-pointer">
+                        <DropdownMenuItem onClick={() => toggleActive(service)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
                           {service.isActive ? <><EyeOff className="w-4 h-4" /> Deactivate</> : <><Eye className="w-4 h-4" /> Activate</>}
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           onClick={() => setDeletingId(service.id)} 
-                          className="rounded-xl gap-2 text-destructive focus:text-destructive cursor-pointer"
+                          className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-rose-600 focus:text-rose-700 focus:bg-rose-50"
                         >
                           <Trash2 className="w-4 h-4" /> Delete Permanently
                         </DropdownMenuItem>
@@ -382,48 +394,52 @@ export default function AdminAddons() {
                 </div>
 
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-1">{service.name}</h3>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Badge variant="outline" className="text-[10px] uppercase tracking-wider bg-muted/50 border-none rounded-md px-1.5 py-0.5">
+                  <h3 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 leading-tight pr-4">{service.name}</h3>
+                  <div className="flex flex-wrap items-center gap-2 mb-4">
+                    <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest text-[#4BBCCC] border-[#4BBCCC]/30 bg-[#4BBCCC]/5 rounded-md px-2 py-0.5">
                       {service.category || "Adventure"}
                     </Badge>
-                    <span className="text-xs text-muted-foreground font-mono">/{service.slug}</span>
+                    <span className="text-[10px] text-slate-400 font-mono font-medium truncate max-w-[120px]">/{service.slug}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground line-clamp-3 mb-6 min-h-[4.5rem]">
+                  <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 min-h-[4.5rem]">
                     {service.description || "No description provided."}
                   </p>
                 </div>
 
-                <div className="pt-6 border-t border-border mt-auto flex items-center justify-between">
+                <div className="pt-6 border-t border-slate-100 mt-auto flex items-end justify-between">
                   <div className="flex flex-col">
-                    <span className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">Price</span>
+                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-black mb-0.5">Price</span>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-2xl font-black text-primary">€{service.basePrice}</span>
+                      <span className="text-3xl font-black text-[#0B3D5E]">€{service.basePrice}</span>
                     </div>
                   </div>
                   {service.isBookable && (
-                    <Badge className="bg-primary/5 text-primary border-none font-medium flex gap-1 items-center rounded-full">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                    <Badge className="bg-[#4BBCCC]/10 text-[#4BBCCC] border-none font-bold text-[10px] uppercase tracking-widest px-3 py-1 flex gap-1.5 items-center rounded-full shadow-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#4BBCCC] animate-pulse" />
                       Bookable
                     </Badge>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         ) : (
-          <div className="bg-card rounded-[40px] border border-dashed border-border p-20 flex flex-col items-center justify-center text-center">
-            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
-              <Sparkles className="w-10 h-10 text-muted-foreground" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-sm p-20 flex flex-col items-center justify-center text-center"
+          >
+            <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner">
+              <Sparkles className="w-10 h-10 text-slate-300" />
             </div>
-            <h2 className="text-2xl font-bold mb-2">No experiences yet</h2>
-            <p className="text-muted-foreground max-w-md mb-8">
+            <h2 className="text-2xl font-black text-[#0B3D5E] mb-2">No experiences yet</h2>
+            <p className="text-slate-500 font-medium max-w-md mb-8">
               Start adding your optional experiences and add-ons like Yoga, Surfing Lessons, or Scooter Rentals.
             </p>
-            <Button onClick={() => handleOpenDialog()} className="rounded-full px-8">
+            <Button onClick={() => handleOpenDialog()} className="rounded-full px-8 bg-[#0B3D5E] hover:bg-[#0B3D5E]/90 text-white font-bold h-12 shadow-lg shadow-[#0B3D5E]/20">
               Create Your First Add-on
             </Button>
-          </div>
+          </motion.div>
         )}
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

@@ -201,98 +201,118 @@ export default function AdminBookings() {
 
   return (
     <AdminLayout>
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Bookings</h1>
-            <p className="text-muted-foreground text-sm mt-1">{bookingsData?.total ?? 0} total bookings</p>
-          </div>
+      <div className="p-8 md:p-12 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h1 className="text-4xl font-serif font-black text-[#0B3D5E]">Bookings</h1>
+            <p className="text-slate-500 font-medium mt-2 text-sm">{bookingsData?.total ?? 0} total bookings managed here.</p>
+          </motion.div>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 mb-6 flex-wrap">
-          <Filter className="w-4 h-4 text-muted-foreground mt-2" />
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="flex gap-2 mb-8 flex-wrap items-center bg-white p-2 rounded-2xl border border-slate-100 shadow-sm w-max"
+        >
+          <div className="px-3">
+            <Filter className="w-4 h-4 text-slate-400" />
+          </div>
+          <div className="w-px h-6 bg-slate-100 mx-1"></div>
           {STATUSES.map((s) => (
             <button
               key={s}
               onClick={() => { setStatusFilter(s); setPage(1); }}
               data-testid={`filter-status-${s || "all"}`}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border capitalize ${
-                statusFilter === s ? "bg-primary text-white border-primary" : "bg-card border-border text-muted-foreground hover:border-primary"
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all capitalize tracking-wide ${
+                statusFilter === s ? "bg-[#0B3D5E] text-white shadow-md shadow-[#0B3D5E]/20" : "bg-transparent text-slate-500 hover:bg-slate-50 hover:text-[#0B3D5E]"
               }`}
             >
               {s || "All"}
             </button>
           ))}
-        </div>
+        </motion.div>
 
         {/* Table */}
-        <div className="bg-card rounded-2xl border border-border overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-[2rem] border border-slate-100 shadow-lg shadow-slate-200/50 overflow-hidden"
+        >
           {isLoading ? (
-            <div className="p-6 space-y-3">
-              {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-14 rounded-xl" />)}
+            <div className="p-8 space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}
             </div>
           ) : bookingsData?.bookings && bookingsData.bookings.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="border-b border-border bg-muted/30">
+                <thead className="border-b border-slate-100 bg-slate-50/50">
                   <tr>
-                    {["Reference", "Name", "Email", "Phone", "Check-in", "Check-out", "Nights", "Status", "Total", "Actions"].map((h) => (
-                      <th key={h} className="text-left px-4 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wide whitespace-nowrap">{h}</th>
+                    {["Reference", "Guest", "Contact", "Check-in", "Check-out", "Nights", "Status", "Total", "Actions"].map((h) => (
+                      <th key={h} className="text-left px-6 py-4 font-black text-slate-400 text-[10px] uppercase tracking-widest whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody className="divide-y divide-slate-100">
                   {bookingsData.bookings.map((b) => (
                     <tr 
                       key={b.id} 
-                      className={`transition-colors cursor-pointer ${
+                      className={`transition-colors cursor-pointer group ${
                         b.status === "pending" 
-                          ? "bg-blue-50/60 hover:bg-blue-100/60" 
+                          ? "bg-blue-50/30 hover:bg-blue-50/60" 
                           : b.status === "confirmed"
-                          ? "bg-emerald-50/30 hover:bg-emerald-100/30"
-                          : "hover:bg-muted/20"
+                          ? "bg-emerald-50/20 hover:bg-emerald-50/50"
+                          : "hover:bg-slate-50"
                       }`}
                       onClick={() => setSelectedBooking(b)}
                       data-testid={`row-booking-${b.id}`}
                     >
-                      <td className="px-4 py-3 font-mono text-xs text-primary font-bold">
-                        <div className="flex items-center gap-2">
-                          {b.reference}
+                      <td className="px-6 py-5 font-mono text-xs font-bold text-[#4BBCCC] whitespace-nowrap">
+                        <div className="flex flex-col gap-1.5">
+                          <span>{b.reference}</span>
                           {b.status === "pending" && (
-                            <span className="px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider font-black bg-blue-500 text-white shadow-sm">
+                            <span className="w-max px-2 py-0.5 rounded-md text-[9px] uppercase tracking-wider font-black bg-blue-500 text-white shadow-sm">
                               New
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <p className="font-medium text-foreground">{b.guestFullName}</p>
+                      <td className="px-6 py-5 whitespace-nowrap">
+                        <p className="font-bold text-[#0B3D5E] group-hover:text-sky-700 transition-colors">{b.guestFullName}</p>
                       </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">{b.guestEmail}</td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">{b.guestPhone || "N/A"}</td>
-                      <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{b.checkIn}</td>
-                      <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{b.checkOut}</td>
-                      <td className="px-4 py-3 text-center">{b.nights}n</td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded-lg text-xs font-medium border capitalize ${STATUS_COLORS[b.status] ?? ""}`}>
+                      <td className="px-6 py-5">
+                        <div className="flex flex-col gap-1 text-xs">
+                          <span className="text-slate-600 font-medium">{b.guestEmail}</span>
+                          {b.guestPhone && <span className="text-slate-400">{b.guestPhone}</span>}
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 text-slate-600 font-medium whitespace-nowrap">{b.checkIn}</td>
+                      <td className="px-6 py-5 text-slate-600 font-medium whitespace-nowrap">{b.checkOut}</td>
+                      <td className="px-6 py-5 text-center font-bold text-slate-400">{b.nights}n</td>
+                      <td className="px-6 py-5">
+                        <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-black border-0 ${STATUS_COLORS[b.status] ?? "bg-slate-100 text-slate-600"}`}>
                           {b.status.replace("_", " ")}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-6 py-5 whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="font-bold text-foreground">€{b.totalAmount}</span>
-                          <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                            Room: €{b.roomSubtotal} | Add-ons: €{b.servicesSubtotal}
+                          <span className="font-black text-[#0B3D5E]">€{b.totalAmount}</span>
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            Room: €{b.roomSubtotal}
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
                           <select
                             value={b.status}
                             onChange={(e) => handleStatusChange(b.id, e.target.value)}
-                            className="text-xs border border-border rounded-lg px-2 py-1 bg-background text-foreground cursor-pointer"
+                            className="text-xs font-bold uppercase tracking-wider border border-slate-200 rounded-xl px-3 py-1.5 bg-white text-slate-600 cursor-pointer hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0B3D5E]/20"
                             data-testid={`select-status-${b.id}`}
                           >
                             {["pending", "confirmed", "checked_in", "checked_out", "cancelled", "no_show"].map((s) => (
@@ -302,7 +322,7 @@ export default function AdminBookings() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            className="h-8 w-8 rounded-xl text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
                             onClick={() => handleDeleteBooking(b.id)}
                             disabled={deleteBooking.isPending}
                             title="Delete Booking"
@@ -318,23 +338,25 @@ export default function AdminBookings() {
               </table>
             </div>
           ) : (
-            <div className="flex items-center justify-center h-48 text-muted-foreground text-sm">
-              No bookings found
+            <div className="flex flex-col items-center justify-center h-64 text-slate-400 bg-slate-50/50">
+              <Calendar className="w-12 h-12 mb-4 text-slate-300" />
+              <p className="text-base font-bold text-[#0B3D5E]">No bookings found</p>
+              <p className="text-sm">Try adjusting your filters</p>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-muted-foreground">
+          <div className="flex items-center justify-between mt-8 px-4">
+            <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">
               Page {page} of {totalPages}
             </p>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} data-testid="button-prev-page">
+              <Button variant="outline" size="sm" className="rounded-xl border-slate-200 hover:bg-slate-50" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} data-testid="button-prev-page">
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} data-testid="button-next-page">
+              <Button variant="outline" size="sm" className="rounded-xl border-slate-200 hover:bg-slate-50" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} data-testid="button-next-page">
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>

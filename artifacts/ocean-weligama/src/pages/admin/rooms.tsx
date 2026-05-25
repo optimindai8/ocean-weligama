@@ -348,108 +348,131 @@ export default function AdminRooms() {
 
   return (
     <AdminLayout>
-      <div className="p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Rooms & Villas</h1>
-            <p className="text-muted-foreground mt-1">Manage accommodation options and packages.</p>
-          </div>
-          <Button 
-            onClick={openCreateDialog} 
-            className="rounded-full px-6 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all"
-            disabled={isLoading || createRoom.isPending || updateRoom.isPending}
+      <div className="p-8 md:p-12 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
           >
-            <Plus className="w-4 h-4" /> Add New Room
-          </Button>
+            <h1 className="text-4xl font-serif font-black text-[#0B3D5E]">Rooms & Villas</h1>
+            <p className="text-slate-500 font-medium mt-2 text-sm">Manage accommodation options and packages.</p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Button 
+              onClick={openCreateDialog} 
+              className="rounded-full px-6 gap-2 bg-[#0B3D5E] hover:bg-[#0B3D5E]/90 text-white shadow-lg shadow-[#0B3D5E]/20 hover:shadow-xl hover:shadow-[#0B3D5E]/30 hover:-translate-y-0.5 transition-all"
+              disabled={isLoading || createRoom.isPending || updateRoom.isPending}
+            >
+              <Plus className="w-4 h-4" /> Add New Room
+            </Button>
+          </motion.div>
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-64 rounded-2xl" />)}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-[26rem] rounded-[2rem]" />)}
           </div>
         ) : roomList && roomList.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {roomList.map((room) => {
+            {roomList.map((room, idx) => {
               const coverImg = (room.gallery && room.gallery.length > 0) ? room.gallery[0] : room.heroImageUrl;
               const catLabel = categories.find(c => c.id === room.category)?.label || room.category;
               return (
-              <div key={room.id} className="bg-card rounded-3xl border border-border/50 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group">
-                <div className="relative h-48 bg-muted overflow-hidden">
+              <motion.div 
+                key={room.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-white rounded-[2.5rem] border border-slate-100 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-200 hover:-translate-y-1 transition-all duration-300 overflow-hidden group flex flex-col"
+              >
+                <div className="relative h-56 bg-slate-50 overflow-hidden shrink-0">
                   {coverImg ? (
                     <img src={coverImg} alt={room.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-secondary/10">
-                      <BedDouble className="w-12 h-12 text-muted-foreground/30" />
+                    <div className="w-full h-full flex items-center justify-center bg-slate-100/50">
+                      <BedDouble className="w-12 h-12 text-slate-300" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D5E]/80 via-[#0B3D5E]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   <div className="absolute top-4 left-4 flex gap-2">
-                    <span className={`text-xs font-bold px-3 py-1 rounded-full shadow-sm ${STATUS_COLORS[room.status] ?? "bg-gray-100 text-gray-700"}`}>
-                      {room.status.toUpperCase()}
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-md ${
+                      room.status === 'active' ? "bg-emerald-400 text-emerald-950" :
+                      room.status === 'hidden' ? "bg-slate-700 text-white" :
+                      "bg-amber-400 text-amber-950"
+                    }`}>
+                      {room.status}
                     </span>
                   </div>
                   {room.isFeatured && (
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
-                      <Star className="w-3 h-3 text-[#F0A500] fill-[#F0A500]" />
-                      <span className="text-[10px] font-bold text-gray-800 uppercase tracking-widest">Featured</span>
+                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+                      <Star className="w-3.5 h-3.5 text-[#F0A500] fill-[#F0A500]" />
+                      <span className="text-[10px] font-black text-[#0B3D5E] uppercase tracking-widest">Featured</span>
                     </div>
                   )}
                 </div>
                 
-                <div className="p-6 relative">
-                  <div className="absolute -top-6 right-6">
+                <div className="p-8 relative flex-1 flex flex-col">
+                  <div className="absolute -top-7 right-8">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-0 hover:scale-110 hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:bg-white transition-all duration-300 group-hover:-translate-y-1">
-                          <MoreVertical className="w-5 h-5 text-gray-800 transition-transform group-hover:scale-110" />
+                        <Button variant="outline" size="icon" className="w-14 h-14 rounded-full bg-white shadow-xl shadow-slate-200/50 border-0 hover:scale-110 hover:shadow-2xl hover:bg-white transition-all duration-300">
+                          <MoreVertical className="w-5 h-5 text-[#0B3D5E]" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 rounded-xl shadow-xl">
-                        <DropdownMenuItem onClick={() => openEditDialog(room)} className="gap-2 cursor-pointer py-2.5">
+                      <DropdownMenuContent align="end" className="w-48 rounded-2xl shadow-xl border-slate-100 p-2">
+                        <DropdownMenuItem onClick={() => openEditDialog(room)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
                           <Pencil className="w-4 h-4" /> Edit Room Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toggleStatus(room.id, room.status)} className="gap-2 cursor-pointer py-2.5">
+                        <DropdownMenuItem onClick={() => toggleStatus(room.id, room.status)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
                           {room.status === "active" ? <><EyeOff className="w-4 h-4" /> Hide from Public</> : <><Eye className="w-4 h-4" /> Show to Public</>}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => confirmDelete(room.id, room.name)} className="text-red-600 focus:text-red-600 focus:bg-red-50 gap-2 cursor-pointer py-2.5">
+                        <DropdownMenuItem onClick={() => confirmDelete(room.id, room.name)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-rose-600 focus:text-rose-700 focus:bg-rose-50">
                           <Trash2 className="w-4 h-4" /> Delete Room
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
 
-                  <p className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{catLabel}</p>
-                  <h3 className="text-xl font-serif font-bold text-foreground mb-4 pr-12 leading-tight">{room.name}</h3>
+                  <p className="text-[10px] font-black text-[#4BBCCC] uppercase tracking-widest mb-3 pr-16">{catLabel}</p>
+                  <h3 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 pr-12 leading-tight">{room.name}</h3>
                   
-                  <div className="flex items-baseline gap-1 mb-6">
-                    <span className="text-2xl font-black text-foreground">€{parseFloat(room.basePricePerNight).toFixed(0)}</span>
-                    <span className="text-muted-foreground text-sm font-medium">/ night</span>
+                  <div className="flex items-baseline gap-1 mb-6 flex-1">
+                    <span className="text-3xl font-black text-[#0B3D5E]">€{parseFloat(room.basePricePerNight).toFixed(0)}</span>
+                    <span className="text-slate-400 text-sm font-bold">/ night</span>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-y-3 gap-x-2 text-sm text-muted-foreground">
+                  <div className="grid grid-cols-2 gap-y-4 gap-x-2 text-xs text-slate-500 font-bold uppercase tracking-wider pt-6 border-t border-slate-100">
                     <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                      <span>Max {room.maxGuests} Guests</span>
+                      <svg className="w-4 h-4 text-[#4BBCCC]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                      <span>Max {room.maxGuests}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <BedDouble className="w-4 h-4 text-primary/60" />
+                      <BedDouble className="w-4 h-4 text-[#4BBCCC]" />
                       <span>{room.type}</span>
                     </div>
                   </div>
                 </div>
-              </div>
-            )})}
+              </motion.div>
+              )})}
           </div>
         ) : (
-          <div className="bg-card rounded-3xl border border-dashed border-border flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-4">
-              <BedDouble className="w-8 h-8 text-muted-foreground/50" />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-sm flex flex-col items-center justify-center py-24 text-center"
+          >
+            <div className="w-24 h-24 rounded-[2rem] bg-slate-50 flex items-center justify-center mb-6 shadow-inner">
+              <BedDouble className="w-10 h-10 text-slate-300" />
             </div>
-            <h3 className="text-lg font-bold text-foreground mb-2">No Rooms Configured</h3>
-            <p className="text-muted-foreground mb-6 max-w-sm">Start building your accommodation options to allow guests to book their stay.</p>
-            <Button onClick={openCreateDialog} className="rounded-full px-8">Create First Room</Button>
-          </div>
+            <h3 className="text-2xl font-black text-[#0B3D5E] mb-2">No Rooms Configured</h3>
+            <p className="text-slate-500 font-medium mb-8 max-w-sm">Start building your accommodation options to allow guests to book their stay.</p>
+            <Button onClick={openCreateDialog} className="rounded-full px-8 bg-[#0B3D5E] hover:bg-[#0B3D5E]/90 shadow-lg shadow-[#0B3D5E]/20 text-white font-bold h-12">Create First Room</Button>
+          </motion.div>
         )}
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
