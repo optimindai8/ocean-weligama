@@ -80,7 +80,7 @@ const roomSchema = z.object({
   maxGuests: z.coerce.number().min(1, "At least 1 guest required"),
   bedrooms: z.coerce.number().min(0),
   bathrooms: z.coerce.number().min(0),
-  basePricePerNight: z.string().min(1, "Price is required").transform(val => val.trim()).refine(
+  basePricePerNight: z.coerce.string().min(1, "Price is required").transform(val => val.trim()).refine(
     val => /^\d+(\.\d{1,2})?$/.test(val),
     "Price must be a valid number (e.g., 150 or 150.50)"
   ),
@@ -175,7 +175,7 @@ export default function AdminRooms() {
       maxGuests: room.maxGuests,
       bedrooms: room.bedrooms,
       bathrooms: room.bathrooms,
-      basePricePerNight: room.basePricePerNight,
+      basePricePerNight: room.basePricePerNight ? String(room.basePricePerNight) : "100",
       currency: room.currency || "EUR",
       status: room.status,
       isFeatured: room.isFeatured,
@@ -297,6 +297,19 @@ export default function AdminRooms() {
       toast({ variant: "destructive", title: "Action failed", description: err.message || "An unexpected error occurred" });
     }
   }
+
+  const onInvalid = (errors: any) => {
+    console.error("Form validation errors:", errors);
+    const firstKey = Object.keys(errors)[0];
+    if (firstKey) {
+      const errorMsg = errors[firstKey]?.message || "Invalid field value";
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: `${firstKey}: ${errorMsg}`,
+      });
+    }
+  };
 
   function toggleStatus(id: string, currentStatus: string) {
     const newStatus = currentStatus === "active" ? "hidden" : "active";
@@ -458,7 +471,7 @@ export default function AdminRooms() {
 
             <div className="p-8 overflow-y-auto flex-1">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
+                <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-10">
                   
                   {/* Basic Information */}
                   <div className="space-y-6">
@@ -626,7 +639,7 @@ export default function AdminRooms() {
                             onChange={(e) => {
                               const newHighlights = [...highlights];
                               newHighlights[index] = e.target.value;
-                              form.setValue("highlights", newHighlights);
+                              form.setValue("highlights", newHighlights, { shouldValidate: true, shouldDirty: true });
                             }}
                             className="bg-white rounded-xl"
                           />
@@ -637,7 +650,7 @@ export default function AdminRooms() {
                             className="shrink-0 rounded-xl"
                             onClick={() => {
                               if (highlights.length > 1) {
-                                form.setValue("highlights", highlights.filter((_, i) => i !== index));
+                                form.setValue("highlights", highlights.filter((_, i) => i !== index), { shouldValidate: true, shouldDirty: true });
                               }
                             }}
                             disabled={highlights.length === 1}
@@ -651,7 +664,7 @@ export default function AdminRooms() {
                           type="button"
                           variant="secondary"
                           size="sm"
-                          onClick={() => form.setValue("highlights", [...highlights, ""])}
+                          onClick={() => form.setValue("highlights", [...highlights, ""], { shouldValidate: true, shouldDirty: true })}
                           className="rounded-full gap-1"
                         >
                           <Plus className="w-3 h-3" /> Add Feature
