@@ -13,10 +13,13 @@ export default function Home() {
     <div className="flex-1">
       
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center pt-20 overflow-hidden">
+      <section
+        className="relative flex items-center justify-center overflow-hidden"
+        style={{ height: "100svh", minHeight: "600px" }}
+      >
         {/* Cinematic Video Background */}
         <div className="absolute inset-0 z-0 bg-slate-950">
-          {/* Mobile video: 360p 8.7 MB — only loaded on small screens */}
+          {/* Mobile video — object-cover fills the screen edge-to-edge, no black bars */}
           <video
             key="mobile-video"
             autoPlay
@@ -26,8 +29,11 @@ export default function Home() {
             disablePictureInPicture
             preload="auto"
             poster="/hero-video-poster.jpg"
-            className="block md:hidden w-full h-full object-contain"
-            style={{ WebkitPlaysinline: true } as React.CSSProperties}
+            className="block md:hidden absolute inset-0 w-full h-full object-cover"
+            style={{
+              WebkitPlaysinline: true,
+              WebkitObjectFit: "cover",
+            } as React.CSSProperties}
           >
             <source src="/hero-video-mobile.mp4" type="video/mp4" />
           </video>
@@ -41,16 +47,16 @@ export default function Home() {
             disablePictureInPicture
             preload="auto"
             poster="/hero-video-poster.jpg"
-            className="hidden md:block w-full h-full object-cover"
+            className="hidden md:block absolute inset-0 w-full h-full object-cover"
           >
             <source src="/hero-video-desktop.mp4" type="video/mp4" />
           </video>
-          {/* Multi-layered Cinematic Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
+          {/* Multi-layered Cinematic Overlay — slightly stronger on mobile for text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/25" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.45)_100%)]" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 text-center">
+        <div className="relative z-10 container mx-auto px-4 text-center pt-16 md:pt-0">
           {/* Trust Badges - Social Proof Anchor */}
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10">
             <motion.div 
