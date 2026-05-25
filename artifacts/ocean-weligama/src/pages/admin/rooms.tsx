@@ -688,7 +688,13 @@ export default function AdminRooms() {
                           </div>
                           <FormControl>
                             <Switch checked={field.value} onCheckedChange={field.onChange} />
-                          </FormControl>95 backdrop-blur-xl border-t px-8 py-6 rounded-b-3xl mt-8 flex gap-3 justify-end z-20">
+                          </FormControl>
+                        </FormItem>
+                      )} />
+                    </div>
+                  </div>
+
+                  <DialogFooter className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t p-6 -mx-8 -mb-8 rounded-b-3xl mt-8">
                     <Button 
                       type="button" 
                       variant="outline" 
@@ -711,13 +717,7 @@ export default function AdminRooms() {
                           </svg>
                           {editingRoom ? "Saving..." : "Creating..."}
                         </>
-                      ) : iv>
-                  </div>
-
-                  <DialogFooter className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t p-6 -mx-8 -mb-8 rounded-b-3xl mt-8">
-                    <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="rounded-full px-6">Cancel</Button>
-                    <Button type="submit" className="rounded-full px-8 bg-primary hover:bg-primary/90">
-                      {editingRoom ? "Save Changes" : "Create Room"}
+                      ) : (editingRoom ? "Save Changes" : "Create Room")}
                     </Button>
                   </DialogFooter>
                 </form>
