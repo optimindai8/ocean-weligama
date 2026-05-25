@@ -64,54 +64,76 @@ export default function BookingConfirmationPage() {
 
           {/* Booking details */}
           {booking && (
-            <div className="bg-card rounded-2xl border border-border p-6 mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold text-foreground">Booking Reference</h2>
-                <span className="font-mono font-bold text-primary text-lg bg-primary/10 px-3 py-1 rounded-lg" data-testid="text-booking-reference">
-                  {booking.reference}
-                </span>
+            <div className="bg-white rounded-[2.5rem] border border-border shadow-xl p-6 md:p-10 mb-8">
+              <div className="flex items-center justify-between pb-6 border-b border-border/50 mb-8">
+                <div>
+                  <h2 className="text-xs font-black uppercase tracking-widest text-primary mb-2">Booking Reference</h2>
+                  <span className="font-mono font-bold text-primary text-2xl" data-testid="text-booking-reference">
+                    {booking.reference}
+                  </span>
+                </div>
+                <div className="bg-green-50 text-green-700 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-sm">
+                  Confirmed
+                </div>
               </div>
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-accent" />
-                  <span className="text-muted-foreground">Check-in:</span>
-                  <span className="font-medium">{booking.checkIn}</span>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-slate-50 border border-slate-100 p-5 rounded-3xl">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Check-in</span>
+                  </div>
+                  <span className="font-bold text-foreground text-lg">{booking.checkIn}</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-accent" />
-                  <span className="text-muted-foreground">Check-out:</span>
-                  <span className="font-medium">{booking.checkOut}</span>
+                <div className="bg-slate-50 border border-slate-100 p-5 rounded-3xl">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Calendar className="w-4 h-4 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Check-out</span>
+                  </div>
+                  <span className="font-bold text-foreground text-lg">{booking.checkOut}</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <Users className="w-4 h-4 text-accent" />
-                  <span className="text-muted-foreground">Guests:</span>
-                  <span className="font-medium">{booking.guestCount}</span>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-100 p-5 rounded-3xl mb-8">
+                <div className="flex items-center gap-2 mb-3">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Guests</span>
                 </div>
-                <div className="border-t border-border pt-3 flex justify-between font-bold">
-                  <span>Total</span>
-                  <span>${booking.totalAmount} {booking.currency}</span>
+                <span className="font-bold text-foreground text-lg">{booking.guestCount} {booking.guestCount === 1 ? 'Guest' : 'Guests'}</span>
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="bg-white rounded-3xl p-6 md:p-8 border-2 border-slate-100 shadow-sm">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-700 mb-6">
+                  Payment Summary
+                </h3>
+                <div className="space-y-4 pb-6 border-b border-border text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground font-medium">Room{booking.nights ? ` (${booking.nights} nights)` : ''}</span>
+                    <span className="font-bold text-foreground text-base">
+                      €{booking.roomSubtotal || "0.00"}
+                    </span>
+                  </div>
+                  {parseFloat(booking.cleaningFee || "0") > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground font-medium">Cleaning Fee</span>
+                      <span className="font-bold text-foreground text-base">€{booking.cleaningFee}</span>
+                    </div>
+                  )}
+                  {parseFloat(booking.servicesSubtotal || "0") > 0 && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground font-medium">Add-ons & Packages</span>
+                      <span className="font-bold text-foreground text-base">€{booking.servicesSubtotal}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex justify-between items-end pt-6">
+                  <span className="font-bold text-lg text-foreground">Total</span>
+                  <span className="font-black text-4xl text-primary">€{booking.totalAmount} <span className="text-sm text-muted-foreground font-bold ml-1">EUR</span></span>
                 </div>
               </div>
             </div>
           )}
-
-          {/* What to bring */}
-          <div className="bg-accent/10 rounded-2xl p-6 mb-6">
-            <h3 className="font-bold text-foreground mb-3">What to Pack</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              {[
-                "Reef-safe sunscreen",
-                "Light cotton clothes for the evenings",
-                "USD cash for local markets and tips",
-                "Flip flops (you'll barely take them off)",
-                "An open mind and a hungry stomach",
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <span className="text-accent">→</span> {item}
-                </li>
-              ))}
-            </ul>
-          </div>
 
           {/* CTAs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
