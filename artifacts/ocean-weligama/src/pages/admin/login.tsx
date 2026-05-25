@@ -76,10 +76,16 @@ export default function AdminLoginPage() {
             
             <div className="text-center mb-10">
               <motion.div
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                className="w-16 h-16 bg-gradient-to-br from-sky-400 to-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_40px_rgba(56,189,248,0.3)]"
+                whileHover={{ scale: 1.05 }}
+                className="mx-auto mb-6 flex justify-center"
               >
-                <Waves className="w-8 h-8 text-white" />
+                <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-2xl shadow-[0_0_40px_rgba(56,189,248,0.2)] p-2 border border-white/20 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src="/logo.jpg" 
+                    alt="Ocean Weligama Logo" 
+                    className="w-full h-full object-contain rounded-xl"
+                  />
+                </div>
               </motion.div>
               <h1 className="text-3xl font-serif font-bold text-white mb-2 tracking-tight">Admin Portal</h1>
               <p className="text-sky-200/60 text-sm font-medium tracking-wide">Enter your credentials to continue</p>
