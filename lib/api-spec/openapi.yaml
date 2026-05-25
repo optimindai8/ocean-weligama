@@ -1713,10 +1713,14 @@ components:
 
     BookingInput:
       type: object
-      required: [roomId, checkIn, checkOut, guestCount, guestFullName, guestEmail, guestPhone, paymentMethod]
+      required: [roomIds, checkIn, checkOut, guestCount, guestFullName, guestEmail, guestPhone, paymentMethod]
       properties:
         roomId:
           type: string
+        roomIds:
+          type: array
+          items:
+            type: string
         checkIn:
           type: string
           format: date
@@ -1759,10 +1763,14 @@ components:
 
     BookingCheck:
       type: object
-      required: [roomId, checkIn, checkOut, guestCount]
+      required: [roomIds, checkIn, checkOut, guestCount]
       properties:
         roomId:
           type: string
+        roomIds:
+          type: array
+          items:
+            type: string
         checkIn:
           type: string
           format: date

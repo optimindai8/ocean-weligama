@@ -164,7 +164,7 @@ export default function BookingConfirmationPage() {
                         const r = roomsList?.find(x => x.id === booking.roomId);
                         const img = r?.heroImageUrl || (r?.gallery && r.gallery[0]);
                         if (img) {
-                          return <img src={img} alt={booking.roomName} className="w-24 h-24 object-cover rounded-xl shadow-sm" />;
+                          return <img src={img} alt={booking.roomName || ""} className="w-24 h-24 object-cover rounded-xl shadow-sm" />;
                         }
                         return null;
                     })()}

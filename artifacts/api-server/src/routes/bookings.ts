@@ -3,13 +3,14 @@ import { db } from "@workspace/db";
 import {
   bookings,
   bookingServices,
+  bookingRooms,
   rooms,
   services,
   availability,
   roomTranslations,
   serviceTranslations,
 } from "@workspace/db";
-import { eq, and, gte, lte, isNull, between } from "drizzle-orm";
+import { eq, and, gte, lte, isNull, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -28,15 +29,21 @@ function calculateNights(checkIn: string, checkOut: string): number {
 
 router.post("/v1/bookings/check", async (req, res) => {
   try {
-    const { roomId, checkIn, checkOut, guestCount, serviceIds = [] } = req.body;
+    const { roomId, roomIds: inputRoomIds, checkIn, checkOut, guestCount, serviceIds = [] } = req.body;
+    const roomIdsArray = inputRoomIds && inputRoomIds.length > 0 ? inputRoomIds : (roomId ? [roomId] : []);
 
-    const [room] = await db
+    if (roomIdsArray.length === 0) {
+      res.status(400).json({ error: "No rooms provided" });
+      return;
+    }
+
+    const selectedRooms = await db
       .select()
       .from(rooms)
-      .where(and(eq(rooms.id, roomId), isNull(rooms.deletedAt)));
+      .where(and(inArray(rooms.id, roomIdsArray), isNull(rooms.deletedAt)));
 
-    if (!room) {
-      res.status(404).json({ error: "Room not found" });
+    if (selectedRooms.length !== roomIdsArray.length) {
+      res.status(404).json({ error: "One or more rooms not found" });
       return;
     }
 
@@ -46,7 +53,7 @@ router.post("/v1/bookings/check", async (req, res) => {
       .from(availability)
       .where(
         and(
-          eq(availability.roomId, roomId),
+          inArray(availability.roomId, roomIdsArray),
           eq(availability.isBlocked, true),
           gte(availability.date, checkIn),
           lte(availability.date, checkOut)
@@ -57,9 +64,10 @@ router.post("/v1/bookings/check", async (req, res) => {
     const conflictingBookings = await db
       .select()
       .from(bookings)
+      .innerJoin(bookingRooms, eq(bookings.id, bookingRooms.bookingId))
       .where(
         and(
-          eq(bookings.roomId, roomId),
+          inArray(bookingRooms.roomId, roomIdsArray),
           isNull(bookings.deletedAt),
           lte(bookings.checkIn, checkOut),
           gte(bookings.checkOut, checkIn)
@@ -67,9 +75,15 @@ router.post("/v1/bookings/check", async (req, res) => {
       );
 
     const nights = calculateNights(checkIn, checkOut);
-    const roomRate = parseFloat(room.basePricePerNight);
-    const roomSubtotal = roomRate * nights;
-    const cleaningFee = parseFloat(room.cleaningFee ?? "0");
+    let totalRoomRate = 0;
+    let cleaningFee = 0;
+    
+    for (const r of selectedRooms) {
+      totalRoomRate += parseFloat(r.basePricePerNight);
+      cleaningFee += parseFloat(r.cleaningFee ?? "0");
+    }
+    
+    const roomSubtotal = totalRoomRate * nights;
 
     let servicesSubtotal = 0;
     if (serviceIds.length > 0) {
@@ -97,13 +111,13 @@ router.post("/v1/bookings/check", async (req, res) => {
 
     res.json({
       available,
-      roomRatePerNight: roomRate.toFixed(2),
+      roomRatePerNight: totalRoomRate.toFixed(2),
       nights,
       roomSubtotal: roomSubtotal.toFixed(2),
       servicesSubtotal: servicesSubtotal.toFixed(2),
       cleaningFee: cleaningFee.toFixed(2),
       totalAmount: (roomSubtotal + servicesSubtotal + cleaningFee).toFixed(2),
-      currency: room.currency,
+      currency: selectedRooms[0].currency,
       unavailableDates: blockedDates.map((b) => b.date),
     });
   } catch (err) {
@@ -116,6 +130,7 @@ router.post("/v1/bookings", async (req, res) => {
   try {
     const {
       roomId,
+      roomIds: inputRoomIds,
       checkIn,
       checkOut,
       guestCount,
@@ -128,21 +143,33 @@ router.post("/v1/bookings", async (req, res) => {
       paymentMethod,
       languageUsed,
     } = req.body;
+    const roomIdsArray = inputRoomIds && inputRoomIds.length > 0 ? inputRoomIds : (roomId ? [roomId] : []);
 
-    const [room] = await db
+    if (roomIdsArray.length === 0) {
+      res.status(400).json({ error: "No rooms provided" });
+      return;
+    }
+
+    const selectedRooms = await db
       .select()
       .from(rooms)
-      .where(and(eq(rooms.id, roomId), isNull(rooms.deletedAt)));
+      .where(and(inArray(rooms.id, roomIdsArray), isNull(rooms.deletedAt)));
 
-    if (!room) {
-      res.status(404).json({ error: "Room not found" });
+    if (selectedRooms.length !== roomIdsArray.length) {
+      res.status(404).json({ error: "One or more rooms not found" });
       return;
     }
 
     const nights = calculateNights(checkIn, checkOut);
-    const roomRate = parseFloat(room.basePricePerNight);
-    const roomSubtotal = roomRate * nights;
-    const cleaningFee = parseFloat(room.cleaningFee ?? "0");
+    let totalRoomRate = 0;
+    let cleaningFee = 0;
+    
+    for (const r of selectedRooms) {
+      totalRoomRate += parseFloat(r.basePricePerNight);
+      cleaningFee += parseFloat(r.cleaningFee ?? "0");
+    }
+    
+    const roomSubtotal = totalRoomRate * nights;
 
     let servicesSubtotal = 0;
     const serviceDetails: Array<{
@@ -187,7 +214,7 @@ router.post("/v1/bookings", async (req, res) => {
       .insert(bookings)
       .values({
         reference,
-        roomId,
+        roomId: roomIdsArray[0], // fallback for backward compatibility
         checkIn,
         checkOut,
         nights,
@@ -197,12 +224,12 @@ router.post("/v1/bookings", async (req, res) => {
         guestPhone,
         guestNationality,
         specialRequests,
-        roomRatePerNight: roomRate.toFixed(2),
+        roomRatePerNight: totalRoomRate.toFixed(2),
         roomSubtotal: roomSubtotal.toFixed(2),
         servicesSubtotal: servicesSubtotal.toFixed(2),
         cleaningFee: cleaningFee.toFixed(2),
         totalAmount: totalAmount.toFixed(2),
-        currency: room.currency,
+        currency: selectedRooms[0].currency,
         depositAmount: "0",
         paymentMethod: paymentMethod ?? "pending",
         languageUsed: languageUsed ?? "en",
@@ -210,6 +237,14 @@ router.post("/v1/bookings", async (req, res) => {
         paymentStatus: "unpaid",
       })
       .returning();
+      
+    // Insert into bookingRooms
+    await db.insert(bookingRooms).values(
+      roomIdsArray.map((rId: string) => ({
+        bookingId: booking.id,
+        roomId: rId,
+      }))
+    );
 
     if (serviceDetails.length > 0) {
       await db.insert(bookingServices).values(
@@ -233,13 +268,15 @@ router.post("/v1/bookings", async (req, res) => {
 
     if (datesToBlock.length > 0) {
       await db.insert(availability).values(
-        datesToBlock.map((date) => ({
-          roomId,
-          date,
-          isBlocked: true,
-          blockReason: "booked",
-          bookingId: booking.id,
-        }))
+        datesToBlock.flatMap((date) => 
+          roomIdsArray.map((rId: string) => ({
+            roomId: rId,
+            date,
+            isBlocked: true,
+            blockReason: "booked",
+            bookingId: booking.id,
+          }))
+        )
       );
     }
 
@@ -282,11 +319,22 @@ router.get("/v1/bookings/:reference", async (req, res) => {
       return;
     }
 
-    const [room] = await db.select().from(rooms).where(eq(rooms.id, booking.roomId));
-    const translations = await db
-      .select()
-      .from(roomTranslations)
-      .where(and(eq(roomTranslations.roomId, booking.roomId), eq(roomTranslations.locale, "en")));
+    const bRooms = await db.select().from(bookingRooms).where(eq(bookingRooms.bookingId, booking.id));
+    const rIds = bRooms.map(br => br.roomId);
+    if (rIds.length === 0 && booking.roomId) {
+      rIds.push(booking.roomId);
+    }
+    
+    let primaryRoomName = "";
+    if (rIds.length > 0) {
+      const [room] = await db.select().from(rooms).where(eq(rooms.id, rIds[0]));
+      const translations = await db
+        .select()
+        .from(roomTranslations)
+        .where(and(eq(roomTranslations.roomId, rIds[0]), eq(roomTranslations.locale, "en")));
+      primaryRoomName = translations[0]?.name ?? room?.slug ?? "";
+    }
+    // (Replaced above)
 
     const serviceRows = await db
       .select()
@@ -301,7 +349,7 @@ router.get("/v1/bookings/:reference", async (req, res) => {
 
     res.json({
       ...booking,
-      roomName: translations[0]?.name ?? room?.slug ?? "",
+      roomName: primaryRoomName,
       services: serviceRows.map((sr) => ({
         id: sr.id,
         serviceId: sr.serviceId,

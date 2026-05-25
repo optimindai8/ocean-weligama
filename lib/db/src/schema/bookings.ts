@@ -39,7 +39,6 @@ export const bookings = pgTable("bookings", {
   id: uuid("id").primaryKey().defaultRandom(),
   reference: text("reference").notNull().unique(),
   roomId: uuid("room_id")
-    .notNull()
     .references(() => rooms.id),
   checkIn: date("check_in").notNull(),
   checkOut: date("check_out").notNull(),
@@ -110,4 +109,14 @@ export const bookingServices = pgTable("booking_services", {
   unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
   subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   notes: text("notes"),
+});
+
+export const bookingRooms = pgTable("booking_rooms", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  bookingId: uuid("booking_id")
+    .notNull()
+    .references(() => bookings.id, { onDelete: "cascade" }),
+  roomId: uuid("room_id")
+    .notNull()
+    .references(() => rooms.id, { onDelete: "cascade" }),
 });

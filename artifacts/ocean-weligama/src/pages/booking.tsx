@@ -245,7 +245,7 @@ export default function BookingPage() {
 
   const [guestCount,            setGuestCount]            = useState(2);
   const [dateRange,             setDateRange]             = useState<{ from?: Date; to?: Date }>({});
-  const [selectedRoomId,        setSelectedRoomId]        = useState<string | null>(null);
+  const [selectedRoomIds,       setSelectedRoomIds]       = useState<string[]>([]);
   const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>([]);
   const [priceData,             setPriceData]             = useState<any>(null);
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
@@ -307,7 +307,7 @@ export default function BookingPage() {
   };
   const airportTotal   = (watchPickup ? ap.pickup : 0) + (watchDrop ? ap.drop : 0);
 
-  const selectedRoom = Array.isArray(rooms) ? rooms.find(r => r.id === selectedRoomId) : undefined;
+  const selectedRooms = Array.isArray(rooms) ? rooms.filter(r => selectedRoomIds.includes(r.id)) : [];
 
   // ── Navigation helpers ─────────────────────────────────────────────────────
   function goTo(n: number) { setDir(n > step ? 1 : -1); setStep(n); }
@@ -324,8 +324,8 @@ export default function BookingPage() {
 
   // ── Availability check (Step 3 → 4) ───────────────────────────────────────
   async function handleRoomContinue() {
-    if (!selectedRoomId) {
-      toast({ variant: "destructive", title: "Please select a room" }); return;
+    if (selectedRoomIds.length === 0) {
+      toast({ variant: "destructive", title: "Please select at least one room" }); return;
     }
     if (!dateRange.from || !dateRange.to) {
       toast({ variant: "destructive", title: "Please go back and select your dates" }); return;
@@ -333,7 +333,8 @@ export default function BookingPage() {
     try {
       const res = await checkAvail.mutateAsync({
         data: {
-          roomId: selectedRoomId,
+          roomId: selectedRoomIds[0],
+          roomIds: selectedRoomIds,
           checkIn: toStr(dateRange.from),
           checkOut: toStr(dateRange.to),
           guestCount,
@@ -357,7 +358,7 @@ export default function BookingPage() {
   async function executeBooking() {
     if (!formDataForSubmit) return;
     const data = formDataForSubmit;
-    if (!selectedRoomId || !dateRange.from || !dateRange.to) return;
+    if (selectedRoomIds.length === 0 || !dateRange.from || !dateRange.to) return;
     const lines: string[] = [];
     if (data.airportPickup) {
       lines.push(
@@ -375,7 +376,8 @@ export default function BookingPage() {
       const bk = await createBook.mutateAsync({
         data: {
           ...data, specialRequests: sr,
-          roomId: selectedRoomId,
+          roomId: selectedRoomIds[0],
+          roomIds: selectedRoomIds,
           checkIn: toStr(dateRange.from), checkOut: toStr(dateRange.to),
           guestCount, serviceIds: selectedDbServiceIds,
         },
@@ -392,7 +394,7 @@ export default function BookingPage() {
   const pills = [
     step > 1 ? `👥 ${guestCount} ${guestCount === 1 ? "Traveler" : "Travelers"}` : null,
     step > 2 && dateRange.from && dateRange.to ? `📅 ${fmt(dateRange.from)} → ${fmt(dateRange.to)} · ${nights}n` : null,
-    step > 3 && selectedRoom ? `🏠 ${selectedRoom.name}` : null,
+    step > 3 && selectedRooms.length ? `🏠 ${selectedRooms.length > 1 ? selectedRooms.length + " Rooms" : selectedRooms[0].name}` : null,
     step > 4 && selectedDbServiceIds.length ? `✨ ${selectedDbServiceIds.length} Add-on${selectedDbServiceIds.length > 1 ? "s" : ""}` : null,
     step > 6 && (watchPickup || watchDrop) ? "✈️ Airport Transfer" : null,
   ].filter(Boolean) as string[];
@@ -648,14 +650,14 @@ export default function BookingPage() {
                     {Array.isArray(rooms) && rooms.map(room => (
                       <button
                         key={room.id}
-                        onClick={() => setSelectedRoomId(room.id)}
+                        onClick={() => setSelectedRoomIds(prev => prev.includes(room.id) ? prev.filter(id => id !== room.id) : [...prev, room.id])}
                         className={`group text-left p-6 md:p-8 rounded-[2rem] border-2 transition-all duration-400 relative overflow-hidden ${
-                          selectedRoomId === room.id
+                          selectedRoomIds.includes(room.id)
                             ? "border-primary bg-white shadow-2xl shadow-primary/10 scale-[1.02]"
                             : "border-white bg-white shadow-lg hover:border-amber-200 hover:shadow-xl hover:scale-[1.01]"
                         }`}
                       >
-                        {selectedRoomId === room.id && (
+                        {selectedRoomIds.includes(room.id) && (
                           <motion.div
                             initial={{ scale: 0 }} animate={{ scale: 1 }}
                             className="absolute top-5 right-5 w-7 h-7 bg-primary rounded-full flex items-center justify-center shadow-lg"
@@ -696,7 +698,7 @@ export default function BookingPage() {
                   onBack={() => goTo(2)}
                   onContinue={handleRoomContinue}
                   continueLabel="Check Availability"
-                  disabled={!selectedRoomId}
+                  disabled={selectedRoomIds.length === 0}
                   loading={checkAvail.isPending}
                 />
               </motion.div>

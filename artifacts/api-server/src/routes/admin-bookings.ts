@@ -3,6 +3,7 @@ import { db } from "@workspace/db";
 import {
   bookings,
   bookingServices,
+  bookingRooms,
   rooms,
   services,
   roomTranslations,
@@ -48,10 +49,17 @@ router.get("/v1/admin/bookings", requireAdmin, async (req, res) => {
     // Get room names
     const enriched = await Promise.all(
       allBookings.map(async (b) => {
-        const translations = await db
-          .select()
-          .from(roomTranslations)
-          .where(and(eq(roomTranslations.roomId, b.roomId), eq(roomTranslations.locale, "en")));
+        const bRooms = await db.select().from(bookingRooms).where(eq(bookingRooms.bookingId, b.id));
+        const firstRoomId = bRooms[0]?.roomId ?? b.roomId ?? null;
+
+        let primaryRoomName = "";
+        if (firstRoomId) {
+          const translations = await db
+            .select()
+            .from(roomTranslations)
+            .where(and(eq(roomTranslations.roomId, firstRoomId), eq(roomTranslations.locale, "en")));
+          primaryRoomName = translations[0]?.name ?? "";
+        }
 
         const serviceRows = await db
           .select()
@@ -66,7 +74,7 @@ router.get("/v1/admin/bookings", requireAdmin, async (req, res) => {
 
         return {
           ...b,
-          roomName: translations[0]?.name ?? "",
+          roomName: primaryRoomName,
           services: serviceRows.map((sr) => ({
             id: sr.id,
             serviceId: sr.serviceId,
@@ -106,10 +114,17 @@ router.get("/v1/admin/bookings/:id", requireAdmin, async (req, res) => {
       return;
     }
 
-    const translations = await db
-      .select()
-      .from(roomTranslations)
-      .where(and(eq(roomTranslations.roomId, booking.roomId), eq(roomTranslations.locale, "en")));
+    const bRooms = await db.select().from(bookingRooms).where(eq(bookingRooms.bookingId, booking.id));
+    const firstRoomId = bRooms[0]?.roomId ?? booking.roomId ?? null;
+
+    let primaryRoomName = "";
+    if (firstRoomId) {
+      const translations = await db
+        .select()
+        .from(roomTranslations)
+        .where(and(eq(roomTranslations.roomId, firstRoomId), eq(roomTranslations.locale, "en")));
+      primaryRoomName = translations[0]?.name ?? "";
+    }
 
     const serviceRows = await db
       .select()
@@ -120,7 +135,7 @@ router.get("/v1/admin/bookings/:id", requireAdmin, async (req, res) => {
 
     res.json({
       ...booking,
-      roomName: translations[0]?.name ?? "",
+      roomName: primaryRoomName,
       services: serviceRows.map((sr) => ({
         id: sr.id,
         serviceId: sr.serviceId,
