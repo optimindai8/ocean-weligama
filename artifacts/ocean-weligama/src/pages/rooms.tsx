@@ -145,10 +145,6 @@ export default function RoomsPage() {
                         </div>
                       )}
 
-                      <h3 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white mb-4 sm:mb-6 leading-tight">
-                        {room.name}
-                      </h3>
-
                       <div className="flex flex-wrap gap-4 text-white/70 text-[10px] font-bold uppercase tracking-widest mb-4 sm:mb-6 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-700 delay-200">
                         <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-accent" />{room.maxGuests} Guests</span>
                         <span className="flex items-center gap-1.5"><BedDouble className="w-3.5 h-3.5 text-accent" />{room.bedrooms} Bed</span>
@@ -168,10 +164,10 @@ export default function RoomsPage() {
                     </div>
                   </div>
 
-                  {/* Clean Background Text (Visible by default on desktop) */}
-                  <div className="hidden lg:block mt-8 px-4 text-center group-hover:opacity-0 transition-opacity duration-500">
-                    <h4 className="text-xl font-serif font-bold text-foreground">{room.name}</h4>
-                    <p className="text-primary text-sm font-black mt-2">{formatPrice(room.basePricePerNight)} / night</p>
+                  {/* Clean Background Text */}
+                  <div className="block mt-6 px-2 text-center transition-opacity duration-500">
+                    <h4 className="text-lg md:text-xl font-serif font-bold text-foreground line-clamp-2 mb-1">{room.name}</h4>
+                    <p className="text-primary text-sm font-black">{formatPrice(room.basePricePerNight)} / night</p>
                   </div>
                 </motion.div>
               )})}
