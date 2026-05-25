@@ -47,6 +47,14 @@ import {
   Home,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Schema
@@ -232,6 +240,9 @@ export default function BookingPage() {
   const [dir,  setDir ]   = useState(1);   // 1 = forward, -1 = backward
 
   // Booking state
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [formDataForSubmit, setFormDataForSubmit] = useState<GuestForm | null>(null);
+
   const [guestCount,            setGuestCount]            = useState(2);
   const [dateRange,             setDateRange]             = useState<{ from?: Date; to?: Date }>({});
   const [selectedRoomId,        setSelectedRoomId]        = useState<string | null>(null);
@@ -338,7 +349,14 @@ export default function BookingPage() {
   }
 
   // ── Submit ─────────────────────────────────────────────────────────────────
-  async function onSubmit(data: GuestForm) {
+  function onPreSubmit(data: GuestForm) {
+    setFormDataForSubmit(data);
+    setIsConfirmOpen(true);
+  }
+
+  async function executeBooking() {
+    if (!formDataForSubmit) return;
+    const data = formDataForSubmit;
     if (!selectedRoomId || !dateRange.from || !dateRange.to) return;
     const lines: string[] = [];
     if (data.airportPickup) {
@@ -365,6 +383,8 @@ export default function BookingPage() {
       setLocation(`/book/confirmation?ref=${(bk as any).reference}`);
     } catch {
       toast({ variant: "destructive", title: "Booking failed", description: "Please try again." });
+    } finally {
+      setIsConfirmOpen(false);
     }
   }
 
@@ -1264,11 +1284,11 @@ export default function BookingPage() {
 
                           <button
                             type="button"
-                            onClick={form.handleSubmit(onSubmit)}
+                            onClick={form.handleSubmit(onPreSubmit)}
                             disabled={createBook.isPending || !form.watch("agreeTerms")}
                             className="w-full bg-accent text-primary hover:bg-yellow-300 rounded-full h-16 text-xl font-bold shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
                           >
-                            {createBook.isPending ? "Confirming…" : "Confirm My Sanctuary"}
+                            Review & Confirm
                             <Check className="w-6 h-6" />
                           </button>
                         </div>
@@ -1403,6 +1423,59 @@ export default function BookingPage() {
 
             </AnimatePresence>
           </Form>
+
+          <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+            <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] p-8 md:p-10 max-h-[90vh] overflow-y-auto border-0 shadow-2xl">
+              <DialogHeader>
+                <div className="mx-auto w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                  <Check className="w-10 h-10 text-primary" />
+                </div>
+                <DialogTitle className="text-3xl font-serif italic text-primary text-center">Confirm Your Journey</DialogTitle>
+                <DialogDescription className="text-center text-base mt-2">
+                  Please review your details before confirming your sanctuary.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-6 my-6 text-sm text-muted-foreground bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
+                <div className="flex justify-between items-center pb-4 border-b border-border">
+                  <span className="font-bold">Name</span>
+                  <span className="text-foreground">{formDataForSubmit?.guestFullName}</span>
+                </div>
+                <div className="flex justify-between items-center pb-4 border-b border-border">
+                  <span className="font-bold">Dates</span>
+                  <span className="text-foreground">{dateRange.from ? fmt(dateRange.from) : ''} — {dateRange.to ? fmt(dateRange.to) : ''} ({nights} nights)</span>
+                </div>
+                <div className="flex justify-between items-center pb-4 border-b border-border">
+                  <span className="font-bold">Room</span>
+                  <span className="text-foreground">{selectedRoom?.name}</span>
+                </div>
+                <div className="flex justify-between items-center pb-4 border-b border-border">
+                  <span className="font-bold">Total Pay Online</span>
+                  <span className="text-2xl font-black text-primary">€{computedTotal}</span>
+                </div>
+                {airportTotal > 0 && (
+                  <div className="flex justify-between items-center pb-2">
+                    <span className="font-bold">Airport Transfer (Pay on Arrival)</span>
+                    <span className="text-accent font-bold">€{airportTotal}</span>
+                  </div>
+                )}
+              </div>
+
+              <DialogFooter className="flex-col sm:flex-row gap-4 sm:gap-0 mt-6 pt-2">
+                <Button variant="outline" onClick={() => setIsConfirmOpen(false)} className="rounded-full w-full sm:w-auto px-8 py-6 h-auto font-bold border-2 hover:bg-slate-50">
+                  Edit Details
+                </Button>
+                <Button 
+                  onClick={executeBooking} 
+                  disabled={createBook.isPending} 
+                  className="rounded-full w-full sm:w-auto px-8 py-6 h-auto font-bold bg-primary text-white hover:bg-primary/90 text-lg shadow-xl hover:scale-105 transition-all"
+                >
+                  {createBook.isPending ? "Confirming..." : "Yes, Confirm Booking"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
         </div>
       </main>
 
