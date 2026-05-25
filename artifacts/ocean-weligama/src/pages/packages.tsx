@@ -24,14 +24,17 @@ export default function PackagesPage() {
 
   // Filter optional packages by active tab category
   const filteredOptionalPackages = activeCategory === "All"
-    ? optionalPackages
-    : optionalPackages.filter(s => s.category === activeCategory);
+    ? optionalPackages.filter(s => s.category?.toLowerCase().includes("package"))
+    : activeCategory === "Experiences"
+      ? optionalPackages.filter(s => !s.category?.toLowerCase().includes("package"))
+      : optionalPackages.filter(s => s.category === activeCategory);
 
   const categories = [
-    { id: "All", label: "All" },
+    { id: "All", label: "All Packages" },
     { id: "Beginner Surf Packages", label: "Beginner Surf" },
     { id: "Advance Surf Packages", label: "Advanced Surf" },
-    { id: "Yoga Retreat Packages", label: "Yoga Retreats" }
+    { id: "Yoga Retreat Packages", label: "Yoga Retreats" },
+    { id: "Experiences", label: "Experiences" }
   ];
 
   return (

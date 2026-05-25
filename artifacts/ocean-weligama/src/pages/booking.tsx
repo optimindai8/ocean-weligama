@@ -377,8 +377,8 @@ export default function BookingPage() {
     step > 6 && (watchPickup || watchDrop) ? "✈️ Airport Transfer" : null,
   ].filter(Boolean) as string[];
 
-  const packages = Array.isArray(services) ? services.filter(s => s.type === "main" || s.type === "optional" || s.category?.toLowerCase() === "package") : [];
-  const experiences = Array.isArray(services) ? services.filter(s => s.type !== "main" && s.type !== "optional" && s.category?.toLowerCase() !== "package") : [];
+  const packages = Array.isArray(services) ? services.filter(s => s.type === "main" || (s.type === "optional" && s.category?.toLowerCase().includes("package")) || s.category?.toLowerCase() === "package") : [];
+  const experiences = Array.isArray(services) ? services.filter(s => (s.type === "optional" && !s.category?.toLowerCase().includes("package")) || (s.type !== "main" && s.type !== "optional" && s.category?.toLowerCase() !== "package")) : [];
 
   // ─────────────────────────────────────────────────────────────────────────
   // RENDER

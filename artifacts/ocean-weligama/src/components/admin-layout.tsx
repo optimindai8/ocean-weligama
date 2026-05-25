@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { useAdminLogout, useAdminGetMe, getAdminGetMeQueryKey, useAdminGetNotificationCounts } from "@workspace/api-client-react";
+import { useAdminLogout, useAdminGetMe, getAdminGetMeQueryKey, useAdminGetNotificationCounts, getAdminGetNotificationCountsQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { TransparentLogo } from "./transparent-logo";
 import {
@@ -43,6 +43,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
 
   const { data: notifications } = useAdminGetNotificationCounts({
     query: {
+      queryKey: getAdminGetNotificationCountsQueryKey(),
       refetchInterval: 30000,
     }
   });
