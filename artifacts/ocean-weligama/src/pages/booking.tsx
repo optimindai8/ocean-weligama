@@ -1318,7 +1318,7 @@ export default function BookingPage() {
                       <div className="space-y-3 pb-5 border-b border-white/15 text-sm">
                         <div className="flex justify-between">
                           <span className="text-white/60">Room</span>
-                          <span className="font-bold">{selectedRoom?.name}</span>
+                          <span className="font-bold">{selectedRooms.map(r => r.name).join(", ")}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-white/60">Dates</span>
@@ -1328,22 +1328,26 @@ export default function BookingPage() {
                           <span className="text-white/60">Guests × Stay</span>
                           <span className="font-bold">{guestCount} {guestCount === 1 ? "guest" : "guests"} · {nights} {nights === 1 ? "night" : "nights"}</span>
                         </div>
-                        {selectedRoom && (
+                        {selectedRooms.length > 0 && (
                           <>
-                            <div className="flex justify-between text-xs text-white/80 pt-1.5 border-t border-white/5">
-                              <span className="text-white/60">Room Rate</span>
-                              <span>€{parseFloat(selectedRoom.basePricePerNight).toFixed(2)} / night</span>
-                            </div>
-                            <div className="flex justify-between text-xs text-white/80">
-                              <span className="text-white/60">Room Subtotal</span>
-                              <span className="font-bold">€{(parseFloat(selectedRoom.basePricePerNight) * nights).toFixed(2)}</span>
-                            </div>
-                            {parseFloat(selectedRoom.cleaningFee || "0") > 0 && (
-                              <div className="flex justify-between text-xs text-white/80">
-                                <span className="text-white/60">Cleaning Fee</span>
-                                <span>€{parseFloat(selectedRoom.cleaningFee || "0").toFixed(2)}</span>
+                            {selectedRooms.map(room => (
+                              <div key={room.id} className="pt-2 border-t border-white/5 mt-2">
+                                <div className="flex justify-between text-xs text-white/80">
+                                  <span className="text-white/60">{room.name} Rate</span>
+                                  <span>€{parseFloat(room.basePricePerNight).toFixed(2)} / night</span>
+                                </div>
+                                <div className="flex justify-between text-xs text-white/80">
+                                  <span className="text-white/60">{room.name} Subtotal</span>
+                                  <span className="font-bold">€{(parseFloat(room.basePricePerNight) * nights).toFixed(2)}</span>
+                                </div>
+                                {parseFloat(room.cleaningFee || "0") > 0 && (
+                                  <div className="flex justify-between text-xs text-white/80">
+                                    <span className="text-white/60">{room.name} Cleaning</span>
+                                    <span>€{parseFloat(room.cleaningFee || "0").toFixed(2)}</span>
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            ))}
                           </>
                         )}
                       </div>
@@ -1449,7 +1453,7 @@ export default function BookingPage() {
                 </div>
                 <div className="flex justify-between items-center pb-4 border-b border-border">
                   <span className="font-bold">Room</span>
-                  <span className="text-foreground">{selectedRoom?.name}</span>
+                  <span className="text-foreground">{selectedRooms.map(r => r.name).join(", ")}</span>
                 </div>
                 <div className="flex justify-between items-center pb-4 border-b border-border">
                   <span className="font-bold">Total Pay Online</span>
