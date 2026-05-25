@@ -23,6 +23,12 @@ export default function RoomsPage() {
   // Since we don't have category filtering natively in the hook API yet, we fetch all and filter client side
   const { data: rooms, isLoading } = useListRooms();
 
+  const getCount = (catValue: string) => {
+    if (!rooms || !Array.isArray(rooms)) return 0;
+    if (catValue === "") return rooms.length;
+    return rooms.filter((r: any) => r.category === catValue).length;
+  };
+
   const filteredRooms = rooms?.filter((r: any) => {
     if (!activeCategory) return true;
     return r.category === activeCategory;
@@ -39,26 +45,25 @@ export default function RoomsPage() {
       />
 
       {/* Interactive Mood Filters */}
-      <section className="relative z-20 px-4 py-8 -mb-12 mt-4 max-w-full overflow-hidden">
-        <div className="w-full max-w-md md:max-w-fit mx-auto bg-white/70 backdrop-blur-3xl border border-white/40 shadow-2xl rounded-full p-2 flex gap-1 overflow-x-auto hide-scrollbar whitespace-nowrap smooth-inertia justify-start md:justify-center">
+      <section className="relative z-20 px-4 py-8 -mb-12 mt-4 max-w-full">
+        <div className="container mx-auto flex flex-wrap gap-4 justify-center">
           {ROOM_CATEGORIES.map((t) => {
             const isActive = activeCategory === t.value;
+            const count = getCount(t.value);
             return (
               <button
                 key={t.value}
                 onClick={() => setActiveCategory(t.value)}
-                className={`relative px-6 py-2.5 rounded-full text-sm font-bold transition-colors duration-300 whitespace-nowrap ${
-                  isActive ? "text-white" : "text-muted-foreground hover:text-foreground"
+                className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-sm font-bold transition-all duration-300 shadow-sm border ${
+                  isActive 
+                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105" 
+                    : "bg-white/80 backdrop-blur-md text-muted-foreground border-white/40 hover:border-primary/30 hover:text-foreground hover:bg-white"
                 }`}
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-primary rounded-full shadow-md"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative z-10">{t.label}</span>
+                <span className={`flex items-center justify-center w-6 h-6 rounded-full text-[11px] transition-colors ${isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
+                  {count}
+                </span>
+                <span>{t.label}</span>
               </button>
             );
           })}
