@@ -184,13 +184,13 @@ export default function GalleryPage() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`flex items-center gap-3 px-6 py-3 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border ${
                     isActive 
                       ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105" 
                       : "bg-white/80 backdrop-blur-md text-muted-foreground border-border/60 hover:border-primary/30 hover:text-foreground hover:bg-white"
                   }`}
                 >
-                  <span className={`flex items-center justify-center w-6 h-6 rounded-full text-[11px] transition-colors ${isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
+                  <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-colors ${isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
                     {count}
                   </span>
                   <span>{CATEGORY_LABELS[cat]}</span>

@@ -29,6 +29,12 @@ export default function PackagesPage() {
       ? optionalPackages.filter(s => !s.category?.toLowerCase().includes("package"))
       : optionalPackages.filter(s => s.category === activeCategory);
 
+  const getCount = (catId: string) => {
+    if (catId === "All") return optionalPackages.filter(s => s.category?.toLowerCase().includes("package")).length;
+    if (catId === "Experiences") return optionalPackages.filter(s => !s.category?.toLowerCase().includes("package")).length;
+    return optionalPackages.filter(s => s.category === catId).length;
+  };
+
   const categories = [
     { id: "All", label: "All Packages" },
     { id: "Beginner Surf Packages", label: "Beginner Surf" },
@@ -180,13 +186,16 @@ export default function PackagesPage() {
                   <button
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
-                    className={`px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 border whitespace-nowrap shadow-sm ${
                       activeCategory === cat.id
-                        ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/10"
-                        : "bg-white text-muted-foreground hover:text-[#0B3D5E] hover:border-[#0B3D5E]/30 border-[#0B3D5E]/10"
+                        ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/10 scale-105"
+                        : "bg-white text-muted-foreground hover:text-[#0B3D5E] hover:border-[#0B3D5E]/30 border-[#0B3D5E]/10 hover:bg-white"
                     }`}
                   >
-                    {cat.label}
+                    <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-colors ${activeCategory === cat.id ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
+                      {getCount(cat.id)}
+                    </span>
+                    <span>{cat.label}</span>
                   </button>
                 ))}
               </div>
