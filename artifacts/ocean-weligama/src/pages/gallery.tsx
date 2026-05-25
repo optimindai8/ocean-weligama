@@ -190,10 +190,10 @@ export default function GalleryPage() {
                       : "bg-white/80 backdrop-blur-md text-muted-foreground border-border/60 hover:border-primary/30 hover:text-foreground hover:bg-white"
                   }`}
                 >
+                  <span>{CATEGORY_LABELS[cat]}</span>
                   <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-colors ${isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
                     {count}
                   </span>
-                  <span>{CATEGORY_LABELS[cat]}</span>
                 </button>
               );
             })}

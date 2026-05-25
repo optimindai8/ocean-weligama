@@ -192,10 +192,10 @@ export default function PackagesPage() {
                         : "bg-white text-muted-foreground hover:text-[#0B3D5E] hover:border-[#0B3D5E]/30 border-[#0B3D5E]/10 hover:bg-white"
                     }`}
                   >
+                    <span>{cat.label}</span>
                     <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-colors ${activeCategory === cat.id ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
                       {getCount(cat.id)}
                     </span>
-                    <span>{cat.label}</span>
                   </button>
                 ))}
               </div>

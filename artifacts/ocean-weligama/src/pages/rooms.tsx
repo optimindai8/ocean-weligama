@@ -60,10 +60,10 @@ export default function RoomsPage() {
                     : "bg-white/80 backdrop-blur-md text-muted-foreground border-white/40 hover:border-primary/30 hover:text-foreground hover:bg-white"
                 }`}
               >
+                <span>{t.label}</span>
                 <span className={`flex items-center justify-center w-6 h-6 rounded-full text-[11px] transition-colors ${isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
                   {count}
                 </span>
-                <span>{t.label}</span>
               </button>
             );
           })}
