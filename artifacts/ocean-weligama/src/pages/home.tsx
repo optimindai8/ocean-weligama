@@ -549,6 +549,133 @@ export default function Home() {
         </section>
       )}
 
+      {/* Why Choose Us Section */}
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent/5 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3" />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <span className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block">
+                Why Choose Us
+              </span>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-6 leading-tight">
+                More Than Just A <span className="text-primary italic">Stay</span>
+              </h2>
+              <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+                We believe your vacation should be effortless. From the moment you arrive, every detail is handled with warmth and precision, so you can focus entirely on unwinding by the ocean.
+              </p>
+
+              <div className="space-y-6">
+                {[
+                  {
+                    title: "Unbeatable Location",
+                    desc: "Literally 100 steps from Weligama’s gentle surf break. Wake up, grab your board, and you're in the water in seconds."
+                  },
+                  {
+                    title: "Authentic Barefoot Luxury",
+                    desc: "We blend high-end modern comforts with authentic Sri Lankan hospitality for a genuinely unique island experience."
+                  },
+                  {
+                    title: "Effortless Experience",
+                    desc: "From airport transfers to personalized surf lessons and daily fresh breakfasts, we curate your entire journey."
+                  }
+                ].map((item, i) => (
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.15 + 0.3 }}
+                    className="flex gap-4 group"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary transition-colors duration-300">
+                      <Check className="w-5 h-5 text-primary group-hover:text-white transition-colors" />
+                    </div>
+                    <div>
+                      <h4 className="text-xl font-bold font-serif mb-2">{item.title}</h4>
+                      <p className="text-muted-foreground text-sm leading-relaxed">{item.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="mt-10 pt-10 border-t border-border">
+                <div className="flex items-center gap-6">
+                  <div className="flex -space-x-4">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className={`w-12 h-12 rounded-full border-2 border-white overflow-hidden bg-muted`}>
+                        <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Guest" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                    <div className="w-12 h-12 rounded-full border-2 border-white bg-primary text-white flex items-center justify-center font-bold text-xs">
+                      +240
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex text-accent mb-1">
+                      {[...Array(5)].map((_, i) => (
+                        <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                      ))}
+                    </div>
+                    <p className="text-sm font-medium">Loved by guests worldwide</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <img src="/service-stay.png" alt="Barefoot Luxury" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                
+                <div className="absolute bottom-0 left-0 p-8 w-full">
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 text-white">
+                    <p className="font-serif italic text-lg mb-4 leading-relaxed">
+                      "The most peaceful week of my life. Waking up to the sound of waves and walking straight onto the sand is an unmatched experience."
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold">
+                        S
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm">Sarah Jenkins</p>
+                        <p className="text-white/70 text-xs">Stayed for 7 nights</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Floating Badge */}
+              <div className="absolute -top-6 -right-6 md:top-10 md:-right-10 bg-white p-4 rounded-2xl shadow-xl animate-bounce" style={{ animationDuration: '3s' }}>
+                <div className="bg-accent/10 p-3 rounded-xl flex items-center gap-3">
+                  <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+                    <span className="text-xl">🏆</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Top Rated</p>
+                    <p className="font-black text-[#0B3D5E]">2026 Choice</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Gallery */}
       <section className="py-24 bg-slate-950 text-white overflow-hidden relative">
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none" />
