@@ -363,11 +363,21 @@ export default function PackagesPage() {
           <p className="text-white/70 max-w-lg mx-auto font-light text-sm md:text-base">
             Select your favorite Surf Package, add-on optional packs, and lock in your spots for the upcoming season!
           </p>
-          <Link href="/book">
-            <Button size="lg" className="rounded-full px-12 h-16 bg-[#F0A500] hover:bg-[#D99500] text-white text-lg font-bold shadow-xl shadow-[#F0A500]/20 transition-all duration-300">
-              Check Availability
-            </Button>
-          </Link>
+          <motion.div 
+            className="relative inline-block mt-8"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            {/* Glowing/pulsing rings for the heartbeat "lightning" effect */}
+            <div className="absolute -inset-3 bg-gradient-to-r from-amber-400 via-[#F0A500] to-yellow-500 rounded-full blur-xl opacity-60 animate-pulse" style={{ animationDuration: '2s' }} />
+            <div className="absolute -inset-1 bg-[#F0A500] rounded-full blur-md opacity-80 animate-pulse" style={{ animationDuration: '1.5s' }} />
+            
+            <Link href="/book" className="relative block z-10">
+              <Button size="lg" className="rounded-full px-12 h-16 bg-[#F0A500] hover:bg-yellow-400 hover:text-[#0B3D5E] text-white text-lg font-black tracking-widest shadow-2xl transition-all duration-300 hover:scale-105 border border-white/20">
+                Check Availability
+              </Button>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
