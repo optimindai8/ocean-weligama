@@ -28,15 +28,15 @@
   transition: transform var(--transition);
   text-decoration: none;
 
-  animation: heartbeat-glow 2.5s infinite;
+  animation: heartbeat-glow 2s infinite;
 }
 
 @keyframes heartbeat-glow {
-  0% { box-shadow: 0 0 0 0 hsla(38, 100%, 55%, 0.8); }
-  10% { box-shadow: 0 0 15px 5px hsla(38, 100%, 55%, 0.8); }
-  20% { box-shadow: 0 0 5px 0 hsla(38, 100%, 55%, 0.6); }
-  30% { box-shadow: 0 0 15px 5px hsla(38, 100%, 55%, 0.8); }
-  50% { box-shadow: 0 0 0 0 hsla(38, 100%, 55%, 0); }
+  0% { box-shadow: 0 0 0 0 hsla(38, 100%, 60%, 0.8); }
+  15% { box-shadow: 0 0 30px 15px hsla(38, 100%, 55%, 1); }
+  30% { box-shadow: 0 0 10px 4px hsla(38, 100%, 55%, 0.6); }
+  45% { box-shadow: 0 0 45px 25px hsla(38, 100%, 60%, 1); }
+  75% { box-shadow: 0 0 0 0 hsla(38, 100%, 55%, 0); }
   100% { box-shadow: 0 0 0 0 hsla(38, 100%, 55%, 0); }
 }
 
