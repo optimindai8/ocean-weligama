@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { TransparentLogo } from "./transparent-logo";
 import { LanguageSelector } from "./LanguageSelector";
 import { Menu, X } from "lucide-react";
+import "./magic-book-btn.css";
 
 export function Navbar() {
   const [location] = useLocation();
@@ -104,18 +105,25 @@ export function Navbar() {
             <div className="hidden md:block">
               <LanguageSelector />
             </div>
-            <Link href="/book">
-              <Button className="
-                animate-pulse-highlight
-                bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full font-black shadow-[0_10px_20px_rgba(240,165,0,0.3)] hover:shadow-[0_15px_30px_rgba(240,165,0,0.5)] transition-all duration-500
-                hover:scale-105 active:scale-95
-                px-4 sm:px-8 h-10 sm:h-12 text-[10px] sm:text-xs tracking-wider uppercase
-                relative overflow-hidden group
-              ">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
-                <span className="relative z-10">Book Now</span>
-              </Button>
-            </Link>
+            <div className="magic-btn-wrapper">
+              <Link href="/book">
+                <button className="magic-btn">
+                  {/* Sparkle SVG */}
+                  <svg className="magic-btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
+                  </svg>
+                  {/* Animated letters */}
+                  <span className="magic-btn-letter">B</span>
+                  <span className="magic-btn-letter">o</span>
+                  <span className="magic-btn-letter">o</span>
+                  <span className="magic-btn-letter">k</span>
+                  <span className="magic-btn-letter">&nbsp;</span>
+                  <span className="magic-btn-letter">N</span>
+                  <span className="magic-btn-letter">o</span>
+                  <span className="magic-btn-letter">w</span>
+                </button>
+              </Link>
+            </div>
 
             {/* Mobile Hamburg Trigger */}
             <button 
