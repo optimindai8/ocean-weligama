@@ -460,7 +460,7 @@ export default function AboutPage() {
                 <div className="lg:col-span-7">
                   <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl bg-muted border border-border/60">
                     <img
-                      src="/assets/room-1.png"
+                      src="/Comfortable_Basic_Private.jpeg"
                       alt="Basic Private Room at Ocean Air Weligama"
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
@@ -513,7 +513,7 @@ export default function AboutPage() {
                 <div className="lg:col-span-7">
                   <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl bg-muted border border-border/60">
                     <img
-                      src="/gallery-room-luxury.jpg"
+                      src="/Deluxe_Double%20with_Balcony.jpeg"
                       alt="Deluxe Double Room with Balcony at Ocean Air"
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
