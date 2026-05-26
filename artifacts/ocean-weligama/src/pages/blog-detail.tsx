@@ -138,19 +138,25 @@ export default function BlogDetailPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white rounded-[3rem] p-8 md:p-14 lg:p-16 shadow-[0_30px_100px_rgba(0,0,0,0.08)] border border-slate-100 hover:shadow-[0_30px_100px_rgba(0,0,0,0.12)] transition-all duration-700 relative overflow-hidden group"
+              className="bg-white rounded-[2.5rem] p-6 md:p-10 shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-transform duration-1000 group-hover:scale-150" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 transition-transform duration-1000 group-hover:scale-150" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
               
-              <div className="relative z-10 prose prose-lg md:prose-xl max-w-none prose-p:text-slate-600 prose-p:leading-[1.8] prose-headings:font-serif prose-headings:text-foreground">
+              <div className="relative z-10 group/story space-y-2">
                 {blog.description.split('\n').map((paragraph: string, i: number) => {
                   if (!paragraph.trim()) return null;
                   return (
-                    <p key={i} className="mb-8 font-medium">
+                    <motion.p 
+                      key={i} 
+                      initial={{ opacity: 0, y: 15 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-50px" }}
+                      transition={{ delay: Math.min(i * 0.1, 0.5), duration: 0.5 }}
+                      className="text-base text-slate-600 leading-[2] p-5 rounded-2xl transition-all duration-300 group-hover/story:text-slate-300 hover:!text-slate-900 hover:!bg-slate-50 hover:shadow-sm cursor-default"
+                    >
                       {i === 0 ? (
                         <>
-                          <span className="float-left text-6xl md:text-8xl font-serif font-black text-primary leading-[0.8] mr-4 mt-2 mb-2 drop-shadow-sm">
+                          <span className="float-left text-5xl font-serif font-black text-primary leading-[0.8] mr-4 mt-2 drop-shadow-sm transition-colors duration-300 group-hover/story:text-primary/40 hover:!text-primary">
                             {paragraph.charAt(0)}
                           </span>
                           {paragraph.slice(1)}
@@ -158,7 +164,7 @@ export default function BlogDetailPage() {
                       ) : (
                         paragraph
                       )}
-                    </p>
+                    </motion.p>
                   );
                 })}
               </div>

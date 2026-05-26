@@ -746,10 +746,16 @@ export default function Home() {
                 <img src={blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 <Badge className="absolute top-4 left-4 bg-white text-black hover:bg-white">{blog.category}</Badge>
               </div>
-              <div className="p-8">
+              <div className="p-8 flex flex-col h-full">
                 <p className="text-xs text-muted-foreground mb-3">{new Date(blog.date).toLocaleDateString()}</p>
                 <h3 className="text-xl font-bold font-serif mb-3 group-hover:text-primary transition-colors">{blog.title}</h3>
-                <p className="text-muted-foreground text-sm line-clamp-2">{blog.description}</p>
+                <p className="text-muted-foreground text-sm line-clamp-2 mb-6 flex-1">{blog.description}</p>
+                
+                <Link href={`/blog/${blog.id}`} className="mt-auto">
+                  <Button variant="outline" className="w-full rounded-full border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
+                    Read Full Story
+                  </Button>
+                </Link>
               </div>
             </motion.div>
           ))}

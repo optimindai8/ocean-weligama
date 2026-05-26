@@ -1300,7 +1300,7 @@ export default function BookingPage() {
                                   />
                                   <span className="text-sm text-muted-foreground">
                                     I agree to the{" "}
-                                    <a href="/cancellation-policy" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80 transition-colors">terms and island policies</a>.
+                                    <a href="/cancellation-policy" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80 transition-colors">Cancellation Policy</a>.
                                   </span>
                                 </label>
                               </FormControl>
