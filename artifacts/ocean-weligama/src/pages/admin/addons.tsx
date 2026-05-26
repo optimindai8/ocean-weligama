@@ -368,7 +368,7 @@ export default function AdminAddons() {
                       <img src={service.imageUrl} alt={service.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full bg-[#0B3D5E]/5 flex items-center justify-center text-[#0B3D5E]/30">
-                        <Sparkles className="w-6 h-6" />
+                        {service.iconEmoji ? <span className="text-2xl">{service.iconEmoji}</span> : <Sparkles className="w-6 h-6" />}
                       </div>
                     )}
                   </div>

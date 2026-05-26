@@ -881,50 +881,44 @@ export default function BookingPage() {
                       <button
                         key={exp.id}
                         onClick={() => toggleService(exp.id)}
-                        className={`group text-left rounded-[1.5rem] border-2 transition-all duration-400 relative overflow-hidden ${
+                        className={`group text-left rounded-[1.5rem] border-2 transition-all duration-400 relative overflow-hidden flex flex-col ${
                           isSel
                             ? "border-purple-400 bg-white shadow-lg shadow-purple-100 scale-[1.02] z-10"
                             : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white hover:border-purple-200 hover:shadow-lg hover:scale-[1.01]"
                         }`}
                       >
-                        {/* Image */}
-                        <div className="relative w-full h-36 overflow-hidden bg-purple-50">
-                          {exp.imageUrl ? (
-                            <img src={exp.imageUrl} alt={exp.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Sparkles className="w-10 h-10 text-purple-200" />
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                          <span className={`absolute bottom-2 left-2 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${TAG_COLORS[tag] || TAG_COLORS.Wellness}`}>
-                            {tag}
-                          </span>
+                        <div className="p-6 flex-1 flex flex-col">
+                          {/* Emoji Icon */}
+                          <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm border border-purple-100">
+                            <span className="text-2xl">{exp.iconEmoji || '🌊'}</span>
+                          </div>
+
+                          {/* Title */}
+                          <h3 className="text-lg font-serif font-bold text-foreground mb-2 group-hover:text-purple-600 transition-colors">
+                            {exp.name}
+                          </h3>
+
+                          {/* Description */}
+                          <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6 flex-1 line-clamp-2">
+                            {exp.description || exp.highlights?.[0] || 'Experience the best of Weligama.'}
+                          </p>
+
+                          <div className="flex items-center justify-between pt-4 border-t border-dashed border-muted mt-auto w-full">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-purple-400">Per Person</p>
+                            <span className={`text-xl font-bold ${isSel ? "text-purple-600" : "text-foreground"}`}>
+                              {price}
+                            </span>
+                          </div>
+
                           {isSel && (
                             <motion.div
                               initial={{ scale: 0 }} animate={{ scale: 1 }}
-                              className="absolute top-2 right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center shadow-lg"
+                              className="absolute top-4 right-4 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center shadow-lg"
                             >
                               <Check className="w-3 h-3 text-white" />
                             </motion.div>
                           )}
                         </div>
-
-                        {/* Content */}
-                        <div className="p-5">
-                          <h3 className="text-base font-serif font-bold text-foreground mb-1.5 leading-tight">{exp.name}</h3>
-                          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mb-4">
-                            {exp.description || exp.highlights?.[0]}
-                          </p>
-                          <div className="flex items-center justify-between pt-3 border-t border-dashed border-muted">
-                            <p className="text-[8px] font-black uppercase tracking-widest text-purple-400">Per Person</p>
-                            <span className={`text-lg font-bold ${isSel ? "text-purple-600" : "text-foreground"}`}>
-                              {price}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="absolute inset-0 bg-purple-500/3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[1.5rem]" />
                       </button>
                     );
                   })}
