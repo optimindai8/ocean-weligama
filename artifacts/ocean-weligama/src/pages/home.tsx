@@ -32,12 +32,11 @@ export default function Home() {
       
       {/* Hero Section */}
       <section
-        className="relative flex flex-col items-center justify-center overflow-hidden"
+        className="relative flex flex-col overflow-hidden"
         style={{ minHeight: "max(100svh, 800px)" }}
       >
         {/* Cinematic Video Background */}
         <div className="absolute inset-0 z-0 bg-slate-950">
-          {/* Hero video */}
           <video
             key="hero-video"
             autoPlay
@@ -48,22 +47,23 @@ export default function Home() {
             preload="auto"
             poster="/hero-video-poster.jpg"
             className="absolute inset-0 w-full h-full object-cover"
-            style={{
-              WebkitPlaysinline: true,
-              WebkitObjectFit: "cover",
-            } as React.CSSProperties}
+            style={{ WebkitPlaysinline: true, WebkitObjectFit: "cover" } as React.CSSProperties}
           >
             <source src="/hero-video.mp4" type="video/mp4" />
           </video>
-          {/* Multi-layered Cinematic Overlay — slightly stronger on mobile for text contrast */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/25" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.45)_100%)]" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 text-center mt-32 mb-0 md:mt-40 flex-1 flex flex-col justify-center pb-40">
-          {/* Trust Badges - Social Proof Anchor */}
+        {/* Row 1: Navbar spacer — always clears the floating navbar */}
+        <div className="h-24 md:h-28 shrink-0" />
+
+        {/* Row 2: Main content — takes all remaining space, centered */}
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4">
+
+          {/* Trust Badges */}
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
@@ -77,56 +77,56 @@ export default function Home() {
               <span className="text-white text-sm font-black tracking-widest uppercase">4.9 Rating</span>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
               className="bg-white/10 backdrop-blur-xl px-6 py-2.5 rounded-full border border-white/20 shadow-2xl flex items-center gap-3 group hover:bg-white/20 transition-all cursor-default"
             >
               <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <span className="text-white text-sm font-black tracking-widest uppercase">1000+ Happy Guests</span>
+              <span className="text-white text-sm font-black tracking-widest uppercase">240+ Happy Guests</span>
             </motion.div>
           </div>
 
-          {/* Cinematic Headline */}
+          {/* Headline */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
-              Your Ocean Home <br/> <span className="text-accent italic font-normal">in Weligama</span>
+              Your Ocean Home <br /> <span className="text-accent italic font-normal">in Weligama</span>
             </h1>
           </motion.div>
 
+          {/* Tagline */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 1 }}
-            className="relative inline-block mb-12"
+            className="relative inline-block mb-10"
           >
             <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-accent rounded-full" />
             <p className="text-lg md:text-3xl text-white/90 max-w-3xl mx-auto leading-relaxed pl-4">
-              <span className="text-white font-bold">100 steps from the ocean.</span> <br className="md:hidden"/>
+              <span className="text-white font-bold">100 steps from the ocean.</span> <br className="md:hidden" />
               Barefoot beach living meets Sri Lankan hospitality.
             </p>
           </motion.div>
 
+          {/* CTA Button */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="mb-10"
           >
             <Link href="/book">
               <Button size="lg" className="
                 relative overflow-hidden
-                bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full 
+                bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full
                 px-8 h-12 text-base sm:px-16 sm:h-16 sm:text-xl font-bold shadow-[0_20px_50px_rgba(240,165,0,0.3)]
                 hover:shadow-[0_20px_60px_rgba(240,165,0,0.5)]
                 transition-all duration-500 hover:scale-105 group
               ">
-                {/* Button Glow Effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                 <span className="relative z-10 flex items-center gap-3">
                   Check Availability
@@ -139,15 +139,17 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Scroll Indicator — sits in its own dedicated space at the very bottom */}
-        <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="relative z-10 flex flex-col items-center gap-2 opacity-50 pb-6"
-        >
-          <span className="text-white text-[10px] font-black uppercase tracking-[0.4em]">Scroll</span>
-          <div className="w-px h-12 bg-gradient-to-b from-white to-transparent" />
-        </motion.div>
+        {/* Row 3: Scroll Indicator — its own dedicated row, never overlaps */}
+        <div className="relative z-10 flex justify-center py-8 shrink-0">
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="flex flex-col items-center gap-2 opacity-50"
+          >
+            <span className="text-white text-[10px] font-black uppercase tracking-[0.4em]">Scroll</span>
+            <div className="w-px h-10 bg-gradient-to-b from-white to-transparent" />
+          </motion.div>
+        </div>
       </section>
 
       {/* High-End Reassurance Panel (Trust Bar) */}
