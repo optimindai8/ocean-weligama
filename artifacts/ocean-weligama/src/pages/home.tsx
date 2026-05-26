@@ -32,8 +32,8 @@ export default function Home() {
       
       {/* Hero Section */}
       <section
-        className="relative flex items-center justify-center overflow-hidden"
-        style={{ minHeight: "max(100svh, 750px)" }}
+        className="relative flex flex-col items-center justify-center overflow-hidden"
+        style={{ minHeight: "max(100svh, 800px)" }}
       >
         {/* Cinematic Video Background */}
         <div className="absolute inset-0 z-0 bg-slate-950">
@@ -60,7 +60,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.45)_100%)]" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 text-center pt-20 pb-24 md:pt-0 md:pb-16">
+        <div className="relative z-10 container mx-auto px-4 text-center mt-32 mb-16 md:mt-40 md:mb-20 flex-1 flex flex-col justify-center">
           {/* Trust Badges - Social Proof Anchor */}
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10">
             <motion.div 
@@ -116,6 +116,7 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
+            className="mb-10"
           >
             <Link href="/book">
               <Button size="lg" className="
@@ -142,7 +143,7 @@ export default function Home() {
         <motion.div 
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-20 md:bottom-28 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50"
+          className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 z-10"
         >
           <span className="text-white text-[10px] font-black uppercase tracking-[0.4em]">Scroll</span>
           <div className="w-px h-12 bg-gradient-to-b from-white to-transparent" />
