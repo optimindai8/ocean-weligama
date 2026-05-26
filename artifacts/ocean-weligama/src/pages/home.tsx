@@ -122,17 +122,24 @@ export default function Home() {
             <Link href="/book">
               <Button size="lg" className="
                 relative overflow-hidden
-                bg-[#121212] hover:bg-[#1a1a1a] text-white rounded-[2rem]
+                bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-[2rem]
                 px-8 h-14 sm:px-14 sm:h-20 sm:text-[22px] font-medium 
-                shadow-[0_20px_50px_rgba(0,0,0,0.8)]
-                border border-[#333] border-t-[#555] border-b-black
+                shadow-[0_20px_50px_rgba(0,0,0,0.4)]
+                border border-white/20 border-t-white/40 border-b-white/5
                 transition-all duration-500 hover:scale-105 group
               ">
-                {/* 3D bottom glow */}
+               {/* 3D bottom glow */}
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[80%] h-[30px] bg-white/60 blur-[12px] rounded-[100%] pointer-events-none transition-all duration-500 group-hover:bg-white/80" />
                 
                 {/* Subtle top reflection */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+
+                {/* Continuous shine sweep */}
+                <motion.div
+                  className="absolute inset-0 w-[40%] bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-[-20deg] pointer-events-none z-20"
+                  animate={{ x: ["-150%", "350%"] }}
+                  transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+                />
                 
                 <span className="relative z-10 flex items-center gap-4">
                   <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-[#b0b0b0] tracking-wide">
