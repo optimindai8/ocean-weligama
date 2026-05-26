@@ -406,10 +406,10 @@ export default function BookingPage() {
   // RENDER
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
 
       {/* ── STICKY PROGRESS HEADER ──────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-border/40 shadow-sm">
+      <header className="sticky top-0 z-40 bg-[#F8FAFC]/80 backdrop-blur-xl border-b border-slate-200/50">
         <div className="container mx-auto px-4 pt-20 md:pt-28 pb-4">
           <div className="max-w-3xl mx-auto space-y-4">
 
@@ -480,6 +480,7 @@ export default function BookingPage() {
       {/* ── MAIN CONTENT ────────────────────────────────────────────────── */}
       <main className="flex-1 py-12 md:py-16 px-4">
         <div className="container mx-auto">
+          <div className="w-full max-w-5xl mx-auto bg-white/90 backdrop-blur-3xl rounded-[3rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-slate-100 p-6 md:p-10 lg:p-14 relative min-h-[60vh] flex flex-col justify-center mb-20">
           <Form {...form}>
             <AnimatePresence mode="wait" custom={dir}>
 
@@ -490,7 +491,7 @@ export default function BookingPage() {
               <motion.div
                 key="s1" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
-                className="max-w-lg mx-auto"
+                className="w-full max-w-2xl mx-auto"
               >
                 <StepHeader
                   n={1} iconBg="bg-sky-100"
@@ -501,7 +502,7 @@ export default function BookingPage() {
 
                 <motion.div
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
-                  className="bg-white rounded-[2.5rem] p-6 md:p-10 shadow-2xl shadow-slate-100/80 border border-slate-100"
+                  className="bg-slate-50/50 rounded-[2.5rem] p-6 md:p-10 border border-slate-100/50"
                 >
                   <div className="flex items-center justify-center gap-6 md:gap-10">
                     <button
@@ -560,7 +561,7 @@ export default function BookingPage() {
               <motion.div
                 key="s2" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
-                className="max-w-xl mx-auto"
+                className="w-full max-w-2xl mx-auto"
               >
                 <StepHeader
                   n={2} iconBg="bg-violet-100"
@@ -571,7 +572,7 @@ export default function BookingPage() {
 
                 <motion.div
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
-                  className="bg-white rounded-[2.5rem] p-4 md:p-10 shadow-2xl shadow-slate-100/80 border border-slate-100"
+                  className="bg-slate-50/50 rounded-[2.5rem] p-4 md:p-10 border border-slate-100/50"
                 >
                   <div className="flex justify-center overflow-x-auto pb-4">
                     <DayPicker
@@ -629,7 +630,7 @@ export default function BookingPage() {
               <motion.div
                 key="s3" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
-                className="max-w-3xl mx-auto"
+                className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
                   n={3} iconBg="bg-amber-100"
@@ -653,8 +654,8 @@ export default function BookingPage() {
                         onClick={() => setSelectedRoomIds(prev => prev.includes(room.id) ? prev.filter(id => id !== room.id) : [...prev, room.id])}
                         className={`group text-left p-6 md:p-8 rounded-[2rem] border-2 transition-all duration-400 relative overflow-hidden ${
                           selectedRoomIds.includes(room.id)
-                            ? "border-primary bg-white shadow-2xl shadow-primary/10 scale-[1.02]"
-                            : "border-white bg-white shadow-lg hover:border-amber-200 hover:shadow-xl hover:scale-[1.01]"
+                            ? "border-primary bg-white shadow-2xl shadow-primary/10 scale-[1.02] z-10"
+                            : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white hover:border-amber-200 hover:shadow-xl hover:scale-[1.01]"
                         }`}
                       >
                         {selectedRoomIds.includes(room.id) && (
@@ -711,7 +712,7 @@ export default function BookingPage() {
               <motion.div
                 key="s4" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
-                className="max-w-3xl mx-auto"
+                className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
                   n={4} iconBg="bg-emerald-100"
@@ -735,8 +736,8 @@ export default function BookingPage() {
                         onClick={() => toggleService(pkg.id)}
                         className={`group bg-white rounded-[2.5rem] border-2 transition-all duration-400 relative overflow-hidden flex flex-col h-full cursor-pointer ${
                           isSel
-                            ? "border-emerald-500 shadow-2xl shadow-emerald-100 scale-[1.02]"
-                            : "border-slate-100 shadow-lg hover:border-emerald-200 hover:shadow-xl hover:scale-[1.01]"
+                            ? "border-emerald-500 bg-white shadow-2xl shadow-emerald-100 scale-[1.02] z-10"
+                            : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white hover:border-emerald-200 hover:shadow-xl hover:scale-[1.01]"
                         }`}
                       >
                         {/* Image */}
@@ -858,7 +859,7 @@ export default function BookingPage() {
               <motion.div
                 key="s5" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
-                className="max-w-3xl mx-auto"
+                className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
                   n={5} iconBg="bg-purple-100"
@@ -882,8 +883,8 @@ export default function BookingPage() {
                         onClick={() => toggleService(exp.id)}
                         className={`group text-left rounded-[1.5rem] border-2 transition-all duration-400 relative overflow-hidden ${
                           isSel
-                            ? "border-purple-400 bg-white shadow-lg shadow-purple-100 scale-[1.02]"
-                            : "border-white bg-white shadow-md hover:border-purple-200 hover:shadow-lg hover:scale-[1.01]"
+                            ? "border-purple-400 bg-white shadow-lg shadow-purple-100 scale-[1.02] z-10"
+                            : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white hover:border-purple-200 hover:shadow-lg hover:scale-[1.01]"
                         }`}
                       >
                         {/* Image */}
@@ -946,7 +947,7 @@ export default function BookingPage() {
               <motion.div
                 key="s6" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
-                className="max-w-3xl mx-auto"
+                className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
                   n={6} iconBg="bg-rose-100"
@@ -960,9 +961,7 @@ export default function BookingPage() {
                   className="space-y-5"
                 >
                   {/* ── Pickup card ── */}
-                  <div className={`rounded-[2rem] border-2 transition-all duration-400 bg-white overflow-hidden ${
-                    watchPickup ? "border-primary shadow-xl shadow-primary/8" : "border-white shadow-lg"
-                  }`}>
+                  <div className={`rounded-[2rem] border-2 transition-all duration-400 overflow-hidden ${watchPickup ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
                     <button
                       type="button"
                       onClick={() => form.setValue("airportPickup", !watchPickup)}
@@ -1076,9 +1075,7 @@ export default function BookingPage() {
                   </div>
 
                   {/* ── Drop card ── */}
-                  <div className={`rounded-[2rem] border-2 transition-all duration-400 bg-white ${
-                    watchDrop ? "border-primary shadow-xl shadow-primary/8" : "border-white shadow-lg"
-                  }`}>
+                  <div className={`rounded-[2rem] border-2 transition-all duration-400 ${watchDrop ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
                     <button
                       type="button"
                       onClick={() => form.setValue("airportDrop", !watchDrop)}
@@ -1163,7 +1160,7 @@ export default function BookingPage() {
               <motion.div
                 key="s7" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
-                className="max-w-5xl mx-auto"
+                className="w-full mx-auto"
               >
                 <StepHeader
                   n={7} iconBg="bg-primary/10"
@@ -1181,7 +1178,7 @@ export default function BookingPage() {
                   >
                     <form className="space-y-5">
                       {/* Details card */}
-                        <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-6">
+                        <div className="bg-slate-50/50 rounded-[2rem] p-5 md:p-8 border border-slate-100/50 space-y-6">
                           <p className="text-[10px] font-black uppercase tracking-widest text-primary">Your Details</p>
 
                           <FormField control={form.control} name="guestFullName" render={({ field }) => (
@@ -1237,7 +1234,7 @@ export default function BookingPage() {
                         </div>
 
                         {/* Payment card */}
-                        <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-5">
+                        <div className="bg-slate-50/50 rounded-[2rem] p-5 md:p-8 border border-slate-100/50 space-y-5">
                           <p className="text-[10px] font-black uppercase tracking-widest text-primary">Payment Method</p>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             {[
@@ -1263,7 +1260,7 @@ export default function BookingPage() {
                         </div>
 
                         {/* Terms + Submit card */}
-                        <div className="bg-white rounded-[2rem] p-5 md:p-8 shadow-xl shadow-slate-100/80 border border-slate-100 space-y-6">
+                        <div className="bg-slate-50/50 rounded-[2rem] p-5 md:p-8 border border-slate-100/50 space-y-6">
                           <FormField control={form.control} name="agreeTerms" render={({ field }) => (
                             <FormItem>
                               <FormControl>
@@ -1429,6 +1426,7 @@ export default function BookingPage() {
 
             </AnimatePresence>
           </Form>
+          </div>
 
           <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
             <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] p-8 md:p-10 max-h-[90vh] overflow-y-auto border-0 shadow-2xl">
