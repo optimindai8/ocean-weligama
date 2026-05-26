@@ -720,45 +720,98 @@ export default function Home() {
       </section>
 
       {/* Featured Blogs */}
-      <section className="py-24 bg-muted container mx-auto px-4">
-        <div className="text-center mb-16">
-          <motion.span 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block"
-          >
-            Stories & Guides
-          </motion.span>
-          <h2 className="text-4xl font-serif font-bold text-foreground mb-4">Latest on the Blog</h2>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {blogs?.filter(b => b.isFeatured).slice(0, 3).map((blog: any, idx: number) => (
+      <section className="py-24 bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-full h-1/2 bg-gradient-to-b from-muted to-transparent" />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+            <div>
+              <motion.span 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block"
+              >
+                Stories & Guides
+              </motion.span>
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-4xl md:text-5xl font-serif font-bold text-foreground"
+              >
+                Latest on the Blog
+              </motion.h2>
+            </div>
+            
             <motion.div
-              key={blog.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-[2.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group"
             >
-              <div className="aspect-video overflow-hidden relative">
-                <img src={blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                <Badge className="absolute top-4 left-4 bg-white text-black hover:bg-white">{blog.category}</Badge>
-              </div>
-              <div className="p-8 flex flex-col h-full">
-                <p className="text-xs text-muted-foreground mb-3">{new Date(blog.date).toLocaleDateString()}</p>
-                <h3 className="text-xl font-bold font-serif mb-3 group-hover:text-primary transition-colors">{blog.title}</h3>
-                <p className="text-muted-foreground text-sm line-clamp-2 mb-6 flex-1">{blog.description}</p>
-                
-                <Link href={`/blog/${blog.id}`} className="mt-auto">
-                  <Button variant="outline" className="w-full rounded-full border-primary/20 text-primary hover:bg-primary hover:text-white transition-all duration-300 group-hover:bg-primary group-hover:text-white">
-                    Read Full Story
-                  </Button>
-                </Link>
-              </div>
+              <Link href="/blog">
+                <Button variant="outline" className="rounded-full border-primary/20 text-primary hover:bg-primary hover:text-white hover:scale-105 transition-all h-12 px-8 font-bold">
+                  View All Stories
+                </Button>
+              </Link>
             </motion.div>
-          ))}
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {blogs?.filter(b => b.isFeatured).slice(0, 3).map((blog: any, idx: number) => (
+              <motion.div
+                key={blog.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.15, duration: 0.6 }}
+                viewport={{ once: true }}
+                className="group relative h-full flex flex-col bg-white rounded-[2.5rem] border border-slate-100/60 overflow-hidden hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+              >
+                <div className="aspect-[4/3] overflow-hidden relative m-2 rounded-[2rem]">
+                  <img 
+                    src={blog.image} 
+                    alt={blog.title} 
+                    className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-110" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  <div className="absolute top-4 left-4 flex gap-2">
+                    <Badge className="bg-white/90 backdrop-blur-md text-black border-none font-bold uppercase tracking-widest text-[9px] px-3 py-1.5 rounded-full shadow-sm">
+                      {blog.category}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <div className="p-6 md:p-8 flex flex-col flex-1 relative bg-white">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-px bg-primary/30" />
+                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">
+                      {new Date(blog.date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  
+                  <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 text-foreground group-hover:text-primary transition-colors duration-300 leading-snug">
+                    {blog.title}
+                  </h3>
+                  
+                  <p className="text-muted-foreground text-sm line-clamp-3 mb-8 flex-1 leading-relaxed font-light">
+                    {blog.description}
+                  </p>
+                  
+                  <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <Link href={`/blog/${blog.id}`} className="w-full">
+                      <Button variant="ghost" className="w-full justify-between hover:bg-primary/5 rounded-full text-primary hover:text-primary transition-all duration-300 group-hover:px-4 font-bold text-sm h-12">
+                        Read Full Story
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:scale-110">
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
