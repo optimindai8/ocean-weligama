@@ -466,7 +466,7 @@ export default function AdminAddons() {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div className="grid grid-cols-1 gap-8">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
                       name="name"
@@ -494,11 +494,10 @@ export default function AdminAddons() {
                         </FormItem>
                       )}
                     />
-                  </div>
                   
-                  <FormField
-                    control={form.control}
-                    name="basePrice"
+                    <FormField
+                      control={form.control}
+                      name="basePrice"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Price (€)</FormLabel>
