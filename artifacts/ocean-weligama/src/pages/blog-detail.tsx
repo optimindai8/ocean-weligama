@@ -73,7 +73,8 @@ export default function BlogDetailPage() {
               className="w-full h-full object-cover scale-110" 
               alt={blog.title}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-black/20" />
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
           </motion.div>
 
           <div className="container relative z-10 mx-auto px-4 pb-20 text-center max-w-4xl">

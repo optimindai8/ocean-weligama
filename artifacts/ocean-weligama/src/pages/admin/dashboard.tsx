@@ -171,10 +171,10 @@ export default function AdminDashboard() {
             <Badge className="bg-emerald-100 text-emerald-700 border-0 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-200">{upcomingCheckins && Array.isArray(upcomingCheckins) ? upcomingCheckins.length : 0} Total</Badge>
           </div>
           {upcomingCheckins && Array.isArray(upcomingCheckins) && upcomingCheckins.length > 0 ? (
-            <div className="overflow-x-auto rounded-[1.5rem] border border-slate-100">
+            <div className="overflow-x-auto max-h-[500px] overflow-y-auto rounded-[1.5rem] border border-slate-100 relative">
               <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-slate-50 text-left text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                <thead className="sticky top-0 z-10 bg-slate-50/95 backdrop-blur shadow-sm">
+                  <tr className="text-left text-slate-500 text-[10px] font-black uppercase tracking-widest">
                     <th className="px-6 py-4 rounded-tl-[1.5rem]">Reference</th>
                     <th className="px-6 py-4">Guest</th>
                     <th className="px-6 py-4">Check-in</th>

@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, Filter, Trash2, Eye, User, Phone, Mail, Globe, Home, Calendar, Sparkles, CreditCard, MessageSquare, Clock, Check, Award, Plane } from "lucide-react";
+import { ChevronLeft, ChevronRight, Filter, Trash2, Eye, User, Phone, Mail, Globe, Home, Calendar, Sparkles, CreditCard, MessageSquare, Clock, Check, Award, Plane, Search, RefreshCw, Info } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -117,6 +117,7 @@ export default function AdminBookings() {
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
   const [expandedPkgs, setExpandedPkgs] = useState<Record<string, boolean>>({});
+  const [searchQuery, setSearchQuery] = useState("");
 
 
 
@@ -209,10 +210,18 @@ export default function AdminBookings() {
 
   const totalPages = Math.ceil((bookingsData?.total ?? 0) / 20);
 
+  const filteredBookings = bookingsData?.bookings?.filter((b) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return b.reference.toLowerCase().includes(q) || 
+           b.guestFullName.toLowerCase().includes(q) || 
+           b.guestEmail.toLowerCase().includes(q);
+  });
+
   return (
     <AdminLayout>
       <div className="p-8 md:p-12 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -220,7 +229,50 @@ export default function AdminBookings() {
             <h1 className="text-4xl font-serif font-black text-[#0B3D5E]">Bookings</h1>
             <p className="text-slate-500 font-medium mt-2 text-sm">{bookingsData?.total ?? 0} total bookings managed here.</p>
           </motion.div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Search reference, name..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64 shadow-sm"
+              />
+            </div>
+            <Button 
+              variant="outline" 
+              className="bg-white border-slate-200 text-slate-600 hover:text-primary hover:bg-slate-50 shadow-sm rounded-xl h-9"
+              onClick={() => {
+                queryClient.invalidateQueries({ queryKey: getAdminListBookingsQueryKey(params) });
+                queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
+                toast({ title: "Bookings refreshed", description: "Latest data has been loaded." });
+              }}
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
         </div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-8 flex items-start gap-4 shadow-sm"
+        >
+          <div className="bg-blue-100 p-2 rounded-full mt-0.5 shrink-0">
+            <Info className="w-5 h-5 text-blue-600" />
+          </div>
+          <div>
+            <h4 className="font-bold text-blue-900 mb-1 text-sm">How to manage bookings</h4>
+            <ul className="text-xs text-blue-800/80 space-y-1 list-disc pl-4 mt-1">
+              <li><strong>View Details:</strong> Click anywhere on a specific booking row to see full details, payment info, and add-ons.</li>
+              <li><strong>Change Status:</strong> Use the dropdown menu in the "Actions" column to instantly update a booking's status.</li>
+              <li><strong>Delete:</strong> Click the red trash icon to permanently remove a booking.</li>
+            </ul>
+          </div>
+        </motion.div>
 
         {/* Filters */}
         <motion.div 
@@ -261,10 +313,10 @@ export default function AdminBookings() {
             <div className="p-8 space-y-4">
               {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}
             </div>
-          ) : bookingsData?.bookings && bookingsData.bookings.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="border-b border-slate-100 bg-slate-50/50">
+          ) : filteredBookings && filteredBookings.length > 0 ? (
+            <div className="overflow-x-auto max-h-[60vh] overflow-y-auto relative">
+              <table className="w-full text-sm relative">
+                <thead className="border-b border-slate-100 bg-slate-50/95 backdrop-blur sticky top-0 z-10 shadow-sm">
                   <tr>
                     {["Reference", "Guest", "Contact", "Check-in", "Check-out", "Nights", "Status", "Total", "Actions"].map((h) => (
                       <th key={h} className="text-left px-6 py-4 font-black text-slate-400 text-[10px] uppercase tracking-widest whitespace-nowrap">{h}</th>
@@ -272,7 +324,7 @@ export default function AdminBookings() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {bookingsData.bookings.map((b) => (
+                  {filteredBookings.map((b) => (
                     <tr 
                       key={b.id} 
                       className={`transition-colors cursor-pointer group ${
@@ -378,7 +430,7 @@ export default function AdminBookings() {
 
         {/* Detailed Booking Modal */}
         <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
-          <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto p-0 rounded-2xl gap-0 border-0 shadow-2xl">
+          <DialogContent className="sm:max-w-4xl lg:max-w-5xl max-h-[85vh] overflow-y-auto p-0 rounded-2xl gap-0 border-0 shadow-2xl">
             {selectedBooking && (() => {
               const parsed = parseSpecialRequests(selectedBooking.specialRequests);
               return (
@@ -397,7 +449,9 @@ export default function AdminBookings() {
                       </div>
                       <h2 className="text-2xl sm:text-3xl font-serif font-bold mb-1">{selectedBooking.guestFullName}</h2>
                       <div className="flex flex-wrap gap-4 text-sm text-white/80 mt-3">
-                        <div className="flex items-center gap-1.5"><Mail className="w-4 h-4" /> {selectedBooking.guestEmail}</div>
+                        <a href={`mailto:${selectedBooking.guestEmail}`} className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer" title="Send email">
+                          <Mail className="w-4 h-4" /> {selectedBooking.guestEmail}
+                        </a>
                         {selectedBooking.guestPhone && <div className="flex items-center gap-1.5"><Phone className="w-4 h-4" /> {selectedBooking.guestPhone}</div>}
                         {selectedBooking.guestNationality && <div className="flex items-center gap-1.5"><Globe className="w-4 h-4" /> {selectedBooking.guestNationality}</div>}
                       </div>
