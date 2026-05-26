@@ -384,7 +384,7 @@ export default function Home() {
           <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
-          {services?.filter(s => s.isFeatured && s.type === "main").map((pkg: any, idx: number) => (
+          {services?.filter(s => s.isFeatured && (s.type === "main" || s.category?.toLowerCase().includes("package"))).map((pkg: any, idx: number) => (
             <motion.div
               key={pkg.id}
               initial={{ opacity: 0, y: 30 }}
@@ -473,7 +473,7 @@ export default function Home() {
               </div>
             </motion.div>
           ))}
-          {(!services || services.filter(s => s.isFeatured && s.type === "main").length === 0) && (
+          {(!services || services.filter(s => s.isFeatured && (s.type === "main" || s.category?.toLowerCase().includes("package"))).length === 0) && (
             <p className="col-span-full text-center text-muted-foreground">More packages coming soon.</p>
           )}
         </div>
