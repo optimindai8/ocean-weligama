@@ -19,6 +19,7 @@ import {
   Filter,
   AlertTriangle,
   RefreshCw,
+  Star,
 } from "lucide-react";
 
 type StatusFilter = "all" | "pending" | "approved" | "rejected";
@@ -53,6 +54,16 @@ export default function AdminGallery() {
       await updateStatus.mutateAsync({ id, data: { status } });
       queryClient.invalidateQueries({ queryKey: ["/api/v1/admin/gallery"] });
       queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  
+  const handleToggleFeatured = async (id: string, isFeatured: boolean) => {
+    try {
+      await updateStatus.mutateAsync({ id, data: { isFeatured: !isFeatured } as any });
+      queryClient.invalidateQueries({ queryKey: ["/api/v1/admin/gallery"] });
     } catch (err) {
       console.error(err);
     }
@@ -224,6 +235,17 @@ export default function AdminGallery() {
                           Reject
                         </motion.button>
                       )}
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleToggleFeatured(item.id, item.isFeatured ?? false)}
+                        disabled={updateStatus.isPending}
+                        className={`w-10 flex-shrink-0 flex items-center justify-center py-2.5 rounded-xl transition-colors border ${item.isFeatured ? 'bg-amber-100 text-amber-500 border-amber-200' : 'bg-card text-muted-foreground hover:bg-muted border-border'}`}
+                      >
+                        <Star className={`w-3.5 h-3.5 ${item.isFeatured ? 'fill-current' : ''}`} />
+                      </motion.button>
+
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
@@ -237,10 +259,21 @@ export default function AdminGallery() {
                     {/* Re-approve if rejected */}
                     {item.status === "approved" && (
                       <div className="mt-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => setConfirmDelete(item.id)}
+                        
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleToggleFeatured(item.id, item.isFeatured ?? false)}
+                        disabled={updateStatus.isPending}
+                        className={`w-10 flex-shrink-0 flex items-center justify-center py-2.5 rounded-xl transition-colors border ${item.isFeatured ? 'bg-amber-100 text-amber-500 border-amber-200' : 'bg-card text-muted-foreground hover:bg-muted border-border'}`}
+                      >
+                        <Star className={`w-3.5 h-3.5 ${item.isFeatured ? 'fill-current' : ''}`} />
+                      </motion.button>
+
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setConfirmDelete(item.id)}
                           className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-red-50 text-red-500 text-xs font-bold hover:bg-red-100 transition-colors border border-red-100"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

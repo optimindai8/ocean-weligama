@@ -3,6 +3,7 @@ import {
   uuid,
   text,
   timestamp,
+  boolean,
   pgEnum,
 } from "drizzle-orm/pg-core";
 
@@ -21,6 +22,7 @@ export const blogs = pgTable("blogs", {
   image: text("image").notNull(),
   category: blogCategoryEnum("category").notNull(),
   date: timestamp("date", { withTimezone: true }).notNull(),
+  isFeatured: boolean("is_featured").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

@@ -89,6 +89,7 @@ const serviceSchema = z.object({
   basePrice: z.string().min(1, "Price is required").regex(/^\d+(\.\d{1,2})?$/, "Invalid price format (e.g. 99.99)"),
   isActive: z.boolean().default(true),
   isBookable: z.boolean().default(true),
+    isFeatured: z.boolean().default(false),
   sortOrder: z.string().default("0"),
 });
 
@@ -146,6 +147,7 @@ export default function AdminPackages() {
       basePrice: "0.00",
       isActive: true,
       isBookable: true,
+      isFeatured: false,
       sortOrder: "0",
     },
   });
@@ -164,6 +166,7 @@ export default function AdminPackages() {
         basePrice: service.basePrice,
         isActive: service.isActive,
         isBookable: service.isBookable ?? true,
+        isFeatured: service.isFeatured ?? false,
         sortOrder: service.sortOrder?.toString() || "0",
       });
     } else {
@@ -179,6 +182,7 @@ export default function AdminPackages() {
         basePrice: "0.00",
         isActive: true,
         isBookable: true,
+      isFeatured: false,
         sortOrder: "0",
       });
     }
@@ -773,6 +777,28 @@ export default function AdminPackages() {
                           </FormItem>
                         )}
                       />
+                      
+                      <FormField
+                        control={form.control}
+                        name="isFeatured"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-muted/20">
+                            <div className="space-y-0.5">
+                              <FormLabel className="text-base">Show on Home Page</FormLabel>
+                              <FormDescription>
+                                Display this package on the main home page
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+
                       <FormField
                         control={form.control}
                         name="isBookable"

@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import { Footer } from "@/components/footer";
 import { Testimonials } from "@/components/testimonials";
-import { useListServices, useListFeaturedRooms } from "@workspace/api-client-react";
+import { useListServices, useListFeaturedRooms, useListBlogs, useListGallery } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import { Users, BedDouble, ArrowRight } from "lucide-react";
+import { Users, BedDouble, ArrowRight, ChevronDown, Package, Image as ImageIcon, BookOpen } from "lucide-react";
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
 
 const ROOM_CATEGORIES = [
@@ -19,6 +21,10 @@ export default function Home() {
   const { formatPrice } = useLanguage();
   const { data: services } = useListServices();
   const { data: rooms } = useListFeaturedRooms();
+  const { data: blogs } = useListBlogs();
+  const { data: galleryItems } = useListGallery();
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
 
   return (
     <div className="flex-1">
@@ -365,6 +371,184 @@ export default function Home() {
           }) : (
             <p className="text-center col-span-full py-12 text-muted-foreground">No rooms found.</p>
           )}
+        </div>
+      </section>
+
+      
+      {/* Featured Packages (Services) */}
+      <section className="py-24 bg-white container mx-auto px-4">
+        <div className="text-center mb-16">
+          <motion.span 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block"
+          >
+            Exclusive Offers
+          </motion.span>
+          <h2 className="text-4xl font-serif font-bold text-foreground mb-4">Featured Packages</h2>
+          <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {services?.filter(s => s.isFeatured).map((pkg: any, idx: number) => (
+            <motion.div
+              key={pkg.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              viewport={{ once: true }}
+              className="bg-muted rounded-[2rem] p-8 border border-border shadow-lg hover:shadow-2xl transition-all duration-300"
+            >
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6 text-primary">
+                <Package className="w-6 h-6" />
+              </div>
+              <h3 className="text-2xl font-serif font-bold mb-3">{pkg.name}</h3>
+              <p className="text-muted-foreground text-sm mb-6 line-clamp-3">{pkg.description}</p>
+              <Link href="/book">
+                <Button className="w-full rounded-full" variant="outline">
+                  Book Now
+                </Button>
+              </Link>
+            </motion.div>
+          ))}
+          {(!services || services.filter(s => s.isFeatured).length === 0) && (
+            <p className="col-span-full text-center text-muted-foreground">More packages coming soon.</p>
+          )}
+        </div>
+      </section>
+
+      {/* Featured Gallery */}
+      <section className="py-24 bg-slate-950 text-white overflow-hidden relative">
+        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+            <div>
+              <motion.span 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                className="text-accent font-bold tracking-[0.3em] uppercase text-xs mb-3 block"
+              >
+                The View
+              </motion.span>
+              <h2 className="text-4xl md:text-5xl font-serif font-bold">Moments in Weligama</h2>
+            </div>
+            <Link href="/gallery">
+              <Button variant="outline" className="rounded-full text-white border-white/30 hover:bg-white hover:text-black hover:scale-105 transition-all">
+                View Full Gallery
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {galleryItems?.filter(i => i.isFeatured).slice(0, 8).map((img: any, idx: number) => (
+              <motion.div
+                key={img.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.1 }}
+                viewport={{ once: true }}
+                className={`relative group rounded-3xl overflow-hidden ${idx === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+                style={{ aspectRatio: idx === 0 ? '1' : '1' }}
+              >
+                <img src={img.url} alt={img.caption || 'Gallery Image'} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                  {img.caption && <p className="text-white text-sm font-medium">{img.caption}</p>}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Blogs */}
+      <section className="py-24 bg-muted container mx-auto px-4">
+        <div className="text-center mb-16">
+          <motion.span 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block"
+          >
+            Stories & Guides
+          </motion.span>
+          <h2 className="text-4xl font-serif font-bold text-foreground mb-4">Latest on the Blog</h2>
+          <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {blogs?.filter(b => b.isFeatured).slice(0, 3).map((blog: any, idx: number) => (
+            <motion.div
+              key={blog.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+              viewport={{ once: true }}
+              className="bg-white rounded-[2.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group"
+            >
+              <div className="aspect-video overflow-hidden relative">
+                <img src={blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <Badge className="absolute top-4 left-4 bg-white text-black hover:bg-white">{blog.category}</Badge>
+              </div>
+              <div className="p-8">
+                <p className="text-xs text-muted-foreground mb-3">{new Date(blog.date).toLocaleDateString()}</p>
+                <h3 className="text-xl font-bold font-serif mb-3 group-hover:text-primary transition-colors">{blog.title}</h3>
+                <p className="text-muted-foreground text-sm line-clamp-2">{blog.description}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 bg-white container mx-auto px-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-16">
+            <motion.span 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block"
+            >
+              Got Questions?
+            </motion.span>
+            <h2 className="text-4xl font-serif font-bold text-foreground mb-4">Frequently Asked Questions</h2>
+          </div>
+          
+          <div className="space-y-4">
+            {[
+              { q: "How far is the beach from the property?", a: "We are literally 100 steps from the ocean. You can grab your board and be in the water in less than 2 minutes." },
+              { q: "Do you offer surf lessons for beginners?", a: "Yes! Our ISA-certified team provides lessons for all levels, complete with high-quality board rentals directly on-site." },
+              { q: "Is breakfast included in the booking?", a: "Absolutely. We offer a complimentary, authentic Sri Lankan or continental breakfast for all our guests." },
+              { q: "Can you arrange airport transfers?", a: "Yes, we offer seamless airport pickups and drop-offs. You can add this during the booking process." },
+              { q: "Do the rooms have air conditioning?", a: "All our rooms are fully equipped with modern air conditioning and high-speed Wi-Fi to ensure maximum comfort." }
+            ].map((faq, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className={`border rounded-2xl overflow-hidden transition-all duration-300 ${openFaq === idx ? 'border-primary/50 shadow-md bg-muted/30' : 'border-border bg-card hover:border-primary/30'}`}
+              >
+                <button
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full px-6 py-5 flex items-center justify-between text-left"
+                >
+                  <span className="font-bold text-foreground pr-4">{faq.q}</span>
+                  <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${openFaq === idx ? 'rotate-180 text-primary' : ''}`} />
+                </button>
+                <AnimatePresence>
+                  {openFaq === idx && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-5 text-muted-foreground text-sm">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 

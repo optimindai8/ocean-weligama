@@ -66,6 +66,7 @@ router.post("/v1/admin/services", requireAdmin, async (req, res) => {
           unit: serviceFields.unit ?? "flat_rate",
           isActive: serviceFields.isActive ?? true,
           isBookable: serviceFields.isBookable ?? true,
+          isFeatured: serviceFields.isFeatured ?? false,
           sortOrder: serviceFields.sortOrder ?? 0,
         })
         .returning();

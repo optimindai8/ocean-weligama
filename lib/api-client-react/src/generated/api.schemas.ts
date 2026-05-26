@@ -16,6 +16,7 @@ export interface Blog {
   image: string;
   category: string;
   date: string;
+  isFeatured?: boolean;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
@@ -38,6 +39,7 @@ export interface BlogInput {
   image: string;
   category: BlogInputCategory;
   date: string;
+  isFeatured?: boolean;
 }
 
 export type BlogUpdateCategory =
@@ -225,6 +227,7 @@ export interface Service {
   unit: ServiceUnit;
   isActive: boolean;
   isBookable?: boolean;
+  isFeatured?: boolean;
   sortOrder?: number;
   name: string;
   /** @nullable */
@@ -261,6 +264,7 @@ export interface ServiceInput {
   unit: ServiceInputUnit;
   isActive?: boolean;
   isBookable?: boolean;
+  isFeatured?: boolean;
   name: string;
   /** @nullable */
   description?: string | null;
@@ -296,6 +300,7 @@ export interface ServiceUpdate {
   unit?: ServiceUpdateUnit;
   isActive?: boolean;
   isBookable?: boolean;
+  isFeatured?: boolean;
   name?: string;
   /** @nullable */
   description?: string | null;
@@ -539,6 +544,7 @@ export interface GalleryUpdate {
 
 export interface AvailabilityDay {
   date: string;
+  isFeatured?: boolean;
   isBlocked: boolean;
   /** @nullable */
   blockReason?: string | null;
@@ -646,6 +652,7 @@ export interface DashboardMetrics {
 
 export interface TrendPoint {
   date: string;
+  isFeatured?: boolean;
   bookings: number;
   revenue: string;
 }

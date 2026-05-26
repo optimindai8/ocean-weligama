@@ -38,15 +38,18 @@ router.get("/v1/admin/gallery", async (req, res) => {
 router.patch("/v1/admin/gallery/:id/status", async (req, res) => {
   try {
     const { id } = req.params as Record<string, string>;
-    const { status } = req.body as { status: "approved" | "rejected" | "pending" };
+    const { status, isFeatured } = req.body as { status?: "approved" | "rejected" | "pending", isFeatured?: boolean };
 
-    if (!["approved", "rejected", "pending"].includes(status)) {
+    if (status && !["approved", "rejected", "pending"].includes(status)) {
       return res.status(400).json({ error: "Invalid status value" });
     }
 
     const [item] = await db
       .update(gallery)
-      .set({ status })
+      .set({ 
+        ...(status && { status }),
+        ...(isFeatured !== undefined && { isFeatured })
+      })
       .where(and(eq(gallery.id, id), isNull(gallery.deletedAt)))
       .returning();
 

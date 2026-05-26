@@ -33,6 +33,7 @@ router.post("/v1/admin/blogs", requireAdmin, async (req, res) => {
         image: body.image,
         category: body.category,
         date: new Date(body.date),
+        isFeatured: body.isFeatured ?? false,
       })
       .returning();
 
@@ -56,6 +57,7 @@ router.patch("/v1/admin/blogs/:id", requireAdmin, async (req, res) => {
         ...(body.image && { image: body.image }),
         ...(body.category && { category: body.category }),
         ...(body.date && { date: new Date(body.date) }),
+        ...(body.isFeatured !== undefined && { isFeatured: body.isFeatured }),
         updatedAt: new Date(),
       })
       .where(eq(blogs.id, id))

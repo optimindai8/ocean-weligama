@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -47,6 +48,7 @@ export default function AdminBlogs() {
     image: "",
     category: "Surfing" as BlogInputCategory,
     date: new Date().toISOString().split("T")[0],
+      isFeatured: false,
   });
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -70,6 +72,7 @@ export default function AdminBlogs() {
         image: blog.image,
         category: blog.category as BlogInputCategory,
         date: blog.date ? new Date(blog.date).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        isFeatured: blog.isFeatured || false,
       });
     } else {
       setEditingBlog(null);
@@ -79,6 +82,7 @@ export default function AdminBlogs() {
         image: "",
         category: "Surfing",
         date: new Date().toISOString().split("T")[0],
+        isFeatured: false,
       });
     }
     setIsDialogOpen(true);
