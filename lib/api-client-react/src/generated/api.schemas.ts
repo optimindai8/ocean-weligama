@@ -218,6 +218,8 @@ export interface Service {
   id: string;
   slug: string;
   /** @nullable */
+  iconEmoji?: string | null;
+  /** @nullable */
   imageUrl?: string | null;
   highlights?: string[];
   type: ServiceType;
@@ -232,6 +234,8 @@ export interface Service {
   name: string;
   /** @nullable */
   description?: string | null;
+  /** @nullable */
+  shortDesc?: string | null;
 }
 
 export type ServiceInputType =
@@ -255,6 +259,8 @@ export const ServiceInputUnit = {
 export interface ServiceInput {
   slug: string;
   /** @nullable */
+  iconEmoji?: string | null;
+  /** @nullable */
   imageUrl?: string | null;
   highlights?: string[];
   type: ServiceInputType;
@@ -268,6 +274,8 @@ export interface ServiceInput {
   name: string;
   /** @nullable */
   description?: string | null;
+  /** @nullable */
+  shortDesc?: string | null;
 }
 
 export type ServiceUpdateType =
@@ -291,6 +299,8 @@ export const ServiceUpdateUnit = {
 export interface ServiceUpdate {
   slug?: string;
   /** @nullable */
+  iconEmoji?: string | null;
+  /** @nullable */
   imageUrl?: string | null;
   highlights?: string[];
   type?: ServiceUpdateType;
@@ -304,6 +314,8 @@ export interface ServiceUpdate {
   name?: string;
   /** @nullable */
   description?: string | null;
+  /** @nullable */
+  shortDesc?: string | null;
   sortOrder?: number;
 }
 
