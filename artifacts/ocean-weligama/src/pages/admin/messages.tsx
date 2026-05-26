@@ -49,7 +49,7 @@ import {
 export default function AdminMessages() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [filter, setFilter] = useState<"all" | "unread" | "replied">("all");
+  const [filter, setFilter] = useState<"all" | "unread" | "replied">("unread");
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
@@ -215,7 +215,12 @@ export default function AdminMessages() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    onClick={() => setSelectedMessage(msg)}
+                    onClick={() => {
+                      setSelectedMessage(msg);
+                      if (!msg.isRead) {
+                        markRead(msg.id, true);
+                      }
+                    }}
                     className={`
                       relative group flex items-center justify-between p-5 cursor-pointer transition-all duration-300
                       hover:bg-primary/[0.03] active:bg-primary/[0.05]
