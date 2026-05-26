@@ -50,7 +50,9 @@ router.get("/v1/admin/bookings", requireAdmin, async (req, res) => {
     const enriched = await Promise.all(
       allBookings.map(async (b) => {
         const bRooms = await db.select().from(bookingRooms).where(eq(bookingRooms.bookingId, b.id));
-        const firstRoomId = bRooms[0]?.roomId ?? b.roomId ?? null;
+        const rIds = bRooms.map(br => br.roomId);
+        if (rIds.length === 0 && b.roomId) rIds.push(b.roomId);
+        const firstRoomId = rIds[0] ?? null;
 
         let primaryRoomName = "";
         if (firstRoomId) {
@@ -74,6 +76,7 @@ router.get("/v1/admin/bookings", requireAdmin, async (req, res) => {
 
         return {
           ...b,
+          roomIds: rIds,
           roomName: primaryRoomName,
           services: serviceRows.map((sr) => ({
             id: sr.id,
@@ -115,7 +118,9 @@ router.get("/v1/admin/bookings/:id", requireAdmin, async (req, res) => {
     }
 
     const bRooms = await db.select().from(bookingRooms).where(eq(bookingRooms.bookingId, booking.id));
-    const firstRoomId = bRooms[0]?.roomId ?? booking.roomId ?? null;
+    const rIds = bRooms.map(br => br.roomId);
+    if (rIds.length === 0 && booking.roomId) rIds.push(booking.roomId);
+    const firstRoomId = rIds[0] ?? null;
 
     let primaryRoomName = "";
     if (firstRoomId) {
@@ -135,6 +140,7 @@ router.get("/v1/admin/bookings/:id", requireAdmin, async (req, res) => {
 
     res.json({
       ...booking,
+      roomIds: rIds,
       roomName: primaryRoomName,
       services: serviceRows.map((sr) => ({
         id: sr.id,

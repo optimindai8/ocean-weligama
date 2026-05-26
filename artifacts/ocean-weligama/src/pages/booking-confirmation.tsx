@@ -158,20 +158,26 @@ export default function BookingConfirmationPage() {
                 <h3 className="text-sm font-black uppercase tracking-widest text-primary mb-6 flex items-center gap-2">
                   <Home className="w-4 h-4" /> Stay Details
                 </h3>
-                <div className="grid md:grid-cols-2 gap-6 items-center">
-                  <div className="flex gap-4 items-center">
-                    {(() => {
-                        const r = roomsList?.find(x => x.id === booking.roomId);
-                        const img = r?.heroImageUrl || (r?.gallery && r.gallery[0]);
-                        if (img) {
-                          return <img src={img} alt={booking.roomName || ""} className="w-24 h-24 object-cover rounded-xl shadow-sm" />;
-                        }
-                        return null;
-                    })()}
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-1">Room</p>
-                      <p className="font-bold text-foreground text-lg leading-tight mb-1">{booking.roomName}</p>
-                      <p className="text-sm text-muted-foreground">{booking.guestCount} {booking.guestCount === 1 ? 'Guest' : 'Guests'}</p>
+                <div className="grid md:grid-cols-2 gap-6 items-start">
+                  <div className="flex flex-col gap-4">
+                    {((booking as any).roomIds?.length ? (booking as any).roomIds : [booking.roomId]).map((rId: string, i: number) => {
+                      const r = roomsList?.find(x => x.id === rId);
+                      const img = r?.heroImageUrl || (r?.gallery && r.gallery[0]);
+                      const roomName = r?.name || booking.roomName || `Room ${i + 1}`;
+                      return (
+                        <div key={i} className="flex gap-4 items-center bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+                          {img && (
+                            <img src={img} alt={roomName} className="w-16 h-16 object-cover rounded-xl shadow-sm" />
+                          )}
+                          <div>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mb-0.5">Room {i + 1}</p>
+                            <p className="font-bold text-foreground text-sm leading-tight mb-0.5 line-clamp-1">{roomName}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div className="mt-1 px-2">
+                      <p className="text-sm text-muted-foreground font-bold">{booking.guestCount} {booking.guestCount === 1 ? 'Guest total' : 'Guests total'}</p>
                     </div>
                   </div>
                   <div className="flex gap-6 md:justify-end">

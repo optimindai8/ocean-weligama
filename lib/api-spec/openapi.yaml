@@ -1640,6 +1640,10 @@ components:
           type: string
         roomName:
           type: ["string", "null"]
+        roomIds:
+          type: array
+          items:
+            type: string
         checkIn:
           type: string
         checkOut:

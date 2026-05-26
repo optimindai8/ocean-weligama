@@ -289,6 +289,7 @@ router.post("/v1/bookings", async (req, res) => {
 
     res.status(201).json({
       ...booking,
+      roomIds: roomIdsArray,
       services: serviceRows.map((sr) => ({
         id: sr.id,
         serviceId: sr.serviceId,
@@ -349,6 +350,7 @@ router.get("/v1/bookings/:reference", async (req, res) => {
 
     res.json({
       ...booking,
+      roomIds: rIds,
       roomName: primaryRoomName,
       services: serviceRows.map((sr) => ({
         id: sr.id,

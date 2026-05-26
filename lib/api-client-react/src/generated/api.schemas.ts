@@ -349,6 +349,7 @@ export interface Booking {
   roomId: string;
   /** @nullable */
   roomName?: string | null;
+  roomIds?: string[];
   checkIn: string;
   checkOut: string;
   nights: number;
@@ -391,7 +392,8 @@ export const BookingInputPaymentMethod = {
 } as const;
 
 export interface BookingInput {
-  roomId: string;
+  roomId?: string;
+  roomIds: string[];
   checkIn: string;
   checkOut: string;
   guestCount: number;
@@ -416,7 +418,8 @@ export interface BookingUpdate {
 }
 
 export interface BookingCheck {
-  roomId: string;
+  roomId?: string;
+  roomIds: string[];
   checkIn: string;
   checkOut: string;
   guestCount: number;

@@ -249,7 +249,8 @@ export const GetServiceResponse = zod.object({
  * @summary Check availability and get price quote
  */
 export const CheckAvailabilityAndPriceBody = zod.object({
-  roomId: zod.string(),
+  roomId: zod.string().optional(),
+  roomIds: zod.array(zod.string()),
   checkIn: zod.coerce.date(),
   checkOut: zod.coerce.date(),
   guestCount: zod.number(),
@@ -272,7 +273,8 @@ export const CheckAvailabilityAndPriceResponse = zod.object({
  * @summary Create a new booking
  */
 export const CreateBookingBody = zod.object({
-  roomId: zod.string(),
+  roomId: zod.string().optional(),
+  roomIds: zod.array(zod.string()),
   checkIn: zod.coerce.date(),
   checkOut: zod.coerce.date(),
   guestCount: zod.number(),
@@ -298,6 +300,7 @@ export const GetBookingByReferenceResponse = zod.object({
   reference: zod.string(),
   roomId: zod.string(),
   roomName: zod.string().nullish(),
+  roomIds: zod.array(zod.string()).optional(),
   checkIn: zod.string(),
   checkOut: zod.string(),
   nights: zod.number(),
@@ -541,6 +544,7 @@ export const AdminListBookingsResponse = zod.object({
       reference: zod.string(),
       roomId: zod.string(),
       roomName: zod.string().nullish(),
+      roomIds: zod.array(zod.string()).optional(),
       checkIn: zod.string(),
       checkOut: zod.string(),
       nights: zod.number(),
@@ -613,6 +617,7 @@ export const AdminGetBookingResponse = zod.object({
   reference: zod.string(),
   roomId: zod.string(),
   roomName: zod.string().nullish(),
+  roomIds: zod.array(zod.string()).optional(),
   checkIn: zod.string(),
   checkOut: zod.string(),
   nights: zod.number(),
@@ -676,6 +681,7 @@ export const AdminUpdateBookingResponse = zod.object({
   reference: zod.string(),
   roomId: zod.string(),
   roomName: zod.string().nullish(),
+  roomIds: zod.array(zod.string()).optional(),
   checkIn: zod.string(),
   checkOut: zod.string(),
   nights: zod.number(),
@@ -1088,6 +1094,7 @@ export const AdminGetUpcomingCheckinsResponseItem = zod.object({
   reference: zod.string(),
   roomId: zod.string(),
   roomName: zod.string().nullish(),
+  roomIds: zod.array(zod.string()).optional(),
   checkIn: zod.string(),
   checkOut: zod.string(),
   nights: zod.number(),
