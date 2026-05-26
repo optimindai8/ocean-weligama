@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -236,19 +236,53 @@ function StepNav({
 export default function BookingPage() {
   const [, setLocation]   = useLocation();
   const { toast }         = useToast();
-  const [step, setStep]   = useState(1);
+
+  const loadState = (key: string, def: any) => {
+    if (typeof window === 'undefined') return def;
+    try {
+      const val = localStorage.getItem(`booking_${key}`);
+      return val ? JSON.parse(val) : def;
+    } catch { return def; }
+  };
+  const saveState = (key: string, val: any) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`booking_${key}`, JSON.stringify(val));
+    }
+  };
+  const clearState = () => {
+    if (typeof window !== 'undefined') {
+      ['step', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'priceData', 'formData'].forEach(k => {
+        localStorage.removeItem(`booking_${k}`);
+      });
+    }
+  };
+
+  const [step, setStep]   = useState(() => loadState("step", 1));
   const [dir,  setDir ]   = useState(1);   // 1 = forward, -1 = backward
 
   // Booking state
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [formDataForSubmit, setFormDataForSubmit] = useState<GuestForm | null>(null);
 
-  const [guestCount,            setGuestCount]            = useState(2);
-  const [dateRange,             setDateRange]             = useState<{ from?: Date; to?: Date }>({});
-  const [selectedRoomIds,       setSelectedRoomIds]       = useState<string[]>([]);
-  const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>([]);
-  const [priceData,             setPriceData]             = useState<any>(null);
+  const [guestCount,            setGuestCount]            = useState(() => loadState("guestCount", 2));
+  const [dateRange,             setDateRange]             = useState<{ from?: Date; to?: Date }>(() => {
+    const dr = loadState("dateRange", {});
+    return {
+      from: dr.from ? new Date(dr.from) : undefined,
+      to: dr.to ? new Date(dr.to) : undefined,
+    };
+  });
+  const [selectedRoomIds,       setSelectedRoomIds]       = useState<string[]>(() => loadState("roomIds", []));
+  const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>(() => loadState("serviceIds", []));
+  const [priceData,             setPriceData]             = useState<any>(() => loadState("priceData", null));
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
+
+  useEffect(() => { saveState("step", step); }, [step]);
+  useEffect(() => { saveState("guestCount", guestCount); }, [guestCount]);
+  useEffect(() => { saveState("dateRange", dateRange); }, [dateRange]);
+  useEffect(() => { saveState("roomIds", selectedRoomIds); }, [selectedRoomIds]);
+  useEffect(() => { saveState("serviceIds", selectedDbServiceIds); }, [selectedDbServiceIds]);
+  useEffect(() => { saveState("priceData", priceData); }, [priceData]);
 
   const nights = dateRange.from && dateRange.to
     ? Math.round((dateRange.to.getTime() - dateRange.from.getTime()) / 86400000) : 0;
@@ -281,14 +315,21 @@ export default function BookingPage() {
 
   const form = useForm<GuestForm>({
     resolver: zodResolver(guestSchema),
-    defaultValues: {
+    defaultValues: loadState("formData", {
       guestFullName: "", guestEmail: "", guestPhone: "",
       guestNationality: "", specialRequests: "",
       paymentMethod: "bank_transfer", agreeTerms: undefined,
       airportPickup: false, airportDrop: false, bringingSurfboard: false,
       flightNumber: "", flightDate: "", flightTime: "",
-    },
+    }),
   });
+
+  useEffect(() => {
+    const subscription = form.watch((value) => {
+      saveState("formData", value);
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
   const watchPickup    = form.watch("airportPickup");
   const watchDrop      = form.watch("airportDrop");
@@ -382,6 +423,7 @@ export default function BookingPage() {
           guestCount, serviceIds: selectedDbServiceIds,
         },
       });
+      clearState();
       setLocation(`/book/confirmation?ref=${(bk as any).reference}`);
     } catch {
       toast({ variant: "destructive", title: "Booking failed", description: "Please try again." });
@@ -1228,28 +1270,19 @@ export default function BookingPage() {
                         </div>
 
                         {/* Payment card */}
-                        <div className="bg-slate-50/50 rounded-[2rem] p-5 md:p-8 border border-slate-100/50 space-y-5">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-primary">Payment Method</p>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            {[
-                              { v: "bank_transfer", label: "Bank Transfer",  desc: "Secure wire"     },
-                              { v: "cash",          label: "Pay on Arrival", desc: "Island payment"  },
-                              { v: "online_card",   label: "Online Card",    desc: "Link to email"   },
-                            ].map(opt => (
-                              <button
-                                key={opt.v}
-                                type="button"
-                                onClick={() => form.setValue("paymentMethod", opt.v as any)}
-                                className={`p-4 rounded-2xl border-2 text-center transition-all duration-300 ${
-                                  form.watch("paymentMethod") === opt.v
-                                    ? "border-primary bg-primary/5 shadow-lg scale-[1.03]"
-                                    : "border-border hover:border-primary/20 bg-muted/5"
-                                }`}
-                              >
-                                <p className="font-bold text-sm mb-1">{opt.label}</p>
-                                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">{opt.desc}</p>
-                              </button>
-                            ))}
+                        <div className="bg-primary/5 rounded-[2rem] p-6 md:p-8 border border-primary/20 space-y-4 text-center relative overflow-hidden">
+                          <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+                          <div className="absolute bottom-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-2xl translate-x-1/2 translate-y-1/2" />
+                          <div className="relative z-10">
+                            <div className="mx-auto w-14 h-14 bg-white rounded-full flex items-center justify-center mb-4 shadow-md border border-primary/10">
+                              <ShieldCheck className="w-7 h-7 text-primary" />
+                            </div>
+                            <h4 className="text-xl font-serif font-bold text-primary mb-2">Secure Your Journey</h4>
+                            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+                              To ensure a personalized and seamless experience, we will contact you very soon to finalize your booking and discuss the best payment method for you. 
+                            </p>
+                            {/* Hidden input to keep form valid if it requires paymentMethod */}
+                            <input type="hidden" {...form.register("paymentMethod")} value="bank_transfer" />
                           </div>
                         </div>
 
@@ -1267,7 +1300,7 @@ export default function BookingPage() {
                                   />
                                   <span className="text-sm text-muted-foreground">
                                     I agree to the{" "}
-                                    <span className="text-primary underline cursor-pointer">terms and island policies</span>.
+                                    <a href="/cancellation-policy" target="_blank" rel="noopener noreferrer" className="text-primary underline hover:text-primary/80 transition-colors">terms and island policies</a>.
                                   </span>
                                 </label>
                               </FormControl>

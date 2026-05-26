@@ -134,13 +134,35 @@ export default function BlogDetailPage() {
             </div>
 
             {/* Typography Content */}
-            <div className="prose prose-lg md:prose-xl max-w-none prose-p:text-muted-foreground prose-p:leading-relaxed prose-headings:font-serif prose-headings:text-foreground">
-              {/* If it's a long text we just split by double newline, or we can just render it directly */}
-              {blog.description.split('\n').map((paragraph: string, i: number) => {
-                if (!paragraph.trim()) return null;
-                return <p key={i} className="mb-6">{paragraph}</p>;
-              })}
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="bg-white rounded-[3rem] p-8 md:p-14 lg:p-16 shadow-[0_30px_100px_rgba(0,0,0,0.08)] border border-slate-100 hover:shadow-[0_30px_100px_rgba(0,0,0,0.12)] transition-all duration-700 relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 transition-transform duration-1000 group-hover:scale-150" />
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 transition-transform duration-1000 group-hover:scale-150" />
+              
+              <div className="relative z-10 prose prose-lg md:prose-xl max-w-none prose-p:text-slate-600 prose-p:leading-[1.8] prose-headings:font-serif prose-headings:text-foreground">
+                {blog.description.split('\n').map((paragraph: string, i: number) => {
+                  if (!paragraph.trim()) return null;
+                  return (
+                    <p key={i} className="mb-8 font-medium">
+                      {i === 0 ? (
+                        <>
+                          <span className="float-left text-6xl md:text-8xl font-serif font-black text-primary leading-[0.8] mr-4 mt-2 mb-2 drop-shadow-sm">
+                            {paragraph.charAt(0)}
+                          </span>
+                          {paragraph.slice(1)}
+                        </>
+                      ) : (
+                        paragraph
+                      )}
+                    </p>
+                  );
+                })}
+              </div>
+            </motion.div>
           </div>
         </section>
       </article>
