@@ -524,9 +524,15 @@ export default function Home() {
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm text-slate-500 font-light leading-relaxed mb-6 flex-1 line-clamp-2">
+                  <p className="text-sm text-slate-500 font-light leading-relaxed mb-4 flex-1 line-clamp-2">
                     {exp.shortDesc || exp.description || 'Experience the best of Weligama.'}
                   </p>
+
+                  {/* Price */}
+                  <div className="flex items-center justify-between pt-4 mb-5 border-t border-dashed border-[#0B3D5E]/10">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#4BBCCC]">Per Person</span>
+                    <span className="text-xl font-black text-[#0B3D5E]">€{exp.basePrice}</span>
+                  </div>
 
                   {/* Explore Link */}
                   <Link
