@@ -127,7 +127,13 @@ export default function Home() {
                 hover:shadow-[0_20px_60px_rgba(240,165,0,0.5)]
                 transition-all duration-500 hover:scale-105 group
               ">
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                {/* Continuous shine effect */}
+                <motion.div 
+                  className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 z-0"
+                  animate={{ x: ["-200%", "400%"] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
+                />
+                
                 <span className="relative z-10 flex items-center gap-3">
                   Check Availability
                   <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
