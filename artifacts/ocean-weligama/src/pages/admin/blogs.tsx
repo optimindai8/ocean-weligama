@@ -212,8 +212,15 @@ export default function AdminBlogs() {
                 <div className="aspect-[4/3] relative overflow-hidden bg-muted">
                   <img src={blog.image} alt={blog.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-[10px] font-black px-3 py-1.5 rounded-full text-primary uppercase tracking-widest shadow-lg">
-                    {blog.category}
+                  <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
+                    <div className="bg-white/90 backdrop-blur-md text-[10px] font-black px-3 py-1.5 rounded-full text-primary uppercase tracking-widest shadow-lg">
+                      {blog.category}
+                    </div>
+                    {blog.isFeatured && (
+                      <div className="bg-accent/90 backdrop-blur-md text-[10px] font-black px-3 py-1.5 rounded-full text-white uppercase tracking-widest shadow-lg">
+                        Featured
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="p-6">
@@ -336,6 +343,15 @@ export default function AdminBlogs() {
                   placeholder="Write your story here..."
                   className="min-h-[150px] rounded-xl resize-none"
                 />
+              </div>
+
+              <div className="flex items-center space-x-2 pt-2">
+                <Switch
+                  id="featured"
+                  checked={formData.isFeatured}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isFeatured: checked })}
+                />
+                <Label htmlFor="featured" className="cursor-pointer">Show on Home Page (Featured)</Label>
               </div>
             </div>
             <DialogFooter>
