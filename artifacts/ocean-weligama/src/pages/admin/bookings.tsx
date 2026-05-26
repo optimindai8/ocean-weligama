@@ -449,8 +449,14 @@ export default function AdminBookings() {
                       </div>
                       <h2 className="text-2xl sm:text-3xl font-serif font-bold mb-1">{selectedBooking.guestFullName}</h2>
                       <div className="flex flex-wrap gap-4 text-sm text-white/80 mt-3">
-                        <a href={`mailto:${selectedBooking.guestEmail}`} className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer" title="Send email">
-                          <Mail className="w-4 h-4" /> {selectedBooking.guestEmail}
+                        <a
+                          href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(selectedBooking.guestEmail)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer underline underline-offset-2 decoration-white/30 hover:decoration-white"
+                          title={`Send email to ${selectedBooking.guestEmail} via Gmail`}
+                        >
+                          <Mail className="w-4 h-4 shrink-0" /> {selectedBooking.guestEmail}
                         </a>
                         {selectedBooking.guestPhone && <div className="flex items-center gap-1.5"><Phone className="w-4 h-4" /> {selectedBooking.guestPhone}</div>}
                         {selectedBooking.guestNationality && <div className="flex items-center gap-1.5"><Globe className="w-4 h-4" /> {selectedBooking.guestNationality}</div>}
