@@ -122,22 +122,25 @@ export default function Home() {
             <Link href="/book">
               <Button size="lg" className="
                 relative overflow-hidden
-                bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full
-                px-8 h-12 text-base sm:px-16 sm:h-16 sm:text-xl font-bold shadow-[0_20px_50px_rgba(240,165,0,0.3)]
-                hover:shadow-[0_20px_60px_rgba(240,165,0,0.5)]
+                bg-[#121212] hover:bg-[#1a1a1a] text-white rounded-[2rem]
+                px-8 h-14 sm:px-14 sm:h-20 sm:text-[22px] font-medium 
+                shadow-[0_20px_50px_rgba(0,0,0,0.8)]
+                border border-[#333] border-t-[#555] border-b-black
                 transition-all duration-500 hover:scale-105 group
               ">
-                {/* Continuous shine effect */}
-                <motion.div 
-                  className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 z-0"
-                  animate={{ x: ["-200%", "400%"] }}
-                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
-                />
+                {/* 3D bottom glow */}
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[80%] h-[30px] bg-white/60 blur-[12px] rounded-[100%] pointer-events-none transition-all duration-500 group-hover:bg-white/80" />
                 
-                <span className="relative z-10 flex items-center gap-3">
-                  Check Availability
-                  <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="9 5l7 7-7 7" />
+                {/* Subtle top reflection */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+                
+                <span className="relative z-10 flex items-center gap-4">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-[#b0b0b0] tracking-wide">
+                    Check Availability
+                  </span>
+                  <svg width="28" height="28" viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg" className="group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 drop-shadow-md">
+                    <path d="M12 2C12 8 18 11.5 24 12C18 12.5 12 16 12 22C12 16 6 12.5 0 12C6 11.5 12 8 12 2Z" />
+                    <path d="M26 18C26 21 29 22.5 32 23C29 23.5 26 25 26 28C26 25 23 23.5 20 23C23 22.5 26 21 26 18Z" />
                   </svg>
                 </span>
               </Button>
