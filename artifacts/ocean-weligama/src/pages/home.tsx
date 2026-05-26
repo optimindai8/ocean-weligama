@@ -60,7 +60,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.45)_100%)]" />
         </div>
 
-        <div className="relative z-10 container mx-auto px-4 text-center mt-32 mb-16 md:mt-40 md:mb-20 flex-1 flex flex-col justify-center">
+        <div className="relative z-10 container mx-auto px-4 text-center mt-32 mb-0 md:mt-40 flex-1 flex flex-col justify-center pb-40">
           {/* Trust Badges - Social Proof Anchor */}
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10">
             <motion.div 
@@ -139,11 +139,11 @@ export default function Home() {
           </motion.div>
         </div>
 
-        {/* Scroll Indicator */}
+        {/* Scroll Indicator — sits in its own dedicated space at the very bottom */}
         <motion.div 
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 z-10"
+          className="relative z-10 flex flex-col items-center gap-2 opacity-50 pb-6"
         >
           <span className="text-white text-[10px] font-black uppercase tracking-[0.4em]">Scroll</span>
           <div className="w-px h-12 bg-gradient-to-b from-white to-transparent" />
