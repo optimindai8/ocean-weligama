@@ -30,9 +30,9 @@ export default function Home() {
       >
         {/* Cinematic Video Background */}
         <div className="absolute inset-0 z-0 bg-slate-950">
-          {/* Mobile video — object-cover fills the screen edge-to-edge, no black bars */}
+          {/* Hero video */}
           <video
-            key="mobile-video"
+            key="hero-video"
             autoPlay
             muted
             loop
@@ -40,27 +40,13 @@ export default function Home() {
             disablePictureInPicture
             preload="auto"
             poster="/hero-video-poster.jpg"
-            className="block md:hidden absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{
               WebkitPlaysinline: true,
               WebkitObjectFit: "cover",
             } as React.CSSProperties}
           >
-            <source src="/hero-video-mobile.mp4" type="video/mp4" />
-          </video>
-          {/* Desktop video: 480p 27 MB — only loaded on md+ screens */}
-          <video
-            key="desktop-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-            disablePictureInPicture
-            preload="auto"
-            poster="/hero-video-poster.jpg"
-            className="hidden md:block absolute inset-0 w-full h-full object-cover"
-          >
-            <source src="/hero-video-desktop.mp4" type="video/mp4" />
+            <source src="/hero-video.mp4" type="video/mp4" />
           </video>
           {/* Multi-layered Cinematic Overlay — slightly stronger on mobile for text contrast */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/25" />
