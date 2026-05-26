@@ -349,7 +349,7 @@ export default function PackagesPage() {
         </section>
       )}
 
-      {/* CTA Section */
+      {/* CTA Section */}
       <section className="py-24 bg-[#0B3D5E] relative overflow-hidden text-center">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
         <div className="container mx-auto px-4 relative z-10 space-y-6">

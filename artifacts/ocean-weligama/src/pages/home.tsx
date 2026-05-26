@@ -5,7 +5,7 @@ import { useListServices, useListFeaturedRooms, useListBlogs, useListGallery } f
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import { Users, BedDouble, ArrowRight, ChevronDown, Package, Image as ImageIcon, BookOpen } from "lucide-react";
+import { Users, BedDouble, ArrowRight, ChevronDown, Package, Image as ImageIcon, BookOpen, Sparkles, Check } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
@@ -24,7 +24,8 @@ export default function Home() {
   const { data: blogs } = useListBlogs();
   const { data: galleryItems } = useListGallery();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+  const toggleCard = (id: string) => setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }));
 
   return (
     <div className="flex-1">
@@ -377,44 +378,170 @@ export default function Home() {
       
       {/* Featured Packages (Services) */}
       <section className="py-24 bg-white container mx-auto px-4">
-        <div className="text-center mb-16">
-          <motion.span 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block"
-          >
-            Exclusive Offers
-          </motion.span>
-          <h2 className="text-4xl font-serif font-bold text-foreground mb-4">Featured Packages</h2>
+        <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+          <span className="text-[#1A6B8A] font-bold tracking-[0.2em] uppercase text-xs">Exclusive Offers</span>
+          <h2 className="text-3xl md:text-5xl font-serif font-bold">Featured Packages</h2>
           <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services?.filter(s => s.isFeatured).map((pkg: any, idx: number) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+          {services?.filter(s => s.isFeatured && s.type === "main").map((pkg: any, idx: number) => (
             <motion.div
               key={pkg.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
               viewport={{ once: true }}
-              className="bg-muted rounded-[2rem] p-8 border border-border shadow-lg hover:shadow-2xl transition-all duration-300"
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              className="group relative flex flex-col bg-white border border-[#0B3D5E]/10 rounded-[2.5rem] overflow-hidden hover:shadow-2xl hover:shadow-[#0B3D5E]/10 transition-all duration-500"
             >
-              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6 text-primary">
-                <Package className="w-6 h-6" />
+              {/* Image Aspect */}
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                {pkg.imageUrl ? (
+                  <img 
+                    src={pkg.imageUrl} 
+                    alt={pkg.name} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                  />
+                ) : (
+                  <div className="w-full h-full bg-[#1A6B8A]/10 flex items-center justify-center text-[#1A6B8A]">
+                    <Sparkles className="w-10 h-10 opacity-40 animate-pulse" />
+                  </div>
+                )}
+                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-[#0B3D5E] font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-full border border-white/40 shadow-sm">
+                  Featured
+                </div>
               </div>
-              <h3 className="text-2xl font-serif font-bold mb-3">{pkg.name}</h3>
-              <p className="text-muted-foreground text-sm mb-6 line-clamp-3">{pkg.description}</p>
-              <Link href="/book">
-                <Button className="w-full rounded-full" variant="outline">
-                  Book Now
-                </Button>
-              </Link>
+
+              {/* Content */}
+              <div className="p-8 flex-1 flex flex-col justify-between space-y-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-serif font-bold text-[#0B3D5E] group-hover:text-[#1A6B8A] transition-colors">
+                      {pkg.name}
+                    </h3>
+                    <p className="text-2xl font-black text-[#1A6B8A]">
+                      €{pkg.basePrice}
+                    </p>
+                  </div>
+
+                  <p className="text-muted-foreground text-sm font-light line-clamp-3">
+                    {pkg.description || "Indulge in a premium surf experience featuring top-notch local guidance, safety, and modern comfort."}
+                  </p>
+
+                  {pkg.highlights && pkg.highlights.length > 0 && (
+                    <div className="border-t border-[#0B3D5E]/10 pt-4 space-y-2.5">
+                      {(expandedCards[pkg.id] ? pkg.highlights : pkg.highlights.slice(0, 4)).map((item: string, index: number) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-start gap-2.5 text-xs text-foreground/80"
+                        >
+                          <Check className="w-4 h-4 text-[#4BBCCC] flex-shrink-0 mt-0.5" />
+                          <span className="font-medium">{item}</span>
+                        </motion.div>
+                      ))}
+                      {pkg.highlights.length > 4 && (
+                        <button
+                          onClick={() => toggleCard(pkg.id)}
+                          className="text-[10px] text-[#1A6B8A] font-semibold italic pl-6 hover:text-[#0B3D5E] transition-colors underline underline-offset-2 cursor-pointer"
+                        >
+                          {expandedCards[pkg.id]
+                            ? "Show less"
+                            : `+ ${pkg.highlights.length - 4} more highlights`}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-4 flex items-center gap-3">
+                  <Link href={`/packages/${pkg.slug}`} className="flex-1">
+                    <Button className="w-full rounded-full bg-[#0B3D5E] hover:bg-[#1A6B8A] text-white font-semibold py-6 shadow-md transition-all duration-300">
+                      View Details
+                    </Button>
+                  </Link>
+                  {pkg.isBookable && (
+                    <Link href={`/book?service=${pkg.slug}`}>
+                      <Button variant="outline" size="icon" className="rounded-full border-[#0B3D5E]/20 w-12 h-12 text-[#0B3D5E] hover:bg-[#0B3D5E] hover:text-white transition-all duration-300" title="Book Now">
+                        <ArrowRight className="w-5 h-5" />
+                      </Button>
+                    </Link>
+                  )}
+                </div>
+              </div>
             </motion.div>
           ))}
-          {(!services || services.filter(s => s.isFeatured).length === 0) && (
+          {(!services || services.filter(s => s.isFeatured && s.type === "main").length === 0) && (
             <p className="col-span-full text-center text-muted-foreground">More packages coming soon.</p>
           )}
         </div>
       </section>
+
+      {/* Experience Weligama Section */}
+      {services && services.filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package") && s.isFeatured).length > 0 && (
+        <section className="py-24 bg-[#FAF9F6] border-t border-[#0B3D5E]/5">
+          <div className="container mx-auto px-4">
+            <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-5xl font-serif font-bold text-[#0B3D5E]"
+              >
+                Experience Weligama
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-muted-foreground font-light text-base md:text-lg"
+              >
+                Everything you need for the perfect coastal escape
+              </motion.p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {services.filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package") && s.isFeatured).map((exp: any, idx: number) => (
+                <motion.div
+                  key={exp.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.08, duration: 0.5 }}
+                  className="group bg-white backdrop-blur-sm border border-[#0B3D5E]/5 rounded-3xl p-8 hover:shadow-xl hover:shadow-[#0B3D5E]/8 transition-all duration-500 hover:-translate-y-1 flex flex-col"
+                >
+                  {/* Emoji Icon */}
+                  <div className="w-14 h-14 bg-[#FAF9F6] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm border border-[#0B3D5E]/5">
+                    <span className="text-2xl">{exp.iconEmoji || '🌊'}</span>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-serif font-bold text-[#0B3D5E] mb-2 group-hover:text-[#1A6B8A] transition-colors">
+                    {exp.name}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-sm text-slate-500 font-light leading-relaxed mb-6 flex-1 line-clamp-2">
+                    {exp.shortDesc || exp.description || 'Experience the best of Weligama.'}
+                  </p>
+
+                  {/* Explore Link */}
+                  <Link
+                    href={`/packages/${exp.slug}`}
+                    className="inline-flex items-center gap-2 text-[#4BBCCC] font-bold text-sm hover:text-[#1A6B8A] transition-colors group/link w-fit"
+                  >
+                    Explore
+                    <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Gallery */}
       <section className="py-24 bg-slate-950 text-white overflow-hidden relative">

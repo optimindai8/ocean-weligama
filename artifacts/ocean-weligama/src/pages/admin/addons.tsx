@@ -89,8 +89,9 @@ const serviceSchema = z.object({
   basePrice: z.string().min(1, "Price is required").regex(/^\d+(\.\d{1,2})?$/, "Invalid price format (e.g. 99.99)"),
   isActive: z.boolean().default(true),
   isBookable: z.boolean().default(true),
-    isFeatured: z.boolean().default(false),
+  isFeatured: z.boolean().default(false),
   sortOrder: z.string().optional(),
+  iconEmoji: z.string().max(10).optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -128,6 +129,7 @@ export default function AdminAddons() {
       isBookable: true,
       isFeatured: false,
       sortOrder: "0",
+      iconEmoji: "",
     },
   });
 
@@ -147,6 +149,7 @@ export default function AdminAddons() {
         isBookable: service.isBookable ?? true,
         isFeatured: service.isFeatured ?? false,
         sortOrder: service.sortOrder?.toString() || "0",
+        iconEmoji: service.iconEmoji || "",
       });
     } else {
       setEditingService(null);
@@ -163,6 +166,7 @@ export default function AdminAddons() {
         isBookable: true,
       isFeatured: false,
         sortOrder: "0",
+        iconEmoji: "",
       });
     }
     setIsDialogOpen(true);
@@ -236,6 +240,7 @@ export default function AdminAddons() {
       category: "Adventure",
       unit: "flat_rate" as const,
       sortOrder: 0,
+      iconEmoji: values.iconEmoji || null,
     };
 
     if (editingService) {
@@ -478,7 +483,22 @@ export default function AdminAddons() {
 
                     <FormField
                       control={form.control}
-                      name="basePrice"
+                      name="iconEmoji"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Icon (Emoji)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. 🏄‍♀️" {...field} className="rounded-xl h-12 text-lg font-semibold text-center" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  
+                  <FormField
+                    control={form.control}
+                    name="basePrice"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Price (€)</FormLabel>
