@@ -198,7 +198,7 @@ export default function AboutPage() {
               </div>
 
               <div className="pt-4 flex items-center gap-6">
-                <Link href="/booking">
+                <Link href="/book">
                   <Button className="bg-primary hover:bg-[#0B3D5E] text-white rounded-full px-8 py-5 h-auto text-sm sm:text-base font-bold shadow-xl transition-all hover:scale-105">
                     Plan Your Stay
                   </Button>
@@ -365,7 +365,7 @@ export default function AboutPage() {
                   <p><strong>✨ Unrestricted Flexibility:</strong> Stay 2 nights or 2 weeks. Custom build an itinerary that fits your personal budget and pace.</p>
                 </div>
 
-                <Link href="/booking">
+                <Link href="/book">
                   <Button className="w-full bg-[#4BBCCC] hover:bg-white text-primary hover:text-primary rounded-full py-6 h-auto text-sm sm:text-base font-bold transition-all shadow-lg hover:scale-[1.02]">
                     Explore Packages
                   </Button>
@@ -687,26 +687,97 @@ export default function AboutPage() {
       </section>
 
       {/* Final Invitation Call to Action */}
-      <section className="py-20 sm:py-32 bg-primary relative overflow-hidden text-center text-white">
-        {/* Subtle mesh details */}
-        <div className="absolute inset-0 opacity-15 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#4BBCCC] via-primary to-primary pointer-events-none" />
+      <section className="py-24 sm:py-32 px-4 sm:px-6 relative overflow-hidden bg-white">
+        {/* Subtle background elements for the outer white section to blend seamlessly */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-primary/5 pointer-events-none" />
         
-        <div className="relative z-10 max-w-3xl mx-auto px-4">
-          <span className="text-[#4BBCCC] font-black tracking-[0.4em] uppercase text-xs mb-4 block">
-            Your Weligama Escape
-          </span>
-          <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif font-bold mb-6 leading-tight">
-            Ready to Discover Sri Lanka?
-          </h2>
-          <p className="text-white/80 text-sm sm:text-lg mb-10 leading-relaxed max-w-xl mx-auto">
-            Whether you are looking for adventure, surfing, yoga, nature, or simply a peaceful beach holiday, Ocean Air is ready to give you a unique Sri Lankan experience you will never forget.
-          </p>
-          <Link href="/booking">
-            <Button size="lg" className="bg-[#4BBCCC] hover:bg-white text-primary hover:text-primary px-8 sm:px-12 py-5 sm:py-7 rounded-full font-black text-xs sm:text-base tracking-widest uppercase shadow-2xl hover:scale-105 h-auto transition-all">
-              Book Your Experience
-            </Button>
-          </Link>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative max-w-6xl mx-auto rounded-[3rem] sm:rounded-[4rem] bg-[#0F172A] overflow-hidden text-center text-white shadow-2xl"
+        >
+          {/* Animated decorative background elements */}
+          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#4BBCCC]/40 via-transparent to-transparent pointer-events-none" />
+          
+          <motion.div 
+            animate={{ 
+              y: [0, -20, 0],
+              rotate: [0, 5, 0]
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-10 left-10 text-white/5"
+          >
+            <Waves className="w-32 h-32 sm:w-48 sm:h-48" />
+          </motion.div>
+          
+          <motion.div 
+            animate={{ 
+              y: [0, 20, 0],
+              rotate: [0, -5, 0]
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            className="absolute bottom-10 right-10 text-white/5"
+          >
+            <Sun className="w-40 h-40 sm:w-64 sm:h-64" />
+          </motion.div>
+
+          <div className="relative z-10 px-6 py-20 sm:py-28 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="flex justify-center mb-8"
+            >
+              <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-[#4BBCCC] font-black tracking-[0.3em] uppercase text-xs px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg shadow-black/20">
+                <Sparkles className="w-3.5 h-3.5" /> Your Weligama Escape
+              </span>
+            </motion.div>
+            
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold mb-8 leading-[1.15] max-w-4xl mx-auto tracking-tight"
+            >
+              Ready to Discover <br className="hidden sm:block" /> Sri Lanka?
+            </motion.h2>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              className="text-white/70 text-base sm:text-lg md:text-xl mb-12 leading-relaxed max-w-2xl mx-auto font-light"
+            >
+              Whether you are looking for adventure, surfing, yoga, nature, or simply a peaceful beach holiday, Ocean Air is ready to give you a unique Sri Lankan experience you will never forget.
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="relative inline-block"
+            >
+              {/* Glowing ring behind the button */}
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-[#4BBCCC] to-sky-400 rounded-full blur-md opacity-30 animate-pulse"></div>
+              
+              <Link href="/book">
+                <Button size="lg" className="relative bg-white hover:bg-transparent text-[#0F172A] hover:text-white border-2 border-white px-8 sm:px-14 py-6 sm:py-8 rounded-full font-black text-sm sm:text-base tracking-widest uppercase shadow-2xl hover:scale-[1.03] h-auto transition-all duration-300 group overflow-hidden">
+                  <span className="relative z-10 flex items-center gap-3">
+                    Book Your Experience
+                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+                  </span>
+                  <div className="absolute inset-0 bg-[#0F172A] translate-y-[101%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </motion.div>
       </section>
 
       <Footer />
