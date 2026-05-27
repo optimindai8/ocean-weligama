@@ -111,15 +111,16 @@ function getServiceTag(category?: string | null) {
   return category || "Adventure";
 }
 
-const STEPS = [
-  { n: 1, label: "Guests",      icon: Users      },
-  { n: 2, label: "Dates",       icon: Calendar   },
-  { n: 3, label: "Room",        icon: Home       },
-  { n: 4, label: "Packages",    icon: Award      },
-  { n: 5, label: "Experiences", icon: Sparkles   },
-  { n: 6, label: "Airport",     icon: Plane      },
-  { n: 7, label: "Confirm",     icon: CreditCard },
-];
+const ALL_STEPS = {
+  guests: { id: "guests", label: "Guests", icon: Users },
+  journey: { id: "journey", label: "Journey", icon: Compass },
+  dates: { id: "dates", label: "Dates", icon: Calendar },
+  room: { id: "room", label: "Room", icon: Home },
+  packages: { id: "packages", label: "Packages", icon: Award },
+  experiences: { id: "experiences", label: "Experiences", icon: Sparkles },
+  airport: { id: "airport", label: "Airport", icon: Plane },
+  confirm: { id: "confirm", label: "Confirm", icon: CreditCard },
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Default fallback airport prices (used while API data loads)
@@ -251,14 +252,24 @@ export default function BookingPage() {
   };
   const clearState = () => {
     if (typeof window !== 'undefined') {
-      ['step', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'priceData', 'formData'].forEach(k => {
+      ['stepId', 'journeyType', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'priceData', 'formData'].forEach(k => {
         localStorage.removeItem(`booking_${k}`);
       });
     }
   };
 
-  const [step, setStep]   = useState(() => loadState("step", 1));
-  const [dir,  setDir ]   = useState(1);   // 1 = forward, -1 = backward
+  const [stepId, setStepId] = useState<string>(() => loadState("stepId", "guests"));
+  const [dir, setDir] = useState(1);
+  const [journeyType, setJourneyType] = useState<"package" | "room" | null>(() => loadState("journeyType", null));
+
+  const flow = journeyType === "package" 
+    ? ["guests", "journey", "packages", "dates", "room", "experiences", "airport", "confirm"]
+    : ["guests", "journey", "dates", "room", "experiences", "airport", "confirm"];
+  
+  const currentStepIndex = flow.indexOf(stepId);
+  const currentStepNumber = currentStepIndex + 1;
+  const totalSteps = flow.length;
+  const STEPS = flow.map((id, idx) => ({ ...ALL_STEPS[id as keyof typeof ALL_STEPS], n: idx + 1 }));
 
   // Booking state
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -277,7 +288,8 @@ export default function BookingPage() {
   const [priceData,             setPriceData]             = useState<any>(() => loadState("priceData", null));
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
 
-  useEffect(() => { saveState("step", step); }, [step]);
+  useEffect(() => { saveState("stepId", stepId); }, [stepId]);
+  useEffect(() => { saveState("journeyType", journeyType); }, [journeyType]);
   useEffect(() => { saveState("guestCount", guestCount); }, [guestCount]);
   useEffect(() => { saveState("dateRange", dateRange); }, [dateRange]);
   useEffect(() => { saveState("roomIds", selectedRoomIds); }, [selectedRoomIds]);
@@ -351,7 +363,12 @@ export default function BookingPage() {
   const selectedRooms = Array.isArray(rooms) ? rooms.filter(r => selectedRoomIds.includes(r.id)) : [];
 
   // ── Navigation helpers ─────────────────────────────────────────────────────
-  function goTo(n: number) { setDir(n > step ? 1 : -1); setStep(n); }
+  function goToStep(id: string) {
+    const nextIdx = flow.indexOf(id);
+    const currIdx = flow.indexOf(stepId);
+    setDir(nextIdx > currIdx ? 1 : -1);
+    setStepId(id);
+  }
 
   function fmt(d?: Date) {
     return d?.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) ?? "";
@@ -383,7 +400,7 @@ export default function BookingPage() {
         },
       });
       setPriceData(res);
-      if ((res as any).available) goTo(4);
+      if ((res as any).available) goToStep("experiences");
       else toast({ variant: "destructive", title: "Room unavailable for these dates", description: "Please choose different dates." });
     } catch {
       toast({ variant: "destructive", title: "Could not check availability" });
@@ -434,11 +451,11 @@ export default function BookingPage() {
 
   // ── Journey pills (appear as steps are completed) ──────────────────────────
   const pills = [
-    step > 1 ? `👥 ${guestCount} ${guestCount === 1 ? "Traveler" : "Travelers"}` : null,
-    step > 2 && dateRange.from && dateRange.to ? `📅 ${fmt(dateRange.from)} → ${fmt(dateRange.to)} · ${nights}n` : null,
-    step > 3 && selectedRooms.length ? `🏠 ${selectedRooms.length > 1 ? selectedRooms.length + " Rooms" : selectedRooms[0].name}` : null,
-    step > 4 && selectedDbServiceIds.length ? `✨ ${selectedDbServiceIds.length} Add-on${selectedDbServiceIds.length > 1 ? "s" : ""}` : null,
-    step > 6 && (watchPickup || watchDrop) ? "✈️ Airport Transfer" : null,
+    currentStepNumber > 1 ? `👥 ${guestCount} ${guestCount === 1 ? "Traveler" : "Travelers"}` : null,
+    currentStepNumber > flow.indexOf("dates") + 1 && dateRange.from && dateRange.to ? `📅 ${fmt(dateRange.from)} → ${fmt(dateRange.to)} · ${nights}n` : null,
+    currentStepNumber > flow.indexOf("room") + 1 && selectedRooms.length ? `🏠 ${selectedRooms.length > 1 ? selectedRooms.length + " Rooms" : selectedRooms[0].name}` : null,
+    currentStepNumber > flow.indexOf("experiences") + 1 && selectedDbServiceIds.length ? `✨ ${selectedDbServiceIds.length} Add-on${selectedDbServiceIds.length > 1 ? "s" : ""}` : null,
+    currentStepNumber > flow.indexOf("airport") + 1 && (watchPickup || watchDrop) ? "✈️ Airport Transfer" : null,
   ].filter(Boolean) as string[];
 
   const packages = Array.isArray(services) ? services.filter(s => s.type === "main" || (s.type === "optional" && s.category?.toLowerCase().includes("package")) || s.category?.toLowerCase() === "package") : [];
@@ -459,7 +476,7 @@ export default function BookingPage() {
             <div className="h-1 bg-muted/50 rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
-                animate={{ width: `${((step - 1) / 6) * 100}%` }}
+                animate={{ width: `${((currentStepNumber - 1) / (totalSteps - 1 || 1)) * 100}%` }}
                 transition={{ duration: 0.55, ease: "easeInOut" }}
               />
             </div>
@@ -468,8 +485,8 @@ export default function BookingPage() {
             <div className="flex items-center justify-between">
               {STEPS.map((s) => {
                 const Icon = s.icon;
-                const done = step > s.n;
-                const curr = step === s.n;
+                const done = currentStepNumber > s.n;
+                const curr = currentStepNumber === s.n;
                 return (
                   <div key={s.n} className="flex flex-col items-center gap-1">
                     <div className={`
@@ -529,14 +546,14 @@ export default function BookingPage() {
             {/* ══════════════════════════════════════════════════════════════
                 STEP 1 — Guests
             ══════════════════════════════════════════════════════════════ */}
-            {step === 1 && (
+            {stepId === "guests" && (
               <motion.div
-                key="s1" custom={dir} variants={slide}
+                key="guests" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
                 className="w-full max-w-2xl mx-auto"
               >
                 <StepHeader
-                  n={1} iconBg="bg-sky-100"
+                  n={currentStepNumber} iconBg="bg-sky-100"
                   icon={<Users className="w-9 h-9 text-sky-600" />}
                   title="How many are joining?"
                   sub="Tell us how many travelers will be staying with us."
@@ -548,6 +565,7 @@ export default function BookingPage() {
                 >
                   <div className="flex items-center justify-center gap-6 md:gap-10">
                     <button
+                      type="button"
                       onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
                       className="w-16 h-16 rounded-full border-2 border-sky-100 text-2xl font-bold text-sky-400 hover:bg-sky-500 hover:border-sky-500 hover:text-white transition-all duration-300 shadow-md flex items-center justify-center"
                     >
@@ -573,6 +591,7 @@ export default function BookingPage() {
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => setGuestCount(Math.min(12, guestCount + 1))}
                       className="w-16 h-16 rounded-full border-2 border-sky-100 text-2xl font-bold text-sky-400 hover:bg-sky-500 hover:border-sky-500 hover:text-white transition-all duration-300 shadow-md flex items-center justify-center"
                     >
@@ -592,21 +611,89 @@ export default function BookingPage() {
                   </AnimatePresence>
                 </motion.div>
 
-                <StepNav onBack={null} onContinue={() => goTo(2)} continueLabel="Choose Your Dates" />
+                <StepNav onBack={null} onContinue={() => goToStep("journey")} continueLabel="Choose Your Journey" />
+              </motion.div>
+            )}
+
+            {/* ══════════════════════════════════════════════════════════════
+                STEP 2 — Journey Type
+            ══════════════════════════════════════════════════════════════ */}
+            {stepId === "journey" && (
+              <motion.div
+                key="journey" custom={dir} variants={slide}
+                initial="enter" animate="center" exit="exit"
+                className="w-full max-w-4xl mx-auto"
+              >
+                <StepHeader
+                  n={currentStepNumber} iconBg="bg-teal-100"
+                  icon={<Compass className="w-9 h-9 text-teal-600" />}
+                  title="Choose Your Experience"
+                  sub="Are you here for a surf package, or a custom room stay?"
+                />
+
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
+                  className="grid sm:grid-cols-2 gap-6"
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setJourneyType("package");
+                      setDateRange({});
+                      setSelectedRoomIds([]);
+                      setSelectedDbServiceIds([]);
+                    }}
+                    className={`p-8 rounded-[2.5rem] border-2 text-left transition-all ${
+                      journeyType === "package" ? "border-primary bg-primary/5 shadow-lg" : "border-slate-100 bg-white hover:border-primary/30"
+                    }`}
+                  >
+                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                      <Award className="w-8 h-8 text-primary" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">Package</h3>
+                    <p className="text-sm text-muted-foreground">The full experience. Surf coaching, meals, and more. Fixed 7 days.</p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setJourneyType("room");
+                      setDateRange({});
+                      setSelectedRoomIds([]);
+                      setSelectedDbServiceIds([]);
+                    }}
+                    className={`p-8 rounded-[2.5rem] border-2 text-left transition-all ${
+                      journeyType === "room" ? "border-primary bg-primary/5 shadow-lg" : "border-slate-100 bg-white hover:border-primary/30"
+                    }`}
+                  >
+                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
+                      <Home className="w-8 h-8 text-primary" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-2">Room Only (Custom Stay)</h3>
+                    <p className="text-sm text-muted-foreground">Book a room and add experiences at your own pace. Minimum 2 nights.</p>
+                  </button>
+                </motion.div>
+
+                <StepNav
+                  onBack={() => goToStep("guests")}
+                  onContinue={() => goToStep(journeyType === "package" ? "packages" : "dates")}
+                  continueLabel="Continue"
+                  disabled={!journeyType}
+                />
               </motion.div>
             )}
 
             {/* ══════════════════════════════════════════════════════════════
                 STEP 2 — Dates
             ══════════════════════════════════════════════════════════════ */}
-            {step === 2 && (
+            {stepId === "dates" && (
               <motion.div
-                key="s2" custom={dir} variants={slide}
+                key="dates" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
                 className="w-full max-w-2xl mx-auto"
               >
                 <StepHeader
-                  n={2} iconBg="bg-violet-100"
+                  n={currentStepNumber} iconBg="bg-violet-100"
                   icon={<Calendar className="w-9 h-9 text-violet-600" />}
                   title="When would you like to arrive?"
                   sub="Select your check-in and check-out dates below."
@@ -620,7 +707,15 @@ export default function BookingPage() {
                     <DayPicker
                       mode="range"
                       selected={dateRange as any}
-                      onSelect={(r) => setDateRange(r ?? {})}
+                      onSelect={(r) => {
+                        if (journeyType === "package" && r?.from) {
+                          const to = new Date(r.from);
+                          to.setDate(to.getDate() + 7);
+                          setDateRange({ from: r.from, to });
+                        } else {
+                          setDateRange(r ?? {});
+                        }
+                      }}
                       disabled={{ before: new Date() }}
                       numberOfMonths={1}
                       className="font-sans"
@@ -647,7 +742,7 @@ export default function BookingPage() {
                 </motion.div>
 
                 <StepNav
-                  onBack={() => goTo(1)}
+                  onBack={() => goToStep(journeyType === "package" ? "packages" : "journey")}
                   onContinue={() => {
                     if (!dateRange.from || !dateRange.to) {
                       toast({ variant: "destructive", title: "Please select check-in and check-out dates" });
@@ -657,7 +752,15 @@ export default function BookingPage() {
                       toast({ variant: "destructive", title: "Check-out must be after check-in" });
                       return;
                     }
-                    goTo(3);
+                    if (journeyType === "room" && nights < 2) {
+                      toast({ variant: "destructive", title: "Minimum 2 nights required for room bookings" });
+                      return;
+                    }
+                    if (journeyType === "package" && nights !== 7) {
+                      toast({ variant: "destructive", title: "Packages require exactly a 7 night stay" });
+                      return;
+                    }
+                    goToStep("room");
                   }}
                   continueLabel="Choose Your Room"
                   disabled={!dateRange.from || !dateRange.to}
@@ -668,14 +771,14 @@ export default function BookingPage() {
             {/* ══════════════════════════════════════════════════════════════
                 STEP 3 — Room
             ══════════════════════════════════════════════════════════════ */}
-            {step === 3 && (
+            {stepId === "room" && (
               <motion.div
-                key="s3" custom={dir} variants={slide}
+                key="room" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
                 className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
-                  n={3} iconBg="bg-amber-100"
+                  n={currentStepNumber} iconBg="bg-amber-100"
                   icon={<Home className="w-9 h-9 text-amber-600" />}
                   title="Choose Your Sanctuary"
                   sub="Select the perfect space for your island escape."
@@ -738,7 +841,7 @@ export default function BookingPage() {
                 )}
 
                 <StepNav
-                  onBack={() => goTo(2)}
+                  onBack={() => goToStep("dates")}
                   onContinue={handleRoomContinue}
                   continueLabel="Check Availability"
                   disabled={selectedRoomIds.length === 0}
@@ -750,14 +853,14 @@ export default function BookingPage() {
             {/* ══════════════════════════════════════════════════════════════
                 STEP 4 — Packages
             ══════════════════════════════════════════════════════════════ */}
-            {step === 4 && (
+            {stepId === "packages" && (
               <motion.div
-                key="s4" custom={dir} variants={slide}
+                key="packages" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
                 className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
-                  n={4} iconBg="bg-emerald-100"
+                  n={currentStepNumber} iconBg="bg-emerald-100"
                   icon={<Award className="w-9 h-9 text-emerald-600" />}
                   title="Surf & Adventure Packages"
                   sub="Add professional coaching to your stay. Completely optional."
@@ -885,11 +988,11 @@ export default function BookingPage() {
                 </motion.div>
 
                 <StepNav
-                  onBack={() => goTo(3)}
-                  onContinue={() => goTo(5)}
-                  continueLabel="Add Experiences"
+                  onBack={() => goToStep("journey")}
+                  onContinue={() => goToStep("dates")}
+                  continueLabel="Continue"
                   skipLabel="Skip Packages"
-                  onSkip={() => goTo(5)}
+                  onSkip={() => goToStep("dates")}
                 />
               </motion.div>
             )}
@@ -897,14 +1000,14 @@ export default function BookingPage() {
             {/* ══════════════════════════════════════════════════════════════
                 STEP 5 — Experiences
             ══════════════════════════════════════════════════════════════ */}
-            {step === 5 && (
+            {stepId === "experiences" && (
               <motion.div
-                key="s5" custom={dir} variants={slide}
+                key="experiences" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
                 className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
-                  n={5} iconBg="bg-purple-100"
+                  n={currentStepNumber} iconBg="bg-purple-100"
                   icon={<Sparkles className="w-9 h-9 text-purple-600" />}
                   title="Island Experiences"
                   sub="All pay on arrival — simply tell us at check-in and we'll arrange everything."
@@ -967,11 +1070,11 @@ export default function BookingPage() {
                 </motion.div>
 
                 <StepNav
-                  onBack={() => goTo(4)}
-                  onContinue={() => goTo(6)}
+                  onBack={() => goToStep("room")}
+                  onContinue={() => goToStep("airport")}
                   continueLabel="Airport Transfer"
                   skipLabel="Skip Experiences"
-                  onSkip={() => goTo(6)}
+                  onSkip={() => goToStep("airport")}
                 />
               </motion.div>
             )}
@@ -979,14 +1082,14 @@ export default function BookingPage() {
             {/* ══════════════════════════════════════════════════════════════
                 STEP 6 — Airport Transfer
             ══════════════════════════════════════════════════════════════ */}
-            {step === 6 && (
+            {stepId === "airport" && (
               <motion.div
-                key="s6" custom={dir} variants={slide}
+                key="airport" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
                 className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
-                  n={6} iconBg="bg-rose-100"
+                  n={currentStepNumber} iconBg="bg-rose-100"
                   icon={<Plane className="w-9 h-9 text-rose-500" />}
                   title="Airport Transfer"
                   sub="Optional — let us handle your journey to and from Bandaranaike International Airport."
@@ -1173,17 +1276,17 @@ export default function BookingPage() {
                 </motion.div>
 
                 <StepNav
-                  onBack={() => goTo(5)}
+                  onBack={() => goToStep("experiences")}
                   onContinue={async () => {
                     const valid = await form.trigger(["flightNumber", "flightDate", "flightTime"]);
-                    if (valid) goTo(7);
+                    if (valid) goToStep("confirm");
                   }}
                   continueLabel="Review & Confirm"
                   skipLabel="No Transfer Needed"
                   onSkip={() => {
                     form.setValue("airportPickup", false);
                     form.setValue("airportDrop", false);
-                    goTo(7);
+                    goToStep("confirm");
                   }}
                 />
               </motion.div>
@@ -1192,14 +1295,14 @@ export default function BookingPage() {
             {/* ══════════════════════════════════════════════════════════════
                 STEP 7 — Confirm & Pay
             ══════════════════════════════════════════════════════════════ */}
-            {step === 7 && (
+            {stepId === "confirm" && (
               <motion.div
-                key="s7" custom={dir} variants={slide}
+                key="confirm" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
                 className="w-full mx-auto"
               >
                 <StepHeader
-                  n={7} iconBg="bg-primary/10"
+                  n={currentStepNumber} iconBg="bg-primary/10"
                   icon={<CreditCard className="w-9 h-9 text-primary" />}
                   title="Almost There"
                   sub="Complete your details and confirm your island sanctuary."
@@ -1321,7 +1424,8 @@ export default function BookingPage() {
                       </form>
 
                     <button
-                      onClick={() => goTo(6)}
+                      type="button"
+                      onClick={() => goToStep("airport")}
                       className="flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground transition-colors px-4 py-2 rounded-full hover:bg-muted"
                     >
                       <ChevronLeft className="w-4 h-4" /> Back to Airport Transfer
