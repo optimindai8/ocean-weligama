@@ -52,11 +52,15 @@ router.post("/v1/admin/services", requireAdmin, async (req, res) => {
 
     // Production-grade transaction: Atomic creation of service + translation
     const result = await db.transaction(async (tx) => {
-      // 1. Check if slug exists
-      const existing = await tx.select().from(services).where(eq(services.slug, serviceFields.slug));
-      if (existing.length > 0) {
-        throw new Error(`DUPLICATE_SLUG: Service with slug "${serviceFields.slug}" already exists`);
+      let finalSlug = serviceFields.slug;
+      let counter = 1;
+      while (true) {
+        const existing = await tx.select().from(services).where(eq(services.slug, finalSlug));
+        if (existing.length === 0) break;
+        finalSlug = `${serviceFields.slug}-${counter}`;
+        counter++;
       }
+      serviceFields.slug = finalSlug;
 
       // 2. Insert Core Service
       const [service] = await tx
@@ -102,13 +106,18 @@ router.patch("/v1/admin/services/:id", requireAdmin, async (req, res) => {
     const result = await db.transaction(async (tx) => {
       // 1. If slug is changing, check for duplicates
       if (serviceFields.slug) {
-        const existing = await tx
-          .select()
-          .from(services)
-          .where(and(eq(services.slug, serviceFields.slug), ne(services.id, id)));
-        if (existing.length > 0) {
-          throw new Error(`DUPLICATE_SLUG: Service with slug "${serviceFields.slug}" already exists`);
+        let finalSlug = serviceFields.slug;
+        let counter = 1;
+        while (true) {
+          const existing = await tx
+            .select()
+            .from(services)
+            .where(and(eq(services.slug, finalSlug), ne(services.id, id)));
+          if (existing.length === 0) break;
+          finalSlug = `${serviceFields.slug}-${counter}`;
+          counter++;
         }
+        serviceFields.slug = finalSlug;
       }
 
       // 2. Update Core Service
