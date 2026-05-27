@@ -62,7 +62,7 @@ export default function Home() {
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4">
 
           {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10">
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10 mt-12">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
