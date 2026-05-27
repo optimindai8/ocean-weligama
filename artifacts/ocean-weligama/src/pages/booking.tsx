@@ -717,9 +717,20 @@ export default function BookingPage() {
                       selected={dateRange as any}
                       onSelect={(r) => {
                         if (journeyType === "package" && r?.from) {
-                          const to = new Date(r.from);
-                          to.setDate(to.getDate() + 7);
-                          setDateRange({ from: r.from, to });
+                          if (!r.to || r.to <= r.from) {
+                            const minTo = new Date(r.from);
+                            minTo.setDate(minTo.getDate() + 7);
+                            setDateRange({ from: r.from, to: minTo });
+                          } else {
+                            const diffDays = Math.round((r.to.getTime() - r.from.getTime()) / 86400000);
+                            if (diffDays < 7) {
+                              const minTo = new Date(r.from);
+                              minTo.setDate(minTo.getDate() + 7);
+                              setDateRange({ from: r.from, to: minTo });
+                            } else {
+                              setDateRange({ from: r.from, to: r.to });
+                            }
+                          }
                         } else {
                           setDateRange(r ?? {});
                         }
@@ -764,8 +775,8 @@ export default function BookingPage() {
                       toast({ variant: "destructive", title: "Minimum 2 nights required for room bookings" });
                       return;
                     }
-                    if (journeyType === "package" && nights !== 7) {
-                      toast({ variant: "destructive", title: "Packages require exactly a 7 night stay" });
+                    if (journeyType === "package" && nights < 7) {
+                      toast({ variant: "destructive", title: "Packages require a minimum 7 night stay" });
                       return;
                     }
                     goToStep("room");
