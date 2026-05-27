@@ -754,6 +754,8 @@ export type ListRoomsParams = {
   minPrice?: number;
   maxPrice?: number;
   locale?: string;
+  checkIn?: string;
+  checkOut?: string;
 };
 
 export type ListRoomsType = (typeof ListRoomsType)[keyof typeof ListRoomsType];

@@ -7,8 +7,10 @@ import {
   roomAmenities,
   availability,
   gallery,
+  bookings,
+  bookingRooms,
 } from "@workspace/db";
-import { eq, and, isNull, gte, lte, sql } from "drizzle-orm";
+import { eq, and, isNull, gte, lte, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -47,16 +49,52 @@ async function getRoomWithTranslation(roomId: string, locale: string) {
 
 router.get("/v1/rooms", async (req, res) => {
   try {
-    const { type, locale = "en" } = req.query as Record<string, string>;
+    const { type, locale = "en", checkIn, checkOut } = req.query as Record<string, string>;
 
     const conditions = [isNull(rooms.deletedAt), eq(rooms.status, "active")];
     if (type) conditions.push(eq(rooms.type, type as "room" | "villa" | "dormitory" | "suite"));
 
-    const allRooms = await db
+    let allRooms = await db
       .select()
       .from(rooms)
       .where(and(...conditions))
       .orderBy(rooms.sortOrder);
+
+    if (checkIn && checkOut && allRooms.length > 0) {
+      const roomIdsArray = allRooms.map((r) => r.id);
+
+      const blockedDates = await db
+        .select({ roomId: availability.roomId })
+        .from(availability)
+        .where(
+          and(
+            inArray(availability.roomId, roomIdsArray),
+            eq(availability.isBlocked, true),
+            gte(availability.date, checkIn),
+            lte(availability.date, checkOut)
+          )
+        );
+
+      const conflictingBookings = await db
+        .select({ roomId: bookingRooms.roomId })
+        .from(bookings)
+        .innerJoin(bookingRooms, eq(bookings.id, bookingRooms.bookingId))
+        .where(
+          and(
+            inArray(bookingRooms.roomId, roomIdsArray),
+            isNull(bookings.deletedAt),
+            lte(bookings.checkIn, checkOut),
+            gte(bookings.checkOut, checkIn)
+          )
+        );
+
+      const unavailableRoomIds = new Set([
+        ...blockedDates.map((b) => b.roomId),
+        ...conflictingBookings.map((b) => b.roomId),
+      ]);
+
+      allRooms = allRooms.filter((r) => !unavailableRoomIds.has(r.id));
+    }
 
     const result = await Promise.all(
       allRooms.map((room) => getRoomWithTranslation(room.id, locale))

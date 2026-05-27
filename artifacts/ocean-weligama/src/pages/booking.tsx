@@ -299,7 +299,15 @@ export default function BookingPage() {
   const nights = dateRange.from && dateRange.to
     ? Math.round((dateRange.to.getTime() - dateRange.from.getTime()) / 86400000) : 0;
 
-  const { data: rooms,    isLoading: roomsLoading } = useListRooms();
+  const toStrSafe = (d: Date) => {
+    return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  };
+  const listRoomsParams: any = {};
+  if (dateRange.from && dateRange.to) {
+    listRoomsParams.checkIn = toStrSafe(dateRange.from);
+    listRoomsParams.checkOut = toStrSafe(dateRange.to);
+  }
+  const { data: rooms,    isLoading: roomsLoading } = useListRooms(listRoomsParams);
   const { data: services }                           = useListServices();
   const checkAvail = useCheckAvailabilityAndPrice();
   const createBook = useCreateBooking();
