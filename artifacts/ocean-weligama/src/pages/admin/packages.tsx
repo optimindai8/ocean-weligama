@@ -269,7 +269,7 @@ export default function AdminPackages() {
             toast({ 
               variant: "destructive", 
               title: "Update failed", 
-              description: err.response?.data?.error || "Unknown error occurred" 
+              description: err.data?.error || err.message || "Unknown error occurred" 
             });
           },
         }
@@ -287,7 +287,7 @@ export default function AdminPackages() {
             toast({ 
               variant: "destructive", 
               title: "Creation failed", 
-              description: err.response?.data?.error || "Unknown error occurred" 
+              description: err.data?.error || err.message || "Unknown error occurred" 
             });
           },
         }
