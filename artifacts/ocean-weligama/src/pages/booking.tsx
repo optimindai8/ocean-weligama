@@ -45,6 +45,7 @@ import {
   Clock,
   ChevronLeft,
   Home,
+  RotateCcw,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import {
@@ -740,6 +741,19 @@ export default function BookingPage() {
                       className="font-sans"
                     />
                   </div>
+
+                  {dateRange.from && (
+                    <div className="flex justify-center mt-4">
+                      <button
+                        type="button"
+                        onClick={() => setDateRange({})}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-violet-600 bg-white border border-violet-200 rounded-full hover:bg-violet-50 hover:border-violet-300 transition-all duration-200 shadow-sm"
+                      >
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        Reset Dates
+                      </button>
+                    </div>
+                  )}
 
                   <AnimatePresence>
                     {dateRange.from && dateRange.to && (
