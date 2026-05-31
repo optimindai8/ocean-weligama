@@ -122,17 +122,7 @@ export default function AdminPackages() {
     return cat;
   };
 
-  const filteredServices = (services as Service[] || []).filter((s) => {
-    if (activeTab === "main") {
-      return s.type === "main";
-    } else {
-      return s.type === "optional" && [
-        "Beginner Surf Packages",
-        "Advance Surf Packages",
-        "Yoga Retreat Packages"
-      ].includes(s.category || "");
-    }
-  });
+  const filteredServices = (services as Service[] || []).filter((s) => s.type === "main");
 
   const form = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
@@ -359,45 +349,7 @@ export default function AdminPackages() {
           </motion.div>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex border-b border-slate-200 mb-8 gap-6 px-2"
-        >
-          <button
-            onClick={() => setActiveTab("main")}
-            className={`pb-4 px-2 text-sm font-black tracking-wide uppercase transition-all relative flex items-center gap-2 group ${
-              activeTab === "main"
-                ? "text-[#0B3D5E]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <span>Surf Main Packages</span>
-            <span className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] transition-colors ${activeTab === "main" ? "bg-[#0B3D5E]/10 text-[#0B3D5E]" : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"}`}>
-              {(services as Service[] || []).filter(s => s.type === "main").length}
-            </span>
-            {activeTab === "main" && (
-              <motion.div layoutId="packageTabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-[#0B3D5E] rounded-t-full" />
-            )}
-          </button>
-          <button
-            onClick={() => setActiveTab("optional")}
-            className={`pb-4 px-2 text-sm font-black tracking-wide uppercase transition-all relative flex items-center gap-2 group ${
-              activeTab === "optional"
-                ? "text-[#0B3D5E]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <span>Optional Packages</span>
-            <span className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-[10px] transition-colors ${activeTab === "optional" ? "bg-[#0B3D5E]/10 text-[#0B3D5E]" : "bg-slate-100 text-slate-500 group-hover:bg-slate-200"}`}>
-              {(services as Service[] || []).filter(s => s.type === "optional" && ["Beginner Surf Packages", "Advance Surf Packages", "Yoga Retreat Packages"].includes(s.category || "")).length}
-            </span>
-            {activeTab === "optional" && (
-              <motion.div layoutId="packageTabIndicator" className="absolute bottom-0 left-0 right-0 h-1 bg-[#0B3D5E] rounded-t-full" />
-            )}
-          </button>
-        </motion.div>
+
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -624,65 +576,7 @@ export default function AdminPackages() {
                   {/* Right Column: Configuration */}
                   <div className="space-y-8">
                     <div className="grid grid-cols-1 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="type"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Package Type</FormLabel>
-                            <Select
-                              onValueChange={(val) => {
-                                field.onChange(val);
-                                if (val === "main") {
-                                  form.setValue("category", "Main Package");
-                                } else {
-                                  form.setValue("category", "Beginner Surf Packages");
-                                }
-                              }}
-                              value={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger className="rounded-xl h-12">
-                                  <SelectValue placeholder="Select type" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent className="rounded-xl">
-                                <SelectItem value="main">Surf Main Package</SelectItem>
-                                <SelectItem value="optional">Optional Package</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
 
-                      {form.watch("type") === "optional" && (
-                        <FormField
-                          control={form.control}
-                          name="category"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Optional Package Sub-type</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                value={field.value || "Beginner Surf Packages"}
-                              >
-                                <FormControl>
-                                  <SelectTrigger className="rounded-xl h-12">
-                                    <SelectValue placeholder="Select sub-type" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent className="rounded-xl">
-                                  <SelectItem value="Beginner Surf Packages">Beginning Surf</SelectItem>
-                                  <SelectItem value="Advance Surf Packages">Advance Surf</SelectItem>
-                                  <SelectItem value="Yoga Retreat Packages">Yoga Surf</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
