@@ -99,11 +99,6 @@ export default function PackageDetailPage() {
             {/* Right Column (Pricing card) */}
             <div className="lg:col-span-1">
               <div className="bg-card rounded-3xl p-8 border border-border shadow-xl shadow-primary/5 sticky top-28 space-y-6">
-                <div className="text-center space-y-1">
-                  <span className="text-xs uppercase text-muted-foreground tracking-widest font-semibold">Package Price</span>
-                  <div className="text-4xl font-black text-primary">€{service.basePrice}</div>
-                </div>
-
                 {service.isBookable && (
                   <Link href={`/book?service=${service.slug}`}>
                     <Button className="w-full bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full h-14 font-bold shadow-lg shadow-[#F0A500]/25 text-base transition-all duration-300" data-testid="button-book-package">

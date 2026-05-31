@@ -12,8 +12,6 @@ export default function PackagesPage() {
   const { data: rawServices, isLoading } = useListServices();
   const services = rawServices as Service[] | undefined;
   
-  // Tab control for Optional Packages
-  const [activeCategory, setActiveCategory] = useState("All");
   // Expanded state for main package highlights (keyed by pkg.id)
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
   const toggleCard = (id: string) => setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }));
@@ -22,26 +20,6 @@ export default function PackagesPage() {
   const mainPackages = services?.filter(s => s.type === "main" && s.isActive) || [];
   const optionalPackages = services?.filter(s => s.type === "optional" && s.isActive) || [];
   const experienceServices = optionalPackages.filter(s => !s.category?.toLowerCase().includes("package"));
-
-  // Filter optional packages by active tab category
-  const filteredOptionalPackages = activeCategory === "All"
-    ? optionalPackages.filter(s => s.category?.toLowerCase().includes("package"))
-    : activeCategory === "Experiences"
-      ? optionalPackages.filter(s => !s.category?.toLowerCase().includes("package"))
-      : optionalPackages.filter(s => s.category === activeCategory);
-
-  const getCount = (catId: string) => {
-    if (catId === "All") return optionalPackages.filter(s => s.category?.toLowerCase().includes("package")).length;
-    if (catId === "Experiences") return optionalPackages.filter(s => !s.category?.toLowerCase().includes("package")).length;
-    return optionalPackages.filter(s => s.category === catId).length;
-  };
-
-  const categories = [
-    { id: "All", label: "All Packages" },
-    { id: "Beginner Surf Packages", label: "Beginner Surf" },
-    { id: "Advance Surf Packages", label: "Advanced Surf" },
-    { id: "Yoga Retreat Packages", label: "Yoga Retreats" },
-  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#0B3D5E] overflow-hidden">
@@ -105,9 +83,6 @@ export default function PackagesPage() {
                       <h3 className="text-2xl font-serif font-bold text-[#0B3D5E] group-hover:text-[#1A6B8A] transition-colors">
                         {pkg.name}
                       </h3>
-                      <p className="text-2xl font-black text-[#1A6B8A]">
-                        €{pkg.basePrice}
-                      </p>
                     </div>
 
                     <p className="text-muted-foreground text-sm font-light line-clamp-3">
@@ -169,121 +144,6 @@ export default function PackagesPage() {
         )}
       </section>
 
-      {/* Section 2: Optional Packages (Add-on Packages) */}
-      <section className="py-24 bg-[#0B3D5E]/5 border-t border-[#0B3D5E]/5">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-            <span className="text-[#1A6B8A] font-bold tracking-[0.2em] uppercase text-xs">Flexible Add-ons</span>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold">Optional Packages</h2>
-            <p className="text-muted-foreground font-light text-base md:text-lg">
-              Enhance your experience. Grouped by tier, pick these custom bundles to build your dream vacation.
-            </p>
-
-            {/* Premium Interactive Tabs */}
-            <div className="w-full overflow-x-auto hide-scrollbar smooth-inertia pt-6 pb-2">
-              <div className="flex w-max mx-auto gap-2 md:gap-4 px-4">
-                {categories.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 border whitespace-nowrap shadow-sm ${
-                      activeCategory === cat.id
-                        ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/10 scale-105"
-                        : "bg-white text-muted-foreground hover:text-[#0B3D5E] hover:border-[#0B3D5E]/30 border-[#0B3D5E]/10 hover:bg-white"
-                    }`}
-                  >
-                    <span>{cat.label}</span>
-                    <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-colors ${activeCategory === cat.id ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
-                      {getCount(cat.id)}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Tab Content Cards Grid */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeCategory}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            >
-              {isLoading ? (
-                [1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-96 rounded-[2.5rem]" />
-                ))
-              ) : filteredOptionalPackages.length > 0 ? (
-                filteredOptionalPackages.map((pkg) => (
-                  <div
-                    key={pkg.id}
-                    className="group bg-white border border-[#0B3D5E]/5 rounded-[2.5rem] p-6 hover:shadow-xl hover:shadow-[#0B3D5E]/5 transition-all duration-300 flex flex-col justify-between"
-                  >
-                    <div className="space-y-4">
-                      {/* Image Thumbnail or Icon */}
-                      <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-muted mb-4">
-                        {pkg.imageUrl ? (
-                          <img src={pkg.imageUrl} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        ) : (
-                          <div className="w-full h-full bg-[#4BBCCC]/10 flex items-center justify-center text-[#4BBCCC]">
-                            <Sparkles className="w-8 h-8 opacity-40" />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-1">
-                        <span className="text-[10px] uppercase font-bold text-[#1A6B8A] tracking-wider bg-[#1A6B8A]/10 px-2 py-0.5 rounded">
-                          {catLabel(pkg.category)}
-                        </span>
-                        <h3 className="text-xl font-bold font-serif text-[#0B3D5E] pt-1">
-                          {pkg.name}
-                        </h3>
-                        <p className="text-xl font-black text-[#1A6B8A]">
-                          €{pkg.basePrice}
-                        </p>
-                      </div>
-
-                      {pkg.highlights && pkg.highlights.length > 0 && (
-                        <div className="space-y-2 pt-2">
-                          {pkg.highlights.map((item, index) => (
-                            <div key={index} className="flex items-start gap-2 text-xs text-foreground/75">
-                              <Check className="w-3.5 h-3.5 text-[#4BBCCC] flex-shrink-0 mt-0.5" />
-                              <span>{item}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="pt-4 mt-6 border-t border-[#0B3D5E]/10 flex items-center gap-3">
-                      <Link href={`/packages/${pkg.slug}`} className="flex-1">
-                        <Button className="w-full rounded-full bg-[#0B3D5E] hover:bg-[#1A6B8A] text-white font-semibold py-6 shadow-md transition-all duration-300">
-                          View Details
-                        </Button>
-                      </Link>
-                      {pkg.isBookable && (
-                        <Link href={`/book?service=${pkg.slug}`}>
-                          <Button variant="outline" size="icon" className="rounded-full border-[#0B3D5E]/20 w-12 h-12 text-[#0B3D5E] hover:bg-[#0B3D5E] hover:text-white transition-all duration-300" title="Book Now">
-                            <ArrowRight className="w-5 h-5" />
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="col-span-full text-center py-16 bg-white rounded-[2.5rem] border border-[#0B3D5E]/10 p-8">
-                  <HelpCircle className="w-10 h-10 text-muted-foreground/30 mx-auto mb-4 animate-pulse" />
-                  <p className="text-muted-foreground font-light">No optional packages listed under this category yet.</p>
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </section>
 
       {/* Experience Weligama Section */}
       {experienceServices.length > 0 && (
@@ -334,12 +194,6 @@ export default function PackagesPage() {
                     {exp.shortDesc || exp.description || 'Experience the best of Weligama.'}
                   </p>
 
-                  {/* Price */}
-                  <div className="flex items-center justify-between pt-4 mb-5 border-t border-dashed border-[#0B3D5E]/10">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#4BBCCC]">Per Person</span>
-                    <span className="text-xl font-black text-[#0B3D5E]">€{exp.basePrice}</span>
-                  </div>
-
                   {/* Explore Link */}
                   <Link
                     href={`/packages/${exp.slug}`}
@@ -384,12 +238,4 @@ export default function PackagesPage() {
       <Footer />
     </div>
   );
-}
-
-function catLabel(cat: string | null | undefined): string {
-  if (!cat) return "Optional";
-  if (cat.toLowerCase().includes("beginner")) return "Beginner";
-  if (cat.toLowerCase().includes("advance")) return "Advanced";
-  if (cat.toLowerCase().includes("yoga")) return "Yoga";
-  return cat;
 }
