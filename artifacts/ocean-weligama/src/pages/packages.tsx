@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Waves, Check, Sparkles, HelpCircle } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
+import { PackageComparisonTable } from "@/components/PackageComparisonTable";
 
 export default function PackagesPage() {
   const { data: rawServices, isLoading } = useListServices();
@@ -144,6 +145,10 @@ export default function PackagesPage() {
         )}
       </section>
 
+      {/* Comparison Table Section */}
+      <section className="bg-white">
+        <PackageComparisonTable />
+      </section>
 
       {/* Experience Weligama Section */}
       {experienceServices.length > 0 && (
