@@ -80,7 +80,7 @@ import {
 
 const serviceSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  slug: z.string().min(2, "Slug must be at least 2 characters").regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
+  slug: z.string().optional(),
   description: z.string().optional(),
   imageUrl: z.string().nullable().optional(),
   highlights: z.array(z.string().min(1)).min(1, "Add at least one item of inclusion"),
@@ -237,8 +237,10 @@ export default function AdminPackages() {
   };
 
   const onSubmit = (values: ServiceFormValues) => {
+    const generatedSlug = values.slug || values.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const data = {
       ...values,
+      slug: generatedSlug,
       description: values.description || null,
       imageUrl: values.imageUrl || null,
       category: values.category || "Main Package",
@@ -556,20 +558,7 @@ export default function AdminPackages() {
                         )}
                       />
 
-                      <FormField
-                        control={form.control}
-                        name="slug"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Slug (URL Handle)</FormLabel>
-                            <FormControl>
-                              <Input placeholder="surfer-starter-package" {...field} className="rounded-xl font-mono text-sm" />
-                            </FormControl>
-                            <FormDescription>URL-friendly handle: oceanweligama.com/packages/<strong>{field.value || "slug"}</strong></FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+
                     </div>
                   </div>
 
