@@ -114,10 +114,9 @@ function getServiceTag(category?: string | null) {
 
 const ALL_STEPS = {
   guests: { id: "guests", label: "Guests", icon: Users },
-  journey: { id: "journey", label: "Journey", icon: Compass },
+  packages: { id: "packages", label: "Packages", icon: Award },
   dates: { id: "dates", label: "Dates", icon: Calendar },
   room: { id: "room", label: "Room", icon: Home },
-  packages: { id: "packages", label: "Packages", icon: Award },
   experiences: { id: "experiences", label: "Experiences", icon: Sparkles },
   airport: { id: "airport", label: "Airport", icon: Plane },
   confirm: { id: "confirm", label: "Confirm", icon: CreditCard },
@@ -253,7 +252,7 @@ export default function BookingPage() {
   };
   const clearState = () => {
     if (typeof window !== 'undefined') {
-      ['stepId', 'journeyType', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'priceData', 'formData'].forEach(k => {
+      ['stepId', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'priceData', 'formData'].forEach(k => {
         localStorage.removeItem(`booking_${k}`);
       });
     }
@@ -261,11 +260,8 @@ export default function BookingPage() {
 
   const [stepId, setStepId] = useState<string>(() => loadState("stepId", "guests"));
   const [dir, setDir] = useState(1);
-  const [journeyType, setJourneyType] = useState<"package" | "room" | null>(() => loadState("journeyType", null));
 
-  const flow = journeyType === "package" 
-    ? ["guests", "journey", "packages", "dates", "room", "experiences", "airport", "confirm"]
-    : ["guests", "journey", "dates", "room", "experiences", "airport", "confirm"];
+  const flow = ["guests", "packages", "dates", "room", "experiences", "airport", "confirm"];
   
   const currentStepIndex = flow.indexOf(stepId);
   const currentStepNumber = currentStepIndex + 1;
@@ -290,7 +286,6 @@ export default function BookingPage() {
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
 
   useEffect(() => { saveState("stepId", stepId); }, [stepId]);
-  useEffect(() => { saveState("journeyType", journeyType); }, [journeyType]);
   useEffect(() => { saveState("guestCount", guestCount); }, [guestCount]);
   useEffect(() => { saveState("dateRange", dateRange); }, [dateRange]);
   useEffect(() => { saveState("roomIds", selectedRoomIds); }, [selectedRoomIds]);
@@ -620,77 +615,11 @@ export default function BookingPage() {
                   </AnimatePresence>
                 </motion.div>
 
-                <StepNav onBack={null} onContinue={() => goToStep("journey")} continueLabel="Choose Your Journey" />
+                <StepNav onBack={null} onContinue={() => goToStep("packages")} continueLabel="View Packages" />
               </motion.div>
             )}
 
-            {/* ══════════════════════════════════════════════════════════════
-                STEP 2 — Journey Type
-            ══════════════════════════════════════════════════════════════ */}
-            {stepId === "journey" && (
-              <motion.div
-                key="journey" custom={dir} variants={slide}
-                initial="enter" animate="center" exit="exit"
-                className="w-full max-w-4xl mx-auto"
-              >
-                <StepHeader
-                  n={currentStepNumber} iconBg="bg-teal-100"
-                  icon={<Compass className="w-9 h-9 text-teal-600" />}
-                  title="Choose Your Experience"
-                  sub="Are you here for a surf package, or a custom room stay?"
-                />
-
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
-                  className="grid sm:grid-cols-2 gap-6"
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setJourneyType("package");
-                      setDateRange({});
-                      setSelectedRoomIds([]);
-                      setSelectedDbServiceIds([]);
-                    }}
-                    className={`p-8 rounded-[2.5rem] border-2 text-left transition-all ${
-                      journeyType === "package" ? "border-primary bg-primary/5 shadow-lg" : "border-slate-100 bg-white hover:border-primary/30"
-                    }`}
-                  >
-                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-                      <Award className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">Package</h3>
-                    <p className="text-sm text-muted-foreground">The full experience. Surf coaching, meals, and more. Fixed 7 days.</p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setJourneyType("room");
-                      setDateRange({});
-                      setSelectedRoomIds([]);
-                      setSelectedDbServiceIds([]);
-                    }}
-                    className={`p-8 rounded-[2.5rem] border-2 text-left transition-all ${
-                      journeyType === "room" ? "border-primary bg-primary/5 shadow-lg" : "border-slate-100 bg-white hover:border-primary/30"
-                    }`}
-                  >
-                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6">
-                      <Home className="w-8 h-8 text-primary" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">Room Only (Custom Stay)</h3>
-                    <p className="text-sm text-muted-foreground">Book a room and add experiences at your own pace. Minimum 2 nights.</p>
-                  </button>
-                </motion.div>
-
-                <StepNav
-                  onBack={() => goToStep("guests")}
-                  onContinue={() => goToStep(journeyType === "package" ? "packages" : "dates")}
-                  continueLabel="Continue"
-                  disabled={!journeyType}
-                />
-              </motion.div>
-            )}
+            {/* Journey Step Removed */}
 
             {/* ══════════════════════════════════════════════════════════════
                 STEP 2 — Dates
@@ -717,7 +646,8 @@ export default function BookingPage() {
                       mode="range"
                       selected={dateRange as any}
                       onSelect={(r) => {
-                        if (journeyType === "package" && r?.from) {
+                        const hasPackageSelected = selectedDbServiceIds.some(id => packages.some(p => p.id === id));
+                        if (hasPackageSelected && r?.from) {
                           if (!r.to || r.to <= r.from) {
                             const minTo = new Date(r.from);
                             minTo.setDate(minTo.getDate() + 7);
@@ -775,8 +705,9 @@ export default function BookingPage() {
                 </motion.div>
 
                 <StepNav
-                  onBack={() => goToStep(journeyType === "package" ? "packages" : "journey")}
+                  onBack={() => goToStep("packages")}
                   onContinue={() => {
+                    const hasPackageSelected = selectedDbServiceIds.some(id => packages.some(p => p.id === id));
                     if (!dateRange.from || !dateRange.to) {
                       toast({ variant: "destructive", title: "Please select check-in and check-out dates" });
                       return;
@@ -785,11 +716,11 @@ export default function BookingPage() {
                       toast({ variant: "destructive", title: "Check-out must be after check-in" });
                       return;
                     }
-                    if (journeyType === "room" && nights < 2) {
+                    if (!hasPackageSelected && nights < 2) {
                       toast({ variant: "destructive", title: "Minimum 2 nights required for room bookings" });
                       return;
                     }
-                    if (journeyType === "package" && nights < 7) {
+                    if (hasPackageSelected && nights < 7) {
                       toast({ variant: "destructive", title: "Packages require a minimum 7 night stay" });
                       return;
                     }
@@ -1021,7 +952,7 @@ export default function BookingPage() {
                 </motion.div>
 
                 <StepNav
-                  onBack={() => goToStep("journey")}
+                  onBack={() => goToStep("guests")}
                   onContinue={() => goToStep("dates")}
                   continueLabel="Continue"
                   skipLabel="Skip Packages"
