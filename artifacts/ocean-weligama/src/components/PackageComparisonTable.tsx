@@ -73,13 +73,13 @@ export function PackageComparisonTable() {
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-12">
+    <div className="w-full max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-10">
         <motion.h2 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl md:text-5xl font-bold text-gray-900 mb-4"
+          className="text-3xl md:text-4xl font-bold text-gray-900 mb-3"
         >
           Compare Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">Surf Packages</span>
         </motion.h2>
@@ -88,7 +88,7 @@ export function PackageComparisonTable() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="text-xl text-gray-600 max-w-3xl mx-auto"
+          className="text-lg text-gray-600 max-w-2xl mx-auto"
         >
           Find the perfect balance of surf, yoga, and relaxation tailored to your experience level.
         </motion.p>
@@ -98,25 +98,25 @@ export function PackageComparisonTable() {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr>
-              <th className="p-6 md:p-8 bg-white border-b border-gray-100 w-1/4 align-bottom">
-                <h3 className="text-xl font-bold text-gray-900">Features Included</h3>
+              <th className="p-4 md:p-6 bg-white border-b border-gray-100 w-1/4 align-bottom">
+                <h3 className="text-lg font-bold text-gray-900">Features Included</h3>
               </th>
               {packages.map((pkg, idx) => (
                 <th 
                   key={pkg.name} 
-                  className={`p-6 md:p-8 border-b border-gray-100 w-1/4 relative transition-colors duration-300 ${hoveredCol === idx ? pkg.bgColor : 'bg-white'}`}
+                  className={`p-4 md:p-6 border-b border-gray-100 w-1/4 relative transition-colors duration-300 ${hoveredCol === idx ? pkg.bgColor : 'bg-white'}`}
                   onMouseEnter={() => setHoveredCol(idx)}
                   onMouseLeave={() => setHoveredCol(null)}
                 >
-                  {pkg.popular && (
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md uppercase tracking-wider">
-                      Most Popular
-                    </div>
-                  )}
-                  <div className="flex flex-col items-center text-center space-y-2">
-                    <div className={`w-12 h-1 rounded-full bg-gradient-to-r ${pkg.color} mb-2`}></div>
-                    <h4 className="text-lg md:text-xl font-bold text-gray-900">{pkg.name}</h4>
-                    <span className="text-sm font-medium text-gray-500">{pkg.type}</span>
+                  <div className="flex flex-col items-center text-center space-y-1 h-full justify-end">
+                    {pkg.popular && (
+                      <div className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-[10px] md:text-xs font-bold px-3 py-1 rounded-full shadow-sm uppercase tracking-wider mb-2">
+                        Most Popular
+                      </div>
+                    )}
+                    <div className={`w-10 h-1 rounded-full bg-gradient-to-r ${pkg.color} mb-1`}></div>
+                    <h4 className="text-base md:text-lg font-bold text-gray-900">{pkg.name}</h4>
+                    <span className="text-xs font-medium text-gray-500">{pkg.type}</span>
                   </div>
                 </th>
               ))}
@@ -126,7 +126,7 @@ export function PackageComparisonTable() {
             {features.map((section, sectionIdx) => (
               <React.Fragment key={section.category}>
                 <tr>
-                  <td colSpan={4} className="bg-gray-50/80 py-4 px-6 md:px-8 text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-100">
+                  <td colSpan={4} className="bg-gray-50/80 py-3 px-4 md:px-6 text-[11px] md:text-xs font-bold text-gray-900 uppercase tracking-wider border-b border-gray-100">
                     {section.category}
                   </td>
                 </tr>
@@ -139,30 +139,30 @@ export function PackageComparisonTable() {
                     transition={{ delay: (sectionIdx * 0.1) + (itemIdx * 0.05) }}
                     className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors"
                   >
-                    <td className="py-5 px-6 md:px-8 text-gray-700 font-medium">
+                    <td className="py-3 px-4 md:px-6 text-sm text-gray-700 font-medium">
                       {item.name}
                     </td>
                     {item.values.map((val, idx) => (
                       <td 
                         key={idx} 
-                        className={`py-5 px-6 md:px-8 text-center transition-colors duration-300 ${hoveredCol === idx ? packages[idx].bgColor : ''}`}
+                        className={`py-3 px-4 md:px-6 text-sm text-center transition-colors duration-300 ${hoveredCol === idx ? packages[idx].bgColor : ''}`}
                         onMouseEnter={() => setHoveredCol(idx)}
                         onMouseLeave={() => setHoveredCol(null)}
                       >
                         {typeof val === 'boolean' ? (
                           val ? (
                             <div className="flex justify-center">
-                              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 shadow-sm">
-                                <Check size={18} strokeWidth={2.5} />
+                              <div className="w-6 h-6 md:w-7 md:h-7 rounded-full bg-green-100 flex items-center justify-center text-green-600 shadow-sm">
+                                <Check size={14} strokeWidth={3} />
                               </div>
                             </div>
                           ) : (
                             <div className="flex justify-center">
-                              <Minus size={20} className="text-gray-300" strokeWidth={2} />
+                              <Minus size={16} className="text-gray-300" strokeWidth={2.5} />
                             </div>
                           )
                         ) : (
-                          <span className="font-semibold text-gray-800">{val}</span>
+                          <span className="font-medium text-gray-800 text-xs md:text-sm">{val}</span>
                         )}
                       </td>
                     ))}
