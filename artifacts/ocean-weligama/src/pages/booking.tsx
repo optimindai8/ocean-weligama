@@ -885,9 +885,6 @@ export default function BookingPage() {
                           <h3 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 leading-tight px-1">
                             {pkg.name}
                           </h3>
-                          <p className="text-3xl font-extrabold text-[#0B3D5E] mb-1 px-1">
-                            {price}.00
-                          </p>
                           <p className="text-xs text-slate-400 font-mono mb-4 px-1">
                             {pkg.slug}
                           </p>
@@ -1016,12 +1013,7 @@ export default function BookingPage() {
                             {exp.description || exp.highlights?.[0] || 'Experience the best of Weligama.'}
                           </p>
 
-                          <div className="flex items-center justify-between pt-4 border-t border-dashed border-muted mt-auto w-full">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-purple-400">Per Person</p>
-                            <span className={`text-xl font-bold ${isSel ? "text-purple-600" : "text-foreground"}`}>
-                              {price}
-                            </span>
-                          </div>
+
 
                           {isSel && (
                             <motion.div
