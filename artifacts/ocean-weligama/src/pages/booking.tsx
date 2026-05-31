@@ -258,11 +258,15 @@ export default function BookingPage() {
     }
   };
 
-  const [stepId, setStepId] = useState<string>(() => loadState("stepId", "guests"));
+  const flow = ["guests", "packages", "dates", "room", "experiences", "airport", "confirm"];
+
+  const [stepId, setStepId] = useState<string>(() => {
+    const saved = loadState("stepId", "guests");
+    return flow.includes(saved) ? saved : "guests";
+  });
+  
   const [dir, setDir] = useState(1);
 
-  const flow = ["guests", "packages", "dates", "room", "experiences", "airport", "confirm"];
-  
   const currentStepIndex = flow.indexOf(stepId);
   const currentStepNumber = currentStepIndex + 1;
   const totalSteps = flow.length;
