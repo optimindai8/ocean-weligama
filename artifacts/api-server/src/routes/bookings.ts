@@ -10,7 +10,7 @@ import {
   roomTranslations,
   serviceTranslations,
 } from "@workspace/db";
-import { eq, and, gte, lte, isNull, inArray } from "drizzle-orm";
+import { eq, and, gte, lte, lt, gt, isNull, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -56,7 +56,7 @@ router.post("/v1/bookings/check", async (req, res) => {
           inArray(availability.roomId, roomIdsArray),
           eq(availability.isBlocked, true),
           gte(availability.date, checkIn),
-          lte(availability.date, checkOut)
+          lt(availability.date, checkOut)
         )
       );
 
@@ -69,8 +69,8 @@ router.post("/v1/bookings/check", async (req, res) => {
         and(
           inArray(bookingRooms.roomId, roomIdsArray),
           isNull(bookings.deletedAt),
-          lte(bookings.checkIn, checkOut),
-          gte(bookings.checkOut, checkIn)
+          lt(bookings.checkIn, checkOut),
+          gt(bookings.checkOut, checkIn)
         )
       );
 

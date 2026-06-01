@@ -10,7 +10,7 @@ import {
   bookings,
   bookingRooms,
 } from "@workspace/db";
-import { eq, and, isNull, gte, lte, sql, inArray } from "drizzle-orm";
+import { eq, and, isNull, gte, lte, lt, gt, sql, inArray } from "drizzle-orm";
 
 const router = Router();
 
@@ -71,7 +71,7 @@ router.get("/v1/rooms", async (req, res) => {
             inArray(availability.roomId, roomIdsArray),
             eq(availability.isBlocked, true),
             gte(availability.date, checkIn),
-            lte(availability.date, checkOut)
+            lt(availability.date, checkOut)
           )
         );
 
@@ -83,8 +83,8 @@ router.get("/v1/rooms", async (req, res) => {
           and(
             inArray(bookingRooms.roomId, roomIdsArray),
             isNull(bookings.deletedAt),
-            lte(bookings.checkIn, checkOut),
-            gte(bookings.checkOut, checkIn)
+            lt(bookings.checkIn, checkOut),
+            gt(bookings.checkOut, checkIn)
           )
         );
 
