@@ -258,7 +258,7 @@ export default function BookingPage() {
     }
   };
 
-  const flow = ["guests", "packages", "dates", "room", "experiences", "airport", "confirm"];
+  const flow = ["guests", "packages", "dates", "experiences", "room", "airport", "confirm"];
 
   const [stepId, setStepId] = useState<string>(() => {
     const saved = loadState("stepId", "guests");
@@ -408,7 +408,7 @@ export default function BookingPage() {
         },
       });
       setPriceData(res);
-      if ((res as any).available) goToStep("experiences");
+      if ((res as any).available) goToStep("airport");
       else toast({ variant: "destructive", title: "Room unavailable for these dates", description: "Please choose different dates." });
     } catch {
       toast({ variant: "destructive", title: "Could not check availability" });
@@ -728,9 +728,9 @@ export default function BookingPage() {
                       toast({ variant: "destructive", title: "Packages require a minimum 7 night stay" });
                       return;
                     }
-                    goToStep("room");
+                    goToStep("experiences");
                   }}
-                  continueLabel="Choose Your Room"
+                  continueLabel="Choose Experiences"
                   disabled={!dateRange.from || !dateRange.to}
                 />
               </motion.div>
@@ -809,7 +809,7 @@ export default function BookingPage() {
                 )}
 
                 <StepNav
-                  onBack={() => goToStep("dates")}
+                  onBack={() => goToStep("experiences")}
                   onContinue={handleRoomContinue}
                   continueLabel="Check Availability"
                   disabled={selectedRoomIds.length === 0}
@@ -1030,11 +1030,11 @@ export default function BookingPage() {
                 </motion.div>
 
                 <StepNav
-                  onBack={() => goToStep("room")}
-                  onContinue={() => goToStep("airport")}
-                  continueLabel="Airport Transfer"
+                  onBack={() => goToStep("dates")}
+                  onContinue={() => goToStep("room")}
+                  continueLabel="Choose Your Room"
                   skipLabel="Skip Experiences"
-                  onSkip={() => goToStep("airport")}
+                  onSkip={() => goToStep("room")}
                 />
               </motion.div>
             )}
