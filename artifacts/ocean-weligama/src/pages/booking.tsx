@@ -337,10 +337,11 @@ export default function BookingPage() {
               const idx = parseInt(indexStr);
               const hl = svc.highlights![idx];
               if (hl) {
-                const numMatch = hl.match(/^(\d+)\s+(.+)/);
-                if (numMatch) {
-                  const originalCount = parseInt(numMatch[1]);
-                  const diff = newCount - originalCount;
+                const _leadNum = hl.match(/^(\d+)\s+(.+)/);
+                const _embNum = !_leadNum ? hl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
+                const _origCount = _leadNum ? parseInt(_leadNum[1]) : _embNum ? parseInt(_embNum[2]) : null;
+                if (_origCount !== null) {
+                  const diff = newCount - _origCount;
                   if (diff > 0) {
                     if (/(lesson)/i.test(hl)) {
                       t += diff * parseFloat((svc as any).extraLessonPrice || "0");
@@ -425,10 +426,11 @@ export default function BookingPage() {
             const i = parseInt(indexStr);
             const hl = svc.highlights![i];
             if (hl) {
-              const match = hl.match(/^(\d+)\s+(.+)/);
-              if (match) {
-                const originalCount = parseInt(match[1]);
-                const diff = newCount - originalCount;
+              const _lNum = hl.match(/^(\d+)\s+(.+)/);
+              const _eNum = !_lNum ? hl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
+              const _orig = _lNum ? parseInt(_lNum[1]) : _eNum ? parseInt(_eNum[2]) : null;
+              if (_orig !== null) {
+                const diff = newCount - _orig;
                 if (diff > 0) {
                   if (/(lesson)/i.test(hl)) {
                     extraLessons += diff;
@@ -977,11 +979,19 @@ export default function BookingPage() {
                                 return (
                                   <>
                                     {visibleHighlights.map((hl, i) => {
-                                      const numMatch = hl.match(/^(\d+)\s+(.+)/);
-                                      const isAdjustable = numMatch && /(lesson|session|class)/i.test(hl);
-                                      const originalCount = numMatch ? parseInt(numMatch[1]) : 0;
+                                      const leadingNumMatch = hl.match(/^(\d+)\s+(.+)/);
+                                      const embeddedNumMatch = !leadingNumMatch ? hl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
+                                      const isLesson = /(lesson)/i.test(hl);
+                                      const isSession = /(session|class)/i.test(hl);
+                                      const isAdjustable = !!(leadingNumMatch || embeddedNumMatch) && (isLesson || isSession);
+                                      const originalCount = leadingNumMatch
+                                        ? parseInt(leadingNumMatch[1])
+                                        : embeddedNumMatch
+                                        ? parseInt(embeddedNumMatch[2])
+                                        : 0;
+                                      const displayPrefix = embeddedNumMatch ? embeddedNumMatch[1] + " " : "";
+                                      const restText = leadingNumMatch ? leadingNumMatch[2] : embeddedNumMatch ? embeddedNumMatch[3] : hl;
                                       const currentCount = highlightCustomizations[pkg.id]?.[i] ?? originalCount;
-                                      const restText = numMatch ? numMatch[2] : "";
 
                                       return (
                                         <div key={i} className="flex items-center gap-2.5">
@@ -989,7 +999,7 @@ export default function BookingPage() {
                                           {isAdjustable && isSel ? (
                                             <div className="flex items-center gap-2 flex-1">
                                               <span className="text-slate-600 font-medium text-sm leading-relaxed flex-1">
-                                                {currentCount} {restText}
+                                                {displayPrefix}{currentCount} {restText}
                                                 {currentCount !== originalCount && (
                                                   <span className="text-[10px] text-emerald-500 font-bold ml-1">(+{currentCount - originalCount})</span>
                                                 )}
@@ -1674,7 +1684,7 @@ export default function BookingPage() {
                   const pkg = Array.isArray(services) ? services.find(s => s.id === pkgId) : null;
                   if (!pkg?.highlights) return false;
                   return Object.entries(overrides).some(([idxStr, newCount]) => {
-                    const originalHl = pkg.highlights[parseInt(idxStr)];
+                    const originalHl = pkg.highlights![parseInt(idxStr)];
                     if (!originalHl) return false;
                     const m = originalHl.match(/^(\d+)\s+(.+)/);
                     return m && newCount !== parseInt(m[1]);
@@ -1687,7 +1697,7 @@ export default function BookingPage() {
                         const pkg = Array.isArray(services) ? services.find(s => s.id === pkgId) : null;
                         if (!pkg?.highlights) return null;
                         return Object.entries(overrides).map(([idxStr, newCount]) => {
-                          const originalHl = pkg.highlights[parseInt(idxStr)];
+                          const originalHl = pkg.highlights![parseInt(idxStr)];
                           if (!originalHl) return null;
                           const m = originalHl.match(/^(\d+)\s+(.+)/);
                           if (!m || newCount === parseInt(m[1])) return null;

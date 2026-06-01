@@ -1,55 +1,75 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Minus, Waves, Dumbbell, Coffee, Star, Gift, Users, Sparkles, ArrowRight } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import {
+  Check, Minus, Waves, Dumbbell, Coffee, Star, Gift,
+  Users, Sparkles, ArrowRight, Flame, Leaf,
+} from 'lucide-react';
+import { Link } from 'wouter';
 
 /* ─── Package Definitions ─────────────────────────────────────────────────── */
 const packages = [
   {
-    name: 'Surfer Starter Package',
+    id: 'starter',
+    slug: 'surfer-starter-package',
+    name: 'Surfer Starter',
     subtitle: 'Beginner',
     tag: 'Perfect Start',
-    gradient: 'from-[#2563EB] via-[#3B82F6] to-[#60A5FA]',
-    lightBg: 'bg-blue-50/60',
-    accentBorder: 'border-blue-200',
-    accentText: 'text-blue-600',
+    gradient: 'from-[#1565C0] via-[#1976D2] to-[#42A5F5]',
+    headerGrad: 'from-[#0D47A1] to-[#1976D2]',
+    lightBg: 'bg-blue-50/70',
+    accentBorder: 'border-blue-300',
+    accentText: 'text-blue-700',
     checkBg: 'bg-blue-100',
-    checkText: 'text-blue-600',
+    checkText: 'text-blue-700',
+    pillBg: 'bg-blue-600',
     popular: false,
     emoji: '🏄',
+    tagIcon: <Waves className="w-3 h-3" />,
   },
   {
-    name: 'Surfer Advance Package',
+    id: 'advance',
+    slug: 'surfer-advance-package',
+    name: 'Surfer Advance',
     subtitle: 'Intermediate / Advanced',
     tag: 'Most Popular',
-    gradient: 'from-[#0891B2] via-[#06B6D4] to-[#22D3EE]',
-    lightBg: 'bg-cyan-50/60',
-    accentBorder: 'border-cyan-200',
-    accentText: 'text-cyan-600',
-    checkBg: 'bg-cyan-100',
-    checkText: 'text-cyan-600',
+    gradient: 'from-[#006064] via-[#00838F] to-[#26C6DA]',
+    headerGrad: 'from-[#004D40] to-[#00838F]',
+    lightBg: 'bg-teal-50/70',
+    accentBorder: 'border-teal-300',
+    accentText: 'text-teal-700',
+    checkBg: 'bg-teal-100',
+    checkText: 'text-teal-700',
+    pillBg: 'bg-teal-600',
     popular: true,
     emoji: '🌊',
+    tagIcon: <Flame className="w-3 h-3" />,
   },
   {
+    id: 'yoga',
+    slug: 'yoga-surf-retreat',
     name: 'Yoga & Surf Retreat',
     subtitle: 'All Levels',
     tag: 'Mind & Body',
-    gradient: 'from-[#0D9488] via-[#14B8A6] to-[#2DD4BF]',
-    lightBg: 'bg-teal-50/60',
-    accentBorder: 'border-teal-200',
-    accentText: 'text-teal-600',
-    checkBg: 'bg-teal-100',
-    checkText: 'text-teal-600',
+    gradient: 'from-[#1B5E20] via-[#2E7D32] to-[#66BB6A]',
+    headerGrad: 'from-[#1B5E20] to-[#388E3C]',
+    lightBg: 'bg-green-50/70',
+    accentBorder: 'border-green-300',
+    accentText: 'text-green-700',
+    checkBg: 'bg-green-100',
+    checkText: 'text-green-700',
+    pillBg: 'bg-green-600',
     popular: false,
     emoji: '🧘',
+    tagIcon: <Leaf className="w-3 h-3" />,
   },
 ];
 
-/* ─── Feature Categories ──────────────────────────────────────────────────── */
+/* ─── Feature Data ────────────────────────────────────────────────────────── */
 type FeatureValue = boolean | string;
 interface FeatureItem {
   name: string;
   values: [FeatureValue, FeatureValue, FeatureValue];
+  highlight?: boolean; // visually emphasize this row
 }
 interface FeatureSection {
   category: string;
@@ -62,241 +82,276 @@ const features: FeatureSection[] = [
     category: 'Accommodation & Meals',
     icon: Coffee,
     items: [
-      { name: '7 nights accommodation', values: [true, true, true] },
-      { name: 'Daily breakfast', values: [true, true, true] },
-      { name: 'Daily dinner', values: [true, true, true] },
+      { name: '7 Nights Accommodation', values: [true, true, true], highlight: true },
+      { name: 'Daily Breakfast', values: [true, true, true] },
+      { name: 'Daily Dinner', values: [true, true, true] },
     ],
   },
   {
     category: 'Surfing & Coaching',
     icon: Waves,
     items: [
-      { name: 'Surf lessons', values: ['6 Lessons', '11 Lessons', 'Included'] },
-      { name: 'Surf theory sessions', values: [true, 'Theory & Coaching', true] },
-      { name: 'Local surf guidance & support', values: [true, false, false] },
+      { name: 'Surf Lessons', values: ['6 Lessons', '11 Lessons', 'Included'], highlight: true },
+      { name: 'Surf Theory Sessions', values: [true, '+ Coaching', true] },
+      { name: 'Local Surf Guidance & Support', values: [true, false, false] },
     ],
   },
   {
     category: 'Yoga & Wellness',
     icon: Dumbbell,
     items: [
-      { name: 'Yoga sessions', values: ['Complimentary 2 Daily', 'Complimentary 2 Daily', 'Daily Sessions'] },
-      { name: 'Sunrise or sunset yoga experiences', values: [false, false, true] },
+      { name: 'Daily Yoga Sessions', values: ['2 Complimentary', '2 Complimentary', 'Full Daily'], highlight: true },
+      { name: 'Sunrise / Sunset Yoga Experiences', values: [false, false, true] },
     ],
   },
   {
     category: 'Community & Activities',
     icon: Users,
     items: [
-      { name: 'Social activities & community events', values: [true, true, false] },
-      { name: 'Social activities & wellness gatherings', values: [false, false, true] },
+      { name: 'Social Activities & Community Events', values: [true, true, false] },
+      { name: 'Social Activities & Wellness Gatherings', values: [false, false, true] },
     ],
   },
   {
     category: 'Free Inclusions',
     icon: Gift,
     items: [
-      { name: 'Free water bottles during the stay', values: [true, true, true] },
-      { name: 'Free surfboard use during the stay', values: [true, true, true] },
-      { name: 'Free Ocean Air surf jersey', values: [true, true, true] },
+      { name: 'Free Water Bottles During Stay', values: [true, true, true] },
+      { name: 'Free Surfboard Use During Stay', values: [true, true, true] },
+      { name: 'Free Ocean Air Surf Jersey', values: [true, true, true], highlight: true },
     ],
   },
 ];
 
+/* ─── Cell Renderer ───────────────────────────────────────────────────────── */
+function CellValue({
+  val,
+  pkg,
+  mini = false,
+}: {
+  val: FeatureValue;
+  pkg: (typeof packages)[0];
+  mini?: boolean;
+}) {
+  if (typeof val === 'boolean') {
+    if (val) {
+      return (
+        <motion.div
+          className="flex justify-center"
+          whileHover={{ scale: 1.25 }}
+          transition={{ type: 'spring', stiffness: 400 }}
+        >
+          <div
+            className={`${mini ? 'w-6 h-6' : 'w-8 h-8'} rounded-full ${pkg.checkBg} flex items-center justify-center shadow-sm`}
+          >
+            <Check size={mini ? 12 : 15} className={pkg.checkText} strokeWidth={3} />
+          </div>
+        </motion.div>
+      );
+    }
+    return (
+      <div className="flex justify-center">
+        <div className={`${mini ? 'w-6 h-6' : 'w-8 h-8'} rounded-full bg-slate-100 flex items-center justify-center`}>
+          <Minus size={mini ? 12 : 14} className="text-slate-300" strokeWidth={2} />
+        </div>
+      </div>
+    );
+  }
+  return (
+    <motion.span
+      whileHover={{ scale: 1.06 }}
+      className={`inline-block font-bold ${mini ? 'text-[10px] px-2 py-0.5' : 'text-xs px-3 py-1.5'} rounded-lg ${pkg.lightBg} ${pkg.accentText} shadow-sm border ${pkg.accentBorder}/30`}
+    >
+      {val}
+    </motion.span>
+  );
+}
+
 /* ─── Component ───────────────────────────────────────────────────────────── */
 export function PackageComparisonTable() {
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
-  const [expandedSection, setExpandedSection] = useState<string | null>(null);
-
-  const toggleSection = (category: string) => {
-    setExpandedSection(prev => (prev === category ? null : category));
-  };
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-      {/* ── Header ──────────────────────────────────────────────── */}
+    <div ref={ref} className="w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+
+      {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="text-center mb-14">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="inline-flex items-center gap-2 bg-[#0B3D5E]/5 px-5 py-2 rounded-full mb-5"
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          className="inline-flex items-center gap-2 bg-[#0B3D5E]/8 px-5 py-2 rounded-full mb-5 border border-[#0B3D5E]/10"
         >
           <Sparkles className="w-4 h-4 text-[#4BBCCC]" />
           <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#0B3D5E]">
-            Compare & Choose
+            Compare &amp; Choose
           </span>
         </motion.div>
+
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1 }}
           className="text-3xl md:text-5xl font-serif font-bold text-[#0B3D5E] mb-4 leading-tight"
         >
           Find Your Perfect{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4BBCCC] to-[#0891B2]">
-            Surf Package
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00838F] to-[#0B3D5E]">
+            Package
           </span>
         </motion.h2>
+
         <motion.p
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2 }}
           className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed"
         >
-          Every package includes premium accommodation, daily meals, and the Ocean Weligama experience.
-          Pick the one that matches your vibe.
+          All packages include 7 nights premium accommodation, daily meals, and
+          the Ocean Air experience. Pick the one that matches your vibe.
         </motion.p>
       </div>
 
-      {/* ── Mobile: Card View ──────────────────────────────────── */}
+      {/* ── Mobile: Card View ────────────────────────────────────────────── */}
       <div className="block lg:hidden space-y-6">
         {packages.map((pkg, pkgIdx) => (
           <motion.div
-            key={pkg.name}
+            key={pkg.id}
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: pkgIdx * 0.1 }}
-            className={`relative bg-white rounded-3xl border-2 overflow-hidden shadow-lg ${
-              pkg.popular ? 'border-cyan-300 shadow-cyan-100/50' : 'border-slate-100'
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: pkgIdx * 0.12 }}
+            className={`relative bg-white rounded-3xl border-2 overflow-hidden shadow-xl ${
+              pkg.popular ? 'border-teal-400 shadow-teal-100/60' : 'border-slate-100'
             }`}
           >
-            {/* Package Header */}
-            <div className={`relative bg-gradient-to-r ${pkg.gradient} px-6 py-8 text-white`}>
+            {/* Gradient Header */}
+            <div className={`relative bg-gradient-to-br ${pkg.headerGrad} px-6 py-8 text-white overflow-hidden`}>
+              {/* Background wave pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <svg viewBox="0 0 200 100" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+                  <path d="M0,50 C40,20 80,80 120,50 C160,20 180,70 200,50 L200,100 L0,100 Z" fill="white"/>
+                </svg>
+              </div>
+
               {pkg.popular && (
-                <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-full border border-white/30">
-                  ⭐ Most Popular
+                <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-full border border-white/30 flex items-center gap-1">
+                  <Star className="w-3 h-3 fill-white" /> Most Popular
                 </div>
               )}
-              <span className="text-4xl mb-3 block">{pkg.emoji}</span>
-              <h3 className="text-xl font-bold mb-1">{pkg.name}</h3>
-              <p className="text-white/80 text-sm font-medium">{pkg.subtitle}</p>
+
+              <span className="text-4xl mb-3 block relative z-10">{pkg.emoji}</span>
+              <h3 className="text-xl font-bold mb-1 relative z-10">{pkg.name}</h3>
+              <p className="text-white/80 text-sm font-medium relative z-10">{pkg.subtitle}</p>
+
+              <div className={`inline-flex items-center gap-1.5 mt-3 bg-white/15 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-white/20 relative z-10`}>
+                {pkg.tagIcon} {pkg.tag}
+              </div>
             </div>
 
             {/* Features */}
-            <div className="p-5">
+            <div className="p-5 space-y-5">
               {features.map(section => (
-                <div key={section.category} className="mb-4 last:mb-0">
-                  <button
-                    onClick={() => toggleSection(`${pkg.name}-${section.category}`)}
-                    className="w-full flex items-center justify-between py-2 text-left"
-                  >
-                    <div className="flex items-center gap-2">
-                      <section.icon className="w-4 h-4 text-slate-400" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-slate-600">
-                        {section.category}
-                      </span>
+                <div key={section.category}>
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+                    <div className="w-7 h-7 rounded-lg bg-[#0B3D5E]/5 flex items-center justify-center">
+                      <section.icon className="w-3.5 h-3.5 text-[#0B3D5E]" />
                     </div>
-                    <motion.span
-                      animate={{ rotate: expandedSection === `${pkg.name}-${section.category}` ? 180 : 0 }}
-                      className="text-slate-400 text-xs"
-                    >
-                      ▼
-                    </motion.span>
-                  </button>
-                  <AnimatePresence>
-                    {(expandedSection === `${pkg.name}-${section.category}` || expandedSection === null) && (
-                      <motion.div
-                        initial={expandedSection !== null ? { height: 0, opacity: 0 } : false}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
-                        {section.items.map(item => {
-                          const val = item.values[pkgIdx];
-                          return (
-                            <div
-                              key={item.name}
-                              className="flex items-center justify-between py-2.5 px-1 border-b border-slate-50 last:border-0"
-                            >
-                              <span className="text-sm text-slate-600 flex-1 pr-3">{item.name}</span>
-                              <div className="shrink-0">
-                                {typeof val === 'boolean' ? (
-                                  val ? (
-                                    <div className={`w-6 h-6 rounded-full ${pkg.checkBg} flex items-center justify-center`}>
-                                      <Check size={12} className={pkg.checkText} strokeWidth={3} />
-                                    </div>
-                                  ) : (
-                                    <Minus size={16} className="text-slate-300" strokeWidth={2} />
-                                  )
-                                ) : (
-                                  <span className={`text-xs font-bold ${pkg.accentText} bg-slate-50 px-2.5 py-1 rounded-lg`}>
-                                    {val}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                      {section.category}
+                    </span>
+                  </div>
+                  <div className="space-y-2.5">
+                    {section.items.map(item => {
+                      const val = item.values[pkgIdx];
+                      return (
+                        <div key={item.name} className="flex items-center justify-between py-1 px-1">
+                          <span className={`text-sm flex-1 pr-3 ${item.highlight ? 'font-semibold text-[#0B3D5E]' : 'text-slate-600'}`}>
+                            {item.name}
+                          </span>
+                          <div className="shrink-0">
+                            <CellValue val={val} pkg={pkg} mini />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               ))}
             </div>
 
             {/* CTA */}
             <div className="px-5 pb-6">
-              <a
-                href="/book"
-                className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r ${pkg.gradient} text-white rounded-xl py-3.5 text-sm font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]`}
-              >
-                Book This Package <ArrowRight className="w-4 h-4" />
-              </a>
+              <Link href={`/book?service=${pkg.slug}`}>
+                <motion.button
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r ${pkg.gradient} text-white rounded-2xl py-4 text-sm font-bold shadow-lg hover:shadow-xl transition-shadow duration-300`}
+                >
+                  Book This Package <ArrowRight className="w-4 h-4" />
+                </motion.button>
+              </Link>
             </div>
           </motion.div>
         ))}
       </div>
 
-      {/* ── Desktop: Table View ────────────────────────────────── */}
+      {/* ── Desktop: Table View ──────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-        className="hidden lg:block overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)]"
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.3, duration: 0.7 }}
+        className="hidden lg:block overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)]"
       >
         <table className="w-full text-left border-collapse">
           {/* Table Header */}
           <thead>
             <tr>
+              {/* Feature label column */}
               <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100 w-[28%] align-bottom">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-serif font-bold text-[#0B3D5E]">Features Included</h3>
-                  <p className="text-xs text-slate-400 font-medium">Hover over a column to highlight</p>
+                  <h3 className="text-xl font-serif font-bold text-[#0B3D5E]">What's Included</h3>
+                  <p className="text-xs text-slate-400 font-medium">Hover a column to explore</p>
                 </div>
               </th>
+
               {packages.map((pkg, idx) => (
                 <th
-                  key={pkg.name}
-                  className={`p-6 pb-8 border-b w-[24%] relative transition-all duration-500 ease-out align-bottom
-                    ${hoveredCol === idx ? `${pkg.lightBg} ${pkg.accentBorder} border-b-2` : 'bg-white border-slate-100'}
-                    ${pkg.popular ? 'border-t-4 border-t-cyan-400' : ''}
+                  key={pkg.id}
+                  className={`p-6 pb-8 border-b w-[24%] relative transition-all duration-500 ease-out align-bottom cursor-pointer
+                    ${hoveredCol === idx ? `${pkg.lightBg} border-b-2 ${pkg.accentBorder}` : 'bg-white border-slate-100'}
+                    ${pkg.popular ? 'border-t-4 border-t-teal-400' : ''}
                   `}
                   onMouseEnter={() => setHoveredCol(idx)}
                   onMouseLeave={() => setHoveredCol(null)}
                 >
+                  {/* Popular glow */}
+                  {pkg.popular && hoveredCol === idx && (
+                    <div className="absolute inset-0 bg-gradient-to-b from-teal-50/60 to-transparent pointer-events-none rounded-t-none" />
+                  )}
+
                   <motion.div
-                    className="flex flex-col items-center text-center space-y-2"
-                    animate={{ y: hoveredCol === idx ? -4 : 0 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                    className="flex flex-col items-center text-center space-y-2 relative z-10"
+                    animate={{ y: hoveredCol === idx ? -5 : 0 }}
+                    transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                   >
                     {pkg.popular && (
                       <motion.div
-                        initial={{ scale: 0.8 }}
-                        animate={{ scale: 1 }}
-                        className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-cyan-200/50 uppercase tracking-[0.15em] mb-1 flex items-center gap-1.5"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className={`flex items-center gap-1.5 bg-gradient-to-r ${pkg.gradient} text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1`}
                       >
                         <Star className="w-3 h-3 fill-current" /> Most Popular
                       </motion.div>
                     )}
                     <span className="text-3xl">{pkg.emoji}</span>
-                    <div className={`w-12 h-1 rounded-full bg-gradient-to-r ${pkg.gradient}`} />
-                    <h4 className="text-base font-bold text-[#0B3D5E] leading-tight">{pkg.name}</h4>
+                    <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${pkg.gradient} opacity-80`} />
+                    <h4 className="text-[15px] font-bold text-[#0B3D5E] leading-tight">{pkg.name}</h4>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{pkg.subtitle}</span>
+
+                    {/* Tag badge */}
+                    <div className={`inline-flex items-center gap-1 ${pkg.checkBg} ${pkg.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full`}>
+                      {pkg.tagIcon} {pkg.tag}
+                    </div>
                   </motion.div>
                 </th>
               ))}
@@ -307,36 +362,41 @@ export function PackageComparisonTable() {
           <tbody>
             {features.map((section, sectionIdx) => (
               <React.Fragment key={section.category}>
-                {/* Category Header Row */}
+                {/* Category header row */}
                 <tr>
                   <td
                     colSpan={4}
-                    className="bg-gradient-to-r from-slate-50/80 to-white py-4 px-6 border-b border-slate-100"
+                    className="bg-gradient-to-r from-slate-50/90 to-white py-4 px-6 border-b border-t border-slate-100/80"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#0B3D5E]/5 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-xl bg-[#0B3D5E]/8 flex items-center justify-center shadow-sm">
                         <section.icon className="w-4 h-4 text-[#0B3D5E]" />
                       </div>
-                      <span className="text-[11px] font-black text-[#0B3D5E] uppercase tracking-[0.15em]">
+                      <span className="text-[11px] font-black text-[#0B3D5E] uppercase tracking-[0.18em]">
                         {section.category}
                       </span>
                     </div>
                   </td>
                 </tr>
 
-                {/* Feature Rows */}
+                {/* Feature rows */}
                 {section.items.map((item, itemIdx) => (
                   <motion.tr
                     key={item.name}
                     initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: sectionIdx * 0.08 + itemIdx * 0.04 }}
-                    className="border-b border-slate-50 last:border-slate-100 group hover:bg-slate-50/40 transition-colors duration-200"
+                    animate={inView ? { opacity: 1 } : {}}
+                    transition={{ delay: 0.4 + sectionIdx * 0.06 + itemIdx * 0.03 }}
+                    className={`border-b border-slate-50 last:border-slate-100 transition-colors duration-200 ${
+                      item.highlight ? 'hover:bg-amber-50/30' : 'hover:bg-slate-50/50'
+                    } group`}
                   >
-                    <td className="py-4 px-6 text-sm text-slate-600 font-medium">
+                    <td className={`py-4 px-6 text-sm font-medium ${item.highlight ? 'text-[#0B3D5E] font-semibold' : 'text-slate-600'}`}>
+                      {item.highlight && (
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#4BBCCC] mr-2 mb-0.5" />
+                      )}
                       {item.name}
                     </td>
+
                     {item.values.map((val, idx) => (
                       <td
                         key={idx}
@@ -346,34 +406,7 @@ export function PackageComparisonTable() {
                         onMouseEnter={() => setHoveredCol(idx)}
                         onMouseLeave={() => setHoveredCol(null)}
                       >
-                        {typeof val === 'boolean' ? (
-                          val ? (
-                            <motion.div
-                              className="flex justify-center"
-                              whileHover={{ scale: 1.2 }}
-                              transition={{ type: 'spring', stiffness: 400 }}
-                            >
-                              <div
-                                className={`w-7 h-7 rounded-full ${packages[idx].checkBg} flex items-center justify-center shadow-sm`}
-                              >
-                                <Check size={14} className={packages[idx].checkText} strokeWidth={3} />
-                              </div>
-                            </motion.div>
-                          ) : (
-                            <div className="flex justify-center">
-                              <div className="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center">
-                                <Minus size={14} className="text-slate-300" strokeWidth={2} />
-                              </div>
-                            </div>
-                          )
-                        ) : (
-                          <motion.span
-                            whileHover={{ scale: 1.05 }}
-                            className={`inline-block font-bold text-xs px-3 py-1.5 rounded-lg ${packages[idx].lightBg} ${packages[idx].accentText} shadow-sm`}
-                          >
-                            {val}
-                          </motion.span>
-                        )}
+                        <CellValue val={val} pkg={packages[idx]} />
                       </td>
                     ))}
                   </motion.tr>
@@ -382,25 +415,30 @@ export function PackageComparisonTable() {
             ))}
 
             {/* CTA Row */}
-            <tr>
-              <td className="p-6 bg-gradient-to-br from-slate-50 to-white" />
+            <tr className="border-t-2 border-slate-100">
+              <td className="p-6 bg-gradient-to-br from-slate-50 to-white">
+                <p className="text-xs text-slate-400 font-medium italic">
+                  All packages include 7 nights accommodation, daily breakfast &amp; dinner
+                </p>
+              </td>
               {packages.map((pkg, idx) => (
                 <td
-                  key={pkg.name}
+                  key={pkg.id}
                   className={`p-6 text-center transition-all duration-500 ${
                     hoveredCol === idx ? pkg.lightBg : 'bg-white'
                   }`}
                   onMouseEnter={() => setHoveredCol(idx)}
                   onMouseLeave={() => setHoveredCol(null)}
                 >
-                  <motion.a
-                    href="/book"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.97 }}
-                    className={`inline-flex items-center gap-2 bg-gradient-to-r ${pkg.gradient} text-white rounded-xl px-6 py-3 text-sm font-bold shadow-lg hover:shadow-xl transition-shadow duration-300`}
-                  >
-                    Book Now <ArrowRight className="w-4 h-4" />
-                  </motion.a>
+                  <Link href={`/book?service=${pkg.slug}`}>
+                    <motion.button
+                      whileHover={{ scale: 1.06, y: -3 }}
+                      whileTap={{ scale: 0.97 }}
+                      className={`inline-flex items-center gap-2 bg-gradient-to-r ${pkg.gradient} text-white rounded-xl px-7 py-3.5 text-sm font-bold shadow-lg hover:shadow-xl transition-shadow duration-300`}
+                    >
+                      Book Now <ArrowRight className="w-4 h-4" />
+                    </motion.button>
+                  </Link>
                 </td>
               ))}
             </tr>
@@ -408,24 +446,28 @@ export function PackageComparisonTable() {
         </table>
       </motion.div>
 
-      {/* ── Bottom Trust Badges ────────────────────────────────── */}
+      {/* ── Trust Badges ────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.5 }}
-        className="flex flex-wrap items-center justify-center gap-6 mt-12 text-slate-400"
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.7 }}
+        className="flex flex-wrap items-center justify-center gap-5 mt-12 text-slate-400"
       >
         {[
           { icon: '🛡️', text: 'Secure Booking' },
           { icon: '💬', text: 'WhatsApp Support' },
           { icon: '✨', text: 'Customizable Add-ons' },
           { icon: '🔄', text: 'Flexible Cancellation' },
+          { icon: '🏆', text: 'ISA Certified Instructors' },
         ].map(badge => (
-          <div key={badge.text} className="flex items-center gap-2 text-xs font-medium">
+          <motion.div
+            key={badge.text}
+            whileHover={{ scale: 1.08, color: '#0B3D5E' }}
+            className="flex items-center gap-2 text-xs font-semibold cursor-default transition-colors duration-200"
+          >
             <span className="text-base">{badge.icon}</span>
             <span>{badge.text}</span>
-          </div>
+          </motion.div>
         ))}
       </motion.div>
     </div>
