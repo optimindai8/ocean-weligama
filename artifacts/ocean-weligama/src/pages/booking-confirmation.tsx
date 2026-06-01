@@ -8,20 +8,24 @@ import { Link } from "wouter";
 import { Check, MessageCircle, Calendar, Users, ArrowRight, Home, Plane, MessageSquare, CreditCard, Award, Sparkles, Clock } from "lucide-react";
 
 function parseSpecialRequests(text: string) {
-  if (!text) return { pickup: null, drop: null, message: "" };
+  if (!text) return { pickup: null, drop: null, customizations: [] as { packageName: string; changes: { from: string; to: string }[] }[], message: "" };
   let pickup: any = null;
   let drop: any = null;
+  const customizations: { packageName: string; changes: { from: string; to: string }[] }[] = [];
   const lines = text.split("\n");
   const remainingLines: string[] = [];
   
   let inPickupSection = false;
   let inDropSection = false;
+  let inCustomSection = false;
+  let currentCustomPkg: { packageName: string; changes: { from: string; to: string }[] } | null = null;
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (line.startsWith("[Airport Pick-up:")) {
       inPickupSection = true;
       inDropSection = false;
+      inCustomSection = false;
       const priceMatch = line.match(/€(\d+(\.\d+)?)/);
       const price = priceMatch ? priceMatch[1] : "0";
       pickup = { price, flightNumber: "", flightDate: "", flightTime: "", bringingSurfboard: "No" };
@@ -31,9 +35,20 @@ function parseSpecialRequests(text: string) {
     if (line.startsWith("[Airport Drop:")) {
       inPickupSection = false;
       inDropSection = true;
+      inCustomSection = false;
       const priceMatch = line.match(/€(\d+(\.\d+)?)/);
       const price = priceMatch ? priceMatch[1] : "0";
       drop = { price };
+      continue;
+    }
+
+    if (line.startsWith("[Package Customization:")) {
+      inPickupSection = false;
+      inDropSection = false;
+      inCustomSection = true;
+      const nameMatch = line.match(/\[Package Customization:\s*(.+)\]/);
+      currentCustomPkg = { packageName: nameMatch ? nameMatch[1] : "Package", changes: [] };
+      customizations.push(currentCustomPkg);
       continue;
     }
     
@@ -60,15 +75,26 @@ function parseSpecialRequests(text: string) {
     if (inDropSection) {
       inDropSection = false;
     }
+
+    if (inCustomSection) {
+      const arrowMatch = line.match(/^(.+?)\s*→\s*(.+)$/);
+      if (arrowMatch && currentCustomPkg) {
+        currentCustomPkg.changes.push({ from: arrowMatch[1].trim(), to: arrowMatch[2].trim() });
+        continue;
+      } else {
+        inCustomSection = false;
+        currentCustomPkg = null;
+      }
+    }
     
-    if (!inPickupSection && !inDropSection) {
+    if (!inPickupSection && !inDropSection && !inCustomSection) {
       if (line !== "" || (remainingLines.length > 0 && remainingLines[remainingLines.length - 1] !== "")) {
         remainingLines.push(lines[i]);
       }
     }
   }
   
-  return { pickup, drop, message: remainingLines.join("\n").trim() };
+  return { pickup, drop, customizations, message: remainingLines.join("\n").trim() };
 }
 
 
@@ -369,6 +395,32 @@ export default function BookingConfirmationPage() {
                         </div>
                       </div>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {/* Package Customizations */}
+              {parsed.customizations && parsed.customizations.length > 0 && (
+                <div className="bg-emerald-50/30 border border-emerald-100/50 p-6 rounded-3xl">
+                  <h3 className="text-sm font-black uppercase tracking-widest text-emerald-600 mb-6 flex items-center gap-2">
+                    <Award className="w-4 h-4" /> Package Customizations
+                  </h3>
+                  <div className="space-y-4">
+                    {parsed.customizations.map((cust, idx) => (
+                      <div key={idx} className="bg-white rounded-2xl p-5 border border-emerald-100 shadow-sm">
+                        <p className="font-bold text-emerald-900 text-sm mb-3">{cust.packageName}</p>
+                        <div className="space-y-2">
+                          {cust.changes.map((ch, ci) => (
+                            <div key={ci} className="flex items-center justify-between text-sm bg-emerald-50/50 px-4 py-2 rounded-xl">
+                              <span className="text-muted-foreground">{ch.from}</span>
+                              <span className="font-bold text-emerald-700 flex items-center gap-1">
+                                <ArrowRight className="w-3 h-3" /> {ch.to}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

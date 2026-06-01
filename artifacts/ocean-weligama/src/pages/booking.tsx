@@ -252,7 +252,7 @@ export default function BookingPage() {
   };
   const clearState = () => {
     if (typeof window !== 'undefined') {
-      ['stepId', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'priceData', 'formData'].forEach(k => {
+      ['stepId', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'priceData', 'formData', 'highlightCustom'].forEach(k => {
         localStorage.removeItem(`booking_${k}`);
       });
     }
@@ -288,6 +288,7 @@ export default function BookingPage() {
   const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>(() => loadState("serviceIds", []));
   const [priceData,             setPriceData]             = useState<any>(() => loadState("priceData", null));
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
+  const [highlightCustomizations, setHighlightCustomizations] = useState<Record<string, Record<number, number>>>(() => loadState("highlightCustom", {}));
 
   useEffect(() => { saveState("stepId", stepId); }, [stepId]);
   useEffect(() => { saveState("guestCount", guestCount); }, [guestCount]);
@@ -295,6 +296,7 @@ export default function BookingPage() {
   useEffect(() => { saveState("roomIds", selectedRoomIds); }, [selectedRoomIds]);
   useEffect(() => { saveState("serviceIds", selectedDbServiceIds); }, [selectedDbServiceIds]);
   useEffect(() => { saveState("priceData", priceData); }, [priceData]);
+  useEffect(() => { saveState("highlightCustom", highlightCustomizations); }, [highlightCustomizations]);
 
   const nights = dateRange.from && dateRange.to
     ? Math.round((dateRange.to.getTime() - dateRange.from.getTime()) / 86400000) : 0;
@@ -434,7 +436,30 @@ export default function BookingPage() {
       );
     }
     if (data.airportDrop) lines.push(`[Airport Drop: €${ap.drop} — Pay on Arrival]`);
-    const poaNames = []; // Admin handles payment online now via services array.
+
+    // Include highlight customizations (lessons/sessions adjustments)
+    const customLines: string[] = [];
+    Object.entries(highlightCustomizations).forEach(([pkgId, overrides]) => {
+      const pkg = Array.isArray(services) ? services.find(s => s.id === pkgId) : null;
+      if (!pkg || !pkg.highlights) return;
+      Object.entries(overrides).forEach(([idxStr, newCount]) => {
+        const hlIdx = parseInt(idxStr);
+        const originalHl = pkg.highlights[hlIdx];
+        if (!originalHl) return;
+        const match = originalHl.match(/^(\d+)\s+(.+)/);
+        if (match) {
+          const originalCount = parseInt(match[1]);
+          if (newCount !== originalCount) {
+            customLines.push(`  ${originalHl} → ${newCount} ${match[2]}`);
+          }
+        }
+      });
+      if (customLines.length > 0) {
+        lines.push(`[Package Customization: ${pkg.name}]`);
+        customLines.forEach(l => lines.push(l));
+        customLines.length = 0;
+      }
+    });
 
     let sr = data.specialRequests || "";
     if (lines.length) sr = lines.join("\n") + (sr ? "\n" + sr : "");
@@ -600,23 +625,14 @@ export default function BookingPage() {
 
                     <button
                       type="button"
-                      onClick={() => setGuestCount(Math.min(12, guestCount + 1))}
+                      onClick={() => setGuestCount(Math.min(50, guestCount + 1))}
                       className="w-16 h-16 rounded-full border-2 border-sky-100 text-2xl font-bold text-sky-400 hover:bg-sky-500 hover:border-sky-500 hover:text-white transition-all duration-300 shadow-md flex items-center justify-center"
                     >
                       +
                     </button>
                   </div>
 
-                  <AnimatePresence>
-                    {guestCount >= apThreshold && (
-                      <motion.p
-                        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                        className="text-xs text-amber-600 font-bold bg-amber-50 border border-amber-100 px-5 py-3 rounded-full text-center mt-8"
-                      >
-                        ✈️ {apThreshold}+ guests — group airport transfer rate: €{parseFloat(apData.pickupPriceGroup).toFixed(0)}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
+
                 </motion.div>
 
                 <StepNav onBack={null} onContinue={() => goToStep("packages")} continueLabel="View Packages" />
@@ -901,12 +917,62 @@ export default function BookingPage() {
 
                                 return (
                                   <>
-                                    {visibleHighlights.map((hl, i) => (
-                                      <div key={i} className="flex items-start gap-2.5">
-                                        <Check className="w-4 h-4 text-[#4BBCCC] shrink-0 mt-0.5" />
-                                        <span className="text-slate-600 font-medium text-sm leading-relaxed">{hl}</span>
-                                      </div>
-                                    ))}
+                                    {visibleHighlights.map((hl, i) => {
+                                      const numMatch = hl.match(/^(\d+)\s+(.+)/);
+                                      const isAdjustable = numMatch && /(lesson|session|class)/i.test(hl);
+                                      const originalCount = numMatch ? parseInt(numMatch[1]) : 0;
+                                      const currentCount = highlightCustomizations[pkg.id]?.[i] ?? originalCount;
+                                      const restText = numMatch ? numMatch[2] : "";
+
+                                      return (
+                                        <div key={i} className="flex items-center gap-2.5">
+                                          <Check className="w-4 h-4 text-[#4BBCCC] shrink-0" />
+                                          {isAdjustable && isSel ? (
+                                            <div className="flex items-center gap-2 flex-1">
+                                              <span className="text-slate-600 font-medium text-sm leading-relaxed flex-1">
+                                                {currentCount} {restText}
+                                                {currentCount !== originalCount && (
+                                                  <span className="text-[10px] text-emerald-500 font-bold ml-1">(+{currentCount - originalCount})</span>
+                                                )}
+                                              </span>
+                                              <div className="flex items-center gap-0.5 shrink-0">
+                                                <button
+                                                  type="button"
+                                                  onClick={(e: React.MouseEvent) => {
+                                                    e.stopPropagation();
+                                                    if (currentCount <= originalCount) return;
+                                                    setHighlightCustomizations(prev => ({
+                                                      ...prev,
+                                                      [pkg.id]: { ...prev[pkg.id], [i]: currentCount - 1 },
+                                                    }));
+                                                  }}
+                                                  disabled={currentCount <= originalCount}
+                                                  className="w-6 h-6 rounded-full border border-slate-200 text-xs font-bold text-slate-400 hover:bg-slate-100 hover:text-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center justify-center"
+                                                >
+                                                  −
+                                                </button>
+                                                <span className="w-7 text-center text-xs font-bold text-[#0B3D5E] tabular-nums">{currentCount}</span>
+                                                <button
+                                                  type="button"
+                                                  onClick={(e: React.MouseEvent) => {
+                                                    e.stopPropagation();
+                                                    setHighlightCustomizations(prev => ({
+                                                      ...prev,
+                                                      [pkg.id]: { ...prev[pkg.id], [i]: currentCount + 1 },
+                                                    }));
+                                                  }}
+                                                  className="w-6 h-6 rounded-full border border-emerald-300 text-xs font-bold text-emerald-500 hover:bg-emerald-50 hover:text-emerald-700 transition-all flex items-center justify-center"
+                                                >
+                                                  +
+                                                </button>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <span className="text-slate-600 font-medium text-sm leading-relaxed">{hl}</span>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
                                     
                                     {hasMore && (
                                       <button
@@ -1544,6 +1610,39 @@ export default function BookingPage() {
                   <span className="font-bold">Room</span>
                   <span className="text-foreground">{selectedRooms.map(r => r.name).join(", ")}</span>
                 </div>
+                {/* Show highlight customizations in confirm dialog */}
+                {Object.entries(highlightCustomizations).some(([pkgId, overrides]) => {
+                  const pkg = Array.isArray(services) ? services.find(s => s.id === pkgId) : null;
+                  if (!pkg?.highlights) return false;
+                  return Object.entries(overrides).some(([idxStr, newCount]) => {
+                    const originalHl = pkg.highlights[parseInt(idxStr)];
+                    if (!originalHl) return false;
+                    const m = originalHl.match(/^(\d+)\s+(.+)/);
+                    return m && newCount !== parseInt(m[1]);
+                  });
+                }) && (
+                  <div className="pb-4 border-b border-border">
+                    <span className="font-bold text-sm block mb-2">📝 Package Customizations</span>
+                    <div className="space-y-1">
+                      {Object.entries(highlightCustomizations).map(([pkgId, overrides]) => {
+                        const pkg = Array.isArray(services) ? services.find(s => s.id === pkgId) : null;
+                        if (!pkg?.highlights) return null;
+                        return Object.entries(overrides).map(([idxStr, newCount]) => {
+                          const originalHl = pkg.highlights[parseInt(idxStr)];
+                          if (!originalHl) return null;
+                          const m = originalHl.match(/^(\d+)\s+(.+)/);
+                          if (!m || newCount === parseInt(m[1])) return null;
+                          return (
+                            <div key={`${pkgId}-${idxStr}`} className="flex justify-between items-center text-xs">
+                              <span className="text-muted-foreground">{originalHl}</span>
+                              <span className="font-bold text-emerald-600">→ {newCount} {m[2]}</span>
+                            </div>
+                          );
+                        });
+                      })}
+                    </div>
+                  </div>
+                )}
                 <div className="flex justify-between items-center pb-4 border-b border-border">
                   <span className="font-bold">Total Pay Online</span>
                   <span className="text-2xl font-black text-primary">€{computedTotal}</span>
