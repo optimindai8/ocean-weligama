@@ -396,6 +396,11 @@ export default function BookingPage() {
   };
   const airportTotal   = (watchPickup ? ap.pickup : 0) + (watchDrop ? ap.drop : 0);
 
+  // Grand total includes room + services + airport transfer
+  const grandTotal = priceData
+    ? (parseFloat(String(computedTotal)) + airportTotal).toFixed(2)
+    : "0.00";
+
   const selectedRooms = Array.isArray(rooms) ? rooms.filter(r => selectedRoomIds.includes(r.id)) : [];
 
   // ── Navigation helpers ─────────────────────────────────────────────────────
@@ -1598,7 +1603,7 @@ export default function BookingPage() {
                       {/* Airport */}
                       {(watchPickup || watchDrop) && (
                         <div className="space-y-2 pb-5 border-b border-white/15 text-sm">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Airport Transfer (Pay on Arrival)</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Airport Transfer</p>
                           {watchPickup && (
                             <div className="flex justify-between">
                               <span className="text-white/80">Pick-up</span>
@@ -1619,13 +1624,8 @@ export default function BookingPage() {
                         {priceData && (
                           <div className="flex items-end justify-between">
                             <span className="text-white/60 text-xs font-black uppercase tracking-widest">Total</span>
-                            <span className="text-4xl font-serif font-bold text-accent">€{computedTotal}</span>
+                            <span className="text-4xl font-serif font-bold text-accent">€{grandTotal}</span>
                           </div>
-                        )}
-                        {airportTotal > 0 && (
-                          <p className="text-xs text-white/40 text-right">
-                            + €{airportTotal} airport transfer (pay on arrival)
-                          </p>
                         )}
                       </div>
 
@@ -1669,16 +1669,16 @@ export default function BookingPage() {
                   <span className="text-foreground">{selectedRooms.map(r => r.name).join(", ")}</span>
                 </div>
                 {/* Customizations omitted from confirm dialog price breakdown as requested */}
-                <div className="flex justify-between items-center pb-4 border-b border-border">
-                  <span className="font-bold">Total Pay Online</span>
-                  <span className="text-2xl font-black text-primary">€{computedTotal}</span>
-                </div>
                 {airportTotal > 0 && (
-                  <div className="flex justify-between items-center pb-2">
-                    <span className="font-bold">Airport Transfer (Pay on Arrival)</span>
-                    <span className="text-accent font-bold">€{airportTotal}</span>
+                  <div className="flex justify-between items-center pb-4 border-b border-border">
+                    <span className="font-bold">Airport Transfer</span>
+                    <span className="text-foreground">€{airportTotal}</span>
                   </div>
                 )}
+                <div className="flex justify-between items-center pb-4 border-b border-border">
+                  <span className="font-bold">Total</span>
+                  <span className="text-2xl font-black text-primary">€{grandTotal}</span>
+                </div>
               </div>
 
               <DialogFooter className="flex-col sm:flex-row gap-4 sm:gap-0 mt-6 pt-2">
