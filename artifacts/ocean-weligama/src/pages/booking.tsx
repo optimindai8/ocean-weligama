@@ -396,7 +396,7 @@ export default function BookingPage() {
   };
   const airportTotal   = (watchPickup ? ap.pickup : 0) + (watchDrop ? ap.drop : 0);
 
-  // Grand total includes room + services + airport transfer
+  // Grand total = room + packages + experiences + airport transfer
   const grandTotal = priceData
     ? (parseFloat(String(computedTotal)) + airportTotal).toFixed(2)
     : "0.00";
