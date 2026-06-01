@@ -329,6 +329,29 @@ export default function BookingPage() {
             qty = nights;
           }
           t += price * qty;
+
+          // Add extra lesson/session costs from highlight customizations
+          const overrides = highlightCustomizations[svcId];
+          if (overrides && svc.highlights) {
+            Object.entries(overrides).forEach(([indexStr, newCount]) => {
+              const idx = parseInt(indexStr);
+              const hl = svc.highlights![idx];
+              if (hl) {
+                const numMatch = hl.match(/^(\d+)\s+(.+)/);
+                if (numMatch) {
+                  const originalCount = parseInt(numMatch[1]);
+                  const diff = newCount - originalCount;
+                  if (diff > 0) {
+                    if (/(lesson)/i.test(hl)) {
+                      t += diff * parseFloat((svc as any).extraLessonPrice || "0");
+                    } else if (/(session|class)/i.test(hl)) {
+                      t += diff * parseFloat((svc as any).extraSessionPrice || "0");
+                    }
+                  }
+                }
+              }
+            });
+          }
         }
       }
     }
@@ -477,8 +500,10 @@ export default function BookingPage() {
     Object.entries(highlightCustomizations).forEach(([pkgId, overrides]) => {
       const pkg = Array.isArray(services) ? services.find((s: any) => s.id === pkgId) : null;
       if (!pkg || !pkg.highlights) return;
+      const customLines: string[] = [];
+      Object.entries(overrides).forEach(([idxStr, newCount]) => {
         const hlIdx = parseInt(idxStr);
-        const originalHl = pkg.highlights[hlIdx];
+        const originalHl = pkg.highlights![hlIdx];
         if (!originalHl) return;
         const match = originalHl.match(/^(\d+)\s+(.+)/);
         if (match) {
@@ -491,7 +516,6 @@ export default function BookingPage() {
       if (customLines.length > 0) {
         lines.push(`[Package Customization: ${pkg.name}]`);
         customLines.forEach(l => lines.push(l));
-        customLines.length = 0;
       }
     });
 
@@ -505,6 +529,7 @@ export default function BookingPage() {
           roomIds: selectedRoomIds,
           checkIn: toStr(dateRange.from), checkOut: toStr(dateRange.to),
           guestCount, serviceIds: selectedDbServiceIds,
+          serviceCustomizations: getServiceCustomizations(),
         },
       });
       clearState();
