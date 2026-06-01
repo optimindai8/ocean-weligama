@@ -255,9 +255,7 @@ export default function BookingConfirmationPage() {
                               <h4 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 leading-tight px-1">
                                 {s.serviceName}
                               </h4>
-                              <p className="text-3xl font-extrabold text-[#0B3D5E] mb-1 px-1">
-                                {currencySymbol}{s.subtotal}
-                              </p>
+                              {/* Price intentionally hidden per client request */}
                               <p className="text-xs text-slate-400 font-mono mb-4 px-1">
                                 {srv?.slug || s.serviceName.toLowerCase().replace(/ /g, "-")}
                               </p>
@@ -322,7 +320,7 @@ export default function BookingConfirmationPage() {
                             {srv?.shortDesc && <p className="text-xs text-emerald-700/80 mt-1 line-clamp-1">{srv.shortDesc}</p>}
                             <p className="text-xs text-emerald-700 font-bold mt-2">Quantity: {s.quantity}</p>
                           </div>
-                          <span className="font-bold text-lg text-emerald-700">{currencySymbol}{s.subtotal}</span>
+                          {/* Price intentionally hidden */}
                         </div>
                       );
                     })}
@@ -444,21 +442,15 @@ export default function BookingConfirmationPage() {
                 </h3>
                 <div className="space-y-4 pb-6 border-b border-border text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-medium">Room{booking.nights ? ` (${booking.nights} nights)` : ''}</span>
+                    <span className="text-muted-foreground font-medium">Room{booking.nights ? ` (${booking.nights} nights)` : ''} <span className="block text-[10px] mt-0.5">Includes packages & experiences</span></span>
                     <span className="font-bold text-foreground text-base">
-                      €{booking.roomSubtotal || "0.00"}
+                      €{((parseFloat(booking.roomSubtotal || "0")) + (parseFloat(booking.servicesSubtotal || "0"))).toFixed(2)}
                     </span>
                   </div>
                   {parseFloat(booking.cleaningFee || "0") > 0 && (
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground font-medium">Cleaning Fee</span>
                       <span className="font-bold text-foreground text-base">€{booking.cleaningFee}</span>
-                    </div>
-                  )}
-                  {parseFloat(booking.servicesSubtotal || "0") > 0 && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground font-medium">Add-ons & Packages</span>
-                      <span className="font-bold text-foreground text-base">€{booking.servicesSubtotal}</span>
                     </div>
                   )}
                 </div>

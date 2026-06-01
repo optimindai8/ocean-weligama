@@ -1571,6 +1571,10 @@ components:
           type: ["string", "null"]
         basePrice:
           type: string
+        extraLessonPrice:
+          type: string
+        extraSessionPrice:
+          type: string
         unit:
           type: string
           enum: [per_person, per_day, per_session, flat_rate]
@@ -1611,6 +1615,10 @@ components:
           type: ["string", "null"]
         basePrice:
           type: string
+        extraLessonPrice:
+          type: string
+        extraSessionPrice:
+          type: string
         unit:
           type: string
           enum: [per_person, per_day, per_session, flat_rate]
@@ -1647,6 +1655,10 @@ components:
         category:
           type: ["string", "null"]
         basePrice:
+          type: string
+        extraLessonPrice:
+          type: string
+        extraSessionPrice:
           type: string
         unit:
           type: string

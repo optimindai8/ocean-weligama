@@ -1565,49 +1565,30 @@ export default function BookingPage() {
                               <div key={room.id} className="pt-2 border-t border-white/5 mt-2">
                                 <div className="flex justify-between text-xs text-white/80">
                                   <span className="text-white/60">{room.name} Rate</span>
-                                  <span>€{parseFloat(room.basePricePerNight).toFixed(2)} / night</span>
+                                  <span className="font-bold">€{computedTotal}</span>
                                 </div>
-                                <div className="flex justify-between text-xs text-white/80">
-                                  <span className="text-white/60">{room.name} Subtotal</span>
-                                  <span className="font-bold">€{(parseFloat(room.basePricePerNight) * nights).toFixed(2)}</span>
+                                <div className="flex justify-between text-[10px] text-white/60 mt-1">
+                                  <span>Includes selected packages and experiences</span>
                                 </div>
-                                {parseFloat(room.cleaningFee || "0") > 0 && (
-                                  <div className="flex justify-between text-xs text-white/80">
-                                    <span className="text-white/60">{room.name} Cleaning</span>
-                                    <span>€{parseFloat(room.cleaningFee || "0").toFixed(2)}</span>
-                                  </div>
-                                )}
                               </div>
                             ))}
                           </>
                         )}
                       </div>
 
-                      {/* Packages & Add-ons */}
+                      {/* Packages & Add-ons (Names Only) */}
                       {selectedDbServiceIds.length > 0 && (
                         <div className="space-y-2.5 pb-5 border-b border-white/15 text-sm">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Packages & Experiences</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Included in Room Price</p>
                           {selectedDbServiceIds.map(id => {
                             const svc = Array.isArray(services) ? services.find(s => s.id === id) : null;
                             if (!svc) return null;
-                            const basePrice = parseFloat(svc.basePrice || "0");
-                            let qty = 1;
-                            let calculationText = "";
-                            if (svc.unit === "per_person") {
-                              qty = guestCount;
-                              calculationText = ` (€${basePrice.toFixed(0)} × ${guestCount} guests)`;
-                            } else if (svc.unit === "per_day") {
-                              qty = nights;
-                              calculationText = ` (€${basePrice.toFixed(0)} × ${nights} nights)`;
-                            }
-                            const svcSubtotal = basePrice * qty;
                             return (
-                              <div key={id} className="flex justify-between items-baseline gap-2">
+                              <div key={id} className="flex items-center gap-2">
+                                <Check className="w-3.5 h-3.5 text-accent shrink-0" />
                                 <span className="text-white/80 text-xs leading-tight">
                                   {svc.name}
-                                  <span className="text-[10px] text-white/50 font-normal">{calculationText}</span>
                                 </span>
-                                <span className="font-bold shrink-0">€{svcSubtotal.toFixed(2)}</span>
                               </div>
                             );
                           })}
@@ -1687,39 +1668,7 @@ export default function BookingPage() {
                   <span className="font-bold">Room</span>
                   <span className="text-foreground">{selectedRooms.map(r => r.name).join(", ")}</span>
                 </div>
-                {/* Show highlight customizations in confirm dialog */}
-                {Object.entries(highlightCustomizations).some(([pkgId, overrides]) => {
-                  const pkg = Array.isArray(services) ? services.find(s => s.id === pkgId) : null;
-                  if (!pkg?.highlights) return false;
-                  return Object.entries(overrides).some(([idxStr, newCount]) => {
-                    const originalHl = pkg.highlights![parseInt(idxStr)];
-                    if (!originalHl) return false;
-                    const m = originalHl.match(/^(\d+)\s+(.+)/);
-                    return m && newCount !== parseInt(m[1]);
-                  });
-                }) && (
-                  <div className="pb-4 border-b border-border">
-                    <span className="font-bold text-sm block mb-2">📝 Package Customizations</span>
-                    <div className="space-y-1">
-                      {Object.entries(highlightCustomizations).map(([pkgId, overrides]) => {
-                        const pkg = Array.isArray(services) ? services.find(s => s.id === pkgId) : null;
-                        if (!pkg?.highlights) return null;
-                        return Object.entries(overrides).map(([idxStr, newCount]) => {
-                          const originalHl = pkg.highlights![parseInt(idxStr)];
-                          if (!originalHl) return null;
-                          const m = originalHl.match(/^(\d+)\s+(.+)/);
-                          if (!m || newCount === parseInt(m[1])) return null;
-                          return (
-                            <div key={`${pkgId}-${idxStr}`} className="flex justify-between items-center text-xs">
-                              <span className="text-muted-foreground">{originalHl}</span>
-                              <span className="font-bold text-emerald-600">→ {newCount} {m[2]}</span>
-                            </div>
-                          );
-                        });
-                      })}
-                    </div>
-                  </div>
-                )}
+                {/* Customizations omitted from confirm dialog price breakdown as requested */}
                 <div className="flex justify-between items-center pb-4 border-b border-border">
                   <span className="font-bold">Total Pay Online</span>
                   <span className="text-2xl font-black text-primary">€{computedTotal}</span>

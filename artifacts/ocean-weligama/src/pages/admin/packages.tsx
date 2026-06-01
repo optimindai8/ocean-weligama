@@ -87,6 +87,8 @@ const serviceSchema = z.object({
   type: z.enum(["main", "optional"]),
   category: z.string().nullable().optional(),
   basePrice: z.string().min(1, "Price is required").regex(/^\d+(\.\d{1,2})?$/, "Invalid price format (e.g. 99.99)"),
+  extraLessonPrice: z.string().regex(/^\d+(\.\d{1,2})?$/, "Invalid price format").optional().default("0"),
+  extraSessionPrice: z.string().regex(/^\d+(\.\d{1,2})?$/, "Invalid price format").optional().default("0"),
   isActive: z.boolean().default(true),
   isBookable: z.boolean().default(true),
     isFeatured: z.boolean().default(false),
@@ -135,6 +137,8 @@ export default function AdminPackages() {
       type: "main",
       category: "Main Package",
       basePrice: "0.00",
+      extraLessonPrice: "0",
+      extraSessionPrice: "0",
       isActive: true,
       isBookable: true,
       isFeatured: false,
@@ -154,6 +158,8 @@ export default function AdminPackages() {
         type: service.type as "main" | "optional",
         category: service.category || "Main Package",
         basePrice: service.basePrice,
+        extraLessonPrice: service.extraLessonPrice || "0",
+        extraSessionPrice: service.extraSessionPrice || "0",
         isActive: service.isActive,
         isBookable: service.isBookable ?? true,
         isFeatured: service.isFeatured ?? false,
@@ -170,6 +176,8 @@ export default function AdminPackages() {
         type: "main",
         category: "Main Package",
         basePrice: "0.00",
+        extraLessonPrice: "0",
+        extraSessionPrice: "0",
         isActive: true,
         isBookable: true,
       isFeatured: false,
@@ -245,6 +253,8 @@ export default function AdminPackages() {
       imageUrl: values.imageUrl || null,
       category: values.category || "Main Package",
       unit: "flat_rate" as const,
+      extraLessonPrice: values.extraLessonPrice || "0",
+      extraSessionPrice: values.extraSessionPrice || "0",
       sortOrder: values.sortOrder ? parseInt(values.sortOrder, 10) || 0 : 0,
     };
 
@@ -594,6 +604,42 @@ export default function AdminPackages() {
                             <FormLabel>Sort Order</FormLabel>
                             <FormControl>
                               <Input type="number" placeholder="0" {...field} className="rounded-xl h-12" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="extraLessonPrice"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Extra Lesson Price (€)</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">€</span>
+                                <Input type="text" placeholder="0.00" {...field} className="pl-9 rounded-xl font-bold h-12" />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="extraSessionPrice"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Extra Session Price (€)</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">€</span>
+                                <Input type="text" placeholder="0.00" {...field} className="pl-9 rounded-xl font-bold h-12" />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>

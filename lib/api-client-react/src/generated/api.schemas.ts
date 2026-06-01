@@ -226,6 +226,8 @@ export interface Service {
   /** @nullable */
   category?: string | null;
   basePrice: string;
+  extraLessonPrice?: string;
+  extraSessionPrice?: string;
   unit: ServiceUnit;
   isActive: boolean;
   isBookable?: boolean;
@@ -265,6 +267,8 @@ export interface ServiceInput {
   /** @nullable */
   category?: string | null;
   basePrice: string;
+  extraLessonPrice?: string;
+  extraSessionPrice?: string;
   unit: ServiceInputUnit;
   isActive?: boolean;
   isBookable?: boolean;
@@ -303,6 +307,8 @@ export interface ServiceUpdate {
   /** @nullable */
   category?: string | null;
   basePrice?: string;
+  extraLessonPrice?: string;
+  extraSessionPrice?: string;
   unit?: ServiceUpdateUnit;
   isActive?: boolean;
   isBookable?: boolean;
