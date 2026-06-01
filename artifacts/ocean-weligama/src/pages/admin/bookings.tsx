@@ -350,8 +350,15 @@ export default function AdminBookings() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredBookings.map((b) => (
-                    <tr 
+                  {filteredBookings.map((b) => {
+                    const parsed = parseSpecialRequests(b.specialRequests || "");
+                    const rowTotal = (
+                      parseFloat(b.totalAmount || "0") +
+                      parseFloat(parsed.pickup?.price || "0") +
+                      parseFloat(parsed.drop?.price || "0")
+                    ).toFixed(2);
+                    return (
+                      <tr 
                       key={b.id} 
                       className={`transition-colors cursor-pointer group ${
                         b.status === "pending" 
@@ -392,7 +399,7 @@ export default function AdminBookings() {
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap">
                         <div className="flex flex-col">
-                          <span className="font-black text-[#0B3D5E]">€{b.totalAmount}</span>
+                          <span className="font-black text-[#0B3D5E]">€{rowTotal}</span>
                           <span className="text-[10px] text-slate-400 font-medium">
                             Room: €{b.roomSubtotal}
                           </span>
@@ -423,8 +430,9 @@ export default function AdminBookings() {
                           </Button>
                         </div>
                       </td>
-                    </tr>
-                  ))}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -665,7 +673,7 @@ export default function AdminBookings() {
                                     <Plane className="w-4 h-4 text-sky-600 animate-pulse" /> Airport Pick-up
                                   </span>
                                   <Badge className="bg-sky-100 text-sky-800 border-none font-bold text-[10px]">
-                                    Pay on Arrival: €{parsed.pickup.price}
+                                    €{parsed.pickup.price}
                                   </Badge>
                                 </div>
                                 <div className="space-y-2 text-xs text-sky-900/80">
@@ -700,7 +708,7 @@ export default function AdminBookings() {
                                     <Plane className="w-4 h-4 text-indigo-600 rotate-180" /> Airport Drop-off
                                   </span>
                                   <Badge className="bg-indigo-100 text-indigo-800 border-none font-bold text-[10px]">
-                                    Pay on Arrival: €{parsed.drop.price}
+                                    €{parsed.drop.price}
                                   </Badge>
                                 </div>
                                 <p className="text-xs text-indigo-900/80 leading-relaxed">
@@ -844,9 +852,15 @@ export default function AdminBookings() {
                           </Badge>
                         </div>
                       </div>
-                      <div className="flex justify-between items-center pt-4">
-                        <span className="font-bold text-lg text-foreground">Total</span>
-                        <span className="font-black text-2xl text-primary">€{selectedBooking.totalAmount} <span className="text-base text-muted-foreground">EUR</span></span>
+                      <div className="flex justify-between items-center pt-4 gap-4">
+                        <span className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Total price = Room price + Packages + Experiences + airport transfer</span>
+                        <span className="font-black text-2xl text-primary whitespace-nowrap">
+                          €{(
+                            parseFloat(selectedBooking.totalAmount || "0") +
+                            parseFloat(parsed.pickup?.price || "0") +
+                            parseFloat(parsed.drop?.price || "0")
+                          ).toFixed(2)} <span className="text-base text-muted-foreground">EUR</span>
+                        </span>
                       </div>
                     </div>
 

@@ -343,7 +343,7 @@ export default function BookingConfirmationPage() {
                               <Plane className="w-4 h-4 text-sky-600" /> Airport Pick-up
                             </span>
                             <div className="bg-sky-50 text-sky-800 px-3 py-1 rounded-lg font-bold text-[10px] uppercase tracking-widest">
-                              Pay on Arrival: €{parsed.pickup.price}
+                              €{parsed.pickup.price}
                             </div>
                           </div>
                           <div className="space-y-3 text-sm text-sky-900/80">
@@ -378,7 +378,7 @@ export default function BookingConfirmationPage() {
                               <Plane className="w-4 h-4 text-indigo-600 rotate-180" /> Airport Drop-off
                             </span>
                             <div className="bg-indigo-50 text-indigo-800 px-3 py-1 rounded-lg font-bold text-[10px] uppercase tracking-widest">
-                              Pay on Arrival: €{parsed.drop.price}
+                              €{parsed.drop.price}
                             </div>
                           </div>
                           <p className="text-sm text-indigo-900/80 leading-relaxed bg-indigo-50/30 p-3 rounded-xl border border-indigo-50">
@@ -454,9 +454,15 @@ export default function BookingConfirmationPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex justify-between items-end pt-6">
-                  <span className="font-bold text-lg text-foreground">Total Paid Online</span>
-                  <span className="font-black text-4xl text-primary">€{booking.totalAmount} <span className="text-sm text-muted-foreground font-bold ml-1">EUR</span></span>
+                <div className="flex justify-between items-end pt-6 gap-4">
+                  <span className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Total price = Room price + Packages + Experiences + airport transfer</span>
+                  <span className="font-black text-4xl text-primary whitespace-nowrap">
+                    €{(
+                      parseFloat(booking.totalAmount || "0") +
+                      parseFloat(parsed.pickup?.price || "0") +
+                      parseFloat(parsed.drop?.price || "0")
+                    ).toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>

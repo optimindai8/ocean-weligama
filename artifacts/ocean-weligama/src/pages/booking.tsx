@@ -500,12 +500,12 @@ export default function BookingPage() {
     const lines: string[] = [];
     if (data.airportPickup) {
       lines.push(
-        `[Airport Pick-up: €${ap.pickup} — Pay on Arrival]`,
+        `[Airport Pick-up: €${ap.pickup}]`,
         `  Flight: ${data.flightNumber}, Date: ${data.flightDate}, Time: ${data.flightTime}`,
         `  Surfboard: ${data.bringingSurfboard ? "Yes" : "No"}`,
       );
     }
-    if (data.airportDrop) lines.push(`[Airport Drop: €${ap.drop} — Pay on Arrival]`);
+    if (data.airportDrop) lines.push(`[Airport Drop: €${ap.drop}]`);
 
     // Include highlight customizations (lessons/sessions adjustments)
     Object.entries(highlightCustomizations).forEach(([pkgId, overrides]) => {
