@@ -390,6 +390,41 @@ export default function BookingPage() {
     setSelectedDbServiceIds(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
   }
 
+  function getServiceCustomizations() {
+    const customizations: Record<string, { extraLessons: number, extraSessions: number }> = {};
+    if (Array.isArray(services)) {
+      Object.entries(highlightCustomizations).forEach(([pkgId, overrides]) => {
+        const svc = services.find(s => s.id === pkgId);
+        if (svc && svc.highlights) {
+          let extraLessons = 0;
+          let extraSessions = 0;
+          Object.entries(overrides).forEach(([indexStr, newCount]) => {
+            const i = parseInt(indexStr);
+            const hl = svc.highlights![i];
+            if (hl) {
+              const match = hl.match(/^(\d+)\s+(.+)/);
+              if (match) {
+                const originalCount = parseInt(match[1]);
+                const diff = newCount - originalCount;
+                if (diff > 0) {
+                  if (/(lesson)/i.test(hl)) {
+                    extraLessons += diff;
+                  } else if (/(session|class)/i.test(hl)) {
+                    extraSessions += diff;
+                  }
+                }
+              }
+            }
+          });
+          if (extraLessons > 0 || extraSessions > 0) {
+            customizations[pkgId] = { extraLessons, extraSessions };
+          }
+        }
+      });
+    }
+    return customizations;
+  }
+
   // ── Availability check (Step 3 → 4) ───────────────────────────────────────
   async function handleRoomContinue() {
     if (selectedRoomIds.length === 0) {
@@ -407,6 +442,7 @@ export default function BookingPage() {
           checkOut: toStr(dateRange.to),
           guestCount,
           serviceIds: selectedDbServiceIds,
+          serviceCustomizations: getServiceCustomizations(),
         },
       });
       setPriceData(res);
@@ -438,11 +474,9 @@ export default function BookingPage() {
     if (data.airportDrop) lines.push(`[Airport Drop: €${ap.drop} — Pay on Arrival]`);
 
     // Include highlight customizations (lessons/sessions adjustments)
-    const customLines: string[] = [];
     Object.entries(highlightCustomizations).forEach(([pkgId, overrides]) => {
-      const pkg = Array.isArray(services) ? services.find(s => s.id === pkgId) : null;
+      const pkg = Array.isArray(services) ? services.find((s: any) => s.id === pkgId) : null;
       if (!pkg || !pkg.highlights) return;
-      Object.entries(overrides).forEach(([idxStr, newCount]) => {
         const hlIdx = parseInt(idxStr);
         const originalHl = pkg.highlights[hlIdx];
         if (!originalHl) return;

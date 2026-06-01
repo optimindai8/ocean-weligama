@@ -106,6 +106,8 @@ export const bookingServices = pgTable("booking_services", {
     .references(() => bookings.id, { onDelete: "cascade" }),
   serviceId: uuid("service_id").notNull(),
   quantity: integer("quantity").notNull().default(1),
+  extraLessons: integer("extra_lessons").default(0),
+  extraSessions: integer("extra_sessions").default(0),
   unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
   subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   notes: text("notes"),

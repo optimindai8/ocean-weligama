@@ -32,6 +32,8 @@ export const services = pgTable("services", {
   // - "optional" for Optional Packages and Add-on Experiences
   type: text("type").default("main").notNull(), // 'main' or 'optional'
   basePrice: decimal("base_price", { precision: 10, scale: 2 }).notNull(),
+  extraLessonPrice: decimal("extra_lesson_price", { precision: 10, scale: 2 }).default("0"),
+  extraSessionPrice: decimal("extra_session_price", { precision: 10, scale: 2 }).default("0"),
   unit: serviceUnitEnum("unit").notNull(),
   isActive: boolean("is_active").default(true),
   isBookable: boolean("is_bookable").default(true),

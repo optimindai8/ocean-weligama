@@ -92,6 +92,8 @@ router.post("/v1/bookings/check", async (req, res) => {
         .from(services)
         .where(eq(services.isActive, true));
 
+      const { serviceCustomizations = {} } = req.body;
+
       for (const sId of serviceIds) {
         const service = addons.find((s) => s.id === sId);
         if (service) {
@@ -102,7 +104,22 @@ router.post("/v1/bookings/check", async (req, res) => {
           } else if (service.unit === "per_day") {
             qty = nights;
           }
-          servicesSubtotal += price * qty;
+
+          let extraLessons = 0;
+          let extraSessions = 0;
+          let extraCost = 0;
+
+          if (serviceCustomizations[sId]) {
+            extraLessons = serviceCustomizations[sId].extraLessons || 0;
+            extraSessions = serviceCustomizations[sId].extraSessions || 0;
+            
+            const extraLessonPrice = parseFloat(service.extraLessonPrice || "0");
+            const extraSessionPrice = parseFloat(service.extraSessionPrice || "0");
+            
+            extraCost = (extraLessons * extraLessonPrice) + (extraSessions * extraSessionPrice);
+          }
+
+          servicesSubtotal += (price * qty) + extraCost;
         }
       }
     }
@@ -177,6 +194,8 @@ router.post("/v1/bookings", async (req, res) => {
       unitPrice: number;
       subtotal: number;
       quantity: number;
+      extraLessons: number;
+      extraSessions: number;
     }> = [];
 
     if (serviceIds.length > 0) {
@@ -184,6 +203,8 @@ router.post("/v1/bookings", async (req, res) => {
         .select()
         .from(services)
         .where(eq(services.isActive, true));
+
+      const { serviceCustomizations = {} } = req.body;
 
       for (const sId of serviceIds) {
         const service = addons.find((s) => s.id === sId);
@@ -195,13 +216,30 @@ router.post("/v1/bookings", async (req, res) => {
           } else if (service.unit === "per_day") {
             qty = nights;
           }
-          const subtotal = price * qty;
+          
+          let extraLessons = 0;
+          let extraSessions = 0;
+          let extraCost = 0;
+
+          if (serviceCustomizations[sId]) {
+            extraLessons = serviceCustomizations[sId].extraLessons || 0;
+            extraSessions = serviceCustomizations[sId].extraSessions || 0;
+            
+            const extraLessonPrice = parseFloat(service.extraLessonPrice || "0");
+            const extraSessionPrice = parseFloat(service.extraSessionPrice || "0");
+            
+            extraCost = (extraLessons * extraLessonPrice) + (extraSessions * extraSessionPrice);
+          }
+
+          const subtotal = (price * qty) + extraCost;
           servicesSubtotal += subtotal;
           serviceDetails.push({
             serviceId: service.id,
             unitPrice: price,
             subtotal: subtotal,
             quantity: qty,
+            extraLessons,
+            extraSessions,
           });
         }
       }
@@ -252,6 +290,8 @@ router.post("/v1/bookings", async (req, res) => {
           bookingId: booking.id,
           serviceId: sd.serviceId,
           quantity: sd.quantity,
+          extraLessons: sd.extraLessons,
+          extraSessions: sd.extraSessions,
           unitPrice: sd.unitPrice.toFixed(2),
           subtotal: sd.subtotal.toFixed(2),
         }))
