@@ -126,10 +126,10 @@ const ALL_STEPS = {
 // Default fallback airport prices (used while API data loads)
 // ─────────────────────────────────────────────────────────────────────────────
 const DEFAULT_AIRPORT_PRICING = {
-  pickupPrice: "75.00",
-  pickupPriceGroup: "100.00",
-  dropPrice: "65.00",
-  dropPriceGroup: "100.00",
+  pickupPrice: "87.00",
+  pickupPriceGroup: "87.00",
+  dropPrice: "87.00",
+  dropPriceGroup: "87.00",
   groupThreshold: 4,
 };
 
@@ -1622,8 +1622,8 @@ export default function BookingPage() {
                       {/* Total */}
                       <div className="space-y-1">
                         {priceData && (
-                          <div className="flex items-end justify-between">
-                            <span className="text-white/60 text-xs font-black uppercase tracking-widest">Total</span>
+                          <div className="flex items-end justify-between gap-4">
+                            <span className="text-white/60 text-[10px] font-black uppercase tracking-widest">Total price = Room price + Packages + Experiences + airport transfer</span>
                             <span className="text-4xl font-serif font-bold text-accent">€{grandTotal}</span>
                           </div>
                         )}
@@ -1675,9 +1675,9 @@ export default function BookingPage() {
                     <span className="text-foreground">€{airportTotal}</span>
                   </div>
                 )}
-                <div className="flex justify-between items-center pb-4 border-b border-border">
-                  <span className="font-bold">Total</span>
-                  <span className="text-2xl font-black text-primary">€{grandTotal}</span>
+                <div className="flex justify-between items-center pb-4 border-b border-border gap-4">
+                  <span className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Total price = Room price + Packages + Experiences + airport transfer</span>
+                  <span className="text-2xl font-black text-primary whitespace-nowrap">€{grandTotal}</span>
                 </div>
               </div>
 
