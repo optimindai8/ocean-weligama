@@ -1360,6 +1360,9 @@ components:
         createdAt:
           type: string
           format: date-time
+        isFeatured:
+          type: boolean
+
         updatedAt:
           type: string
           format: date-time
@@ -1548,6 +1551,13 @@ components:
           type: string
         slug:
           type: string
+        isFeatured:
+          type: boolean
+        iconEmoji:
+          type: string
+        shortDesc:
+          type: string
+
         imageUrl:
           type: ["string", "null"]
         highlights:
@@ -1581,6 +1591,13 @@ components:
       properties:
         slug:
           type: string
+        isFeatured:
+          type: boolean
+        iconEmoji:
+          type: string
+        shortDesc:
+          type: string
+
         imageUrl:
           type: ["string", "null"]
         highlights:
@@ -1611,6 +1628,13 @@ components:
       properties:
         slug:
           type: string
+        isFeatured:
+          type: boolean
+        iconEmoji:
+          type: string
+        shortDesc:
+          type: string
+
         imageUrl:
           type: ["string", "null"]
         highlights:
@@ -1753,6 +1777,16 @@ components:
           type: ["string", "null"]
         specialRequests:
           type: ["string", "null"]
+        serviceCustomizations:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              extraLessons:
+                type: integer
+              extraSessions:
+                type: integer
+
         serviceIds:
           type: array
           items:
@@ -1793,6 +1827,16 @@ components:
           format: date
         guestCount:
           type: integer
+        serviceCustomizations:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              extraLessons:
+                type: integer
+              extraSessions:
+                type: integer
+
         serviceIds:
           type: array
           items:
@@ -2247,6 +2291,9 @@ components:
         createdAt:
           type: string
           format: date-time
+        isFeatured:
+          type: boolean
+
         updatedAt:
           type: string
           format: date-time

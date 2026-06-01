@@ -25,6 +25,8 @@ export const ListRoomsQueryParams = zod.object({
   minPrice: zod.coerce.number().optional(),
   maxPrice: zod.coerce.number().optional(),
   locale: zod.coerce.string().default(listRoomsQueryLocaleDefault),
+  checkIn: zod.date().optional(),
+  checkOut: zod.date().optional(),
 });
 
 export const ListRoomsResponseItem = zod.object({
@@ -202,6 +204,9 @@ export const ListServicesQueryParams = zod.object({
 export const ListServicesResponseItem = zod.object({
   id: zod.string(),
   slug: zod.string(),
+  isFeatured: zod.boolean().optional(),
+  iconEmoji: zod.string().optional(),
+  shortDesc: zod.string().optional(),
   imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
@@ -232,6 +237,9 @@ export const GetServiceQueryParams = zod.object({
 export const GetServiceResponse = zod.object({
   id: zod.string(),
   slug: zod.string(),
+  isFeatured: zod.boolean().optional(),
+  iconEmoji: zod.string().optional(),
+  shortDesc: zod.string().optional(),
   imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
@@ -254,6 +262,15 @@ export const CheckAvailabilityAndPriceBody = zod.object({
   checkIn: zod.coerce.date(),
   checkOut: zod.coerce.date(),
   guestCount: zod.number(),
+  serviceCustomizations: zod
+    .record(
+      zod.string(),
+      zod.object({
+        extraLessons: zod.number().optional(),
+        extraSessions: zod.number().optional(),
+      }),
+    )
+    .optional(),
   serviceIds: zod.array(zod.string()).optional(),
 });
 
@@ -283,6 +300,15 @@ export const CreateBookingBody = zod.object({
   guestPhone: zod.string(),
   guestNationality: zod.string().nullish(),
   specialRequests: zod.string().nullish(),
+  serviceCustomizations: zod
+    .record(
+      zod.string(),
+      zod.object({
+        extraLessons: zod.number().optional(),
+        extraSessions: zod.number().optional(),
+      }),
+    )
+    .optional(),
   serviceIds: zod.array(zod.string()).optional(),
   paymentMethod: zod.enum(["online_card", "bank_transfer", "cash", "pending"]),
   languageUsed: zod.string().nullish(),
@@ -839,6 +865,9 @@ export const AdminDeleteRoomParams = zod.object({
 export const AdminListServicesResponseItem = zod.object({
   id: zod.string(),
   slug: zod.string(),
+  isFeatured: zod.boolean().optional(),
+  iconEmoji: zod.string().optional(),
+  shortDesc: zod.string().optional(),
   imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
@@ -860,6 +889,9 @@ export const AdminListServicesResponse = zod.array(
  */
 export const AdminCreateServiceBody = zod.object({
   slug: zod.string(),
+  isFeatured: zod.boolean().optional(),
+  iconEmoji: zod.string().optional(),
+  shortDesc: zod.string().optional(),
   imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
@@ -881,6 +913,9 @@ export const AdminUpdateServiceParams = zod.object({
 
 export const AdminUpdateServiceBody = zod.object({
   slug: zod.string().optional(),
+  isFeatured: zod.boolean().optional(),
+  iconEmoji: zod.string().optional(),
+  shortDesc: zod.string().optional(),
   imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]).optional(),
@@ -899,6 +934,9 @@ export const AdminUpdateServiceBody = zod.object({
 export const AdminUpdateServiceResponse = zod.object({
   id: zod.string(),
   slug: zod.string(),
+  isFeatured: zod.boolean().optional(),
+  iconEmoji: zod.string().optional(),
+  shortDesc: zod.string().optional(),
   imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
@@ -1221,6 +1259,7 @@ export const AdminUpdateAirportPricingResponse = zod.object({
   dropPriceGroup: zod.string(),
   groupThreshold: zod.number(),
   createdAt: zod.coerce.date(),
+  isFeatured: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
 });
 
@@ -1349,6 +1388,7 @@ export const GetAirportPricingResponse = zod.object({
   dropPriceGroup: zod.string(),
   groupThreshold: zod.number(),
   createdAt: zod.coerce.date(),
+  isFeatured: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
 });
 
@@ -1367,6 +1407,7 @@ export const ListBlogsResponseItem = zod.object({
   category: zod.string(),
   date: zod.coerce.date(),
   createdAt: zod.coerce.date(),
+  isFeatured: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
   deletedAt: zod.coerce.date().nullish(),
 });
@@ -1387,6 +1428,7 @@ export const GetBlogResponse = zod.object({
   category: zod.string(),
   date: zod.coerce.date(),
   createdAt: zod.coerce.date(),
+  isFeatured: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
   deletedAt: zod.coerce.date().nullish(),
 });
@@ -1402,6 +1444,7 @@ export const AdminListBlogsResponseItem = zod.object({
   category: zod.string(),
   date: zod.coerce.date(),
   createdAt: zod.coerce.date(),
+  isFeatured: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
   deletedAt: zod.coerce.date().nullish(),
 });
@@ -1443,6 +1486,7 @@ export const AdminUpdateBlogResponse = zod.object({
   category: zod.string(),
   date: zod.coerce.date(),
   createdAt: zod.coerce.date(),
+  isFeatured: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
   deletedAt: zod.coerce.date().nullish(),
 });

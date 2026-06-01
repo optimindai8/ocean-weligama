@@ -339,13 +339,15 @@ export default function BookingPage() {
               if (hl) {
                 const _leadNum = hl.match(/^(\d+)\s+(.+)/);
                 const _embNum = !_leadNum ? hl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
-                const _origCount = _leadNum ? parseInt(_leadNum[1]) : _embNum ? parseInt(_embNum[2]) : null;
+                const isLesson = /(lesson)/i.test(hl);
+                const isSession = /(session|class)/i.test(hl);
+                const _origCount = _leadNum ? parseInt(_leadNum[1]) : _embNum ? parseInt(_embNum[2]) : (isLesson || isSession ? 1 : null);
                 if (_origCount !== null) {
                   const diff = newCount - _origCount;
                   if (diff > 0) {
-                    if (/(lesson)/i.test(hl)) {
+                    if (isLesson) {
                       t += diff * parseFloat((svc as any).extraLessonPrice || "0");
-                    } else if (/(session|class)/i.test(hl)) {
+                    } else if (isSession) {
                       t += diff * parseFloat((svc as any).extraSessionPrice || "0");
                     }
                   }
@@ -428,13 +430,15 @@ export default function BookingPage() {
             if (hl) {
               const _lNum = hl.match(/^(\d+)\s+(.+)/);
               const _eNum = !_lNum ? hl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
-              const _orig = _lNum ? parseInt(_lNum[1]) : _eNum ? parseInt(_eNum[2]) : null;
+              const isLesson = /(lesson)/i.test(hl);
+              const isSession = /(session|class)/i.test(hl);
+              const _orig = _lNum ? parseInt(_lNum[1]) : _eNum ? parseInt(_eNum[2]) : (isLesson || isSession ? 1 : null);
               if (_orig !== null) {
                 const diff = newCount - _orig;
                 if (diff > 0) {
-                  if (/(lesson)/i.test(hl)) {
+                  if (isLesson) {
                     extraLessons += diff;
-                  } else if (/(session|class)/i.test(hl)) {
+                  } else if (isSession) {
                     extraSessions += diff;
                   }
                 }
@@ -507,12 +511,16 @@ export default function BookingPage() {
         const hlIdx = parseInt(idxStr);
         const originalHl = pkg.highlights![hlIdx];
         if (!originalHl) return;
-        const match = originalHl.match(/^(\d+)\s+(.+)/);
-        if (match) {
-          const originalCount = parseInt(match[1]);
-          if (newCount !== originalCount) {
-            customLines.push(`  ${originalHl} → ${newCount} ${match[2]}`);
-          }
+        const _lNum = originalHl.match(/^(\d+)\s+(.+)/);
+        const _eNum = !_lNum ? originalHl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
+        const isLesson = /(lesson)/i.test(originalHl);
+        const isSession = /(session|class)/i.test(originalHl);
+        const originalCount = _lNum ? parseInt(_lNum[1]) : _eNum ? parseInt(_eNum[2]) : (isLesson || isSession ? 1 : null);
+        
+        if (originalCount !== null && newCount !== originalCount) {
+          const restText = _lNum ? _lNum[2] : _eNum ? _eNum[3] : originalHl;
+          const prefix = _eNum ? _eNum[1] + " " : "";
+          customLines.push(`  ${originalHl} → ${prefix}${newCount} ${restText}`);
         }
       });
       if (customLines.length > 0) {
@@ -983,12 +991,12 @@ export default function BookingPage() {
                                       const embeddedNumMatch = !leadingNumMatch ? hl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
                                       const isLesson = /(lesson)/i.test(hl);
                                       const isSession = /(session|class)/i.test(hl);
-                                      const isAdjustable = !!(leadingNumMatch || embeddedNumMatch) && (isLesson || isSession);
+                                      const isAdjustable = isLesson || isSession;
                                       const originalCount = leadingNumMatch
                                         ? parseInt(leadingNumMatch[1])
                                         : embeddedNumMatch
                                         ? parseInt(embeddedNumMatch[2])
-                                        : 0;
+                                        : (isAdjustable ? 1 : 0);
                                       const displayPrefix = embeddedNumMatch ? embeddedNumMatch[1] + " " : "";
                                       const restText = leadingNumMatch ? leadingNumMatch[2] : embeddedNumMatch ? embeddedNumMatch[3] : hl;
                                       const currentCount = highlightCustomizations[pkg.id]?.[i] ?? originalCount;

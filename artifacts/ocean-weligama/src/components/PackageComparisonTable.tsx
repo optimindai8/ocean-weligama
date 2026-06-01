@@ -100,7 +100,8 @@ const features: FeatureSection[] = [
     category: 'Yoga & Wellness',
     icon: Dumbbell,
     items: [
-      { name: 'Daily Yoga Sessions', values: ['2 Complimentary', '2 Complimentary', 'Full Daily'], highlight: true },
+      { name: 'Complimentary 2 Daily Yoga Sessions', values: [true, true, false], highlight: true },
+      { name: 'Daily Yoga Sessions', values: [false, false, true], highlight: true },
       { name: 'Sunrise / Sunset Yoga Experiences', values: [false, false, true] },
     ],
   },

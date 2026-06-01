@@ -16,8 +16,8 @@ export interface Blog {
   image: string;
   category: string;
   date: string;
-  isFeatured?: boolean;
   createdAt: string;
+  isFeatured?: boolean;
   updatedAt: string;
   deletedAt?: string | null;
 }
@@ -39,7 +39,6 @@ export interface BlogInput {
   image: string;
   category: BlogInputCategory;
   date: string;
-  isFeatured?: boolean;
 }
 
 export type BlogUpdateCategory =
@@ -217,8 +216,9 @@ export const ServiceUnit = {
 export interface Service {
   id: string;
   slug: string;
-  /** @nullable */
-  iconEmoji?: string | null;
+  isFeatured?: boolean;
+  iconEmoji?: string;
+  shortDesc?: string;
   /** @nullable */
   imageUrl?: string | null;
   highlights?: string[];
@@ -229,13 +229,10 @@ export interface Service {
   unit: ServiceUnit;
   isActive: boolean;
   isBookable?: boolean;
-  isFeatured?: boolean;
   sortOrder?: number;
   name: string;
   /** @nullable */
   description?: string | null;
-  /** @nullable */
-  shortDesc?: string | null;
 }
 
 export type ServiceInputType =
@@ -258,8 +255,9 @@ export const ServiceInputUnit = {
 
 export interface ServiceInput {
   slug: string;
-  /** @nullable */
-  iconEmoji?: string | null;
+  isFeatured?: boolean;
+  iconEmoji?: string;
+  shortDesc?: string;
   /** @nullable */
   imageUrl?: string | null;
   highlights?: string[];
@@ -270,12 +268,9 @@ export interface ServiceInput {
   unit: ServiceInputUnit;
   isActive?: boolean;
   isBookable?: boolean;
-  isFeatured?: boolean;
   name: string;
   /** @nullable */
   description?: string | null;
-  /** @nullable */
-  shortDesc?: string | null;
 }
 
 export type ServiceUpdateType =
@@ -298,8 +293,9 @@ export const ServiceUpdateUnit = {
 
 export interface ServiceUpdate {
   slug?: string;
-  /** @nullable */
-  iconEmoji?: string | null;
+  isFeatured?: boolean;
+  iconEmoji?: string;
+  shortDesc?: string;
   /** @nullable */
   imageUrl?: string | null;
   highlights?: string[];
@@ -310,12 +306,9 @@ export interface ServiceUpdate {
   unit?: ServiceUpdateUnit;
   isActive?: boolean;
   isBookable?: boolean;
-  isFeatured?: boolean;
   name?: string;
   /** @nullable */
   description?: string | null;
-  /** @nullable */
-  shortDesc?: string | null;
   sortOrder?: number;
 }
 
@@ -398,6 +391,13 @@ export interface Booking {
   createdAt: string;
 }
 
+export type BookingInputServiceCustomizations = {
+  [key: string]: {
+    extraLessons?: number;
+    extraSessions?: number;
+  };
+};
+
 export type BookingInputPaymentMethod =
   (typeof BookingInputPaymentMethod)[keyof typeof BookingInputPaymentMethod];
 
@@ -421,6 +421,7 @@ export interface BookingInput {
   guestNationality?: string | null;
   /** @nullable */
   specialRequests?: string | null;
+  serviceCustomizations?: BookingInputServiceCustomizations;
   serviceIds?: string[];
   paymentMethod: BookingInputPaymentMethod;
   /** @nullable */
@@ -434,12 +435,20 @@ export interface BookingUpdate {
   paymentMethod?: string;
 }
 
+export type BookingCheckServiceCustomizations = {
+  [key: string]: {
+    extraLessons?: number;
+    extraSessions?: number;
+  };
+};
+
 export interface BookingCheck {
   roomId?: string;
   roomIds: string[];
   checkIn: string;
   checkOut: string;
   guestCount: number;
+  serviceCustomizations?: BookingCheckServiceCustomizations;
   serviceIds?: string[];
 }
 
@@ -556,7 +565,6 @@ export interface GalleryUpdate {
 
 export interface AvailabilityDay {
   date: string;
-  isFeatured?: boolean;
   isBlocked: boolean;
   /** @nullable */
   blockReason?: string | null;
@@ -664,7 +672,6 @@ export interface DashboardMetrics {
 
 export interface TrendPoint {
   date: string;
-  isFeatured?: boolean;
   bookings: number;
   revenue: string;
 }
@@ -716,6 +723,7 @@ export interface AirportPricing {
   dropPriceGroup: string;
   groupThreshold: number;
   createdAt: string;
+  isFeatured?: boolean;
   updatedAt: string;
 }
 
