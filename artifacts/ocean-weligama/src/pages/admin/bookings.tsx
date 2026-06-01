@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, Filter, Trash2, Eye, User, Phone, Mail, Globe, Home, Calendar, Sparkles, CreditCard, MessageSquare, Clock, Check, Award, Plane, Search, RefreshCw, Info } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Filter, Trash2, Eye, User, Phone, Mail, Globe, Home, Calendar, Sparkles, CreditCard, MessageSquare, Clock, Check, Award, Plane, Search, RefreshCw, Info, ArrowRight, Zap } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -719,41 +719,97 @@ export default function AdminBookings() {
                       </div>
                     )}
 
-                    {/* Package Customizations */}
-                    {parsed.customizations && parsed.customizations.length > 0 && (
-                      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-emerald-100 shadow-sm">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-emerald-600 mb-4 flex items-center gap-2">
-                          <Award className="w-4 h-4" /> Package Customizations
-                        </h3>
-                        <div className="space-y-4">
-                          {parsed.customizations.map((cust: any, idx: number) => (
-                            <div key={idx} className="bg-emerald-50/40 rounded-xl p-4 border border-emerald-100">
-                              <p className="font-bold text-emerald-900 text-sm mb-3">{cust.packageName}</p>
-                              <div className="space-y-2">
-                                {cust.changes.map((ch: any, ci: number) => (
-                                  <div key={ci} className="flex items-center justify-between text-xs bg-white px-3 py-2 rounded-lg border border-emerald-100">
-                                    <span className="text-slate-500">{ch.from}</span>
-                                    <span className="font-bold text-emerald-700 flex items-center gap-1">
-                                      → {ch.to}
-                                    </span>
+                    {/* Package Customizations & Special Requests — Combined Clean Section */}
+                    {(parsed.customizations?.length > 0 || parsed.message) && (
+                      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                        {/* Section Header */}
+                        <div className="px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-slate-100/80 bg-gradient-to-r from-slate-50 to-white">
+                          <h3 className="text-sm font-black uppercase tracking-widest text-[#0B3D5E] flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-sm shadow-violet-200">
+                              <Zap className="w-3.5 h-3.5 text-white" />
+                            </div>
+                            Requests & Customizations
+                          </h3>
+                          <p className="text-xs text-slate-400 mt-1.5 ml-[38px]">Guest preferences and package modifications</p>
+                        </div>
+
+                        <div className="p-5 sm:p-6 space-y-5">
+
+                          {/* Package Customizations */}
+                          {parsed.customizations && parsed.customizations.length > 0 && parsed.customizations.map((cust: any, idx: number) => {
+                            const custKey = `cust-${idx}`;
+                            const isOpen = expandedPkgs[custKey] !== false; // default open
+                            return (
+                              <div key={idx} className="rounded-xl border border-emerald-100/80 overflow-hidden transition-all duration-300">
+                                {/* Collapsible Header */}
+                                <button
+                                  type="button"
+                                  onClick={(e: React.MouseEvent) => {
+                                    e.stopPropagation();
+                                    setExpandedPkgs(prev => ({ ...prev, [custKey]: !isOpen }));
+                                  }}
+                                  className="w-full flex items-center justify-between px-4 py-3.5 bg-gradient-to-r from-emerald-50/80 to-teal-50/40 hover:from-emerald-50 hover:to-teal-50/60 transition-colors cursor-pointer group"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-sm shadow-emerald-200/50">
+                                      <Award className="w-4 h-4 text-white" />
+                                    </div>
+                                    <div className="text-left">
+                                      <p className="font-bold text-emerald-900 text-sm leading-tight">{cust.packageName}</p>
+                                      <p className="text-[10px] text-emerald-600/70 font-medium mt-0.5">
+                                        {cust.changes.length} modification{cust.changes.length !== 1 ? 's' : ''}
+                                      </p>
+                                    </div>
                                   </div>
-                                ))}
+                                  <ChevronDown className={`w-4 h-4 text-emerald-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
+                                </button>
+
+                                {/* Collapsible Body */}
+                                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                                  <div className="px-4 py-3 space-y-2 bg-white">
+                                    {cust.changes.map((ch: any, ci: number) => (
+                                      <div key={ci} className="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-slate-50/80 border border-slate-100/60 group/row hover:bg-emerald-50/40 hover:border-emerald-100/60 transition-all duration-200">
+                                        {/* From */}
+                                        <span className="text-xs text-slate-500 font-medium line-through decoration-slate-300 flex-1 min-w-0 truncate">
+                                          {ch.from}
+                                        </span>
+                                        {/* Arrow */}
+                                        <div className="shrink-0 w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center group-hover/row:bg-emerald-200 transition-colors">
+                                          <ArrowRight className="w-3 h-3 text-emerald-600" />
+                                        </div>
+                                        {/* To */}
+                                        <span className="text-xs font-bold text-emerald-700 flex-1 min-w-0 truncate text-right">
+                                          {ch.to}
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+
+                          {/* Guest Notes / Special Requests */}
+                          {parsed.message && (
+                            <div className="rounded-xl border border-amber-100/80 overflow-hidden">
+                              <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-amber-50/80 to-orange-50/30">
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-sm shadow-amber-200/50">
+                                  <MessageSquare className="w-4 h-4 text-white" />
+                                </div>
+                                <div>
+                                  <p className="font-bold text-amber-900 text-sm leading-tight">Guest Notes</p>
+                                  <p className="text-[10px] text-amber-600/70 font-medium mt-0.5">Additional requests from the guest</p>
+                                </div>
+                              </div>
+                              <div className="px-4 py-3 bg-white">
+                                <p className="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed bg-amber-50/30 p-3.5 rounded-lg border border-amber-100/40 font-medium">
+                                  {parsed.message}
+                                </p>
                               </div>
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                          )}
 
-                    {/* Special Requests */}
-                    {parsed.message && (
-                      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-border shadow-sm">
-                        <h3 className="text-sm font-black uppercase tracking-widest text-amber-600 mb-4 flex items-center gap-2">
-                          <MessageSquare className="w-4 h-4" /> Special Requests & Notes
-                        </h3>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed bg-amber-50/50 p-4 rounded-xl border border-amber-100/50">
-                          {parsed.message}
-                        </p>
+                        </div>
                       </div>
                     )}
 

@@ -409,7 +409,7 @@ export default function BookingPage() {
   function fmt(d?: Date) {
     return d?.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) ?? "";
   }
-  function toStr(d: Date) { return d.toISOString().slice(0, 10); }
+  function toStr(d: Date) { return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
 
   // ── Toggle helpers ─────────────────────────────────────────────────────────
   function toggleService(id: string) {
