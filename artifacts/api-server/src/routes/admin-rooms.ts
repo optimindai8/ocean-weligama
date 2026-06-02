@@ -106,8 +106,8 @@ router.post("/v1/admin/rooms", requireAdmin, async (req, res) => {
         activePackages.map((pkg) => ({
           roomId: room.id,
           packageId: pkg.id,
-          price: pkg.basePrice, // default price
-          dailyPrice: pkg.basePrice, // default daily price
+          price: "0.00",
+          dailyPrice: "0.00",
         }))
       );
     }

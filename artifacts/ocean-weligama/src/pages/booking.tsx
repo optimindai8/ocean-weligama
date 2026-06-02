@@ -965,8 +965,10 @@ export default function BookingPage() {
                       >
                         {/* Image */}
                         <div className="relative w-full h-56 overflow-hidden bg-emerald-50 shrink-0 rounded-t-[2.5rem]">
-                          {pkg.imageUrl ? (
-                            <img src={pkg.imageUrl} alt={pkg.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                          {pkg.iconEmoji ? (
+                            <div className="w-full h-full flex items-center justify-center text-8xl">
+                              {pkg.iconEmoji}
+                            </div>
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <Award className="w-16 h-16 text-emerald-200" />

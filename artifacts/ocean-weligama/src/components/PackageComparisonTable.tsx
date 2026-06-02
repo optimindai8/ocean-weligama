@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import {
   Check, Minus, Waves, Dumbbell, Coffee, Star, Gift,
@@ -171,6 +171,27 @@ function CellValue({
 /* ─── Component ───────────────────────────────────────────────────────────── */
 export function PackageComparisonTable() {
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
+  const [matrixData, setMatrixData] = useState<any>(null);
+  const [loadingMatrix, setLoadingMatrix] = useState(true);
+
+  useEffect(() => {
+    const fetchMatrix = async () => {
+      try {
+        const isDev = import.meta.env.DEV;
+        const apiUrl = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
+        const res = await fetch(`${apiUrl}/v1/matrix-pricing`);
+        if (res.ok) {
+          const json = await res.json();
+          setMatrixData(json);
+        }
+      } catch (err) {
+        console.error("Failed to fetch matrix pricing", err);
+      } finally {
+        setLoadingMatrix(false);
+      }
+    };
+    fetchMatrix();
+  }, []);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -415,6 +436,60 @@ export function PackageComparisonTable() {
           </tbody>
         </table>
       </motion.div>
+
+      {/* ── Dynamic Matrix Pricing Table ───────────────────────────────────── */}
+      {!loadingMatrix && matrixData && matrixData.rooms && matrixData.packages && (
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.5, duration: 0.7 }}
+          className="mt-16 w-full max-w-7xl mx-auto overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[600px]">
+              <thead>
+                <tr>
+                  <th className="p-4 border-b-2 border-slate-800 bg-white w-1/4"></th>
+                  {matrixData.packages.map((pkg: any, idx: number) => {
+                    // Match visual styles from packages array if possible, fallback to some defaults
+                    return (
+                      <th key={pkg.id} className="p-4 border-b-2 border-slate-800 bg-white text-center font-bold text-sm md:text-base text-slate-900">
+                        {pkg.name}
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {matrixData.rooms.map((room: any, rIdx: number) => (
+                  <tr key={room.id} className="border-b border-slate-200 last:border-b-0">
+                    <td className="p-4 md:p-6 bg-white">
+                      <div className="font-semibold text-slate-800 text-sm md:text-base">{room.name}</div>
+                      <div className="text-xs text-slate-400 mt-1">Per Person / Per Week</div>
+                    </td>
+                    {matrixData.packages.map((pkg: any, pIdx: number) => {
+                      const record = matrixData.prices.find((p: any) => p.roomId === room.id && p.packageId === pkg.id);
+                      const price = record ? parseFloat(record.price) : 0;
+                      const daily = record ? parseFloat(record.dailyPrice) : 0;
+                      
+                      // Color mapping to match the design logic
+                      let colorClass = "text-blue-500";
+                      if (pIdx === 1) colorClass = "text-emerald-500";
+                      if (pIdx === 2) colorClass = "text-purple-500";
+
+                      return (
+                        <td key={pkg.id} className={`p-4 md:p-6 text-center font-bold text-sm md:text-base ${colorClass}`}>
+                          {price > 0 ? `${price}€ / ${daily}€` : "-"}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+      )}
 
       {/* ── Trust Badges ────────────────────────────────────────────────── */}
       <motion.div

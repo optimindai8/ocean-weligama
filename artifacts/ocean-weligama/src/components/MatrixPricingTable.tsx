@@ -82,12 +82,12 @@ export function MatrixPricingTable() {
                       {room.name}
                     </td>
                     {packages?.map((pkg) => {
-                      const price = getPrice(room.id, pkg.id);
+                      const price = getPrice(room.id!, pkg.id!);
                       return (
                         <td key={pkg.id} className="p-6 md:p-8 text-center border-l border-[#0B3D5E]/5 font-medium text-slate-600">
                           {price ? (
                             <div className="flex flex-col items-center justify-center">
-                              <span className="text-xl font-bold text-[#1A6B8A]">{formatPrice(price)}</span>
+                              <span className="text-xl font-bold text-[#1A6B8A]">{formatPrice(parseFloat(price as string))}</span>
                               <span className="text-xs text-slate-400 mt-1 uppercase tracking-wider">Per Night</span>
                             </div>
                           ) : (

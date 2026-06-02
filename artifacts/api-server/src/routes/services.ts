@@ -94,11 +94,19 @@ router.get("/v1/matrix-pricing", async (req, res) => {
       return { id: r.id, name: t?.name ?? r.name };
     });
 
-    const mainPackages = await db
-      .select({ id: services.id, name: services.name, slug: services.slug })
+    const { serviceTranslations } = await import("@workspace/db");
+    const sTranslations = await db.select().from(serviceTranslations).where(eq(serviceTranslations.locale, "en"));
+
+    const packagesRecords = await db
+      .select({ id: services.id, slug: services.slug })
       .from(services)
       .where(and(eq(services.type, "main"), eq(services.isActive, true)))
       .orderBy(services.sortOrder);
+      
+    const mainPackages = packagesRecords.map(p => {
+      const t = sTranslations.find(tr => tr.serviceId === p.id);
+      return { id: p.id, name: t?.name ?? p.slug, slug: p.slug };
+    });
 
     const prices = await db.select().from(roomPackagePrices);
 

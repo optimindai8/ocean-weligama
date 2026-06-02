@@ -106,7 +106,7 @@ export default function AdminMatrixPricing() {
                     </td>
                     {packages.map(pkg => {
                       const key = `${room.id}-${pkg.id}`;
-                      const currentVal = editingValues[key] !== undefined ? editingValues[key] : getPrice(room.id, pkg.id);
+                      const currentVal = editingValues[key] !== undefined ? editingValues[key] : getPrice(room.id!, pkg.id!);
                       
                       return (
                         <td key={key} className="px-6 py-5">
@@ -114,8 +114,8 @@ export default function AdminMatrixPricing() {
                             <span className="absolute left-3 text-slate-400 font-medium text-sm">€</span>
                             <Input
                               value={currentVal}
-                              onChange={(e) => handlePriceChange(room.id, pkg.id, e.target.value)}
-                              onBlur={(e) => savePrice(room.id, pkg.id, e.target.value)}
+                              onChange={(e) => handlePriceChange(room.id!, pkg.id!, e.target.value)}
+                              onBlur={(e) => savePrice(room.id!, pkg.id!, e.target.value)}
                               className="pl-7 pr-10 text-center font-bold h-11 rounded-xl bg-slate-50 border-slate-200 focus-visible:ring-1 focus-visible:ring-[#0B3D5E] focus-visible:bg-white transition-all"
                               placeholder="0.00"
                             />

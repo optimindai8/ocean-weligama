@@ -248,8 +248,8 @@ export default function BookingConfirmationPage() {
                         return (
                           <div key={idx} className="bg-white rounded-[2.5rem] border-2 border-slate-100 shadow-sm overflow-hidden flex flex-col w-full max-w-md mx-auto mb-6">
                             <div className="relative w-full h-64 shrink-0 bg-emerald-50">
-                              {srv?.imageUrl || srv?.heroImageUrl ? (
-                                <img src={srv.imageUrl || srv?.heroImageUrl} alt={s.serviceName} className="w-full h-full object-cover" />
+                              {srv?.gallery?.[0] || srv?.heroImageUrl ? (
+                                <img src={srv.gallery?.[0] || srv?.heroImageUrl} alt={s.serviceName} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
                                   <Award className="w-16 h-16 text-emerald-200" />

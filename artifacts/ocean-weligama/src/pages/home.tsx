@@ -10,7 +10,6 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
 import { PackageComparisonTable } from "@/components/PackageComparisonTable";
-import { MatrixPricingTable } from "@/components/MatrixPricingTable";
 
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
@@ -401,9 +400,6 @@ export default function Home() {
       <section className="bg-white">
         <PackageComparisonTable />
       </section>
-
-      {/* Matrix Pricing Section */}
-      <MatrixPricingTable />
 
       {/* Experience Weligama Section */}
       {services && services.filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package") && s.isFeatured).length > 0 && (

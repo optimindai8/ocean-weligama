@@ -43,12 +43,10 @@ export default function PackageDetailPage() {
       <div className="pt-24 flex-1">
         {/* Banner Image */}
         <section className="relative aspect-[21/9] md:aspect-[21/6] w-full overflow-hidden bg-primary">
-          {service.imageUrl ? (
-            <img 
-              src={service.imageUrl} 
-              alt={service.name} 
-              className="w-full h-full object-cover opacity-90" 
-            />
+          {service.iconEmoji ? (
+            <div className="w-full h-full flex items-center justify-center text-9xl bg-emerald-50">
+              {service.iconEmoji}
+            </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-accent/20">
               <Sparkles className="w-16 h-16 text-white opacity-40 animate-pulse" />

@@ -82,7 +82,6 @@ const serviceSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   slug: z.string().optional(),
   description: z.string().optional(),
-  imageUrl: z.string().nullable().optional(),
   highlights: z.array(z.string()).optional(),
   type: z.enum(["main", "optional"]),
   category: z.string().nullable().optional(),
@@ -103,9 +102,7 @@ export default function AdminAddons() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [newHighlight, setNewHighlight] = useState("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: services, isLoading } = useAdminListServices({
     query: { queryKey: getAdminListServicesQueryKey() },
@@ -121,7 +118,6 @@ export default function AdminAddons() {
       name: "",
       slug: "",
       description: "",
-      imageUrl: "",
       highlights: [],
       type: "main",
       category: "Main Package",
@@ -142,7 +138,6 @@ export default function AdminAddons() {
         name: service.name,
         slug: service.slug,
         description: service.description || "",
-        imageUrl: service.imageUrl || "",
         highlights: service.highlights || [],
         type: service.type as "main" | "optional",
         category: service.category || "Main Package",
@@ -160,7 +155,6 @@ export default function AdminAddons() {
         name: "",
         slug: "",
         description: "",
-        imageUrl: "",
         highlights: [],
         type: "optional",
         category: "Adventure",
@@ -174,51 +168,6 @@ export default function AdminAddons() {
       });
     }
     setIsDialogOpen(true);
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const isDev = import.meta.env.DEV;
-      const apiUrl = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
-      const response = await fetch(`${apiUrl}/api/upload`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("ow-admin-token")}`
-        },
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        let errorMsg = "Upload failed";
-        try {
-          const errorData = JSON.parse(text);
-          errorMsg = errorData.error || errorMsg;
-        } catch {
-          errorMsg = `Server error (${response.status}): ${text.slice(0, 100)}`;
-        }
-        throw new Error(errorMsg);
-      }
-      
-      const data = await response.json();
-      form.setValue("imageUrl", data.url);
-      toast({ title: "Image uploaded successfully" });
-    } catch (err: any) {
-      toast({ 
-        variant: "destructive", 
-        title: "Upload failed", 
-        description: err.message || "Could not upload image." 
-      });
-    } finally {
-      setIsUploading(false);
-    }
   };
 
   const addHighlight = () => {
@@ -240,7 +189,6 @@ export default function AdminAddons() {
       slug: generatedSlug,
       highlights: [values.name],
       description: values.description || null,
-      imageUrl: null,
       category: "Adventure",
       unit: values.unit,
       sortOrder: 0,
@@ -367,14 +315,8 @@ export default function AdminAddons() {
                 className="group relative bg-white border border-slate-100 rounded-[2.5rem] p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 flex flex-col"
               >
                 <div className="flex items-start justify-between mb-6">
-                  <div className="w-16 h-16 rounded-[1.2rem] overflow-hidden shadow-md shadow-slate-200/50 group-hover:scale-105 transition-transform bg-slate-50">
-                    {service.imageUrl ? (
-                      <img src={service.imageUrl} alt={service.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full bg-[#0B3D5E]/5 flex items-center justify-center text-[#0B3D5E]/30">
-                        {service.iconEmoji ? <span className="text-2xl">{service.iconEmoji}</span> : <Sparkles className="w-6 h-6" />}
-                      </div>
-                    )}
+                  <div className="w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-2xl shadow-md shadow-slate-200/50 group-hover:scale-105 transition-transform bg-slate-50">
+                    {service.iconEmoji || <Sparkles className="w-6 h-6 text-[#0B3D5E]/30" />}
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-slate-200 text-slate-500">
