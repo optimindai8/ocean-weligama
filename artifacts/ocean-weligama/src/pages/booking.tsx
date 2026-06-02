@@ -121,6 +121,15 @@ function getUnitLabel(unit: string | undefined, qty: number) {
   return ``;
 }
 
+function getUnitInputLabel(unit: string | undefined) {
+  if (unit === 'per_day') return 'Number of Days';
+  if (unit === 'per_tour') return 'Number of Tours';
+  if (unit === 'per_trip') return 'Number of Trips';
+  if (unit === 'per_lesson') return 'Number of Lessons';
+  if (unit === 'per_session') return 'Number of Sessions';
+  return 'Quantity';
+}
+
 const ALL_STEPS = {
   guests: { id: "guests", label: "Guests", icon: Users },
   packages: { id: "packages", label: "Packages", icon: Award },
@@ -1175,15 +1184,26 @@ export default function BookingPage() {
 
 
                           {isSel && exp.unit !== 'flat_rate' && exp.unit !== 'per_person' && (
-                            <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-purple-50 rounded-full border border-purple-100 px-3 py-1 shadow-sm" onClick={(e) => e.stopPropagation()}>
-                              <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: Math.max(1, (p[exp.id] || 1) - 1) }))} className="w-6 h-6 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100">-</button>
-                              <span className="text-sm font-bold text-purple-800 text-center min-w-[24px]">
-                                {serviceQuantities[exp.id] || 1}
-                                {getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1) && (
-                                  <span className="text-[9px] ml-1 uppercase">{getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1)}</span>
-                                )}
-                              </span>
-                              <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || 1) + 1 }))} className="w-6 h-6 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100">+</button>
+                            <div className="mt-4 pt-4 border-t border-purple-50 flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
+                              <div className="flex items-center justify-between">
+                                <label className="text-sm font-bold text-purple-900">{getUnitInputLabel(exp.unit)}</label>
+                                <div className="flex items-center gap-3 bg-purple-50 rounded-full border border-purple-100 px-3 py-1.5 shadow-sm">
+                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: Math.max(1, (p[exp.id] || 1) - 1) }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100 transition-colors">-</button>
+                                  <span className="text-sm font-black text-purple-900 text-center min-w-[40px]">
+                                    {serviceQuantities[exp.id] || 1}
+                                    {getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1) && (
+                                      <span className="text-[10px] ml-1 uppercase tracking-wider">{getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1)}</span>
+                                    )}
+                                  </span>
+                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || 1) + 1 }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100 transition-colors">+</button>
+                                </div>
+                              </div>
+                              <div className="flex justify-between items-center bg-purple-50/50 p-3 rounded-xl border border-purple-50/50">
+                                <span className="text-xs font-bold text-purple-800/70 uppercase tracking-widest">Subtotal</span>
+                                <span className="text-base font-black text-purple-900">
+                                  €{((serviceQuantities[exp.id] || 1) * parseFloat(exp.basePrice)).toFixed(2)}
+                                </span>
+                              </div>
                             </div>
                           )}
 

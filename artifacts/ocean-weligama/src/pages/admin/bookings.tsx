@@ -650,16 +650,28 @@ export default function AdminBookings() {
                             }
 
                             return (
-                              <div key={idx} className="flex gap-4 p-4 rounded-xl bg-emerald-50/50 border border-emerald-100 items-center">
+                              <div key={idx} className="flex gap-4 p-5 rounded-2xl bg-white border border-emerald-100 items-center shadow-sm">
                                 {srv?.heroImageUrl && (
-                                  <img src={srv.heroImageUrl} alt={srv.name || s.serviceName} className="w-16 h-16 rounded-lg object-cover shadow-sm" />
+                                  <img src={srv.heroImageUrl} alt={srv.name || s.serviceName} className="w-16 h-16 rounded-xl object-cover shadow-sm" />
                                 )}
-                                <div className="flex-1">
-                                  <p className="font-bold text-emerald-900 text-base">{s.serviceName}</p>
-                                  {srv?.shortDesc && <p className="text-xs text-emerald-700/80 mt-1 line-clamp-1">{srv.shortDesc}</p>}
-                                  <p className="text-xs text-emerald-700 font-bold mt-2">{getUnitLabel(srv?.unit, s.quantity)}</p>
+                                <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-2">
+                                  <div>
+                                    <p className="font-bold text-emerald-950 text-base">{s.serviceName}</p>
+                                    {srv?.shortDesc && <p className="text-xs text-emerald-800/70 mt-1 line-clamp-1">{srv.shortDesc}</p>}
+                                  </div>
+                                  <div className="flex items-center gap-4 text-right">
+                                    <div className="flex flex-col text-right">
+                                      <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mb-0.5">Quantity</span>
+                                      <span className="text-sm font-black text-emerald-900 bg-emerald-50 px-3 py-1 rounded-lg">
+                                        {getUnitLabel(srv?.unit, s.quantity)}
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-col text-right">
+                                      <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mb-0.5">Subtotal</span>
+                                      <span className="text-lg font-black text-emerald-700">{currencySymbol}{parseFloat(s.subtotal).toFixed(2)}</span>
+                                    </div>
+                                  </div>
                                 </div>
-                                <span className="font-bold text-lg text-emerald-700">{currencySymbol}{s.subtotal}</span>
                               </div>
                             );
                           })}
