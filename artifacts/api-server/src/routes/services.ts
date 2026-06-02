@@ -77,8 +77,9 @@ router.get("/v1/services/:slug", async (req, res) => {
 
 router.get("/v1/matrix-pricing", async (req, res) => {
   try {
-    const { rooms, services, roomPackagePrices } = await import("@workspace/db");
-    const { isNull, and, eq } = await import("drizzle-orm");
+    // We already have db from top-level import
+    const { rooms, roomPackagePrices, roomTranslations } = await import("@workspace/db");
+    const { isNull } = await import("drizzle-orm");
 
     const allRooms = await db
       .select({ id: rooms.id, name: rooms.slug }) 
@@ -87,14 +88,12 @@ router.get("/v1/matrix-pricing", async (req, res) => {
       .orderBy(rooms.sortOrder);
 
     // Fetch translations for better names
-    const { roomTranslations } = await import("@workspace/db");
     const rTranslations = await db.select().from(roomTranslations).where(eq(roomTranslations.locale, "en"));
     const roomsMap = allRooms.map(r => {
       const t = rTranslations.find(tr => tr.roomId === r.id);
       return { id: r.id, name: t?.name ?? r.name };
     });
 
-    const { serviceTranslations } = await import("@workspace/db");
     const sTranslations = await db.select().from(serviceTranslations).where(eq(serviceTranslations.locale, "en"));
 
     const packagesRecords = await db

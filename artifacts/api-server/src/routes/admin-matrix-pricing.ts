@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { rooms, services, roomPackagePrices } from "@workspace/db";
+import { rooms, services, roomPackagePrices, roomTranslations, serviceTranslations } from "@workspace/db";
 import { eq, and, isNull } from "drizzle-orm";
 import { requireAdmin } from "../lib/auth.js";
 
@@ -10,20 +10,18 @@ const router = Router();
 router.get("/v1/admin/matrix-pricing", requireAdmin, async (req, res) => {
   try {
     const allRooms = await db
-      .select({ id: rooms.id, name: rooms.slug }) // Assuming room slug or translation is enough, or we should fetch translations. For admin, maybe slug is fine or we can fetch translations.
+      .select({ id: rooms.id, name: rooms.slug }) 
       .from(rooms)
       .where(isNull(rooms.deletedAt))
       .orderBy(rooms.sortOrder);
 
     // Fetch translations for better names
-    const { roomTranslations } = await import("@workspace/db");
     const rTranslations = await db.select().from(roomTranslations).where(eq(roomTranslations.locale, "en"));
     const roomsMap = allRooms.map(r => {
       const t = rTranslations.find(tr => tr.roomId === r.id);
       return { id: r.id, name: t?.name ?? r.name };
     });
 
-    const { serviceTranslations } = await import("@workspace/db");
     const sTranslations = await db.select().from(serviceTranslations).where(eq(serviceTranslations.locale, "en"));
 
     const packagesRecords = await db
