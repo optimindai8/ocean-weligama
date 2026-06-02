@@ -112,6 +112,15 @@ function getServiceTag(category?: string | null) {
   return category || "Adventure";
 }
 
+function getUnitLabel(unit: string | undefined, qty: number) {
+  if (unit === 'per_day') return `${qty > 1 ? 'Days' : 'Day'}`;
+  if (unit === 'per_tour') return `${qty > 1 ? 'Tours' : 'Tour'}`;
+  if (unit === 'per_trip') return `${qty > 1 ? 'Trips' : 'Trip'}`;
+  if (unit === 'per_lesson') return `${qty > 1 ? 'Lessons' : 'Lesson'}`;
+  if (unit === 'per_session') return `${qty > 1 ? 'Sessions' : 'Session'}`;
+  return ``;
+}
+
 const ALL_STEPS = {
   guests: { id: "guests", label: "Guests", icon: Users },
   packages: { id: "packages", label: "Packages", icon: Award },
@@ -1166,9 +1175,14 @@ export default function BookingPage() {
 
 
                           {isSel && exp.unit !== 'flat_rate' && exp.unit !== 'per_person' && (
-                            <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-purple-50 rounded-full border border-purple-100 px-2 py-1 shadow-sm" onClick={(e) => e.stopPropagation()}>
+                            <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-purple-50 rounded-full border border-purple-100 px-3 py-1 shadow-sm" onClick={(e) => e.stopPropagation()}>
                               <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: Math.max(1, (p[exp.id] || 1) - 1) }))} className="w-6 h-6 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100">-</button>
-                              <span className="text-sm font-bold text-purple-800 w-4 text-center">{serviceQuantities[exp.id] || 1}</span>
+                              <span className="text-sm font-bold text-purple-800 text-center min-w-[24px]">
+                                {serviceQuantities[exp.id] || 1}
+                                {getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1) && (
+                                  <span className="text-[9px] ml-1 uppercase">{getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1)}</span>
+                                )}
+                              </span>
                               <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || 1) + 1 }))} className="w-6 h-6 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100">+</button>
                             </div>
                           )}

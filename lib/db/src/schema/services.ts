@@ -14,6 +14,10 @@ export const serviceUnitEnum = pgEnum("service_unit", [
   "per_day",
   "per_qty",
   "flat_rate",
+  "per_session",
+  "per_tour",
+  "per_trip",
+  "per_lesson",
 ]);
 
 export const services = pgTable("services", {

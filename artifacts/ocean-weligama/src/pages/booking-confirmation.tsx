@@ -9,6 +9,10 @@ import { Check, MessageCircle, Calendar, Users, ArrowRight, Home, Plane, Message
 
 function getUnitLabel(unit: string | undefined, qty: number) {
   if (unit === 'per_day') return `${qty} Day${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_tour') return `${qty} Tour${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_trip') return `${qty} Trip${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_lesson') return `${qty} Lesson${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_session') return `${qty} Session${qty > 1 ? 's' : ''}`;
   return `Quantity: ${qty}`;
 }
 

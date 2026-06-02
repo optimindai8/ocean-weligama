@@ -404,6 +404,8 @@ export type BookingInputServiceCustomizations = {
   };
 };
 
+export type BookingInputServiceQuantities = { [key: string]: number };
+
 export type BookingInputPaymentMethod =
   (typeof BookingInputPaymentMethod)[keyof typeof BookingInputPaymentMethod];
 
@@ -429,6 +431,7 @@ export interface BookingInput {
   specialRequests?: string | null;
   serviceCustomizations?: BookingInputServiceCustomizations;
   serviceIds?: string[];
+  serviceQuantities?: BookingInputServiceQuantities;
   paymentMethod: BookingInputPaymentMethod;
   /** @nullable */
   languageUsed?: string | null;
@@ -448,6 +451,8 @@ export type BookingCheckServiceCustomizations = {
   };
 };
 
+export type BookingCheckServiceQuantities = { [key: string]: number };
+
 export interface BookingCheck {
   roomId?: string;
   roomIds: string[];
@@ -456,6 +461,7 @@ export interface BookingCheck {
   guestCount: number;
   serviceCustomizations?: BookingCheckServiceCustomizations;
   serviceIds?: string[];
+  serviceQuantities?: BookingCheckServiceQuantities;
 }
 
 export interface BookingQuote {

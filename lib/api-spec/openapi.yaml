@@ -1803,6 +1803,10 @@ components:
           type: array
           items:
             type: string
+        serviceQuantities:
+          type: object
+          additionalProperties:
+            type: integer
         paymentMethod:
           type: string
           enum: [online_card, bank_transfer, cash, pending]
@@ -1853,6 +1857,10 @@ components:
           type: array
           items:
             type: string
+        serviceQuantities:
+          type: object
+          additionalProperties:
+            type: integer
 
     BookingQuote:
       type: object

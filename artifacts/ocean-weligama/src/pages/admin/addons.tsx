@@ -531,7 +531,11 @@ export default function AdminAddons() {
                             <SelectContent>
                               <SelectItem value="flat_rate">Flat Rate</SelectItem>
                               <SelectItem value="per_person">Per Person</SelectItem>
-                              <SelectItem value="per_day">Per Day</SelectItem>
+                              <SelectItem value="per_day">Per Day (Days)</SelectItem>
+                              <SelectItem value="per_tour">Per Tour (Tours)</SelectItem>
+                              <SelectItem value="per_trip">Per Trip (Trips)</SelectItem>
+                              <SelectItem value="per_lesson">Per Lesson (Lessons)</SelectItem>
+                              <SelectItem value="per_session">Per Session (Sessions)</SelectItem>
                               <SelectItem value="per_qty">Per Quantity</SelectItem>
                             </SelectContent>
                           </Select>
