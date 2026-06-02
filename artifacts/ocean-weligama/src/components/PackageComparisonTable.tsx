@@ -467,7 +467,7 @@ export function PackageComparisonTable() {
                 </tr>
               </thead>
               <tbody>
-                {matrixData?.rooms?.length > 0 ? (
+                {matrixData?.rooms?.length > 0 && (
                   matrixData.rooms.map((room: any) => (
                     <tr key={room.id} className="border-b border-slate-200 last:border-b-0 bg-white">
                       <td className="p-4 md:px-6 md:py-5">
@@ -496,12 +496,6 @@ export function PackageComparisonTable() {
                       })}
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="p-8 text-center text-slate-400 font-medium">
-                      {loadingMatrix ? "Loading pricing matrix..." : "Please add rooms and configure packages in the admin panel to view the pricing matrix."}
-                    </td>
-                  </tr>
                 )}
               </tbody>
             </table>
