@@ -12,10 +12,7 @@ import {
 export const serviceUnitEnum = pgEnum("service_unit", [
   "per_person",
   "per_day",
-  "per_session",
-  "per_tour",
-  "per_trip",
-  "per_lesson",
+  "per_qty",
   "flat_rate",
 ]);
 
