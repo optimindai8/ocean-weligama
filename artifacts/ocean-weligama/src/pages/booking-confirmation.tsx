@@ -7,6 +7,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { Check, MessageCircle, Calendar, Users, ArrowRight, Home, Plane, MessageSquare, CreditCard, Award, Sparkles, Clock } from "lucide-react";
 
+function getUnitLabel(unit: string | undefined, qty: number) {
+  if (!unit || unit === 'flat_rate' || unit === 'per_person') return `Quantity: ${qty}`;
+  if (unit === 'per_day') return `${qty} Day${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_session') return `${qty} Session${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_tour') return `${qty} Tour${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_trip') return `${qty} Trip${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_lesson') return `${qty} Lesson${qty > 1 ? 's' : ''}`;
+  return `Quantity: ${qty}`;
+}
+
 function parseSpecialRequests(text: string) {
   if (!text) return { pickup: null, drop: null, customizations: [] as { packageName: string; changes: { from: string; to: string }[] }[], message: "" };
   let pickup: any = null;
@@ -303,7 +313,7 @@ export default function BookingConfirmationPage() {
                               )}
                               
                               <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 font-bold px-1">
-                                <span>Quantity: {s.quantity}</span>
+                                <span>{getUnitLabel(srv?.unit, s.quantity)}</span>
                                 <div className="bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-bold">Main Package</div>
                               </div>
                             </div>
@@ -318,7 +328,7 @@ export default function BookingConfirmationPage() {
                           <div className="flex-1">
                             <p className="font-bold text-emerald-900 text-base">{s.serviceName}</p>
                             {srv?.shortDesc && <p className="text-xs text-emerald-700/80 mt-1 line-clamp-1">{srv.shortDesc}</p>}
-                            <p className="text-xs text-emerald-700 font-bold mt-2">Quantity: {s.quantity}</p>
+                            <p className="text-xs text-emerald-700 font-bold mt-2">{getUnitLabel(srv?.unit, s.quantity)}</p>
                           </div>
                           {/* Price intentionally hidden */}
                         </div>

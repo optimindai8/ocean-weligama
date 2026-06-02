@@ -89,8 +89,9 @@ const serviceSchema = z.object({
   basePrice: z.string().min(1, "Price is required").regex(/^\d+(\.\d{1,2})?$/, "Invalid price format (e.g. 99.99)"),
   isActive: z.boolean().default(true),
   isBookable: z.boolean().default(true),
-    isFeatured: z.boolean().default(false),
+  isFeatured: z.boolean().default(false),
   sortOrder: z.string().default("0"),
+  unit: z.enum(["per_person", "per_day", "per_session", "per_tour", "per_trip", "per_lesson", "flat_rate"]).default("flat_rate"),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -139,6 +140,7 @@ export default function AdminPackages() {
       isBookable: true,
       isFeatured: false,
       sortOrder: "0",
+      unit: "flat_rate",
     },
   });
 
@@ -158,6 +160,7 @@ export default function AdminPackages() {
         isBookable: service.isBookable ?? true,
         isFeatured: service.isFeatured ?? false,
         sortOrder: service.sortOrder?.toString() || "0",
+        unit: (service.unit as any) || "flat_rate",
       });
     } else {
       setEditingService(null);
@@ -174,6 +177,7 @@ export default function AdminPackages() {
         isBookable: true,
       isFeatured: false,
         sortOrder: "0",
+        unit: "flat_rate",
       });
     }
     setIsDialogOpen(true);
@@ -244,7 +248,7 @@ export default function AdminPackages() {
       description: values.description || null,
       imageUrl: values.imageUrl || null,
       category: values.category || "Main Package",
-      unit: "flat_rate" as const,
+      unit: values.unit,
       sortOrder: values.sortOrder ? parseInt(values.sortOrder, 10) || 0 : 0,
     };
 
@@ -595,6 +599,33 @@ export default function AdminPackages() {
                             <FormControl>
                               <Input type="number" placeholder="0" {...field} className="rounded-xl h-12" />
                             </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="unit"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pricing Unit</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="rounded-xl h-12 font-semibold">
+                                  <SelectValue placeholder="Select a unit" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="flat_rate">Flat Rate</SelectItem>
+                                <SelectItem value="per_person">Per Person</SelectItem>
+                                <SelectItem value="per_day">Per Day</SelectItem>
+                                <SelectItem value="per_session">Per Session</SelectItem>
+                                <SelectItem value="per_tour">Per Tour</SelectItem>
+                                <SelectItem value="per_trip">Per Trip</SelectItem>
+                                <SelectItem value="per_lesson">Per Lesson</SelectItem>
+                              </SelectContent>
+                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}

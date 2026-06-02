@@ -29,7 +29,7 @@ function calculateNights(checkIn: string, checkOut: string): number {
 
 router.post("/v1/bookings/check", async (req, res) => {
   try {
-    const { roomId, roomIds: inputRoomIds, checkIn, checkOut, guestCount, serviceIds = [] } = req.body;
+    const { roomId, roomIds: inputRoomIds, checkIn, checkOut, guestCount, serviceIds = [], serviceQuantities = {} } = req.body;
     const roomIdsArray = inputRoomIds && inputRoomIds.length > 0 ? inputRoomIds : (roomId ? [roomId] : []);
 
     if (roomIdsArray.length === 0) {
@@ -99,7 +99,9 @@ router.post("/v1/bookings/check", async (req, res) => {
         if (service) {
           const price = parseFloat(service.basePrice);
           let qty = 1;
-          if (service.unit === "per_person") {
+          if (serviceQuantities && typeof serviceQuantities[sId] === "number") {
+            qty = serviceQuantities[sId];
+          } else if (service.unit === "per_person") {
             qty = guestCount;
           } else if (service.unit === "per_day") {
             qty = nights;
@@ -154,6 +156,7 @@ router.post("/v1/bookings", async (req, res) => {
       guestNationality,
       specialRequests,
       serviceIds = [],
+      serviceQuantities = {},
       paymentMethod,
       languageUsed,
     } = req.body;
@@ -208,7 +211,9 @@ router.post("/v1/bookings", async (req, res) => {
         if (service) {
           const price = parseFloat(service.basePrice);
           let qty = 1;
-          if (service.unit === "per_person") {
+          if (serviceQuantities && typeof serviceQuantities[sId] === "number") {
+            qty = serviceQuantities[sId];
+          } else if (service.unit === "per_person") {
             qty = guestCount;
           } else if (service.unit === "per_day") {
             qty = nights;

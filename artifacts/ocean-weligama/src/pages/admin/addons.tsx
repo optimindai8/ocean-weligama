@@ -92,6 +92,7 @@ const serviceSchema = z.object({
   isFeatured: z.boolean().default(false),
   sortOrder: z.string().optional(),
   iconEmoji: z.string().max(10).optional(),
+  unit: z.enum(["per_person", "per_day", "per_session", "per_tour", "per_trip", "per_lesson", "flat_rate"]).default("flat_rate"),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -130,6 +131,7 @@ export default function AdminAddons() {
       isFeatured: false,
       sortOrder: "0",
       iconEmoji: "",
+      unit: "flat_rate",
     },
   });
 
@@ -150,6 +152,7 @@ export default function AdminAddons() {
         isFeatured: service.isFeatured ?? false,
         sortOrder: service.sortOrder?.toString() || "0",
         iconEmoji: service.iconEmoji || "",
+        unit: (service.unit as any) || "flat_rate",
       });
     } else {
       setEditingService(null);
@@ -167,6 +170,7 @@ export default function AdminAddons() {
       isFeatured: false,
         sortOrder: "0",
         iconEmoji: "",
+        unit: "flat_rate",
       });
     }
     setIsDialogOpen(true);
@@ -238,7 +242,7 @@ export default function AdminAddons() {
       description: values.description || null,
       imageUrl: null,
       category: "Adventure",
-      unit: "flat_rate" as const,
+      unit: values.unit,
       sortOrder: 0,
       iconEmoji: values.iconEmoji || null,
     };
@@ -512,6 +516,32 @@ export default function AdminAddons() {
                       )}
                     />
                     
+                    <FormField
+                      control={form.control}
+                      name="unit"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Pricing Unit</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="rounded-xl h-12 font-semibold bg-white border-slate-200">
+                                <SelectValue placeholder="Select a unit" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="flat_rate">Flat Rate</SelectItem>
+                              <SelectItem value="per_person">Per Person</SelectItem>
+                              <SelectItem value="per_day">Per Day</SelectItem>
+                              <SelectItem value="per_session">Per Session</SelectItem>
+                              <SelectItem value="per_tour">Per Tour</SelectItem>
+                              <SelectItem value="per_trip">Per Trip</SelectItem>
+                              <SelectItem value="per_lesson">Per Lesson</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                   </div>
 

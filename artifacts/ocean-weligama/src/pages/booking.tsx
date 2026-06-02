@@ -252,7 +252,7 @@ export default function BookingPage() {
   };
   const clearState = () => {
     if (typeof window !== 'undefined') {
-      ['stepId', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'priceData', 'formData', 'highlightCustom'].forEach(k => {
+      ['stepId', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'serviceQuantities', 'priceData', 'formData', 'highlightCustom'].forEach(k => {
         localStorage.removeItem(`booking_${k}`);
       });
     }
@@ -286,6 +286,7 @@ export default function BookingPage() {
   });
   const [selectedRoomIds,       setSelectedRoomIds]       = useState<string[]>(() => loadState("roomIds", []));
   const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>(() => loadState("serviceIds", []));
+  const [serviceQuantities,     setServiceQuantities]     = useState<Record<string, number>>(() => loadState("serviceQuantities", {}));
   const [priceData,             setPriceData]             = useState<any>(() => loadState("priceData", null));
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
   const [highlightCustomizations, setHighlightCustomizations] = useState<Record<string, Record<number, number>>>(() => loadState("highlightCustom", {}));
@@ -295,6 +296,7 @@ export default function BookingPage() {
   useEffect(() => { saveState("dateRange", dateRange); }, [dateRange]);
   useEffect(() => { saveState("roomIds", selectedRoomIds); }, [selectedRoomIds]);
   useEffect(() => { saveState("serviceIds", selectedDbServiceIds); }, [selectedDbServiceIds]);
+  useEffect(() => { saveState("serviceQuantities", serviceQuantities); }, [serviceQuantities]);
   useEffect(() => { saveState("priceData", priceData); }, [priceData]);
   useEffect(() => { saveState("highlightCustom", highlightCustomizations); }, [highlightCustomizations]);
 
@@ -323,7 +325,9 @@ export default function BookingPage() {
         if (svc) {
           const price = parseFloat(svc.basePrice || "0");
           let qty = 1;
-          if (svc.unit === "per_person") {
+          if (serviceQuantities && typeof serviceQuantities[svcId] === "number") {
+            qty = serviceQuantities[svcId];
+          } else if (svc.unit === "per_person") {
             qty = guestCount;
           } else if (svc.unit === "per_day") {
             qty = nights;
@@ -472,6 +476,7 @@ export default function BookingPage() {
           checkOut: toStr(dateRange.to),
           guestCount,
           serviceIds: selectedDbServiceIds,
+          serviceQuantities,
           serviceCustomizations: getServiceCustomizations(),
         },
       });
@@ -540,6 +545,7 @@ export default function BookingPage() {
           roomIds: selectedRoomIds,
           checkIn: toStr(dateRange.from), checkOut: toStr(dateRange.to),
           guestCount, serviceIds: selectedDbServiceIds,
+          serviceQuantities,
           serviceCustomizations: getServiceCustomizations(),
         },
       });
@@ -1158,6 +1164,14 @@ export default function BookingPage() {
                           </p>
 
 
+
+                          {isSel && exp.unit !== 'flat_rate' && exp.unit !== 'per_person' && (
+                            <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-purple-50 rounded-full border border-purple-100 px-2 py-1 shadow-sm" onClick={(e) => e.stopPropagation()}>
+                              <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: Math.max(1, (p[exp.id] || 1) - 1) }))} className="w-6 h-6 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100">-</button>
+                              <span className="text-sm font-bold text-purple-800 w-4 text-center">{serviceQuantities[exp.id] || 1}</span>
+                              <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || 1) + 1 }))} className="w-6 h-6 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100">+</button>
+                            </div>
+                          )}
 
                           {isSel && (
                             <motion.div

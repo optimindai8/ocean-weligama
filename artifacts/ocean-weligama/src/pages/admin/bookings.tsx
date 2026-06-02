@@ -135,6 +135,16 @@ function parseSpecialRequests(text: string) {
   return { pickup, drop, customizations, message: remainingLines.join("\n").trim() };
 }
 
+function getUnitLabel(unit: string | undefined, qty: number) {
+  if (!unit || unit === 'flat_rate' || unit === 'per_person') return `Quantity: ${qty}`;
+  if (unit === 'per_day') return `${qty} Day${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_session') return `${qty} Session${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_tour') return `${qty} Tour${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_trip') return `${qty} Trip${qty > 1 ? 's' : ''}`;
+  if (unit === 'per_lesson') return `${qty} Lesson${qty > 1 ? 's' : ''}`;
+  return `Quantity: ${qty}`;
+}
+
 export default function AdminBookings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -632,7 +642,7 @@ export default function AdminBookings() {
                                       )}
                                     </div>
                                     <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 font-bold">
-                                      <span>Quantity: {s.quantity}</span>
+                                      <span>{getUnitLabel(srv?.unit, s.quantity)}</span>
                                       <Badge className="bg-emerald-50 text-emerald-700 border-none font-bold">Main Package</Badge>
                                     </div>
                                   </div>
@@ -648,7 +658,7 @@ export default function AdminBookings() {
                                 <div className="flex-1">
                                   <p className="font-bold text-emerald-900 text-base">{s.serviceName}</p>
                                   {srv?.shortDesc && <p className="text-xs text-emerald-700/80 mt-1 line-clamp-1">{srv.shortDesc}</p>}
-                                  <p className="text-xs text-emerald-700 font-bold mt-2">Quantity: {s.quantity}</p>
+                                  <p className="text-xs text-emerald-700 font-bold mt-2">{getUnitLabel(srv?.unit, s.quantity)}</p>
                                 </div>
                                 <span className="font-bold text-lg text-emerald-700">{currencySymbol}{s.subtotal}</span>
                               </div>
