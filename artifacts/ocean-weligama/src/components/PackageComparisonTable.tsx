@@ -280,18 +280,7 @@ export function PackageComparisonTable() {
               ))}
             </div>
 
-            {/* CTA */}
-            <div className="px-5 pb-6">
-              <Link href={`/book?service=${pkg.slug}`}>
-                <motion.button
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r ${pkg.gradient} text-white rounded-2xl py-4 text-sm font-bold shadow-lg hover:shadow-xl transition-shadow duration-300`}
-                >
-                  Book This Package <ArrowRight className="w-4 h-4" />
-                </motion.button>
-              </Link>
-            </div>
+            {/* CTA Removed */}
           </motion.div>
         ))}
       </div>
@@ -415,33 +404,13 @@ export function PackageComparisonTable() {
               </React.Fragment>
             ))}
 
-            {/* CTA Row */}
+            {/* Footer Row */}
             <tr className="border-t-2 border-slate-100">
-              <td className="p-6 bg-gradient-to-br from-slate-50 to-white">
+              <td colSpan={4} className="p-6 bg-gradient-to-br from-slate-50 to-white text-center">
                 <p className="text-xs text-slate-400 font-medium italic">
                   All packages include 7 nights accommodation, daily breakfast &amp; dinner
                 </p>
               </td>
-              {packages.map((pkg, idx) => (
-                <td
-                  key={pkg.id}
-                  className={`p-6 text-center transition-all duration-500 ${
-                    hoveredCol === idx ? pkg.lightBg : 'bg-white'
-                  }`}
-                  onMouseEnter={() => setHoveredCol(idx)}
-                  onMouseLeave={() => setHoveredCol(null)}
-                >
-                  <Link href={`/book?service=${pkg.slug}`}>
-                    <motion.button
-                      whileHover={{ scale: 1.06, y: -3 }}
-                      whileTap={{ scale: 0.97 }}
-                      className={`inline-flex items-center gap-2 bg-gradient-to-r ${pkg.gradient} text-white rounded-xl px-7 py-3.5 text-sm font-bold shadow-lg hover:shadow-xl transition-shadow duration-300`}
-                    >
-                      Book Now <ArrowRight className="w-4 h-4" />
-                    </motion.button>
-                  </Link>
-                </td>
-              ))}
             </tr>
           </tbody>
         </table>
