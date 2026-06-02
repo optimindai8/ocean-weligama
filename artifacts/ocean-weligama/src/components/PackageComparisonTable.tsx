@@ -451,80 +451,58 @@ export function PackageComparisonTable() {
                 <tr>
                   <th className="p-4 border-b-[3px] border-black bg-white w-1/3">
                   </th>
-                  {(() => {
-                    const packages = (matrixData && matrixData.packages && matrixData.packages.length > 0) 
-                      ? matrixData.packages 
-                      : [
-                          { id: '1', name: 'Moderate Surf / Guiding' },
-                          { id: '2', name: 'Surf And Yoga Package' },
-                          { id: '3', name: 'Full Surf Package' }
-                        ];
-                    return packages.map((pkg: any, idx: number) => (
+                  {matrixData?.packages?.length > 0 ? (
+                    matrixData.packages.map((pkg: any) => (
                       <th key={pkg.id} className="p-4 border-b-[3px] border-black bg-white text-center font-bold text-sm text-black">
                         {pkg.name}
                       </th>
-                    ));
-                  })()}
+                    ))
+                  ) : (
+                    <>
+                      <th className="p-4 border-b-[3px] border-black bg-white text-center font-bold text-sm text-black">Surfer Starter Package</th>
+                      <th className="p-4 border-b-[3px] border-black bg-white text-center font-bold text-sm text-black">Surfer Advance Package</th>
+                      <th className="p-4 border-b-[3px] border-black bg-white text-center font-bold text-sm text-black">Yoga & Surf Retreat Package</th>
+                    </>
+                  )}
                 </tr>
               </thead>
               <tbody>
-                {(() => {
-                  const hasData = matrixData && matrixData.rooms && matrixData.rooms.length > 0;
-                  const rooms = hasData 
-                    ? matrixData.rooms 
-                    : [
-                        { id: 'r1', name: 'Mixed Dormitory Bed', subtitle: 'Max ( 05 people )' },
-                        { id: 'r2', name: 'Private Single Room', subtitle: 'Per Week' },
-                        { id: 'r3', name: 'Private Double / Twin Room', subtitle: 'Per Person / Per Week' },
-                        { id: 'r4', name: 'Private Triple Room', subtitle: 'Per Person / Per Week' }
-                      ];
-                      
-                  const mockPrices: Record<string, string[]> = {
-                    'r1': ['290€ / 41.43€', '350€ / 50.0€', '390€ / 55.71€'],
-                    'r2': ['390€ / 55.71€', '450€ / 64.29€', '490€ / 70.0€'],
-                    'r3': ['290€ / 41.43€', '350€ / 50.0€', '390€ / 55.71€'],
-                    'r4': ['290€ / 41.43€', '350€ / 50.0€', '390€ / 55.71€'],
-                  };
-
-                  return rooms.map((room: any, rIdx: number) => (
+                {matrixData?.rooms?.length > 0 ? (
+                  matrixData.rooms.map((room: any) => (
                     <tr key={room.id} className="border-b border-slate-200 last:border-b-0 bg-white">
                       <td className="p-4 md:px-6 md:py-5">
                         <div className="font-bold text-slate-800 text-sm">{room.name}</div>
-                        <div className="text-[11px] font-medium text-slate-500 mt-0.5">{room.subtitle || 'Per Person / Per Week'}</div>
+                        <div className="text-[11px] font-medium text-slate-500 mt-0.5">Per Person / Per Week</div>
                       </td>
                       
-                      {(() => {
-                        const packages = (matrixData && matrixData.packages && matrixData.packages.length > 0) 
-                          ? matrixData.packages 
-                          : [{id:'1'}, {id:'2'}, {id:'3'}];
+                      {(matrixData?.packages || []).map((pkg: any, pIdx: number) => {
+                        let displayPrice = "-";
+                        
+                        const record = matrixData?.prices?.find((p: any) => p.roomId === room.id && p.packageId === pkg.id);
+                        if (record && parseFloat(record.price) > 0) {
+                          displayPrice = `${parseFloat(record.price)}€ / ${parseFloat(record.dailyPrice)}€`;
+                        }
+                        
+                        let colorClass = "text-[#3B82F6]";
+                        if (pIdx === 1) colorClass = "text-[#22C55E]";
+                        if (pIdx === 2) colorClass = "text-[#A855F7]";
+                        if (pIdx > 2) colorClass = "text-slate-600";
 
-                        return packages.map((pkg: any, pIdx: number) => {
-                          let displayPrice = "-";
-                          
-                          if (hasData) {
-                            const record = matrixData.prices.find((p: any) => p.roomId === room.id && p.packageId === pkg.id);
-                            if (record && parseFloat(record.price) > 0) {
-                              displayPrice = `${parseFloat(record.price)}€ / ${parseFloat(record.dailyPrice)}€`;
-                            }
-                          } else {
-                            displayPrice = mockPrices[room.id]?.[pIdx] || "-";
-                          }
-                          
-                          let colorClass = "text-[#3B82F6]"; // Blue
-                          if (pIdx === 1) colorClass = "text-[#22C55E]"; // Green
-                          if (pIdx === 2) colorClass = "text-[#A855F7]"; // Purple
-                          if (pIdx > 2) colorClass = "text-slate-600";
-
-                          return (
-                            <td key={pkg.id} className={`p-4 md:px-6 md:py-5 text-center font-bold text-sm ${colorClass}`}>
-                              {displayPrice}
-                            </td>
-                          );
-                        });
-                      })()}
+                        return (
+                          <td key={pkg.id} className={`p-4 md:px-6 md:py-5 text-center font-bold text-sm ${colorClass}`}>
+                            {displayPrice}
+                          </td>
+                        );
+                      })}
                     </tr>
-                  ));
-                })()}
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="p-8 text-center text-slate-400 font-medium">
+                      {loadingMatrix ? "Loading pricing matrix..." : "Please add rooms and configure packages in the admin panel to view the pricing matrix."}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
