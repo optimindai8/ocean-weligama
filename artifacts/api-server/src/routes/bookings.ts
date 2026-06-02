@@ -113,10 +113,7 @@ router.post("/v1/bookings/check", async (req, res) => {
             extraLessons = serviceCustomizations[sId].extraLessons || 0;
             extraSessions = serviceCustomizations[sId].extraSessions || 0;
             
-            const extraLessonPrice = parseFloat(service.extraLessonPrice || "0");
-            const extraSessionPrice = parseFloat(service.extraSessionPrice || "0");
-            
-            extraCost = (extraLessons * extraLessonPrice) + (extraSessions * extraSessionPrice);
+            extraCost = 0;
           }
 
           servicesSubtotal += (price * qty) + extraCost;
@@ -225,10 +222,7 @@ router.post("/v1/bookings", async (req, res) => {
             extraLessons = serviceCustomizations[sId].extraLessons || 0;
             extraSessions = serviceCustomizations[sId].extraSessions || 0;
             
-            const extraLessonPrice = parseFloat(service.extraLessonPrice || "0");
-            const extraSessionPrice = parseFloat(service.extraSessionPrice || "0");
-            
-            extraCost = (extraLessons * extraLessonPrice) + (extraSessions * extraSessionPrice);
+            extraCost = 0;
           }
 
           const subtotal = (price * qty) + extraCost;

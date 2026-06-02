@@ -345,11 +345,7 @@ export default function BookingPage() {
                 if (_origCount !== null) {
                   const diff = newCount - _origCount;
                   if (diff > 0) {
-                    if (isLesson) {
-                      t += diff * parseFloat((svc as any).extraLessonPrice || "0");
-                    } else if (isSession) {
-                      t += diff * parseFloat((svc as any).extraSessionPrice || "0");
-                    }
+                    // Extra lessons/sessions are free or unsupported now
                   }
                 }
               }
@@ -996,7 +992,7 @@ export default function BookingPage() {
                                       const embeddedNumMatch = !leadingNumMatch ? hl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
                                       const isLesson = /(lesson)/i.test(hl);
                                       const isSession = /(session|class)/i.test(hl);
-                                      const isAdjustable = isLesson || isSession;
+                                      const isAdjustable = (isLesson || isSession) && pkg.type !== "main";
                                       const originalCount = leadingNumMatch
                                         ? parseInt(leadingNumMatch[1])
                                         : embeddedNumMatch
