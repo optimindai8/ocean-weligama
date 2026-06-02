@@ -438,81 +438,97 @@ export function PackageComparisonTable() {
       </motion.div>
 
       {/* ── Dynamic Matrix Pricing Table ───────────────────────────────────── */}
-      <div className="mt-20 w-full max-w-7xl mx-auto">
-        <div className="text-center mb-10">
-          <h3 className="text-3xl md:text-4xl font-serif font-bold text-[#0B3D5E] mb-3">Room & Package Matrix</h3>
-          <p className="text-slate-500 max-w-2xl mx-auto">Inclusive pricing for your perfect stay. View our weekly and daily rates combining your preferred room and surf package.</p>
-        </div>
-        {loadingMatrix ? (
-          <div className="p-16 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-200 animate-pulse font-medium">
-            Loading matrix pricing data...
-          </div>
-        ) : (!matrixData || !matrixData.rooms || matrixData.rooms.length === 0 || !matrixData.packages || matrixData.packages.length === 0) ? (
-          <div className="p-16 text-center text-slate-500 bg-white rounded-2xl border border-slate-200 shadow-sm">
-            <p className="font-semibold text-lg mb-2">No pricing matrix available</p>
-            <p className="text-sm opacity-80">Pricing matrix data is currently being updated. Please check back later.</p>
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.5, duration: 0.7 }}
-            className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)]"
-          >
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[600px]">
-                <thead>
-                  <tr>
-                    <th className="p-6 border-b-2 border-slate-800 bg-slate-50 w-1/4">
-                      <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Select your stay</span>
-                    </th>
-                    {matrixData.packages.map((pkg: any, idx: number) => {
-                      return (
-                        <th key={pkg.id} className="p-6 border-b-2 border-slate-800 bg-slate-50 text-center">
-                          <div className="font-bold text-base md:text-lg text-slate-900 mb-1">{pkg.name}</div>
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Package</div>
-                        </th>
-                      );
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {matrixData.rooms.map((room: any, rIdx: number) => (
-                    <tr key={room.id} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50/50 transition-colors">
-                      <td className="p-5 md:p-6 bg-transparent">
-                        <div className="font-bold text-slate-800 text-sm md:text-base">{room.name}</div>
-                        <div className="text-[11px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">Per Person / Per Week</div>
-                      </td>
-                      {matrixData.packages.map((pkg: any, pIdx: number) => {
-                        const record = matrixData.prices.find((p: any) => p.roomId === room.id && p.packageId === pkg.id);
-                        const price = record ? parseFloat(record.price) : 0;
-                        const daily = record ? parseFloat(record.dailyPrice) : 0;
-                        
-                        let colorClass = "text-blue-600 bg-blue-50/50";
-                        if (pIdx === 1) colorClass = "text-teal-600 bg-teal-50/50";
-                        if (pIdx === 2) colorClass = "text-emerald-600 bg-emerald-50/50";
-                        if (pIdx > 2) colorClass = "text-slate-600 bg-slate-50/50";
+      <div className="mt-12 w-full max-w-[1000px] mx-auto pb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.5, duration: 0.7 }}
+          className="bg-white rounded-lg shadow-[0_8px_30px_rgb(0,0,0,0.08)] overflow-hidden border border-slate-100"
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[700px]">
+              <thead>
+                <tr>
+                  <th className="p-4 border-b-[3px] border-black bg-white w-1/3">
+                  </th>
+                  {(() => {
+                    const packages = (matrixData && matrixData.packages && matrixData.packages.length > 0) 
+                      ? matrixData.packages 
+                      : [
+                          { id: '1', name: 'Moderate Surf / Guiding' },
+                          { id: '2', name: 'Surf And Yoga Package' },
+                          { id: '3', name: 'Full Surf Package' }
+                        ];
+                    return packages.map((pkg: any, idx: number) => (
+                      <th key={pkg.id} className="p-4 border-b-[3px] border-black bg-white text-center font-bold text-sm text-black">
+                        {pkg.name}
+                      </th>
+                    ));
+                  })()}
+                </tr>
+              </thead>
+              <tbody>
+                {(() => {
+                  const hasData = matrixData && matrixData.rooms && matrixData.rooms.length > 0;
+                  const rooms = hasData 
+                    ? matrixData.rooms 
+                    : [
+                        { id: 'r1', name: 'Mixed Dormitory Bed', subtitle: 'Max ( 05 people )' },
+                        { id: 'r2', name: 'Private Single Room', subtitle: 'Per Week' },
+                        { id: 'r3', name: 'Private Double / Twin Room', subtitle: 'Per Person / Per Week' },
+                        { id: 'r4', name: 'Private Triple Room', subtitle: 'Per Person / Per Week' }
+                      ];
+                      
+                  const mockPrices: Record<string, string[]> = {
+                    'r1': ['290€ / 41.43€', '350€ / 50.0€', '390€ / 55.71€'],
+                    'r2': ['390€ / 55.71€', '450€ / 64.29€', '490€ / 70.0€'],
+                    'r3': ['290€ / 41.43€', '350€ / 50.0€', '390€ / 55.71€'],
+                    'r4': ['290€ / 41.43€', '350€ / 50.0€', '390€ / 55.71€'],
+                  };
 
-                        return (
-                          <td key={pkg.id} className={`p-5 md:p-6 text-center font-bold text-sm md:text-base border-l border-slate-100 ${colorClass}`}>
-                            {price > 0 ? (
-                              <div className="flex flex-col items-center justify-center">
-                                <span className="text-lg">{price}€</span>
-                                <span className="text-[10px] font-semibold opacity-70 mt-1 uppercase tracking-wider">or {daily}€ / day</span>
-                              </div>
-                            ) : (
-                              <span className="text-slate-300">-</span>
-                            )}
-                          </td>
-                        );
-                      })}
+                  return rooms.map((room: any, rIdx: number) => (
+                    <tr key={room.id} className="border-b border-slate-200 last:border-b-0 bg-white">
+                      <td className="p-4 md:px-6 md:py-5">
+                        <div className="font-bold text-slate-800 text-sm">{room.name}</div>
+                        <div className="text-[11px] font-medium text-slate-500 mt-0.5">{room.subtitle || 'Per Person / Per Week'}</div>
+                      </td>
+                      
+                      {(() => {
+                        const packages = (matrixData && matrixData.packages && matrixData.packages.length > 0) 
+                          ? matrixData.packages 
+                          : [{id:'1'}, {id:'2'}, {id:'3'}];
+
+                        return packages.map((pkg: any, pIdx: number) => {
+                          let displayPrice = "-";
+                          
+                          if (hasData) {
+                            const record = matrixData.prices.find((p: any) => p.roomId === room.id && p.packageId === pkg.id);
+                            if (record && parseFloat(record.price) > 0) {
+                              displayPrice = `${parseFloat(record.price)}€ / ${parseFloat(record.dailyPrice)}€`;
+                            }
+                          } else {
+                            displayPrice = mockPrices[room.id]?.[pIdx] || "-";
+                          }
+                          
+                          let colorClass = "text-[#3B82F6]"; // Blue
+                          if (pIdx === 1) colorClass = "text-[#22C55E]"; // Green
+                          if (pIdx === 2) colorClass = "text-[#A855F7]"; // Purple
+                          if (pIdx > 2) colorClass = "text-slate-600";
+
+                          return (
+                            <td key={pkg.id} className={`p-4 md:px-6 md:py-5 text-center font-bold text-sm ${colorClass}`}>
+                              {displayPrice}
+                            </td>
+                          );
+                        });
+                      })()}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-        )}
+                  ));
+                })()}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
       </div>
 
       {/* ── Trust Badges ────────────────────────────────────────────────── */}
@@ -520,7 +536,7 @@ export function PackageComparisonTable() {
         initial={{ opacity: 0, y: 20 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.7 }}
-        className="flex flex-wrap items-center justify-center gap-5 mt-12 text-slate-400"
+        className="flex flex-wrap items-center justify-center gap-5 mt-4 pb-12 text-slate-400"
       >
         {[
           { icon: '🛡️', text: 'Secure Booking' },
