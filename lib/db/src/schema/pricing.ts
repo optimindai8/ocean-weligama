@@ -6,8 +6,10 @@ import {
   text,
   timestamp,
   boolean,
+  unique,
 } from "drizzle-orm/pg-core";
 import { rooms } from "./rooms";
+import { services } from "./services";
 
 export const pricingRules = pgTable("pricing_rules", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -29,3 +31,27 @@ export const pricingRules = pgTable("pricing_rules", {
     .defaultNow()
     .notNull(),
 });
+
+export const roomPackagePrices = pgTable(
+  "room_package_prices",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    roomId: uuid("room_id")
+      .notNull()
+      .references(() => rooms.id, { onDelete: "cascade" }),
+    packageId: uuid("package_id")
+      .notNull()
+      .references(() => services.id, { onDelete: "cascade" }),
+    price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+    dailyPrice: decimal("daily_price", { precision: 10, scale: 2 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => ({
+    unq: unique("room_package_unq").on(table.roomId, table.packageId),
+  })
+);

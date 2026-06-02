@@ -30,6 +30,7 @@ import AdminMessages from "@/pages/admin/messages";
 import AdminGallery from "@/pages/admin/gallery";
 import AdminBlogs from "@/pages/admin/blogs";
 import AdminAirport from "@/pages/admin/airport";
+import AdminMatrixPricing from "@/pages/admin/matrix-pricing";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -90,6 +91,7 @@ function App() {
               <Route path="/ow-admin/gallery" component={AdminGallery} />
               <Route path="/ow-admin/blogs" component={AdminBlogs} />
               <Route path="/ow-admin/airport" component={AdminAirport} />
+              <Route path="/ow-admin/matrix-pricing" component={AdminMatrixPricing} />
 
               <Route component={NotFound} />
             </Switch>

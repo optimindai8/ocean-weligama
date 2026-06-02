@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { rooms, roomTranslations, amenities, roomAmenities } from "@workspace/db";
+import { rooms, roomTranslations, amenities, roomAmenities, services, roomPackagePrices } from "@workspace/db";
 import { eq, and, isNull } from "drizzle-orm";
 import { requireAdmin } from "../lib/auth.js";
 
@@ -95,6 +95,22 @@ router.post("/v1/admin/rooms", requireAdmin, async (req, res) => {
       name,
       description,
     });
+
+    const activePackages = await db
+      .select({ id: services.id, basePrice: services.basePrice })
+      .from(services)
+      .where(and(eq(services.type, "main"), eq(services.isActive, true)));
+
+    if (activePackages.length > 0) {
+      await db.insert(roomPackagePrices).values(
+        activePackages.map((pkg) => ({
+          roomId: room.id,
+          packageId: pkg.id,
+          price: pkg.basePrice, // default price
+          dailyPrice: pkg.basePrice, // default daily price
+        }))
+      );
+    }
 
     const result = await enrichRoom(room.id);
     res.status(201).json(result);

@@ -10,6 +10,7 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
 import { PackageComparisonTable } from "@/components/PackageComparisonTable";
+import { MatrixPricingTable } from "@/components/MatrixPricingTable";
 
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
@@ -396,110 +397,13 @@ export default function Home() {
       </section>
 
       
-      {/* Featured Packages (Services) */}
-      <section className="py-24 bg-white container mx-auto px-4">
-        <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-          <span className="text-[#1A6B8A] font-bold tracking-[0.2em] uppercase text-xs">Exclusive Offers</span>
-          <h2 className="text-3xl md:text-5xl font-serif font-bold">Featured Packages</h2>
-          <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
-          {services?.filter(s => s.isFeatured && (s.type === "main" || s.category?.toLowerCase().includes("package"))).map((pkg: any, idx: number) => (
-            <motion.div
-              key={pkg.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="group relative flex flex-col bg-white border border-[#0B3D5E]/10 rounded-[2.5rem] overflow-hidden hover:shadow-2xl hover:shadow-[#0B3D5E]/10 transition-all duration-500"
-            >
-              {/* Image Aspect */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-                {pkg.imageUrl ? (
-                  <img 
-                    src={pkg.imageUrl} 
-                    alt={pkg.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                  />
-                ) : (
-                  <div className="w-full h-full bg-[#1A6B8A]/10 flex items-center justify-center text-[#1A6B8A]">
-                    <Sparkles className="w-10 h-10 opacity-40 animate-pulse" />
-                  </div>
-                )}
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-[#0B3D5E] font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-full border border-white/40 shadow-sm">
-                  Featured
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-8 flex-1 flex flex-col justify-between space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <h3 className="text-2xl font-serif font-bold text-[#0B3D5E] group-hover:text-[#1A6B8A] transition-colors">
-                      {pkg.name}
-                    </h3>
-                  </div>
-
-                  <p className="text-muted-foreground text-sm font-light line-clamp-3">
-                    {pkg.description || "Indulge in a premium surf experience featuring top-notch local guidance, safety, and modern comfort."}
-                  </p>
-
-                  {pkg.highlights && pkg.highlights.length > 0 && (
-                    <div className="border-t border-[#0B3D5E]/10 pt-4 space-y-2.5">
-                      {(expandedCards[pkg.id] ? pkg.highlights : pkg.highlights.slice(0, 4)).map((item: string, index: number) => (
-                        <motion.div
-                          key={index}
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="flex items-start gap-2.5 text-xs text-foreground/80"
-                        >
-                          <Check className="w-4 h-4 text-[#4BBCCC] flex-shrink-0 mt-0.5" />
-                          <span className="font-medium">{item}</span>
-                        </motion.div>
-                      ))}
-                      {pkg.highlights.length > 4 && (
-                        <button
-                          onClick={() => toggleCard(pkg.id)}
-                          className="text-[10px] text-[#1A6B8A] font-semibold italic pl-6 hover:text-[#0B3D5E] transition-colors underline underline-offset-2 cursor-pointer"
-                        >
-                          {expandedCards[pkg.id]
-                            ? "Show less"
-                            : `+ ${pkg.highlights.length - 4} more highlights`}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="pt-4 flex items-center gap-3">
-                  <Link href={`/packages/${pkg.slug}`} className="flex-1">
-                    <Button className="w-full rounded-full bg-[#0B3D5E] hover:bg-[#1A6B8A] text-white font-semibold py-6 shadow-md transition-all duration-300">
-                      View Details
-                    </Button>
-                  </Link>
-                  {pkg.isBookable && (
-                    <Link href={`/book?service=${pkg.slug}`}>
-                      <Button variant="outline" size="icon" className="rounded-full border-[#0B3D5E]/20 w-12 h-12 text-[#0B3D5E] hover:bg-[#0B3D5E] hover:text-white transition-all duration-300" title="Book Now">
-                        <ArrowRight className="w-5 h-5" />
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-          {(!services || services.filter(s => s.isFeatured && (s.type === "main" || s.category?.toLowerCase().includes("package"))).length === 0) && (
-            <p className="col-span-full text-center text-muted-foreground">More packages coming soon.</p>
-          )}
-        </div>
-      </section>
-
       {/* Comparison Table Section */}
       <section className="bg-white">
         <PackageComparisonTable />
       </section>
+
+      {/* Matrix Pricing Section */}
+      <MatrixPricingTable />
 
       {/* Experience Weligama Section */}
       {services && services.filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package") && s.isFeatured).length > 0 && (

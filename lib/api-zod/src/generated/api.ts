@@ -207,7 +207,6 @@ export const ListServicesResponseItem = zod.object({
   isFeatured: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
-  imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
   category: zod.string().nullish(),
@@ -222,6 +221,40 @@ export const ListServicesResponseItem = zod.object({
   description: zod.string().nullish(),
 });
 export const ListServicesResponse = zod.array(ListServicesResponseItem);
+
+/**
+ * @summary Get public matrix pricing data
+ */
+export const GetMatrixPricingResponse = zod.object({
+  rooms: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid().optional(),
+        name: zod.string().optional(),
+      }),
+    )
+    .optional(),
+  packages: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid().optional(),
+        name: zod.string().optional(),
+        slug: zod.string().optional(),
+      }),
+    )
+    .optional(),
+  prices: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid().optional(),
+        roomId: zod.string().uuid().optional(),
+        packageId: zod.string().uuid().optional(),
+        price: zod.string().optional(),
+        dailyPrice: zod.string().optional(),
+      }),
+    )
+    .optional(),
+});
 
 /**
  * @summary Get service detail by slug
@@ -242,7 +275,6 @@ export const GetServiceResponse = zod.object({
   isFeatured: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
-  imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
   category: zod.string().nullish(),
@@ -874,7 +906,6 @@ export const AdminListServicesResponseItem = zod.object({
   isFeatured: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
-  imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
   category: zod.string().nullish(),
@@ -900,7 +931,6 @@ export const AdminCreateServiceBody = zod.object({
   isFeatured: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
-  imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
   category: zod.string().nullish(),
@@ -926,7 +956,6 @@ export const AdminUpdateServiceBody = zod.object({
   isFeatured: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
-  imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]).optional(),
   category: zod.string().nullish(),
@@ -949,7 +978,6 @@ export const AdminUpdateServiceResponse = zod.object({
   isFeatured: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
-  imageUrl: zod.string().nullish(),
   highlights: zod.array(zod.string()).optional(),
   type: zod.enum(["main", "optional"]),
   category: zod.string().nullish(),
@@ -1275,6 +1303,54 @@ export const AdminUpdateAirportPricingResponse = zod.object({
   createdAt: zod.coerce.date(),
   isFeatured: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Get room package matrix pricing
+ */
+export const AdminGetMatrixPricingResponse = zod.object({
+  rooms: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid().optional(),
+        name: zod.string().optional(),
+      }),
+    )
+    .optional(),
+  packages: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid().optional(),
+        name: zod.string().optional(),
+        slug: zod.string().optional(),
+      }),
+    )
+    .optional(),
+  prices: zod
+    .array(
+      zod.object({
+        id: zod.string().uuid().optional(),
+        roomId: zod.string().uuid().optional(),
+        packageId: zod.string().uuid().optional(),
+        price: zod.string().optional(),
+        dailyPrice: zod.string().optional(),
+      }),
+    )
+    .optional(),
+});
+
+/**
+ * @summary Update a specific matrix price
+ */
+export const AdminUpdateMatrixPricingBody = zod.object({
+  roomId: zod.string().uuid(),
+  packageId: zod.string().uuid(),
+  price: zod.string(),
+  dailyPrice: zod.string(),
+});
+
+export const AdminUpdateMatrixPricingResponse = zod.object({
+  success: zod.boolean().optional(),
 });
 
 /**

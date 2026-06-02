@@ -27,6 +27,7 @@ import type {
   AdminListMessagesParams,
   AdminLoginInput,
   AdminMarkNotificationsRead200,
+  AdminUpdateMatrixPricing200,
   AdminUser,
   AirportPricing,
   AirportPricingInput,
@@ -60,6 +61,8 @@ import type {
   ListRoomsParams,
   ListServicesParams,
   MarkNotificationsReadInput,
+  MatrixPricingData,
+  MatrixPricingUpdate,
   MessageUpdate,
   NotificationCounts,
   PageViewInput,
@@ -657,6 +660,81 @@ export function useListServices<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getListServicesQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get public matrix pricing data
+ */
+export const getGetMatrixPricingUrl = () => {
+  return `/api/v1/matrix-pricing`;
+};
+
+export const getMatrixPricing = async (
+  options?: RequestInit,
+): Promise<MatrixPricingData> => {
+  return customFetch<MatrixPricingData>(getGetMatrixPricingUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetMatrixPricingQueryKey = () => {
+  return [`/api/v1/matrix-pricing`] as const;
+};
+
+export const getGetMatrixPricingQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMatrixPricing>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getMatrixPricing>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMatrixPricingQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMatrixPricing>>
+  > = ({ signal }) => getMatrixPricing({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMatrixPricing>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetMatrixPricingQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMatrixPricing>>
+>;
+export type GetMatrixPricingQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get public matrix pricing data
+ */
+
+export function useGetMatrixPricing<
+  TData = Awaited<ReturnType<typeof getMatrixPricing>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getMatrixPricing>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetMatrixPricingQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;
@@ -4266,6 +4344,171 @@ export const useAdminUpdateAirportPricing = <
   TContext
 > => {
   return useMutation(getAdminUpdateAirportPricingMutationOptions(options));
+};
+
+/**
+ * @summary Get room package matrix pricing
+ */
+export const getAdminGetMatrixPricingUrl = () => {
+  return `/api/v1/admin/matrix-pricing`;
+};
+
+export const adminGetMatrixPricing = async (
+  options?: RequestInit,
+): Promise<MatrixPricingData> => {
+  return customFetch<MatrixPricingData>(getAdminGetMatrixPricingUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminGetMatrixPricingQueryKey = () => {
+  return [`/api/v1/admin/matrix-pricing`] as const;
+};
+
+export const getAdminGetMatrixPricingQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminGetMatrixPricing>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetMatrixPricing>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminGetMatrixPricingQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminGetMatrixPricing>>
+  > = ({ signal }) => adminGetMatrixPricing({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetMatrixPricing>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminGetMatrixPricingQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminGetMatrixPricing>>
+>;
+export type AdminGetMatrixPricingQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get room package matrix pricing
+ */
+
+export function useAdminGetMatrixPricing<
+  TData = Awaited<ReturnType<typeof adminGetMatrixPricing>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetMatrixPricing>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminGetMatrixPricingQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update a specific matrix price
+ */
+export const getAdminUpdateMatrixPricingUrl = () => {
+  return `/api/v1/admin/matrix-pricing`;
+};
+
+export const adminUpdateMatrixPricing = async (
+  matrixPricingUpdate: MatrixPricingUpdate,
+  options?: RequestInit,
+): Promise<AdminUpdateMatrixPricing200> => {
+  return customFetch<AdminUpdateMatrixPricing200>(
+    getAdminUpdateMatrixPricingUrl(),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(matrixPricingUpdate),
+    },
+  );
+};
+
+export const getAdminUpdateMatrixPricingMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminUpdateMatrixPricing>>,
+    TError,
+    { data: BodyType<MatrixPricingUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminUpdateMatrixPricing>>,
+  TError,
+  { data: BodyType<MatrixPricingUpdate> },
+  TContext
+> => {
+  const mutationKey = ["adminUpdateMatrixPricing"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminUpdateMatrixPricing>>,
+    { data: BodyType<MatrixPricingUpdate> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return adminUpdateMatrixPricing(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminUpdateMatrixPricingMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminUpdateMatrixPricing>>
+>;
+export type AdminUpdateMatrixPricingMutationBody =
+  BodyType<MatrixPricingUpdate>;
+export type AdminUpdateMatrixPricingMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update a specific matrix price
+ */
+export const useAdminUpdateMatrixPricing = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminUpdateMatrixPricing>>,
+    TError,
+    { data: BodyType<MatrixPricingUpdate> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminUpdateMatrixPricing>>,
+  TError,
+  { data: BodyType<MatrixPricingUpdate> },
+  TContext
+> => {
+  return useMutation(getAdminUpdateMatrixPricingMutationOptions(options));
 };
 
 /**

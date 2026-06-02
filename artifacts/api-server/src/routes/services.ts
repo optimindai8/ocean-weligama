@@ -75,4 +75,42 @@ router.get("/v1/services/:slug", async (req, res) => {
   }
 });
 
+router.get("/v1/matrix-pricing", async (req, res) => {
+  try {
+    const { rooms, services, roomPackagePrices } = await import("@workspace/db");
+    const { isNull, and, eq } = await import("drizzle-orm");
+
+    const allRooms = await db
+      .select({ id: rooms.id, name: rooms.slug }) 
+      .from(rooms)
+      .where(isNull(rooms.deletedAt))
+      .orderBy(rooms.sortOrder);
+
+    // Fetch translations for better names
+    const { roomTranslations } = await import("@workspace/db");
+    const rTranslations = await db.select().from(roomTranslations).where(eq(roomTranslations.locale, "en"));
+    const roomsMap = allRooms.map(r => {
+      const t = rTranslations.find(tr => tr.roomId === r.id);
+      return { id: r.id, name: t?.name ?? r.name };
+    });
+
+    const mainPackages = await db
+      .select({ id: services.id, name: services.name, slug: services.slug })
+      .from(services)
+      .where(and(eq(services.type, "main"), eq(services.isActive, true)))
+      .orderBy(services.sortOrder);
+
+    const prices = await db.select().from(roomPackagePrices);
+
+    res.json({
+      rooms: roomsMap,
+      packages: mainPackages,
+      prices: prices,
+    });
+  } catch (err) {
+    req.log.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;

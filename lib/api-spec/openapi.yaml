@@ -219,6 +219,19 @@ paths:
                 items:
                   $ref: "#/components/schemas/Service"
 
+  /v1/matrix-pricing:
+    get:
+      operationId: getMatrixPricing
+      tags: [services]
+      summary: Get public matrix pricing data
+      responses:
+        "200":
+          description: Matrix Pricing data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MatrixPricingData"
+
   /v1/services/{slug}:
     get:
       operationId: getService
@@ -1041,6 +1054,43 @@ paths:
                 $ref: "#/components/schemas/AirportPricing"
 
   # ADMIN PRICING
+  /v1/admin/matrix-pricing:
+    get:
+      operationId: adminGetMatrixPricing
+      tags: [admin-pricing]
+      summary: Get room package matrix pricing
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Matrix Pricing data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MatrixPricingData"
+    patch:
+      operationId: adminUpdateMatrixPricing
+      tags: [admin-pricing]
+      summary: Update a specific matrix price
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatrixPricingUpdate"
+      responses:
+        "200":
+          description: Price updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /v1/admin/pricing:
     get:
       operationId: adminListPricingRules
@@ -1332,6 +1382,68 @@ paths:
 
 components:
   schemas:
+    MatrixPricingUpdate:
+      type: object
+      properties:
+        roomId:
+          type: string
+          format: uuid
+        packageId:
+          type: string
+          format: uuid
+        price:
+          type: string
+        dailyPrice:
+          type: string
+      required:
+        - roomId
+        - packageId
+        - price
+        - dailyPrice
+
+    MatrixPricingData:
+      type: object
+      properties:
+        rooms:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+        packages:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+              slug:
+                type: string
+        prices:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              roomId:
+                type: string
+                format: uuid
+              packageId:
+                type: string
+                format: uuid
+              price:
+                type: string
+              dailyPrice:
+                type: string
     HealthStatus:
       type: object
       properties:
@@ -1558,8 +1670,7 @@ components:
         shortDesc:
           type: string
 
-        imageUrl:
-          type: ["string", "null"]
+
         highlights:
           type: array
           items:
@@ -1602,8 +1713,7 @@ components:
         shortDesc:
           type: string
 
-        imageUrl:
-          type: ["string", "null"]
+
         highlights:
           type: array
           items:
@@ -1643,8 +1753,7 @@ components:
         shortDesc:
           type: string
 
-        imageUrl:
-          type: ["string", "null"]
+
         highlights:
           type: array
           items:

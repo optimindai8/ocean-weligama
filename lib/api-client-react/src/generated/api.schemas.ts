@@ -5,6 +5,38 @@
  * Ocean Weligama API
  * OpenAPI spec version: 0.1.0
  */
+export interface MatrixPricingUpdate {
+  roomId: string;
+  packageId: string;
+  price: string;
+  dailyPrice: string;
+}
+
+export type MatrixPricingDataRoomsItem = {
+  id?: string;
+  name?: string;
+};
+
+export type MatrixPricingDataPackagesItem = {
+  id?: string;
+  name?: string;
+  slug?: string;
+};
+
+export type MatrixPricingDataPricesItem = {
+  id?: string;
+  roomId?: string;
+  packageId?: string;
+  price?: string;
+  dailyPrice?: string;
+};
+
+export interface MatrixPricingData {
+  rooms?: MatrixPricingDataRoomsItem[];
+  packages?: MatrixPricingDataPackagesItem[];
+  prices?: MatrixPricingDataPricesItem[];
+}
+
 export interface HealthStatus {
   status: string;
 }
@@ -219,8 +251,6 @@ export interface Service {
   isFeatured?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
-  /** @nullable */
-  imageUrl?: string | null;
   highlights?: string[];
   type: ServiceType;
   /** @nullable */
@@ -260,8 +290,6 @@ export interface ServiceInput {
   isFeatured?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
-  /** @nullable */
-  imageUrl?: string | null;
   highlights?: string[];
   type: ServiceInputType;
   /** @nullable */
@@ -300,8 +328,6 @@ export interface ServiceUpdate {
   isFeatured?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
-  /** @nullable */
-  imageUrl?: string | null;
   highlights?: string[];
   type?: ServiceUpdateType;
   /** @nullable */
@@ -846,6 +872,10 @@ export type AdminGetBookingsTrendParams = {
 export type AdminListMessagesParams = {
   isRead?: boolean;
   limit?: number;
+};
+
+export type AdminUpdateMatrixPricing200 = {
+  success?: boolean;
 };
 
 export type AdminGetRoomAvailabilityParams = {

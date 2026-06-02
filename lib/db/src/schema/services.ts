@@ -24,7 +24,6 @@ export const services = pgTable("services", {
   id: uuid("id").primaryKey().defaultRandom(),
   slug: text("slug").notNull().unique(),
   iconEmoji: text("icon_emoji"),
-  imageUrl: text("image_url"),
   highlights: text("highlights").array(),
   // Category field:
   // - For Main Packages: "Main Package"

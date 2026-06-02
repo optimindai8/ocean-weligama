@@ -9,6 +9,7 @@ import {
   availability,
   roomTranslations,
   serviceTranslations,
+  roomPackagePrices,
 } from "@workspace/db";
 import { eq, and, gte, lte, lt, gt, isNull, inArray } from "drizzle-orm";
 
@@ -94,10 +95,24 @@ router.post("/v1/bookings/check", async (req, res) => {
 
       const { serviceCustomizations = {} } = req.body;
 
+      const matrixPrices = await db
+        .select()
+        .from(roomPackagePrices)
+        .where(inArray(roomPackagePrices.roomId, roomIdsArray));
+
       for (const sId of serviceIds) {
         const service = addons.find((s) => s.id === sId);
         if (service) {
-          const price = parseFloat(service.basePrice);
+          // Check for matrix price (for the primary room)
+          const matrixPrice = matrixPrices.find(m => m.packageId === sId && m.roomId === roomIdsArray[0]);
+          // Note: The matrix price is an inclusive daily price (Room + Package). 
+          // So the package addon price is (Matrix Daily Price - Room Base Price).
+          let price = parseFloat(service.basePrice);
+          if (matrixPrice && service.type === "main") {
+            const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
+            price = parseFloat(matrixPrice.dailyPrice) - roomBase;
+            if (price < 0) price = 0;
+          }
           let qty = 1;
           if (serviceQuantities && typeof serviceQuantities[sId] === "number") {
             qty = serviceQuantities[sId];
@@ -204,12 +219,24 @@ router.post("/v1/bookings", async (req, res) => {
         .from(services)
         .where(eq(services.isActive, true));
 
+      const matrixPrices = await db
+        .select()
+        .from(roomPackagePrices)
+        .where(inArray(roomPackagePrices.roomId, roomIdsArray));
+
       const { serviceCustomizations = {} } = req.body;
 
       for (const sId of serviceIds) {
         const service = addons.find((s) => s.id === sId);
         if (service) {
-          const price = parseFloat(service.basePrice);
+          // Check for matrix price
+          const matrixPrice = matrixPrices.find(m => m.packageId === sId && m.roomId === roomIdsArray[0]);
+          let price = parseFloat(service.basePrice);
+          if (matrixPrice && service.type === "main") {
+            const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
+            price = parseFloat(matrixPrice.dailyPrice) - roomBase;
+            if (price < 0) price = 0;
+          }
           let qty = 1;
           if (serviceQuantities && typeof serviceQuantities[sId] === "number") {
             qty = serviceQuantities[sId];
