@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
+import { Link } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,6 +25,7 @@ import {
   EyeOff,
   MoreVertical,
   Star,
+  Sparkles,
   Upload,
   X,
 } from "lucide-react";
@@ -429,6 +431,11 @@ export default function AdminRooms() {
                         <DropdownMenuItem onClick={() => openEditDialog(room)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
                           <Pencil className="w-4 h-4" /> Edit Room Details
                         </DropdownMenuItem>
+                        <Link href="/ow-admin/matrix-pricing">
+                          <DropdownMenuItem className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
+                            <Sparkles className="w-4 h-4" /> Set Matrix Prices
+                          </DropdownMenuItem>
+                        </Link>
                         <DropdownMenuItem onClick={() => toggleStatus(room.id, room.status)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
                           {room.status === "active" ? <><EyeOff className="w-4 h-4" /> Hide from Public</> : <><Eye className="w-4 h-4" /> Show to Public</>}
                         </DropdownMenuItem>
