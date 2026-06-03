@@ -2,7 +2,7 @@ import { useGetMatrixPricing, getGetMatrixPricingQueryKey } from "@workspace/api
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
-import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Sparkles, ArrowRight, CheckCircle2, Star } from "lucide-react";
 
 const EXCLUDED_PACKAGES = [
   "Moderate Surf / Guiding",
@@ -88,31 +88,36 @@ export function MatrixPricingTable() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr>
-                  <th className="p-5 md:p-6 bg-white text-[#0B3D5E] border-b-2 border-slate-100 font-serif font-bold text-lg md:text-xl min-w-[220px] max-w-[280px] align-bottom">
+                  <th className="p-5 md:p-6 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-lg md:text-xl min-w-[220px] max-w-[280px] align-bottom">
                     Room Type
                     <div className="text-xs font-light text-slate-400 font-sans mt-1">Select your comfort</div>
                   </th>
-                  {filteredPackages.map((pkg, idx) => (
-                    <th key={pkg.id} className="p-4 md:p-6 text-center bg-white border-b-2 border-slate-100 relative min-w-[160px] align-bottom">
-                      <div className="flex flex-col items-center justify-end h-full gap-2">
-                        {idx === 0 && (
-                          <span className="bg-[#E0EFF5] text-[#1A6B8A] text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider mb-1">Most Popular</span>
+                  {filteredPackages.map((pkg) => {
+                    const isPopular = pkg.name?.toLowerCase().includes('advance');
+                    return (
+                      <th key={pkg.id} className={`p-4 md:p-6 text-center bg-white border-b border-slate-100 relative min-w-[160px] align-bottom ${isPopular ? 'border-t-4 border-t-teal-400' : ''}`}>
+                        {isPopular && (
+                          <div className="absolute inset-0 bg-gradient-to-b from-teal-50/40 to-transparent pointer-events-none rounded-t-none" />
                         )}
-                        <div className="font-bold text-sm md:text-base text-[#0B3D5E] tracking-tight leading-snug whitespace-normal max-w-[180px]">
-                          {pkg.name}
+                        <div className="flex flex-col items-center justify-end h-full gap-2 relative z-10">
+                          {isPopular && (
+                            <span className="flex items-center gap-1.5 bg-gradient-to-r from-[#006064] via-[#00838F] to-[#26C6DA] text-white text-[9px] font-black px-3 py-1 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1">
+                              <Star className="w-3 h-3 fill-white" /> Most Popular
+                            </span>
+                          )}
+                          <div className={`font-bold text-sm md:text-base tracking-tight leading-snug whitespace-normal max-w-[180px] ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
+                            {pkg.name}
+                          </div>
                         </div>
-                        <div className="text-[10px] md:text-xs text-slate-400 font-medium uppercase tracking-widest bg-slate-50 px-2 py-1 rounded-md">
-                          Per Person / Night
-                        </div>
-                      </div>
-                    </th>
-                  ))}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 bg-white">
-                {filteredRooms.map((room, idx) => (
-                  <tr key={room.id} className="group hover:bg-[#F8FBFC] transition-colors duration-200">
-                    <td className="p-5 md:p-6 text-sm md:text-base text-[#0B3D5E] bg-white group-hover:bg-[#F8FBFC] transition-colors relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal max-w-[280px]">
+              <tbody className="divide-y divide-slate-50 bg-white">
+                {filteredRooms.map((room) => (
+                  <tr key={room.id} className="group transition-colors duration-200 hover:bg-slate-50/50">
+                    <td className="p-5 md:p-6 text-sm md:text-base text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-colors relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal max-w-[280px]">
                       {room.name}
                       <div className="flex items-center gap-1.5 text-[11px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-2 font-bold uppercase tracking-wider">
                         View Details <ArrowRight className="w-3 h-3" />
@@ -120,14 +125,14 @@ export function MatrixPricingTable() {
                     </td>
                     {filteredPackages.map((pkg) => {
                       const price = getPrice(room.id!, pkg.id!);
+                      const isPopular = pkg.name?.toLowerCase().includes('advance');
                       return (
-                        <td key={pkg.id} className="p-4 md:p-6 text-center relative transition-colors duration-200">
+                        <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 ${isPopular ? 'bg-teal-50/10' : ''}`}>
                           {price && price !== "0" && price !== "0.00" ? (
                             <div className="flex flex-col items-center justify-center gap-1 group/price">
-                              <span className="text-lg md:text-xl font-black text-[#0B3D5E] group-hover:text-[#1A6B8A] transition-colors tracking-tight">
+                              <span className={`text-lg md:text-xl font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
                                 {formatPrice(parseFloat(price as string))}
                               </span>
-                              <CheckCircle2 className="w-4 h-4 text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-all duration-300 scale-50 group-hover:scale-100 absolute bottom-2 md:bottom-3" />
                             </div>
                           ) : (
                             <span className="text-slate-200 font-light text-xl">-</span>
