@@ -46,72 +46,23 @@ const PAYMENT_COLORS: Record<string, string> = {
 const STATUSES = ["", "pending", "confirmed", "checked_in", "checked_out", "cancelled"];
 
 function parseSpecialRequests(text: string) {
-  if (!text) return { pickup: null, drop: null, customizations: [] as { packageName: string; changes: { from: string; to: string }[] }[], message: "" };
-  let pickup: any = null;
-  let drop: any = null;
+  if (!text) return { customizations: [] as { packageName: string; changes: { from: string; to: string }[] }[], message: "" };
   const customizations: { packageName: string; changes: { from: string; to: string }[] }[] = [];
   const lines = text.split("\n");
   const remainingLines: string[] = [];
   
-  let inPickupSection = false;
-  let inDropSection = false;
   let inCustomSection = false;
   let currentCustomPkg: { packageName: string; changes: { from: string; to: string }[] } | null = null;
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (line.startsWith("[Airport Pick-up:")) {
-      inPickupSection = true;
-      inDropSection = false;
-      inCustomSection = false;
-      const priceMatch = line.match(/€(\d+(\.\d+)?)/);
-      const price = priceMatch ? priceMatch[1] : "0";
-      pickup = { price, flightNumber: "", flightDate: "", flightTime: "", bringingSurfboard: "No" };
-      continue;
-    }
-    
-    if (line.startsWith("[Airport Drop:")) {
-      inPickupSection = false;
-      inDropSection = true;
-      inCustomSection = false;
-      const priceMatch = line.match(/€(\d+(\.\d+)?)/);
-      const price = priceMatch ? priceMatch[1] : "0";
-      drop = { price };
-      continue;
-    }
 
     if (line.startsWith("[Package Customization:")) {
-      inPickupSection = false;
-      inDropSection = false;
       inCustomSection = true;
       const nameMatch = line.match(/\[Package Customization:\s*(.+)\]/);
       currentCustomPkg = { packageName: nameMatch ? nameMatch[1] : "Package", changes: [] };
       customizations.push(currentCustomPkg);
       continue;
-    }
-    
-    if (inPickupSection) {
-      if (line.startsWith("Flight:")) {
-        const match = line.match(/Flight:\s*([^,]+),\s*Date:\s*([^,]+),\s*Time:\s*(.+)/);
-        if (match) {
-          pickup.flightNumber = match[1].trim();
-          pickup.flightDate = match[2].trim();
-          pickup.flightTime = match[3].trim();
-        }
-        continue;
-      } else if (line.startsWith("Surfboard:")) {
-        const match = line.match(/Surfboard:\s*(.+)/);
-        if (match) {
-          pickup.bringingSurfboard = match[1].trim();
-        }
-        continue;
-      } else {
-        inPickupSection = false;
-      }
-    }
-    
-    if (inDropSection) {
-      inDropSection = false;
     }
 
     if (inCustomSection) {
@@ -125,14 +76,14 @@ function parseSpecialRequests(text: string) {
       }
     }
     
-    if (!inPickupSection && !inDropSection && !inCustomSection) {
+    if (!inCustomSection) {
       if (line !== "" || (remainingLines.length > 0 && remainingLines[remainingLines.length - 1] !== "")) {
         remainingLines.push(lines[i]);
       }
     }
   }
   
-  return { pickup, drop, customizations, message: remainingLines.join("\n").trim() };
+  return { customizations, message: remainingLines.join("\n").trim() };
 }
 
 function getUnitLabel(unit: string | undefined, qty: number) {
@@ -192,6 +143,11 @@ export default function AdminBookings() {
       cleaningFee: string;
       totalAmount: string;
       currency: string;
+      airportPickupPrice?: string;
+      airportDropPrice?: string;
+      airportPickup?: boolean;
+      airportDrop?: boolean;
+      flightDetails?: string;
       createdAt: string;
       services: Array<{
         serviceName: string;
@@ -360,12 +316,7 @@ export default function AdminBookings() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {filteredBookings.map((b) => {
-                    const parsed = parseSpecialRequests(b.specialRequests || "");
-                    const rowTotal = (
-                      parseFloat(b.totalAmount || "0") +
-                      parseFloat(parsed.pickup?.price || "0") +
-                      parseFloat(parsed.drop?.price || "0")
-                    ).toFixed(2);
+                    const rowTotal = (parseFloat(b.totalAmount || "0")).toFixed(2);
                     return (
                       <tr 
                       key={b.id} 
@@ -680,13 +631,15 @@ export default function AdminBookings() {
                     )}
 
                     {/* Airport Transfers */}
-                    {(parsed.pickup || parsed.drop) && (
+                    {((selectedBooking as any).airportPickup || (selectedBooking as any).airportDrop) && (() => {
+                      const details = (selectedBooking as any).flightDetails ? JSON.parse((selectedBooking as any).flightDetails) : {};
+                      return (
                       <div className="bg-white rounded-2xl p-5 sm:p-6 border border-border shadow-sm">
                         <h3 className="text-sm font-black uppercase tracking-widest text-[#0B3D5E] mb-4 flex items-center gap-2">
                           <Plane className="w-4 h-4 text-primary" /> Airport Transfer Details
                         </h3>
                         <div className="grid md:grid-cols-2 gap-4">
-                          {parsed.pickup && (
+                          {(selectedBooking as any).airportPickup && (
                             <div className="p-4 rounded-xl bg-sky-50/50 border border-sky-100/50 flex flex-col justify-between">
                               <div>
                                 <div className="flex items-center justify-between mb-3">
@@ -694,34 +647,34 @@ export default function AdminBookings() {
                                     <Plane className="w-4 h-4 text-sky-600 animate-pulse" /> Airport Pick-up
                                   </span>
                                   <Badge className="bg-sky-100 text-sky-800 border-none font-bold text-[10px]">
-                                    €{parsed.pickup.price}
+                                    €{(selectedBooking as any).airportPickupPrice}
                                   </Badge>
                                 </div>
                                 <div className="space-y-2 text-xs text-sky-900/80">
                                   <div className="flex items-center gap-2">
                                     <span className="font-bold text-sky-950 w-24">Flight Number:</span>
-                                    <span className="font-mono bg-sky-100/50 px-1.5 py-0.5 rounded font-bold text-sky-900">{parsed.pickup.flightNumber || "N/A"}</span>
+                                    <span className="font-mono bg-sky-100/50 px-1.5 py-0.5 rounded font-bold text-sky-900">{details.flightNumber || "N/A"}</span>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <span className="font-bold text-sky-950 w-24">Arrival Date:</span>
-                                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-sky-600" /> {parsed.pickup.flightDate || "N/A"}</span>
+                                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5 text-sky-600" /> {details.flightDate || "N/A"}</span>
                                   </div>
                                   <div className="flex items-center gap-2">
                                     <span className="font-bold text-sky-950 w-24">Arrival Time:</span>
-                                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-sky-600" /> {parsed.pickup.flightTime || "N/A"}</span>
+                                    <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-sky-600" /> {details.flightTime || "N/A"}</span>
                                   </div>
                                 </div>
                               </div>
                               <div className="mt-4 pt-3 border-t border-sky-100/50 flex items-center justify-between text-xs">
                                 <span className="font-bold text-sky-950">Bringing Surfboard:</span>
-                                <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${parsed.pickup.bringingSurfboard === "Yes" ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
-                                  {parsed.pickup.bringingSurfboard || "No"}
+                                <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] ${details.bringingSurfboard ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
+                                  {details.bringingSurfboard ? "Yes" : "No"}
                                 </span>
                               </div>
                             </div>
                           )}
                           
-                          {parsed.drop && (
+                          {(selectedBooking as any).airportDrop && (
                             <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100/50 flex flex-col justify-between">
                               <div>
                                 <div className="flex items-center justify-between mb-3">
@@ -729,7 +682,7 @@ export default function AdminBookings() {
                                     <Plane className="w-4 h-4 text-indigo-600 rotate-180" /> Airport Drop-off
                                   </span>
                                   <Badge className="bg-indigo-100 text-indigo-800 border-none font-bold text-[10px]">
-                                    €{parsed.drop.price}
+                                    €{(selectedBooking as any).airportDropPrice}
                                   </Badge>
                                 </div>
                                 <p className="text-xs text-indigo-900/80 leading-relaxed">
@@ -746,7 +699,8 @@ export default function AdminBookings() {
                           )}
                         </div>
                       </div>
-                    )}
+                      );
+                    })()}
 
                     {/* Package Customizations & Special Requests — Combined Clean Section */}
                     {(parsed.customizations?.length > 0 || parsed.message) && (
@@ -876,11 +830,7 @@ export default function AdminBookings() {
                       <div className="flex justify-between items-center pt-4 gap-4">
                         <span className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Total price = Room price + Packages + Experiences + airport transfer</span>
                         <span className="font-black text-2xl text-primary whitespace-nowrap">
-                          €{(
-                            parseFloat(selectedBooking.totalAmount || "0") +
-                            parseFloat(parsed.pickup?.price || "0") +
-                            parseFloat(parsed.drop?.price || "0")
-                          ).toFixed(2)} <span className="text-base text-muted-foreground">EUR</span>
+                          €{(parseFloat(selectedBooking.totalAmount || "0")).toFixed(2)} <span className="text-base text-muted-foreground">EUR</span>
                         </span>
                       </div>
                     </div>

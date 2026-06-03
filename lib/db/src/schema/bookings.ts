@@ -73,6 +73,12 @@ export const bookings = pgTable("bookings", {
     precision: 10,
     scale: 2,
   }).default("0"),
+  
+  airportPickup: boolean("airport_pickup").default(false),
+  airportDrop: boolean("airport_drop").default(false),
+  airportPickupPrice: decimal("airport_pickup_price", { precision: 10, scale: 2 }).default("0"),
+  airportDropPrice: decimal("airport_drop_price", { precision: 10, scale: 2 }).default("0"),
+  flightDetails: text("flight_details"),
 
   status: bookingStatusEnum("status").notNull().default("pending"),
   paymentStatus: paymentStatusEnum("payment_status")

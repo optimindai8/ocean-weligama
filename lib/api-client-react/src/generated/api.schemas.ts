@@ -461,6 +461,12 @@ export interface BookingInput {
   paymentMethod: BookingInputPaymentMethod;
   /** @nullable */
   languageUsed?: string | null;
+  airportPickupPrice?: number;
+  airportDropPrice?: number;
+  airportPickup?: boolean;
+  airportDrop?: boolean;
+  /** @nullable */
+  flightDetails?: string | null;
 }
 
 export interface BookingUpdate {
@@ -488,6 +494,8 @@ export interface BookingCheck {
   serviceCustomizations?: BookingCheckServiceCustomizations;
   serviceIds?: string[];
   serviceQuantities?: BookingCheckServiceQuantities;
+  airportPickupPrice?: number;
+  airportDropPrice?: number;
 }
 
 export interface BookingQuote {

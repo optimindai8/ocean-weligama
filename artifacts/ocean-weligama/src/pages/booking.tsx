@@ -524,14 +524,13 @@ export default function BookingPage() {
     const data = formDataForSubmit;
     if (selectedRoomIds.length === 0 || !dateRange.from || !dateRange.to) return;
     const lines: string[] = [];
-    if (data.airportPickup) {
-      lines.push(
-        `[Airport Pick-up: €${ap.pickup}]`,
-        `  Flight: ${data.flightNumber}, Date: ${data.flightDate}, Time: ${data.flightTime}`,
-        `  Surfboard: ${data.bringingSurfboard ? "Yes" : "No"}`,
-      );
-    }
-    if (data.airportDrop) lines.push(`[Airport Drop: €${ap.drop}]`);
+    const flightDetailsObj = data.airportPickup ? {
+      flightNumber: data.flightNumber,
+      flightDate: data.flightDate,
+      flightTime: data.flightTime,
+      bringingSurfboard: data.bringingSurfboard
+    } : null;
+    const flightDetailsStr = flightDetailsObj ? JSON.stringify(flightDetailsObj) : null;
 
     // Include highlight customizations (lessons/sessions adjustments)
     Object.entries(highlightCustomizations).forEach(([pkgId, overrides]) => {
@@ -566,6 +565,9 @@ export default function BookingPage() {
       const bk = await createBook.mutateAsync({
         data: {
           ...data, specialRequests: sr,
+          airportPickupPrice: data.airportPickup ? ap.pickup : 0,
+          airportDropPrice: data.airportDrop ? ap.drop : 0,
+          flightDetails: flightDetailsStr,
           roomId: selectedRoomIds[0],
           roomIds: selectedRoomIds,
           checkIn: toStr(dateRange.from), checkOut: toStr(dateRange.to),

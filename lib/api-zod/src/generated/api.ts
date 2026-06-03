@@ -309,6 +309,8 @@ export const CheckAvailabilityAndPriceBody = zod.object({
     .optional(),
   serviceIds: zod.array(zod.string()).optional(),
   serviceQuantities: zod.record(zod.string(), zod.number()).optional(),
+  airportPickupPrice: zod.number().optional(),
+  airportDropPrice: zod.number().optional(),
 });
 
 export const CheckAvailabilityAndPriceResponse = zod.object({
@@ -350,6 +352,11 @@ export const CreateBookingBody = zod.object({
   serviceQuantities: zod.record(zod.string(), zod.number()).optional(),
   paymentMethod: zod.enum(["online_card", "bank_transfer", "cash", "pending"]),
   languageUsed: zod.string().nullish(),
+  airportPickupPrice: zod.number().optional(),
+  airportDropPrice: zod.number().optional(),
+  airportPickup: zod.boolean().optional(),
+  airportDrop: zod.boolean().optional(),
+  flightDetails: zod.string().nullish(),
 });
 
 /**

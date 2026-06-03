@@ -30,7 +30,7 @@ function calculateNights(checkIn: string, checkOut: string): number {
 
 router.post("/v1/bookings/check", async (req, res) => {
   try {
-    const { roomId, roomIds: inputRoomIds, checkIn, checkOut, guestCount, serviceIds = [], serviceQuantities = {} } = req.body;
+    const { roomId, roomIds: inputRoomIds, checkIn, checkOut, guestCount, serviceIds = [], serviceQuantities = {}, airportPickupPrice = 0, airportDropPrice = 0 } = req.body;
     const roomIdsArray = inputRoomIds && inputRoomIds.length > 0 ? inputRoomIds : (roomId ? [roomId] : []);
 
     if (roomIdsArray.length === 0) {
@@ -147,7 +147,9 @@ router.post("/v1/bookings/check", async (req, res) => {
       roomSubtotal: roomSubtotal.toFixed(2),
       servicesSubtotal: servicesSubtotal.toFixed(2),
       cleaningFee: cleaningFee.toFixed(2),
-      totalAmount: (roomSubtotal + servicesSubtotal + cleaningFee).toFixed(2),
+      airportPickupPrice: Number(airportPickupPrice).toFixed(2),
+      airportDropPrice: Number(airportDropPrice).toFixed(2),
+      totalAmount: (roomSubtotal + servicesSubtotal + cleaningFee + Number(airportPickupPrice) + Number(airportDropPrice)).toFixed(2),
       currency: selectedRooms[0].currency,
       unavailableDates: blockedDates.map((b) => b.date),
     });
@@ -174,8 +176,18 @@ router.post("/v1/bookings", async (req, res) => {
       serviceQuantities = {},
       paymentMethod,
       languageUsed,
+      airportPickup,
+      airportDrop,
+      airportPickupPrice = 0,
+      airportDropPrice = 0,
+      flightDetails,
     } = req.body;
     const roomIdsArray = inputRoomIds && inputRoomIds.length > 0 ? inputRoomIds : (roomId ? [roomId] : []);
+
+    if (guestCount > 3 && (airportPickup || airportDrop)) {
+      res.status(400).json({ error: "Airport pickup and drop are limited to up to 3 people." });
+      return;
+    }
 
     if (roomIdsArray.length === 0) {
       res.status(400).json({ error: "No rooms provided" });
@@ -271,7 +283,7 @@ router.post("/v1/bookings", async (req, res) => {
       }
     }
 
-    const totalAmount = roomSubtotal + servicesSubtotal + cleaningFee;
+    const totalAmount = roomSubtotal + servicesSubtotal + cleaningFee + Number(airportPickupPrice) + Number(airportDropPrice);
     const reference = generateReference();
 
     const [booking] = await db
@@ -295,6 +307,11 @@ router.post("/v1/bookings", async (req, res) => {
         totalAmount: totalAmount.toFixed(2),
         currency: selectedRooms[0].currency,
         depositAmount: "0",
+        airportPickup: Boolean(airportPickup),
+        airportDrop: Boolean(airportDrop),
+        airportPickupPrice: Number(airportPickupPrice).toFixed(2),
+        airportDropPrice: Number(airportDropPrice).toFixed(2),
+        flightDetails,
         paymentMethod: paymentMethod ?? "pending",
         languageUsed: languageUsed ?? "en",
         status: "pending",

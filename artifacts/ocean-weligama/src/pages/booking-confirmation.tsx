@@ -17,72 +17,23 @@ function getUnitLabel(unit: string | undefined, qty: number) {
 }
 
 function parseSpecialRequests(text: string) {
-  if (!text) return { pickup: null, drop: null, customizations: [] as { packageName: string; changes: { from: string; to: string }[] }[], message: "" };
-  let pickup: any = null;
-  let drop: any = null;
+  if (!text) return { customizations: [] as { packageName: string; changes: { from: string; to: string }[] }[], message: "" };
   const customizations: { packageName: string; changes: { from: string; to: string }[] }[] = [];
   const lines = text.split("\n");
   const remainingLines: string[] = [];
   
-  let inPickupSection = false;
-  let inDropSection = false;
   let inCustomSection = false;
   let currentCustomPkg: { packageName: string; changes: { from: string; to: string }[] } | null = null;
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (line.startsWith("[Airport Pick-up:")) {
-      inPickupSection = true;
-      inDropSection = false;
-      inCustomSection = false;
-      const priceMatch = line.match(/€(\d+(\.\d+)?)/);
-      const price = priceMatch ? priceMatch[1] : "0";
-      pickup = { price, flightNumber: "", flightDate: "", flightTime: "", bringingSurfboard: "No" };
-      continue;
-    }
-    
-    if (line.startsWith("[Airport Drop:")) {
-      inPickupSection = false;
-      inDropSection = true;
-      inCustomSection = false;
-      const priceMatch = line.match(/€(\d+(\.\d+)?)/);
-      const price = priceMatch ? priceMatch[1] : "0";
-      drop = { price };
-      continue;
-    }
 
     if (line.startsWith("[Package Customization:")) {
-      inPickupSection = false;
-      inDropSection = false;
       inCustomSection = true;
       const nameMatch = line.match(/\[Package Customization:\s*(.+)\]/);
       currentCustomPkg = { packageName: nameMatch ? nameMatch[1] : "Package", changes: [] };
       customizations.push(currentCustomPkg);
       continue;
-    }
-    
-    if (inPickupSection) {
-      if (line.startsWith("Flight:")) {
-        const match = line.match(/Flight:\s*([^,]+),\s*Date:\s*([^,]+),\s*Time:\s*(.+)/);
-        if (match) {
-          pickup.flightNumber = match[1].trim();
-          pickup.flightDate = match[2].trim();
-          pickup.flightTime = match[3].trim();
-        }
-        continue;
-      } else if (line.startsWith("Surfboard:")) {
-        const match = line.match(/Surfboard:\s*(.+)/);
-        if (match) {
-          pickup.bringingSurfboard = match[1].trim();
-        }
-        continue;
-      } else {
-        inPickupSection = false;
-      }
-    }
-    
-    if (inDropSection) {
-      inDropSection = false;
     }
 
     if (inCustomSection) {
@@ -96,14 +47,14 @@ function parseSpecialRequests(text: string) {
       }
     }
     
-    if (!inPickupSection && !inDropSection && !inCustomSection) {
+    if (!inCustomSection) {
       if (line !== "" || (remainingLines.length > 0 && remainingLines[remainingLines.length - 1] !== "")) {
         remainingLines.push(lines[i]);
       }
     }
   }
   
-  return { pickup, drop, customizations, message: remainingLines.join("\n").trim() };
+  return { customizations, message: remainingLines.join("\n").trim() };
 }
 
 
@@ -341,13 +292,15 @@ export default function BookingConfirmationPage() {
               )}
 
               {/* Airport Transfers */}
-              {(parsed.pickup || parsed.drop) && (
+              {((booking as any).airportPickup || (booking as any).airportDrop) && (
                 <div className="bg-sky-50/30 border border-sky-100/50 p-6 rounded-3xl">
                   <h3 className="text-sm font-black uppercase tracking-widest text-sky-800 mb-6 flex items-center gap-2">
                     <Plane className="w-4 h-4" /> Airport Transfer Details
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {parsed.pickup && (
+                    {(booking as any).airportPickup && (() => {
+                      const details = (booking as any).flightDetails ? JSON.parse((booking as any).flightDetails) : {};
+                      return (
                       <div className="p-5 rounded-2xl bg-white border border-sky-100 shadow-sm flex flex-col justify-between">
                         <div>
                           <div className="flex items-center justify-between mb-4">
@@ -355,34 +308,35 @@ export default function BookingConfirmationPage() {
                               <Plane className="w-4 h-4 text-sky-600" /> Airport Pick-up
                             </span>
                             <div className="bg-sky-50 text-sky-800 px-3 py-1 rounded-lg font-bold text-[10px] uppercase tracking-widest">
-                              €{parsed.pickup.price}
+                              €{(booking as any).airportPickupPrice}
                             </div>
                           </div>
                           <div className="space-y-3 text-sm text-sky-900/80">
                             <div className="flex justify-between items-center bg-sky-50/50 p-2 rounded-lg">
                               <span className="font-bold text-sky-950">Flight:</span>
-                              <span className="font-mono font-bold text-sky-900">{parsed.pickup.flightNumber || "N/A"}</span>
+                              <span className="font-mono font-bold text-sky-900">{details.flightNumber || "N/A"}</span>
                             </div>
                             <div className="flex justify-between items-center bg-sky-50/50 p-2 rounded-lg">
                               <span className="font-bold text-sky-950">Arrival:</span>
                               <span className="font-bold flex items-center gap-1.5">
-                                <Calendar className="w-3.5 h-3.5" /> {parsed.pickup.flightDate || "N/A"}
+                                <Calendar className="w-3.5 h-3.5" /> {details.flightDate || "N/A"}
                                 <span className="text-sky-300">|</span>
-                                <Clock className="w-3.5 h-3.5" /> {parsed.pickup.flightTime || "N/A"}
+                                <Clock className="w-3.5 h-3.5" /> {details.flightTime || "N/A"}
                               </span>
                             </div>
                           </div>
                         </div>
                         <div className="mt-4 pt-4 border-t border-sky-50 flex items-center justify-between text-xs">
                           <span className="font-bold text-sky-950">Bringing Surfboard:</span>
-                          <span className={`px-3 py-1 rounded-full font-bold uppercase tracking-wider text-[10px] ${parsed.pickup.bringingSurfboard === "Yes" ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
-                            {parsed.pickup.bringingSurfboard || "No"}
+                          <span className={`px-3 py-1 rounded-full font-bold uppercase tracking-wider text-[10px] ${details.bringingSurfboard ? "bg-amber-100 text-amber-800" : "bg-slate-100 text-slate-600"}`}>
+                            {details.bringingSurfboard ? "Yes" : "No"}
                           </span>
                         </div>
                       </div>
-                    )}
+                      )
+                    })()}
                     
-                    {parsed.drop && (
+                    {(booking as any).airportDrop && (
                       <div className="p-5 rounded-2xl bg-white border border-indigo-100 shadow-sm flex flex-col justify-between">
                         <div>
                           <div className="flex items-center justify-between mb-4">
@@ -390,7 +344,7 @@ export default function BookingConfirmationPage() {
                               <Plane className="w-4 h-4 text-indigo-600 rotate-180" /> Airport Drop-off
                             </span>
                             <div className="bg-indigo-50 text-indigo-800 px-3 py-1 rounded-lg font-bold text-[10px] uppercase tracking-widest">
-                              €{parsed.drop.price}
+                              €{(booking as any).airportDropPrice}
                             </div>
                           </div>
                           <p className="text-sm text-indigo-900/80 leading-relaxed bg-indigo-50/30 p-3 rounded-xl border border-indigo-50">
@@ -469,11 +423,7 @@ export default function BookingConfirmationPage() {
                 <div className="flex justify-between items-end pt-6 gap-4">
                   <span className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Total price = Room price + Packages + Experiences + airport transfer</span>
                   <span className="font-black text-4xl text-primary whitespace-nowrap">
-                    €{(
-                      parseFloat(booking.totalAmount || "0") +
-                      parseFloat(parsed.pickup?.price || "0") +
-                      parseFloat(parsed.drop?.price || "0")
-                    ).toFixed(2)}
+                    €{(parseFloat(booking.totalAmount || "0")).toFixed(2)}
                   </span>
                 </div>
               </div>

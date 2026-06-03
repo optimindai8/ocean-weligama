@@ -1921,6 +1921,16 @@ components:
           enum: [online_card, bank_transfer, cash, pending]
         languageUsed:
           type: ["string", "null"]
+        airportPickupPrice:
+          type: number
+        airportDropPrice:
+          type: number
+        airportPickup:
+          type: boolean
+        airportDrop:
+          type: boolean
+        flightDetails:
+          type: ["string", "null"]
 
     BookingUpdate:
       type: object
@@ -1970,6 +1980,10 @@ components:
           type: object
           additionalProperties:
             type: integer
+        airportPickupPrice:
+          type: number
+        airportDropPrice:
+          type: number
 
     BookingQuote:
       type: object
