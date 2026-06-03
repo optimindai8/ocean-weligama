@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Waves, Check, Sparkles, HelpCircle } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
-import { PackageComparisonTable } from "@/components/PackageComparisonTable";
+
 import { MatrixPricingTable } from "@/components/MatrixPricingTable";
 
 export default function PackagesPage() {
@@ -28,10 +28,7 @@ export default function PackagesPage() {
         badgeIcon={<Sparkles className="w-3.5 h-3.5 text-[#4BBCCC]" />}
       />
 
-      {/* Comparison Table Section */}
-      <section className="bg-white">
-        <PackageComparisonTable />
-      </section>
+
 
       {/* Matrix Pricing Section */}
       <MatrixPricingTable />

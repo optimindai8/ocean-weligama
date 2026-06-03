@@ -9,7 +9,7 @@ import { Users, BedDouble, ArrowRight, ChevronDown, Package, Image as ImageIcon,
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
-import { PackageComparisonTable } from "@/components/PackageComparisonTable";
+
 
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
@@ -396,10 +396,7 @@ export default function Home() {
       </section>
 
       
-      {/* Comparison Table Section */}
-      <section className="bg-white">
-        <PackageComparisonTable />
-      </section>
+
 
       {/* Experience Weligama Section */}
       {services && services.filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package") && s.isFeatured).length > 0 && (
