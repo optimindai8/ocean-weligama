@@ -131,10 +131,9 @@ function getUnitInputLabel(unit: string | undefined) {
 }
 
 const ALL_STEPS = {
-  guests: { id: "guests", label: "Guests", icon: Users },
-  packages: { id: "packages", label: "Packages", icon: Award },
-  dates: { id: "dates", label: "Dates", icon: Calendar },
   room: { id: "room", label: "Room", icon: Home },
+  dates: { id: "dates", label: "Dates", icon: Calendar },
+  guests: { id: "guests", label: "Guests", icon: Users },
   experiences: { id: "experiences", label: "Experiences", icon: Sparkles },
   airport: { id: "airport", label: "Airport", icon: Plane },
   confirm: { id: "confirm", label: "Confirm", icon: CreditCard },
@@ -188,7 +187,7 @@ function StepHeader({
         {icon}
       </motion.div>
       <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-2">
-        Step {n} of 7
+        Step {n} of 6
       </p>
       <h1 className="text-3xl md:text-5xl font-serif font-bold italic text-foreground mb-3 px-2">
         {title}
@@ -276,11 +275,11 @@ export default function BookingPage() {
     }
   };
 
-  const flow = ["guests", "packages", "dates", "experiences", "room", "airport", "confirm"];
+  const flow = ["room", "dates", "guests", "experiences", "airport", "confirm"];
 
   const [stepId, setStepId] = useState<string>(() => {
-    const saved = loadState("stepId", "guests");
-    return flow.includes(saved) ? saved : "guests";
+    const saved = loadState("stepId", "room");
+    return flow.includes(saved) ? saved : "room";
   });
   
   const [dir, setDir] = useState(1);
@@ -476,6 +475,14 @@ export default function BookingPage() {
     }
     return customizations;
   }
+
+  // ── Auto-clear airport transfers when guest count exceeds 3 ─────────────
+  useEffect(() => {
+    if (guestCount > 3) {
+      form.setValue("airportPickup", false);
+      form.setValue("airportDrop", false);
+    }
+  }, [guestCount]);
 
   // ── Availability check (Step 3 → 4) ───────────────────────────────────────
   async function handleRoomContinue() {
@@ -729,7 +736,7 @@ export default function BookingPage() {
 
                 </motion.div>
 
-                <StepNav onBack={null} onContinue={() => goToStep("packages")} continueLabel="View Packages" />
+                <StepNav onBack={() => goToStep("dates")} onContinue={() => goToStep("experiences")} continueLabel="Choose Experiences" />
               </motion.div>
             )}
 
@@ -819,9 +826,8 @@ export default function BookingPage() {
                 </motion.div>
 
                 <StepNav
-                  onBack={() => goToStep("packages")}
+                  onBack={() => goToStep("room")}
                   onContinue={() => {
-                    const hasPackageSelected = selectedDbServiceIds.some(id => packages.some(p => p.id === id));
                     if (!dateRange.from || !dateRange.to) {
                       toast({ variant: "destructive", title: "Please select check-in and check-out dates" });
                       return;
@@ -830,17 +836,9 @@ export default function BookingPage() {
                       toast({ variant: "destructive", title: "Check-out must be after check-in" });
                       return;
                     }
-                    if (!hasPackageSelected && nights < 2) {
-                      toast({ variant: "destructive", title: "Minimum 2 nights required for room bookings" });
-                      return;
-                    }
-                    if (hasPackageSelected && nights < 7) {
-                      toast({ variant: "destructive", title: "Packages require a minimum 7 night stay" });
-                      return;
-                    }
-                    goToStep("experiences");
+                    goToStep("guests");
                   }}
-                  continueLabel="Choose Experiences"
+                  continueLabel="Add Guests"
                   disabled={!dateRange.from || !dateRange.to}
                 />
               </motion.div>
@@ -919,32 +917,35 @@ export default function BookingPage() {
                 )}
 
                 <StepNav
-                  onBack={() => goToStep("experiences")}
-                  onContinue={handleRoomContinue}
-                  continueLabel="Check Availability"
+                  onBack={null}
+                  onContinue={() => goToStep("dates")}
+                  continueLabel="Choose Dates"
                   disabled={selectedRoomIds.length === 0}
-                  loading={checkAvail.isPending}
                 />
               </motion.div>
             )}
 
             {/* ══════════════════════════════════════════════════════════════
-                STEP 4 — Packages
+                STEP 4 — Experiences & Packages
             ══════════════════════════════════════════════════════════════ */}
-            {stepId === "packages" && (
+            {stepId === "experiences" && (
               <motion.div
-                key="packages" custom={dir} variants={slide}
+                key="experiences" custom={dir} variants={slide}
                 initial="enter" animate="center" exit="exit"
                 className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
-                  n={currentStepNumber} iconBg="bg-emerald-100"
-                  icon={<Award className="w-9 h-9 text-emerald-600" />}
-                  title="Surf & Adventure Packages"
-                  sub="Add professional coaching to your stay. Completely optional."
+                  n={currentStepNumber} iconBg="bg-purple-100"
+                  icon={<Sparkles className="w-9 h-9 text-purple-600" />}
+                  title="Experiences & Packages"
+                  sub="Enhance your stay with surf packages and island adventures — all optional."
                 />
 
-                <motion.div
+                
+                {packages.length > 0 && (
+                  <div className="mb-10">
+                    <h2 className="text-2xl font-serif font-bold text-emerald-900 mb-6 px-2 flex items-center gap-2"><Award className="w-6 h-6 text-emerald-600"/> Surf & Adventure Packages</h2>
+                    <motion.div
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
                   className="grid md:grid-cols-2 gap-8"
                 >
@@ -1121,34 +1122,13 @@ export default function BookingPage() {
                     );
                   })}
                 </motion.div>
-
-                <StepNav
-                  onBack={() => goToStep("guests")}
-                  onContinue={() => goToStep("dates")}
-                  continueLabel="Continue"
-                  skipLabel="Skip Packages"
-                  onSkip={() => goToStep("dates")}
-                />
-              </motion.div>
-            )}
-
-            {/* ══════════════════════════════════════════════════════════════
-                STEP 5 — Experiences
-            ══════════════════════════════════════════════════════════════ */}
-            {stepId === "experiences" && (
-              <motion.div
-                key="experiences" custom={dir} variants={slide}
-                initial="enter" animate="center" exit="exit"
-                className="w-full max-w-4xl mx-auto"
-              >
-                <StepHeader
-                  n={currentStepNumber} iconBg="bg-purple-100"
-                  icon={<Sparkles className="w-9 h-9 text-purple-600" />}
-                  title="Island Experiences"
-                  sub="All pay on arrival — simply tell us at check-in and we'll arrange everything."
-                />
-
-                <motion.div
+                  </div>
+                )}
+  
+                {experiences.length > 0 && (
+                  <div>
+                    <h2 className="text-2xl font-serif font-bold text-purple-900 mb-6 px-2 flex items-center gap-2"><Sparkles className="w-6 h-6 text-purple-600"/> Add-On Experiences</h2>
+                    <motion.div
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
                   className="grid sm:grid-cols-2 md:grid-cols-3 gap-5"
                 >
@@ -1222,19 +1202,22 @@ export default function BookingPage() {
                     );
                   })}
                 </motion.div>
+                  </div>
+                )}
 
                 <StepNav
-                  onBack={() => goToStep("dates")}
-                  onContinue={() => goToStep("room")}
-                  continueLabel="Choose Your Room"
-                  skipLabel="Skip Experiences"
-                  onSkip={() => goToStep("room")}
+                  onBack={() => goToStep("guests")}
+                  onContinue={handleRoomContinue}
+                  continueLabel="Check Availability"
+                  skipLabel="Skip to Airport Transfer"
+                  onSkip={() => goToStep("airport")}
+                  loading={checkAvail.isPending}
                 />
               </motion.div>
             )}
 
             {/* ══════════════════════════════════════════════════════════════
-                STEP 6 — Airport Transfer
+                STEP 5 — Airport Transfer
             ══════════════════════════════════════════════════════════════ */}
             {stepId === "airport" && (
               <motion.div
@@ -1253,11 +1236,31 @@ export default function BookingPage() {
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
                   className="space-y-5"
                 >
+                  {/* ── Airport Transfer 3-person limit warning ── */}
+                  {guestCount > 3 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+                      className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 flex items-start gap-4"
+                    >
+                      <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+                        <Users className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-amber-900 text-sm">Airport Transfer Unavailable</p>
+                        <p className="text-xs text-amber-700 mt-1 leading-relaxed">
+                          Airport pick-up and drop-off is available for up to <strong>3 people</strong> only.
+                          You have <strong>{guestCount} guests</strong> selected. Please reduce your guest count or arrange your own transport.
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+
                   {/* ── Pickup card ── */}
-                  <div className={`rounded-[2rem] border-2 transition-all duration-400 overflow-hidden ${watchPickup ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
+                  <div className={`rounded-[2rem] border-2 transition-all duration-400 overflow-hidden ${guestCount > 3 ? "opacity-40 pointer-events-none border-transparent bg-slate-50/70" : watchPickup ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
                     <button
                       type="button"
-                      onClick={() => form.setValue("airportPickup", !watchPickup)}
+                      disabled={guestCount > 3}
+                      onClick={() => { if (guestCount <= 3) form.setValue("airportPickup", !watchPickup); }}
                       className="w-full text-left p-5 md:p-7 flex items-start gap-4 md:gap-5"
                     >
                       <div className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
@@ -1368,10 +1371,11 @@ export default function BookingPage() {
                   </div>
 
                   {/* ── Drop card ── */}
-                  <div className={`rounded-[2rem] border-2 transition-all duration-400 ${watchDrop ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
+                  <div className={`rounded-[2rem] border-2 transition-all duration-400 ${guestCount > 3 ? "opacity-40 pointer-events-none border-transparent bg-slate-50/70" : watchDrop ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
                     <button
                       type="button"
-                      onClick={() => form.setValue("airportDrop", !watchDrop)}
+                      disabled={guestCount > 3}
+                      onClick={() => { if (guestCount <= 3) form.setValue("airportDrop", !watchDrop); }}
                       className="w-full text-left p-5 md:p-7 flex items-start gap-4 md:gap-5"
                     >
                       <div className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
