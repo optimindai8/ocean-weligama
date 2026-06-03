@@ -1303,7 +1303,7 @@ export default function BookingPage() {
                         <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
                           Transfer from Bandaranaike International Airport to the Surf Camp.{" "}
                           <span className="font-semibold text-foreground/70">
-                            Up to {apThreshold - 1} pax: €{parseFloat(apData.pickupPrice).toFixed(0)}. For {apThreshold}+ pax: €{parseFloat(apData.pickupPriceGroup).toFixed(0)}.
+                            Up to 3 people: €{parseFloat(apData.pickupPrice).toFixed(0)}.
                           </span>
                         </p>
                       </div>
@@ -1418,7 +1418,7 @@ export default function BookingPage() {
                         <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
                           Transfer from the Surf Camp to Bandaranaike International Airport.{" "}
                           <span className="font-semibold text-foreground/70">
-                            Up to {apThreshold - 1} pax: €{parseFloat(apData.dropPrice).toFixed(0)}. For {apThreshold}+ pax: €{parseFloat(apData.dropPriceGroup).toFixed(0)}.
+                            Up to 3 people: €{parseFloat(apData.dropPrice).toFixed(0)}.
                           </span>
                         </p>
                       </div>
