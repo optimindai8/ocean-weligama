@@ -481,7 +481,13 @@ export function PackageComparisonTable() {
                     <tr key={room.id} className="border-b border-slate-200 last:border-b-0 bg-white">
                       <td className="p-4 md:px-6 md:py-5">
                         <div className="font-bold text-slate-800 text-sm">{room.name}</div>
-                        <div className="text-[11px] font-medium text-slate-500 mt-0.5">Per Person / Per Week</div>
+                        <div className="text-[11px] font-medium text-slate-500 mt-0.5">
+                          {room.type === 'dormitory' 
+                            ? `Max ( ${room.maxGuests < 10 ? '0' : ''}${room.maxGuests} people )` 
+                            : room.maxGuests === 1 
+                              ? 'Per Week' 
+                              : 'Per Person / Per Week'}
+                        </div>
                       </td>
                       
                       {(matrixData?.packages || []).map((pkg: any, pIdx: number) => {

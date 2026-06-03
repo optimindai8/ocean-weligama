@@ -10,7 +10,7 @@ const router = Router();
 router.get("/v1/admin/matrix-pricing", requireAdmin, async (req, res) => {
   try {
     const allRooms = await db
-      .select({ id: rooms.id, name: rooms.slug }) 
+      .select({ id: rooms.id, name: rooms.slug, maxGuests: rooms.maxGuests, type: rooms.type }) 
       .from(rooms)
       .where(isNull(rooms.deletedAt))
       .orderBy(rooms.sortOrder);
@@ -19,7 +19,7 @@ router.get("/v1/admin/matrix-pricing", requireAdmin, async (req, res) => {
     const rTranslations = await db.select().from(roomTranslations).where(eq(roomTranslations.locale, "en"));
     const roomsMap = allRooms.map(r => {
       const t = rTranslations.find(tr => tr.roomId === r.id);
-      return { id: r.id, name: t?.name ?? r.name };
+      return { id: r.id, name: t?.name ?? r.name, maxGuests: r.maxGuests, type: r.type };
     });
 
     const sTranslations = await db.select().from(serviceTranslations).where(eq(serviceTranslations.locale, "en"));
