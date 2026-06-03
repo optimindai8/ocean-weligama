@@ -400,6 +400,13 @@ export default function BookingPage() {
   const watchDrop      = form.watch("airportDrop");
   const watchSurfboard = form.watch("bringingSurfboard");
 
+  useEffect(() => {
+    if (guestCount > 3) {
+      if (watchPickup) form.setValue("airportPickup", false);
+      if (watchDrop) form.setValue("airportDrop", false);
+    }
+  }, [guestCount, watchPickup, watchDrop, form]);
+
   // ── Dynamic airport pricing from API ─────────────────────────────────────
   const { data: airportPricingData } = useGetAirportPricing({
     query: { queryKey: getGetAirportPricingQueryKey(), staleTime: 60_000 },
@@ -594,7 +601,7 @@ export default function BookingPage() {
     currentStepNumber > flow.indexOf("airport") + 1 && (watchPickup || watchDrop) ? "✈️ Airport Transfer" : null,
   ].filter(Boolean) as string[];
 
-  const packages = Array.isArray(services) ? services.filter(s => s.type === "main" || (s.type === "optional" && s.category?.toLowerCase().includes("package")) || s.category?.toLowerCase() === "package") : [];
+  const packages: any[] = [];
   const experiences = Array.isArray(services) ? services.filter(s => (s.type === "optional" && !s.category?.toLowerCase().includes("package")) || (s.type !== "main" && s.type !== "optional" && s.category?.toLowerCase() !== "package")) : [];
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -770,16 +777,17 @@ export default function BookingPage() {
                       selected={dateRange as any}
                       onSelect={(r) => {
                         const hasPackageSelected = selectedDbServiceIds.some(id => packages.some(p => p.id === id));
-                        if (hasPackageSelected && r?.from) {
+                        if (r?.from) {
                           if (!r.to || r.to <= r.from) {
                             const minTo = new Date(r.from);
-                            minTo.setDate(minTo.getDate() + 7);
+                            minTo.setDate(minTo.getDate() + (hasPackageSelected ? 7 : 2));
                             setDateRange({ from: r.from, to: minTo });
                           } else {
                             const diffDays = Math.round((r.to.getTime() - r.from.getTime()) / 86400000);
-                            if (diffDays < 7) {
+                            const minDays = hasPackageSelected ? 7 : 2;
+                            if (diffDays < minDays) {
                               const minTo = new Date(r.from);
-                              minTo.setDate(minTo.getDate() + 7);
+                              minTo.setDate(minTo.getDate() + minDays);
                               setDateRange({ from: r.from, to: minTo });
                             } else {
                               setDateRange({ from: r.from, to: r.to });
@@ -836,6 +844,10 @@ export default function BookingPage() {
                     }
                     if (dateRange.from.getTime() === dateRange.to.getTime()) {
                       toast({ variant: "destructive", title: "Check-out must be after check-in" });
+                      return;
+                    }
+                    if (nights < 2) {
+                      toast({ variant: "destructive", title: "Minimum 2 nights required" });
                       return;
                     }
                     goToStep("guests");
