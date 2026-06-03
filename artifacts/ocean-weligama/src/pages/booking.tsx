@@ -401,7 +401,7 @@ export default function BookingPage() {
   const watchSurfboard = form.watch("bringingSurfboard");
 
   useEffect(() => {
-    if (guestCount > 3) {
+    if (guestCount !== 3) {
       if (watchPickup) form.setValue("airportPickup", false);
       if (watchDrop) form.setValue("airportDrop", false);
     }
@@ -1250,8 +1250,8 @@ export default function BookingPage() {
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
                   className="space-y-5"
                 >
-                  {/* ── Airport Transfer 3-person limit warning ── */}
-                  {guestCount > 3 && (
+                  {/* ── Airport Transfer limit warning ── */}
+                  {guestCount !== 3 && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
                       className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 flex items-start gap-4"
@@ -1262,19 +1262,24 @@ export default function BookingPage() {
                       <div>
                         <p className="font-bold text-amber-900 text-sm">Airport Transfer Unavailable</p>
                         <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-                          Airport pick-up and drop-off is available for up to <strong>3 people</strong> only.
-                          You have <strong>{guestCount} guests</strong> selected. Please reduce your guest count or arrange your own transport.
+                          Airport pick-up and drop-off is available for exactly <strong>3 guests</strong> only.
+                          You have <strong>{guestCount} guest{guestCount !== 1 ? 's' : ''}</strong> selected. Please adjust your guest count to 3 to select this option.
                         </p>
                       </div>
                     </motion.div>
                   )}
 
                   {/* ── Pickup card ── */}
-                  <div className={`rounded-[2rem] border-2 transition-all duration-400 overflow-hidden ${guestCount > 3 ? "opacity-40 pointer-events-none border-transparent bg-slate-50/70" : watchPickup ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
+                  <div className={`rounded-[2rem] border-2 transition-all duration-400 overflow-hidden ${guestCount !== 3 ? "opacity-60 border-transparent bg-slate-50/70" : watchPickup ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
                     <button
                       type="button"
-                      disabled={guestCount > 3}
-                      onClick={() => { if (guestCount <= 3) form.setValue("airportPickup", !watchPickup); }}
+                      onClick={() => {
+                        if (guestCount !== 3) {
+                          toast({ variant: "destructive", title: "Transfer Unavailable", description: "You need to select exactly 3 guests to get this option." });
+                          return;
+                        }
+                        form.setValue("airportPickup", !watchPickup);
+                      }}
                       className="w-full text-left p-5 md:p-7 flex items-start gap-4 md:gap-5"
                     >
                       <div className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
@@ -1385,11 +1390,16 @@ export default function BookingPage() {
                   </div>
 
                   {/* ── Drop card ── */}
-                  <div className={`rounded-[2rem] border-2 transition-all duration-400 ${guestCount > 3 ? "opacity-40 pointer-events-none border-transparent bg-slate-50/70" : watchDrop ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
+                  <div className={`rounded-[2rem] border-2 transition-all duration-400 ${guestCount !== 3 ? "opacity-60 border-transparent bg-slate-50/70" : watchDrop ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
                     <button
                       type="button"
-                      disabled={guestCount > 3}
-                      onClick={() => { if (guestCount <= 3) form.setValue("airportDrop", !watchDrop); }}
+                      onClick={() => {
+                        if (guestCount !== 3) {
+                          toast({ variant: "destructive", title: "Transfer Unavailable", description: "You need to select exactly 3 guests to get this option." });
+                          return;
+                        }
+                        form.setValue("airportDrop", !watchDrop);
+                      }}
                       className="w-full text-left p-5 md:p-7 flex items-start gap-4 md:gap-5"
                     >
                       <div className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
