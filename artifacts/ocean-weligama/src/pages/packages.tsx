@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Waves, Check, Sparkles, HelpCircle } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { PackageComparisonTable } from "@/components/PackageComparisonTable";
+import { MatrixPricingTable } from "@/components/MatrixPricingTable";
 
 export default function PackagesPage() {
   const { data: rawServices, isLoading } = useListServices();
@@ -31,6 +32,9 @@ export default function PackagesPage() {
       <section className="bg-white">
         <PackageComparisonTable />
       </section>
+
+      {/* Matrix Pricing Section */}
+      <MatrixPricingTable />
 
       {/* Experience Weligama Section */}
       {experienceServices.length > 0 && (
