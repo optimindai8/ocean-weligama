@@ -2,7 +2,7 @@ import { useGetMatrixPricing, getGetMatrixPricingQueryKey } from "@workspace/api
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
-import { Sparkles, ArrowRight, CheckCircle2, Star } from "lucide-react";
+import { Sparkles, ArrowRight, CheckCircle2, Star, Waves, Flame, Leaf } from "lucide-react";
 
 const EXCLUDED_PACKAGES = [
   "Moderate Surf / Guiding",
@@ -15,6 +15,39 @@ const EXCLUDED_ROOMS = [
   "Private Single Room",
   "Private Double / Twin Room",
   "Private Triple Room"
+];
+
+const PACKAGE_META = [
+  {
+    nameMatch: 'starter',
+    subtitle: 'BEGINNER',
+    tag: 'Perfect Start',
+    gradient: 'from-[#1565C0] via-[#1976D2] to-[#42A5F5]',
+    checkBg: 'bg-blue-100',
+    accentText: 'text-blue-700',
+    emoji: '🏄',
+    tagIcon: <Waves className="w-3 h-3" />,
+  },
+  {
+    nameMatch: 'advance',
+    subtitle: 'INTERMEDIATE / ADVANCED',
+    tag: 'Most Popular',
+    gradient: 'from-[#006064] via-[#00838F] to-[#26C6DA]',
+    checkBg: 'bg-teal-100',
+    accentText: 'text-teal-700',
+    emoji: '🌊',
+    tagIcon: <Flame className="w-3 h-3" />,
+  },
+  {
+    nameMatch: 'yoga',
+    subtitle: 'ALL LEVELS',
+    tag: 'Mind & Body',
+    gradient: 'from-[#1B5E20] via-[#2E7D32] to-[#66BB6A]',
+    checkBg: 'bg-green-100',
+    accentText: 'text-green-700',
+    emoji: '🧘',
+    tagIcon: <Leaf className="w-3 h-3" />,
+  },
 ];
 
 export function MatrixPricingTable() {
@@ -88,27 +121,39 @@ export function MatrixPricingTable() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr>
-                  <th className="p-5 md:p-6 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-lg md:text-xl min-w-[220px] max-w-[280px] align-bottom">
+                  <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-lg md:text-xl min-w-[220px] max-w-[280px] align-bottom">
                     Room Type
                     <div className="text-xs font-light text-slate-400 font-sans mt-1">Select your comfort</div>
                   </th>
                   {filteredPackages.map((pkg) => {
                     const isPopular = pkg.name?.toLowerCase().includes('advance');
+                    const meta = PACKAGE_META.find(m => pkg.name?.toLowerCase().includes(m.nameMatch)) || PACKAGE_META[0];
                     return (
-                      <th key={pkg.id} className={`p-4 md:p-6 text-center bg-white border-b border-slate-100 relative min-w-[160px] align-bottom ${isPopular ? 'border-t-4 border-t-teal-400' : ''}`}>
+                      <th key={pkg.id} className={`p-6 pb-8 border-b relative transition-all duration-500 ease-out align-bottom bg-white border-slate-100 ${isPopular ? 'border-t-4 border-t-teal-400' : ''} min-w-[220px]`}>
                         {isPopular && (
-                          <div className="absolute inset-0 bg-gradient-to-b from-teal-50/40 to-transparent pointer-events-none rounded-t-none" />
+                          <div className="absolute inset-0 bg-gradient-to-b from-teal-50/60 to-transparent pointer-events-none rounded-t-none" />
                         )}
-                        <div className="flex flex-col items-center justify-end h-full gap-2 relative z-10">
+
+                        <motion.div
+                          className="flex flex-col items-center text-center space-y-2 relative z-10"
+                        >
                           {isPopular && (
-                            <span className="flex items-center gap-1.5 bg-gradient-to-r from-[#006064] via-[#00838F] to-[#26C6DA] text-white text-[9px] font-black px-3 py-1 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1">
-                              <Star className="w-3 h-3 fill-white" /> Most Popular
-                            </span>
+                            <motion.div
+                              className={`flex items-center gap-1.5 bg-gradient-to-r ${meta.gradient} text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1`}
+                            >
+                              <Star className="w-3 h-3 fill-current" /> Most Popular
+                            </motion.div>
                           )}
-                          <div className={`font-bold text-sm md:text-base tracking-tight leading-snug whitespace-normal max-w-[180px] ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
-                            {pkg.name}
+                          <span className="text-3xl">{meta.emoji}</span>
+                          <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${meta.gradient} opacity-80`} />
+                          <h4 className="text-[15px] font-bold text-[#0B3D5E] leading-tight mt-1">{pkg.name}</h4>
+                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{meta.subtitle}</span>
+
+                          {/* Tag badge */}
+                          <div className={`inline-flex items-center gap-1 ${meta.checkBg} ${meta.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full mt-1`}>
+                            {meta.tagIcon} {meta.tag}
                           </div>
-                        </div>
+                        </motion.div>
                       </th>
                     );
                   })}
