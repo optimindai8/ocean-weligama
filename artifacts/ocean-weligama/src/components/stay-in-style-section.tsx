@@ -42,6 +42,13 @@ export function StayInStyleSection() {
           </motion.p>
         </div>
 
+        <div className="flex justify-end mb-4 pr-4">
+          <p className="text-sm font-semibold text-slate-400 flex items-center gap-2 animate-pulse">
+            Swipe to explore 
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </p>
+        </div>
+
         {/* Scrollable Container */}
         <div className="flex overflow-x-auto gap-6 pb-8 snap-x hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {styleRooms.map((room: any, idx: number) => {
@@ -62,7 +69,7 @@ export function StayInStyleSection() {
                     <Carousel className="w-full h-full">
                       <CarouselContent className="h-full ml-0">
                         {images.map((img: string, index: number) => (
-                          <CarouselItem key={index} className="h-full pl-0">
+                          <CarouselItem key={index} className="h-full pl-0 flex-[0_0_100%]">
                             <img
                               src={img}
                               alt={`${room.name} - ${index + 1}`}
@@ -71,14 +78,18 @@ export function StayInStyleSection() {
                           </CarouselItem>
                         ))}
                       </CarouselContent>
-                      <div className="absolute inset-x-0 bottom-4 flex justify-center gap-1 z-10 pointer-events-none">
-                         {/* Dots representation, visually appealing */}
-                         {images.map((_: any, i: number) => (
-                           <div key={i} className="w-2 h-2 rounded-full bg-white/70 shadow-sm" />
-                         ))}
-                      </div>
-                      <CarouselPrevious className="left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 hover:bg-black/40 text-white border-none h-8 w-8" />
-                      <CarouselNext className="right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 hover:bg-black/40 text-white border-none h-8 w-8" />
+                      {images.length > 1 && (
+                        <>
+                          <div className="absolute inset-x-0 bottom-4 flex justify-center gap-1.5 z-10 pointer-events-none">
+                            {/* Dots representation, visually appealing */}
+                            {images.map((_: any, i: number) => (
+                              <div key={i} className="w-2 h-2 rounded-full bg-white/70 shadow-sm" />
+                            ))}
+                          </div>
+                          <CarouselPrevious className="left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 hover:bg-black/40 text-white border-none h-8 w-8" />
+                          <CarouselNext className="right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 hover:bg-black/40 text-white border-none h-8 w-8" />
+                        </>
+                      )}
                     </Carousel>
                   ) : (
                     <div className="w-full h-full bg-muted flex items-center justify-center">
