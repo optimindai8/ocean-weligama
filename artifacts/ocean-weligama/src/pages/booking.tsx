@@ -1197,13 +1197,6 @@ export default function BookingPage() {
                                   </span>
                                   <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || 1) + 1 }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100 transition-colors">+</button>
                                 </div>
-                              </div>
-                              <div className="flex justify-between items-center bg-purple-50/50 p-3 rounded-xl border border-purple-50/50">
-                                <span className="text-xs font-bold text-purple-800/70 uppercase tracking-widest">Subtotal</span>
-                                <span className="text-base font-black text-purple-900">
-                                  €{((serviceQuantities[exp.id] || 1) * parseFloat(exp.basePrice)).toFixed(2)}
-                                </span>
-                              </div>
                             </div>
                           )}
 
