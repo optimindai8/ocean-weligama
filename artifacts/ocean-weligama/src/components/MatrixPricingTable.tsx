@@ -2,7 +2,8 @@ import { useGetMatrixPricing, getGetMatrixPricingQueryKey } from "@workspace/api
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
-import { Sparkles, ArrowRight, CheckCircle2, Star, Waves, Flame, Leaf } from "lucide-react";
+import { Sparkles, ArrowRight, CheckCircle2, Star, Waves, Flame, Leaf, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
 
 const EXCLUDED_PACKAGES = [
   "Moderate Surf / Guiding",
@@ -49,6 +50,236 @@ const PACKAGE_META = [
     tagIcon: <Leaf className="w-3 h-3" />,
   },
 ];
+
+/* ─────────────────────────────────────────────────────
+   Inner table component with scrollable body
+   ───────────────────────────────────────────────────── */
+function MatrixTableInner({
+  filteredRooms,
+  filteredPackages,
+  getPrice,
+  formatPrice,
+}: {
+  filteredRooms: any[];
+  filteredPackages: any[];
+  getPrice: (roomId: string, packageId: string) => any;
+  formatPrice: (n: number) => string;
+}) {
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isAtTop, setIsAtTop] = useState(true);
+  const MAX_ROWS_VISIBLE = 4;
+  const ROW_HEIGHT = 90; // approximate row height in px
+  const maxBodyHeight = MAX_ROWS_VISIBLE * ROW_HEIGHT;
+  const needsScroll = filteredRooms.length > MAX_ROWS_VISIBLE;
+
+  const updateScrollState = useCallback(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+    setIsAtBottom(el.scrollTop >= el.scrollHeight - el.clientHeight - 5);
+    setIsAtTop(el.scrollTop <= 5);
+  }, []);
+
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    return () => el.removeEventListener("scroll", updateScrollState);
+  }, [updateScrollState]);
+
+  const scrollToTop = () => {
+    bodyRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const scrollToBottom = () => {
+    bodyRef.current?.scrollTo({ top: bodyRef.current.scrollHeight, behavior: "smooth" });
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+      className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden relative max-w-[1100px] mx-auto"
+    >
+      {/* Horizontally scrollable wrapper */}
+      <div className="overflow-x-auto relative z-10">
+
+        {/* ── HEADER TABLE ── always visible */}
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr>
+              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-lg md:text-xl min-w-[220px] max-w-[280px] align-bottom">
+                Room Type
+                <div className="text-xs font-light text-slate-400 font-sans mt-1">Select your comfort</div>
+              </th>
+              {filteredPackages.map((pkg: any) => {
+                const isPopular = pkg.name?.toLowerCase().includes('advance');
+                const meta = PACKAGE_META.find(m => pkg.name?.toLowerCase().includes(m.nameMatch)) || PACKAGE_META[0];
+                return (
+                  <th key={pkg.id} className={`p-6 pb-8 border-b relative transition-all duration-500 ease-out align-bottom bg-white border-slate-100 ${isPopular ? 'border-t-4 border-t-teal-400' : ''} min-w-[220px]`}>
+                    {isPopular && (
+                      <div className="absolute inset-0 bg-gradient-to-b from-teal-50/60 to-transparent pointer-events-none rounded-t-none" />
+                    )}
+                    <motion.div className="flex flex-col items-center text-center space-y-2 relative z-10">
+                      {isPopular && (
+                        <motion.div
+                          className={`flex items-center gap-1.5 bg-gradient-to-r ${meta.gradient} text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1`}
+                        >
+                          <Star className="w-3 h-3 fill-current" /> Most Popular
+                        </motion.div>
+                      )}
+                      <span className="text-3xl">{meta.emoji}</span>
+                      <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${meta.gradient} opacity-80`} />
+                      <h4 className="text-[15px] font-bold text-[#0B3D5E] leading-tight mt-1">{pkg.name}</h4>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{meta.subtitle}</span>
+                      <div className={`inline-flex items-center gap-1 ${meta.checkBg} ${meta.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full mt-1`}>
+                        {meta.tagIcon} {meta.tag}
+                      </div>
+                    </motion.div>
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+        </table>
+
+        {/* ── SCROLLABLE BODY ── */}
+        <div
+          ref={bodyRef}
+          style={{
+            maxHeight: needsScroll ? `${maxBodyHeight}px` : undefined,
+            overflowY: needsScroll ? "auto" : undefined,
+            scrollBehavior: "smooth",
+          }}
+        >
+          <table className="w-full text-left border-collapse">
+            <tbody className="divide-y divide-slate-50 bg-white">
+              {filteredRooms.map((room: any) => (
+                <tr key={room.id} className="group transition-colors duration-200 hover:bg-slate-50/50">
+                  <td className="p-5 md:p-6 text-sm md:text-base text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-colors relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal min-w-[220px] max-w-[280px]">
+                    {room.name}
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-2 font-bold uppercase tracking-wider">
+                      View Details <ArrowRight className="w-3 h-3" />
+                    </div>
+                  </td>
+                  {filteredPackages.map((pkg: any) => {
+                    const price = getPrice(room.id!, pkg.id!);
+                    const isPopular = pkg.name?.toLowerCase().includes('advance');
+                    return (
+                      <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 min-w-[220px] ${isPopular ? 'bg-teal-50/10' : ''}`}>
+                        {price && price !== "0" && price !== "0.00" ? (
+                          <div className="flex flex-col items-center justify-center gap-1 group/price">
+                            <span className={`text-lg md:text-xl font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
+                              {formatPrice(parseFloat(price as string))}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-slate-200 font-light text-xl">-</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* ── Bottom fade gradient to hint at more content ── */}
+      {needsScroll && !isAtBottom && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: "80px",
+            background: "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, rgba(255,255,255,1) 100%)",
+            pointerEvents: "none",
+            zIndex: 15,
+            borderBottomLeftRadius: "2rem",
+            borderBottomRightRadius: "2rem",
+          }}
+        />
+      )}
+
+      {/* ── Scroll indicator buttons ── */}
+      {needsScroll && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "12px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 20,
+            display: "flex",
+            gap: "8px",
+          }}
+        >
+          {!isAtTop && (
+            <button
+              type="button"
+              onClick={scrollToTop}
+              aria-label="Scroll to top"
+              style={{
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                backgroundColor: "#0B3D5E",
+                border: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "white",
+                boxShadow: "0 2px 10px rgba(11,61,94,0.3)",
+                transition: "all 0.2s",
+              }}
+            >
+              <ChevronUp size={16} strokeWidth={2.5} />
+            </button>
+          )}
+          {!isAtBottom && (
+            <button
+              type="button"
+              onClick={scrollToBottom}
+              aria-label="Scroll down for more rooms"
+              style={{
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                backgroundColor: "#0B3D5E",
+                border: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "white",
+                boxShadow: "0 2px 10px rgba(11,61,94,0.3)",
+                transition: "all 0.2s",
+                animation: "bounce-gentle 2s infinite",
+              }}
+            >
+              <ChevronDown size={16} strokeWidth={2.5} />
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Bounce animation for the scroll hint */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes bounce-gentle {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(4px); }
+        }
+      `}} />
+    </motion.div>
+  );
+}
 
 export function MatrixPricingTable() {
   const { formatPrice } = useLanguage();
@@ -110,87 +341,12 @@ export function MatrixPricingTable() {
           </p>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden relative max-w-[1100px] mx-auto"
-        >
-          <div className="overflow-x-auto relative z-10">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr>
-                  <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-lg md:text-xl min-w-[220px] max-w-[280px] align-bottom">
-                    Room Type
-                    <div className="text-xs font-light text-slate-400 font-sans mt-1">Select your comfort</div>
-                  </th>
-                  {filteredPackages.map((pkg) => {
-                    const isPopular = pkg.name?.toLowerCase().includes('advance');
-                    const meta = PACKAGE_META.find(m => pkg.name?.toLowerCase().includes(m.nameMatch)) || PACKAGE_META[0];
-                    return (
-                      <th key={pkg.id} className={`p-6 pb-8 border-b relative transition-all duration-500 ease-out align-bottom bg-white border-slate-100 ${isPopular ? 'border-t-4 border-t-teal-400' : ''} min-w-[220px]`}>
-                        {isPopular && (
-                          <div className="absolute inset-0 bg-gradient-to-b from-teal-50/60 to-transparent pointer-events-none rounded-t-none" />
-                        )}
-
-                        <motion.div
-                          className="flex flex-col items-center text-center space-y-2 relative z-10"
-                        >
-                          {isPopular && (
-                            <motion.div
-                              className={`flex items-center gap-1.5 bg-gradient-to-r ${meta.gradient} text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1`}
-                            >
-                              <Star className="w-3 h-3 fill-current" /> Most Popular
-                            </motion.div>
-                          )}
-                          <span className="text-3xl">{meta.emoji}</span>
-                          <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${meta.gradient} opacity-80`} />
-                          <h4 className="text-[15px] font-bold text-[#0B3D5E] leading-tight mt-1">{pkg.name}</h4>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{meta.subtitle}</span>
-
-                          {/* Tag badge */}
-                          <div className={`inline-flex items-center gap-1 ${meta.checkBg} ${meta.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full mt-1`}>
-                            {meta.tagIcon} {meta.tag}
-                          </div>
-                        </motion.div>
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50 bg-white">
-                {filteredRooms.map((room) => (
-                  <tr key={room.id} className="group transition-colors duration-200 hover:bg-slate-50/50">
-                    <td className="p-5 md:p-6 text-sm md:text-base text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-colors relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal max-w-[280px]">
-                      {room.name}
-                      <div className="flex items-center gap-1.5 text-[11px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-2 font-bold uppercase tracking-wider">
-                        View Details <ArrowRight className="w-3 h-3" />
-                      </div>
-                    </td>
-                    {filteredPackages.map((pkg) => {
-                      const price = getPrice(room.id!, pkg.id!);
-                      const isPopular = pkg.name?.toLowerCase().includes('advance');
-                      return (
-                        <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 ${isPopular ? 'bg-teal-50/10' : ''}`}>
-                          {price && price !== "0" && price !== "0.00" ? (
-                            <div className="flex flex-col items-center justify-center gap-1 group/price">
-                              <span className={`text-lg md:text-xl font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
-                                {formatPrice(parseFloat(price as string))}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-slate-200 font-light text-xl">-</span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
+        <MatrixTableInner
+          filteredRooms={filteredRooms}
+          filteredPackages={filteredPackages}
+          getPrice={getPrice}
+          formatPrice={formatPrice}
+        />
       </div>
     </section>
   );
