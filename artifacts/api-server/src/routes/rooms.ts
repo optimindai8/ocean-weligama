@@ -38,12 +38,28 @@ async function getRoomWithTranslation(roomId: string, locale: string) {
     .innerJoin(amenities, eq(roomAmenities.amenityId, amenities.id))
     .where(eq(roomAmenities.roomId, roomId));
 
+  const images = await db
+    .select({
+      id: gallery.id,
+      mediaType: gallery.mediaType,
+      url: gallery.url,
+      thumbnailUrl: gallery.thumbnailUrl,
+      altText: gallery.altText,
+      caption: gallery.caption,
+      category: gallery.category,
+      isFeatured: gallery.isFeatured,
+    })
+    .from(gallery)
+    .where(and(eq(gallery.roomId, roomId), isNull(gallery.deletedAt)))
+    .orderBy(gallery.sortOrder);
+
   return {
     ...room,
     name: translation?.name ?? "",
     description: translation?.description ?? "",
     shortDesc: translation?.shortDesc ?? null,
     amenities: roomAmenitiesData.map((a) => a.key),
+    images,
   };
 }
 

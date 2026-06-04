@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useMemo, type ReactNode } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -42,8 +42,8 @@ import {
   Bike,
   Plane,
   Calendar,
-  Clock,
   ChevronLeft,
+  ChevronRight,
   Home,
   RotateCcw,
 } from "lucide-react";
@@ -245,6 +245,111 @@ function StepNav({
         </button>
       </div>
     </div>
+  );
+}
+
+function RoomCard({ room, isSelected, onClick }: { room: any, isSelected: boolean, onClick: () => void }) {
+  const [currentImgIdx, setCurrentImgIdx] = useState(0);
+  
+  const allImages = useMemo(() => {
+    const imgs: string[] = [];
+    if (room.heroImageUrl) imgs.push(room.heroImageUrl);
+    if (Array.isArray(room.images)) {
+      room.images.forEach((img: any) => {
+        if (img.url && img.url !== room.heroImageUrl) {
+          imgs.push(img.url);
+        }
+      });
+    }
+    return imgs;
+  }, [room]);
+
+  const nextImg = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImgIdx(prev => (prev + 1) % allImages.length);
+  };
+
+  const prevImg = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImgIdx(prev => (prev - 1 + allImages.length) % allImages.length);
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className={`group text-left p-6 md:p-8 rounded-[2rem] border-2 transition-all duration-400 relative overflow-hidden ${
+        isSelected
+          ? "border-primary bg-white shadow-2xl shadow-primary/10 scale-[1.02] z-10"
+          : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white hover:border-amber-200 hover:shadow-xl hover:scale-[1.01]"
+      }`}
+    >
+      {isSelected && (
+        <motion.div
+          initial={{ scale: 0 }} animate={{ scale: 1 }}
+          className="absolute top-5 right-5 w-7 h-7 bg-primary rounded-full flex items-center justify-center shadow-lg z-20"
+        >
+          <Check className="w-4 h-4 text-white" />
+        </motion.div>
+      )}
+      
+      {allImages.length > 0 && (
+        <div className="w-full h-48 mb-5 rounded-2xl overflow-hidden bg-muted relative group/slider">
+          {/* Images */}
+          <div className="w-full h-full relative bg-slate-100">
+            {allImages.map((src, idx) => (
+              <img 
+                key={src}
+                src={src} 
+                alt={`${room.name} image ${idx + 1}`} 
+                className={`w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-500 ${idx === currentImgIdx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`} 
+              />
+            ))}
+          </div>
+
+          {/* Controls */}
+          {allImages.length > 1 && (
+            <>
+              <div 
+                onClick={prevImg}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center z-20 opacity-0 group-hover/slider:opacity-100 transition-opacity backdrop-blur-sm shadow-md"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </div>
+              <div 
+                onClick={nextImg}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center z-20 opacity-0 group-hover/slider:opacity-100 transition-opacity backdrop-blur-sm shadow-md"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </div>
+
+              {/* Dots */}
+              <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-20">
+                {allImages.map((_, idx) => (
+                  <div 
+                    key={idx}
+                    onClick={(e) => { e.stopPropagation(); setCurrentImgIdx(idx); }}
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${idx === currentImgIdx ? 'bg-white scale-125 w-3' : 'bg-white/50 hover:bg-white/80'}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      <h3 className="text-2xl font-serif font-bold text-foreground mb-3">{room.name}</h3>
+      {room.shortDesc && (
+        <p className="text-sm text-muted-foreground mb-5 line-clamp-2">{room.shortDesc}</p>
+      )}
+      <div className="flex items-end justify-between">
+        <div>
+          <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">Capacity</p>
+          <p className="text-sm font-bold text-muted-foreground">{room.maxGuests} Guests</p>
+        </div>
+      </div>
+      {/* hover shimmer */}
+      <div className="absolute inset-0 bg-amber-500/3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2rem]" />
+    </button>
   );
 }
 
@@ -888,42 +993,12 @@ export default function BookingPage() {
                     className="grid md:grid-cols-2 gap-6"
                   >
                     {Array.isArray(rooms) && rooms.map(room => (
-                      <button
+                      <RoomCard 
                         key={room.id}
+                        room={room}
+                        isSelected={selectedRoomIds.includes(room.id)}
                         onClick={() => setSelectedRoomIds(prev => prev.includes(room.id) ? prev.filter(id => id !== room.id) : [...prev, room.id])}
-                        className={`group text-left p-6 md:p-8 rounded-[2rem] border-2 transition-all duration-400 relative overflow-hidden ${
-                          selectedRoomIds.includes(room.id)
-                            ? "border-primary bg-white shadow-2xl shadow-primary/10 scale-[1.02] z-10"
-                            : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white hover:border-amber-200 hover:shadow-xl hover:scale-[1.01]"
-                        }`}
-                      >
-                        {selectedRoomIds.includes(room.id) && (
-                          <motion.div
-                            initial={{ scale: 0 }} animate={{ scale: 1 }}
-                            className="absolute top-5 right-5 w-7 h-7 bg-primary rounded-full flex items-center justify-center shadow-lg"
-                          >
-                            <Check className="w-4 h-4 text-white" />
-                          </motion.div>
-                        )}
-                        {room.heroImageUrl && (
-                          <div className="w-full h-40 mb-5 rounded-2xl overflow-hidden bg-muted">
-                            <img src={room.heroImageUrl} alt={room.name} className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                        <h3 className="text-2xl font-serif font-bold text-foreground mb-3">{room.name}</h3>
-                        {room.shortDesc && (
-                          <p className="text-sm text-muted-foreground mb-5 line-clamp-2">{room.shortDesc}</p>
-                        )}
-                        <div className="flex items-end justify-between">
-                          <div>
-                            <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">Capacity</p>
-                            <p className="text-sm font-bold text-muted-foreground">{room.maxGuests} Guests</p>
-                          </div>
-
-                        </div>
-                        {/* hover shimmer */}
-                        <div className="absolute inset-0 bg-amber-500/3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2rem]" />
-                      </button>
+                      />
                     ))}
                   </motion.div>
                 )}
