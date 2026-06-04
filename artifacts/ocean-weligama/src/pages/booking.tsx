@@ -919,13 +919,7 @@ export default function BookingPage() {
                             <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">Capacity</p>
                             <p className="text-sm font-bold text-muted-foreground">{room.maxGuests} Guests</p>
                           </div>
-                          <div className="text-right">
-                            <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">From</p>
-                            <p className="text-3xl font-bold text-primary">
-                              €{room.basePricePerNight}
-                              <span className="text-xs font-normal text-muted-foreground">/nt</span>
-                            </p>
-                          </div>
+
                         </div>
                         {/* hover shimmer */}
                         <div className="absolute inset-0 bg-amber-500/3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-[2rem]" />
