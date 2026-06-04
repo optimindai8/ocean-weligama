@@ -292,6 +292,7 @@ export default function BookingPage() {
   // Booking state
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [formDataForSubmit, setFormDataForSubmit] = useState<GuestForm | null>(null);
+  const [showUnavailablePopup, setShowUnavailablePopup] = useState(false);
 
   const [guestCount,            setGuestCount]            = useState(() => loadState("guestCount", 2));
   const [dateRange,             setDateRange]             = useState<{ from?: Date; to?: Date }>(() => {
@@ -513,8 +514,11 @@ export default function BookingPage() {
         },
       });
       setPriceData(res);
-      if ((res as any).available) goToStep("airport");
-      else toast({ variant: "destructive", title: "Room unavailable for these dates", description: "Please choose different dates." });
+      if ((res as any).available) {
+        goToStep("airport");
+      } else {
+        setShowUnavailablePopup(true);
+      }
     } catch {
       toast({ variant: "destructive", title: "Could not check availability" });
     }
@@ -1767,6 +1771,85 @@ export default function BookingPage() {
                   {createBook.isPending ? "Confirming..." : "Yes, Confirm Booking"}
                 </Button>
               </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* ── Unavailable Room Popup ── */}
+          <Dialog open={showUnavailablePopup} onOpenChange={setShowUnavailablePopup}>
+            <DialogContent className="sm:max-w-2xl p-0 overflow-hidden bg-white/95 backdrop-blur-xl border-slate-100/60 shadow-2xl rounded-3xl">
+              <div className="bg-[#0B3D5E] p-8 text-white text-center">
+                <h2 className="text-3xl font-serif font-bold mb-3">Room Unavailable</h2>
+                <p className="text-sm text-white/90 max-w-md mx-auto leading-relaxed">
+                  We're so sorry, but your originally selected room is already booked for these dates. 
+                  The good news? We have these beautiful alternatives ready for you!
+                </p>
+              </div>
+              
+              <div className="p-6 md:p-8 max-h-[60vh] overflow-y-auto">
+                {Array.isArray(rooms) && rooms.filter(r => !selectedRoomIds.includes(r.id)).length > 0 ? (
+                  <div className="space-y-4">
+                    {rooms.filter(r => !selectedRoomIds.includes(r.id)).map(altRoom => (
+                      <div key={altRoom.id} className="flex flex-col sm:flex-row gap-5 p-4 md:p-5 border-2 border-slate-100 rounded-3xl hover:border-emerald-200 hover:bg-emerald-50/30 transition-all duration-300">
+                        {altRoom.heroImageUrl ? (
+                          <div className="w-full sm:w-32 h-32 rounded-2xl overflow-hidden shrink-0 bg-muted">
+                            <img src={altRoom.heroImageUrl} alt={altRoom.name} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="w-full sm:w-32 h-32 rounded-2xl shrink-0 bg-slate-100 flex items-center justify-center">
+                            <Home className="w-8 h-8 text-slate-300" />
+                          </div>
+                        )}
+                        <div className="flex-1 flex flex-col justify-center">
+                          <h3 className="font-bold text-foreground font-serif text-xl mb-1">{altRoom.name}</h3>
+                          <p className="text-xs text-muted-foreground mb-4 font-bold">{altRoom.maxGuests} Guests • €{altRoom.basePricePerNight}/night</p>
+                          <Button
+                            size="default"
+                            className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-md font-bold self-start px-6"
+                            onClick={async () => {
+                              setSelectedRoomIds([altRoom.id]);
+                              setShowUnavailablePopup(false);
+                              try {
+                                const newRes = await checkAvail.mutateAsync({
+                                  data: {
+                                    roomId: altRoom.id,
+                                    roomIds: [altRoom.id],
+                                    checkIn: toStr(dateRange.from!),
+                                    checkOut: toStr(dateRange.to!),
+                                    guestCount,
+                                    serviceIds: selectedDbServiceIds,
+                                    serviceQuantities,
+                                    serviceCustomizations: getServiceCustomizations(),
+                                  }
+                                });
+                                setPriceData(newRes);
+                                if ((newRes as any).available) {
+                                  goToStep("airport");
+                                } else {
+                                  toast({ variant: "destructive", title: "Still unavailable. Please pick different dates." });
+                                }
+                              } catch (err) {
+                                toast({ variant: "destructive", title: "Error checking availability" });
+                              }
+                            }}
+                          >
+                            Select & Continue
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-muted-foreground mb-6 text-lg font-serif">Unfortunately, we have no other rooms available for these dates.</p>
+                    <Button variant="outline" className="rounded-full px-8 py-6 h-auto font-bold border-2 hover:bg-slate-50" onClick={() => {
+                      setShowUnavailablePopup(false);
+                      goToStep("dates");
+                    }}>
+                      Change Dates
+                    </Button>
+                  </div>
+                )}
+              </div>
             </DialogContent>
           </Dialog>
 
