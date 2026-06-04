@@ -66,7 +66,7 @@ export function StayInStyleSection() {
                 {/* Image Carousel */}
                 <div className="relative aspect-[4/3] mb-6 overflow-hidden rounded-sm group-hover:shadow-lg transition-shadow">
                   {images && images.length > 0 ? (
-                    <Carousel className="w-full h-full">
+                    <Carousel className="w-full h-full" opts={{ loop: true }}>
                       <CarouselContent className="h-full ml-0">
                         {images.map((img: string, index: number) => (
                           <CarouselItem key={index} className="h-full pl-0 flex-[0_0_100%]">
@@ -86,8 +86,8 @@ export function StayInStyleSection() {
                               <div key={i} className="w-2 h-2 rounded-full bg-white/70 shadow-sm" />
                             ))}
                           </div>
-                          <CarouselPrevious className="left-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 hover:bg-black/40 text-white border-none h-8 w-8" />
-                          <CarouselNext className="right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 hover:bg-black/40 text-white border-none h-8 w-8" />
+                          <CarouselPrevious className="left-2 bg-black/40 hover:bg-black/60 text-white border-none h-8 w-8 z-10 shadow-sm" />
+                          <CarouselNext className="right-2 bg-black/40 hover:bg-black/60 text-white border-none h-8 w-8 z-10 shadow-sm" />
                         </>
                       )}
                     </Carousel>
