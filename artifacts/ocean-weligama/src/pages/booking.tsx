@@ -254,10 +254,21 @@ function RoomCard({ room, isSelected, onClick }: { room: any, isSelected: boolea
   const allImages = useMemo(() => {
     const imgs: string[] = [];
     if (room.heroImageUrl) imgs.push(room.heroImageUrl);
+    
+    // API returning room.images array of objects
     if (Array.isArray(room.images)) {
       room.images.forEach((img: any) => {
         if (img.url && img.url !== room.heroImageUrl) {
           imgs.push(img.url);
+        }
+      });
+    }
+    
+    // API returning room.gallery array of strings
+    if (Array.isArray(room.gallery)) {
+      room.gallery.forEach((url: string) => {
+        if (typeof url === 'string' && url !== room.heroImageUrl && !imgs.includes(url)) {
+          imgs.push(url);
         }
       });
     }
