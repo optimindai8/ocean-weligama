@@ -90,6 +90,7 @@ const roomSchema = z.object({
   currency: z.string().default("EUR"),
   status: z.enum(["active", "maintenance", "hidden"]).default("active"),
   isFeatured: z.boolean().default(false),
+  showInPackages: z.boolean().default(false),
   gallery: z.array(z.string()).default([]),
   highlights: z.array(z.string()).default([]),
 });
@@ -135,6 +136,7 @@ export default function AdminRooms() {
       currency: "EUR",
       status: "active",
       isFeatured: false,
+      showInPackages: false,
       gallery: [],
       highlights: [""],
     },
@@ -158,6 +160,7 @@ export default function AdminRooms() {
       currency: "EUR",
       status: "active",
       isFeatured: false,
+      showInPackages: false,
       gallery: [],
       highlights: [""],
     });
@@ -179,6 +182,7 @@ export default function AdminRooms() {
       currency: room.currency || "EUR",
       status: room.status,
       isFeatured: room.isFeatured,
+      showInPackages: room.showInPackages || false,
       gallery: room.gallery || (room.heroImageUrl ? [room.heroImageUrl] : []),
       highlights: room.highlights?.length ? room.highlights : [""],
     });
@@ -721,6 +725,17 @@ export default function AdminRooms() {
                           <div className="space-y-1">
                             <FormLabel className="text-base font-bold text-[#F0A500] flex items-center gap-1"><Star className="w-4 h-4 fill-[#F0A500]" /> Featured Room</FormLabel>
                             <FormDescription>Highlight this room on the homepage.</FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                          </FormControl>
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="showInPackages" render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-2xl border p-6 bg-card shadow-sm md:col-span-2">
+                          <div className="space-y-1">
+                            <FormLabel className="text-base font-bold text-[#4BBCCC] flex items-center gap-1"><Sparkles className="w-4 h-4" /> Show in Packages</FormLabel>
+                            <FormDescription>Display this room in the "Stay in Style" section.</FormDescription>
                           </div>
                           <FormControl>
                             <Switch checked={field.value} onCheckedChange={field.onChange} />

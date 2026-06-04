@@ -10,6 +10,7 @@ import { PageHero } from "@/components/page-hero";
 
 import { PackageComparisonTable } from "@/components/PackageComparisonTable";
 import { MatrixPricingTable } from "@/components/MatrixPricingTable";
+import { StayInStyleSection } from "@/components/stay-in-style-section";
 
 export default function PackagesPage() {
   const { data: rawServices, isLoading } = useListServices();
@@ -36,6 +37,8 @@ export default function PackagesPage() {
 
       {/* Matrix Pricing Section */}
       <MatrixPricingTable />
+
+      <StayInStyleSection />
 
       {/* Experience Weligama Section */}
       {experienceServices.length > 0 && (

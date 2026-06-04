@@ -1028,7 +1028,7 @@ export default function BookingPage() {
 
                                 return (
                                   <>
-                                    {visibleHighlights.map((hl, i) => {
+                                    {visibleHighlights.map((hl: string, i: number) => {
                                       const leadingNumMatch = hl.match(/^(\d+)\s+(.+)/);
                                       const embeddedNumMatch = !leadingNumMatch ? hl.match(/^(.+?)\s(\d+)\s(.+)/) : null;
                                       const isLesson = /(lesson)/i.test(hl);

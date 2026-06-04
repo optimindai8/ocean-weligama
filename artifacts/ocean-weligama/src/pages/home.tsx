@@ -11,6 +11,7 @@ import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
 import { PackageComparisonTable } from "@/components/PackageComparisonTable";
 import { MatrixPricingTable } from "@/components/MatrixPricingTable";
+import { StayInStyleSection } from "@/components/stay-in-style-section";
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
   { value: "solo", label: "Solo Traveler Packages" },
@@ -402,6 +403,8 @@ export default function Home() {
 
       {/* Matrix Pricing Section */}
       <MatrixPricingTable />
+
+      <StayInStyleSection />
 
       {/* Experience Weligama Section */}
       {services && services.filter(s => s.type === "optional" && !s.category?.toLowerCase().includes("package") && s.isFeatured).length > 0 && (

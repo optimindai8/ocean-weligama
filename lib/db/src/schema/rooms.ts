@@ -40,6 +40,7 @@ export const rooms = pgTable("rooms", {
   ),
   currency: text("currency").notNull().default("EUR"),
   isFeatured: boolean("is_featured").default(false),
+  showInPackages: boolean("show_in_packages").default(false),
   sortOrder: integer("sort_order").default(0),
   heroImageUrl: text("hero_image_url"),
   gallery: text("gallery").array(),
