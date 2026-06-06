@@ -97,14 +97,29 @@ router.get("/v1/matrix-pricing", async (req, res) => {
     const sTranslations = await db.select().from(serviceTranslations).where(eq(serviceTranslations.locale, "en"));
 
     const packagesRecords = await db
-      .select({ id: services.id, slug: services.slug, isFeatured: services.isFeatured, iconEmoji: services.iconEmoji })
+      .select({ 
+        id: services.id, 
+        slug: services.slug, 
+        isFeatured: services.isFeatured, 
+        iconEmoji: services.iconEmoji,
+        matrixLabel: services.matrixLabel,
+        matrixExperienceLevel: services.matrixExperienceLevel
+      })
       .from(services)
       .where(and(eq(services.type, "main"), eq(services.isActive, true)))
       .orderBy(services.sortOrder);
       
     const mainPackages = packagesRecords.map(p => {
       const t = sTranslations.find(tr => tr.serviceId === p.id);
-      return { id: p.id, name: t?.name ?? p.slug, slug: p.slug, isFeatured: p.isFeatured, iconEmoji: p.iconEmoji };
+      return { 
+        id: p.id, 
+        name: t?.name ?? p.slug, 
+        slug: p.slug, 
+        isFeatured: p.isFeatured, 
+        iconEmoji: p.iconEmoji,
+        matrixLabel: p.matrixLabel,
+        matrixExperienceLevel: p.matrixExperienceLevel
+      };
     });
 
     const prices = await db.select().from(roomPackagePrices);

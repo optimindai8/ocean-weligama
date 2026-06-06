@@ -23,6 +23,10 @@ export type MatrixPricingDataPackagesItem = {
   slug?: string;
   isFeatured?: boolean;
   iconEmoji?: string;
+  /** @nullable */
+  matrixLabel?: string | null;
+  /** @nullable */
+  matrixExperienceLevel?: string | null;
 };
 
 export type MatrixPricingDataPricesItem = {

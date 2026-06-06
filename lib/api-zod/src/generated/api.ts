@@ -245,6 +245,8 @@ export const GetMatrixPricingResponse = zod.object({
         slug: zod.string().optional(),
         isFeatured: zod.boolean().optional(),
         iconEmoji: zod.string().optional(),
+        matrixLabel: zod.string().nullish(),
+        matrixExperienceLevel: zod.string().nullish(),
       }),
     )
     .optional(),
@@ -1352,6 +1354,8 @@ export const AdminGetMatrixPricingResponse = zod.object({
         slug: zod.string().optional(),
         isFeatured: zod.boolean().optional(),
         iconEmoji: zod.string().optional(),
+        matrixLabel: zod.string().nullish(),
+        matrixExperienceLevel: zod.string().nullish(),
       }),
     )
     .optional(),

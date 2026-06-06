@@ -1430,6 +1430,10 @@ components:
                 type: boolean
               iconEmoji:
                 type: string
+              matrixLabel:
+                type: ["string", "null"]
+              matrixExperienceLevel:
+                type: ["string", "null"]
         prices:
           type: array
           items:
