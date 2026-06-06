@@ -39,6 +39,9 @@ export const services = pgTable("services", {
   isActive: boolean("is_active").default(true),
   isBookable: boolean("is_bookable").default(true),
   isFeatured: boolean("is_featured").default(false),
+  comparisonLabel: text("comparison_label"),
+  matrixLabel: text("matrix_label"),
+  matrixExperienceLevel: text("matrix_experience_level"),
   maxCapacity: integer("max_capacity"),
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at", { withTimezone: true })

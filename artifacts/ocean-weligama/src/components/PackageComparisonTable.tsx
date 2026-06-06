@@ -107,7 +107,7 @@ export function PackageComparisonTable() {
       ...s,
       emoji: s.iconEmoji || '🏄',
       subtitle: s.category || 'Premium',
-      tag: s.isFeatured ? 'Most Popular' : 'Premium',
+      tag: s.comparisonLabel || (s.isFeatured ? 'Most Popular' : 'Premium'),
       popular: s.isFeatured,
       scheme: COLOR_SCHEMES[idx % COLOR_SCHEMES.length]
     }));

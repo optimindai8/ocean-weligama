@@ -92,6 +92,9 @@ const serviceSchema = z.object({
   isActive: z.boolean().default(true),
   isBookable: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
+  comparisonLabel: z.string().nullable().optional(),
+  matrixLabel: z.string().nullable().optional(),
+  matrixExperienceLevel: z.string().nullable().optional(),
   sortOrder: z.string().default("0"),
   unit: z.enum(["per_person", "per_day", "per_session", "per_tour", "per_trip", "per_lesson", "flat_rate"]).default("flat_rate"),
 });
@@ -140,6 +143,9 @@ export default function AdminPackages() {
       isActive: true,
       isBookable: true,
       isFeatured: false,
+      comparisonLabel: "",
+      matrixLabel: "",
+      matrixExperienceLevel: "",
       sortOrder: "0",
       unit: "flat_rate",
     },
@@ -160,6 +166,9 @@ export default function AdminPackages() {
         isActive: service.isActive,
         isBookable: service.isBookable ?? true,
         isFeatured: service.isFeatured ?? false,
+        comparisonLabel: service.comparisonLabel || "",
+        matrixLabel: service.matrixLabel || "",
+        matrixExperienceLevel: service.matrixExperienceLevel || "",
         sortOrder: service.sortOrder?.toString() || "0",
         unit: (service.unit as any) || "flat_rate",
       });
@@ -176,7 +185,10 @@ export default function AdminPackages() {
         basePrice: "0.00",
         isActive: true,
         isBookable: true,
-      isFeatured: false,
+        isFeatured: false,
+        comparisonLabel: "",
+        matrixLabel: "",
+        matrixExperienceLevel: "",
         sortOrder: "0",
         unit: "flat_rate",
       });
@@ -203,6 +215,9 @@ export default function AdminPackages() {
       slug: generatedSlug,
       description: values.description || null,
       category: values.category || "Main Package",
+      comparisonLabel: values.comparisonLabel || null,
+      matrixLabel: values.matrixLabel || null,
+      matrixExperienceLevel: values.matrixExperienceLevel || null,
       unit: values.unit,
       sortOrder: values.sortOrder ? parseInt(values.sortOrder, 10) || 0 : 0,
     };
@@ -606,6 +621,73 @@ export default function AdminPackages() {
                         </FormItem>
                       )}
                     />
+
+                    <div className="space-y-4 pt-4 border-t border-border">
+                      <h4 className="text-sm font-bold text-[#0B3D5E]">Table Labels Customization</h4>
+                      
+                      <FormField
+                        control={form.control}
+                        name="comparisonLabel"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Comparison Table Label</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g. Premium" {...field} value={field.value || ""} className="rounded-xl h-10" />
+                            </FormControl>
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {["Premium", "Most Popular", "Best Value", "Limited Offer"].map(tag => (
+                                <Badge key={tag} variant="outline" className="text-[10px] cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => form.setValue("comparisonLabel", tag)}>
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="matrixLabel"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Matrix Table Label</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g. Perfect Start" {...field} value={field.value || ""} className="rounded-xl h-10" />
+                            </FormControl>
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {["Perfect Start", "Most Popular", "Mind & Body", "Ultimate Experience"].map(tag => (
+                                <Badge key={tag} variant="outline" className="text-[10px] cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => form.setValue("matrixLabel", tag)}>
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="matrixExperienceLevel"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Matrix Experience Level</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g. BEGINNER" {...field} value={field.value || ""} className="rounded-xl h-10 uppercase" />
+                            </FormControl>
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {["BEGINNER", "INTERMEDIATE / ADVANCED", "ALL LEVELS", "EXPERT"].map(tag => (
+                                <Badge key={tag} variant="outline" className="text-[10px] cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => form.setValue("matrixExperienceLevel", tag)}>
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                 </div>
 

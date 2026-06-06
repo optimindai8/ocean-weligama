@@ -1673,8 +1673,12 @@ components:
           type: string
         shortDesc:
           type: string
-
-
+        comparisonLabel:
+          type: ["string", "null"]
+        matrixLabel:
+          type: ["string", "null"]
+        matrixExperienceLevel:
+          type: ["string", "null"]
         highlights:
           type: array
           items:
@@ -1716,8 +1720,12 @@ components:
           type: string
         shortDesc:
           type: string
-
-
+        comparisonLabel:
+          type: ["string", "null"]
+        matrixLabel:
+          type: ["string", "null"]
+        matrixExperienceLevel:
+          type: ["string", "null"]
         highlights:
           type: array
           items:
@@ -1756,8 +1764,12 @@ components:
           type: string
         shortDesc:
           type: string
-
-
+        comparisonLabel:
+          type: ["string", "null"]
+        matrixLabel:
+          type: ["string", "null"]
+        matrixExperienceLevel:
+          type: ["string", "null"]
         highlights:
           type: array
           items:

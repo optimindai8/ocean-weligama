@@ -253,6 +253,12 @@ export interface Service {
   isFeatured?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
+  /** @nullable */
+  comparisonLabel?: string | null;
+  /** @nullable */
+  matrixLabel?: string | null;
+  /** @nullable */
+  matrixExperienceLevel?: string | null;
   highlights?: string[];
   type: ServiceType;
   /** @nullable */
@@ -292,6 +298,12 @@ export interface ServiceInput {
   isFeatured?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
+  /** @nullable */
+  comparisonLabel?: string | null;
+  /** @nullable */
+  matrixLabel?: string | null;
+  /** @nullable */
+  matrixExperienceLevel?: string | null;
   highlights?: string[];
   type: ServiceInputType;
   /** @nullable */
@@ -330,6 +342,12 @@ export interface ServiceUpdate {
   isFeatured?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
+  /** @nullable */
+  comparisonLabel?: string | null;
+  /** @nullable */
+  matrixLabel?: string | null;
+  /** @nullable */
+  matrixExperienceLevel?: string | null;
   highlights?: string[];
   type?: ServiceUpdateType;
   /** @nullable */

@@ -138,9 +138,9 @@ function MatrixTableInner({
                       <span className="text-3xl">{pkg.iconEmoji || meta.emoji}</span>
                       <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${meta.gradient} opacity-80`} />
                       <h4 className="text-[14px] font-serif font-bold text-[#0B3D5E] leading-tight mt-1">{pkg.name}</h4>
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{meta.subtitle}</span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{pkg.matrixExperienceLevel || meta.subtitle}</span>
                       <div className={`inline-flex items-center gap-1 ${meta.checkBg} ${meta.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full mt-1`}>
-                        {meta.tagIcon} {meta.tag}
+                        {meta.tagIcon} {pkg.matrixLabel || meta.tag}
                       </div>
                     </motion.div>
                   </th>
