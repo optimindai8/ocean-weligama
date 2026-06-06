@@ -31,6 +31,7 @@ export default function AdminReviews() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"unapproved" | "approved">("unapproved");
 
 
 
@@ -42,6 +43,10 @@ export default function AdminReviews() {
   const deleteReview = useAdminDeleteReview();
 
   const reviewList = reviews as any[] | undefined;
+  
+  const unapprovedReviews = reviewList?.filter((r) => !r.isApproved) || [];
+  const approvedReviews = reviewList?.filter((r) => r.isApproved) || [];
+  const displayedReviews = activeTab === "unapproved" ? unapprovedReviews : approvedReviews;
 
   function update(id: string, data: Record<string, unknown>) {
     updateReview.mutate(
@@ -106,11 +111,44 @@ export default function AdminReviews() {
           </button>
         </div>
 
+        <div className="flex bg-muted/50 p-1.5 rounded-[2rem] w-fit mb-8 border border-border/50 shadow-inner">
+          <button
+            onClick={() => setActiveTab("unapproved")}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all ${
+              activeTab === "unapproved" 
+                ? "bg-card text-foreground shadow-sm ring-1 ring-border" 
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+            }`}
+          >
+            Unapproved
+            {unapprovedReviews.length > 0 && (
+              <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === "unapproved" ? "bg-yellow-100 text-yellow-700" : "bg-muted-foreground/20"}`}>
+                {unapprovedReviews.length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab("approved")}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all ${
+              activeTab === "approved" 
+                ? "bg-card text-foreground shadow-sm ring-1 ring-border" 
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+            }`}
+          >
+            Approved
+            {approvedReviews.length > 0 && (
+              <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === "approved" ? "bg-green-100 text-green-700" : "bg-muted-foreground/20"}`}>
+                {approvedReviews.length}
+              </span>
+            )}
+          </button>
+        </div>
+
         {isLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => <Skeleton key={i} className="h-48 rounded-2xl" />)}
           </div>
-        ) : reviewList && reviewList.length > 0 ? (
+        ) : displayedReviews.length > 0 ? (
           <motion.div 
             className="space-y-4"
             variants={{
@@ -124,7 +162,7 @@ export default function AdminReviews() {
             animate="show"
           >
             <AnimatePresence mode="popLayout">
-              {reviewList.map((review) => (
+              {displayedReviews.map((review) => (
                 <motion.div
                   key={review.id}
                   layout
@@ -258,7 +296,7 @@ export default function AdminReviews() {
               <MessageSquare className="w-10 h-10 text-muted-foreground/30" />
             </motion.div>
             <h3 className="text-xl font-bold text-foreground mb-2 italic">Quiet waters...</h3>
-            <p className="text-muted-foreground text-sm max-w-xs">No reviews match your current filter. Check back later!</p>
+            <p className="text-muted-foreground text-sm max-w-xs">No {activeTab} reviews match your current filter. Check back later!</p>
           </motion.div>
         )}
 
