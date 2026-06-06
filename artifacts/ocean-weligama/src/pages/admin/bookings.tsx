@@ -25,6 +25,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { AlertTriangle } from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -104,6 +115,7 @@ export default function AdminBookings() {
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
   const [expandedPkgs, setExpandedPkgs] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
 
 
@@ -175,19 +187,19 @@ export default function AdminBookings() {
     );
   }
 
-  function handleDeleteBooking(id: string) {
-    if (window.confirm("Are you sure you want to delete this booking? This action cannot be undone.")) {
-      deleteBooking.mutate(
-        { id },
-        {
-          onSuccess: () => {
-            toast({ title: "Booking deleted successfully" });
-            queryClient.invalidateQueries({ queryKey: getAdminListBookingsQueryKey(params) });
-          },
-          onError: () => toast({ variant: "destructive", title: "Failed to delete booking" }),
-        }
-      );
-    }
+  function confirmDelete() {
+    if (!deleteId) return;
+    deleteBooking.mutate(
+      { id: deleteId },
+      {
+        onSuccess: () => {
+          toast({ title: "Booking deleted successfully" });
+          queryClient.invalidateQueries({ queryKey: getAdminListBookingsQueryKey(params) });
+          setDeleteId(null);
+        },
+        onError: () => toast({ variant: "destructive", title: "Failed to delete booking" }),
+      }
+    );
   }
 
   const { data: allBookingsRes } = useAdminListBookings({ limit: 1000 }, {
@@ -381,7 +393,7 @@ export default function AdminBookings() {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 rounded-xl text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                            onClick={() => handleDeleteBooking(b.id)}
+                            onClick={(e) => { e.stopPropagation(); setDeleteId(b.id); }}
                             disabled={deleteBooking.isPending}
                             title="Delete Booking"
                             data-testid={`delete-booking-${b.id}`}
@@ -842,6 +854,38 @@ export default function AdminBookings() {
           </DialogContent>
         </Dialog>
 
+        {/* Delete Confirm Dialog */}
+        <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+          <AlertDialogContent className="rounded-[2rem] p-8 border border-border shadow-2xl max-w-sm">
+            <AlertDialogHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center shrink-0">
+                  <AlertTriangle className="w-6 h-6 text-red-500" />
+                </div>
+                <div>
+                  <AlertDialogTitle className="text-xl font-bold text-foreground">Delete Booking?</AlertDialogTitle>
+                  <AlertDialogDescription className="text-xs font-bold text-red-500/80 uppercase tracking-widest mt-1">
+                    Cannot be undone
+                  </AlertDialogDescription>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
+                This booking will be permanently removed from the system. This action cannot be reversed.
+              </p>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="mt-8 flex gap-3 sm:space-x-0">
+              <AlertDialogCancel className="flex-1 py-6 rounded-xl border border-border text-foreground font-semibold text-sm hover:bg-muted transition-colors m-0">
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmDelete}
+                className="flex-1 py-6 rounded-xl bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition-colors m-0"
+              >
+                {deleteBooking.isPending ? "Deleting..." : "Yes, Delete"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </AdminLayout>
   );
