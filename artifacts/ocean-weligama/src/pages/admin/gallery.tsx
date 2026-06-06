@@ -209,78 +209,55 @@ export default function AdminGallery() {
                       </p>
                     )}
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-2">
+                    {/* Action Toolbar */}
+                    <div className="flex items-center gap-2 pt-3 mt-3 border-t border-border/40">
                       {item.status !== "approved" && (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => handleStatusChange(item.id, "approved")}
                           disabled={updateStatus.isPending}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-green-500 text-white text-xs font-bold hover:bg-green-600 transition-colors disabled:opacity-50"
+                          className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-green-50 hover:bg-green-100 text-green-600 text-xs font-bold transition-colors border border-green-200/50 shadow-sm disabled:opacity-50"
                         >
                           <Check className="w-3.5 h-3.5" />
                           Approve
                         </motion.button>
                       )}
-                      {item.status !== "rejected" && (
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleStatusChange(item.id, "rejected")}
-                          disabled={updateStatus.isPending}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-amber-500 text-white text-xs font-bold hover:bg-amber-600 transition-colors disabled:opacity-50"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                          Reject
-                        </motion.button>
-                      )}
                       
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleToggleFeatured(item.id, item.isFeatured ?? false)}
-                        disabled={updateStatus.isPending}
-                        className={`w-10 flex-shrink-0 flex items-center justify-center py-2.5 rounded-xl transition-colors border ${item.isFeatured ? 'bg-amber-100 text-amber-500 border-amber-200' : 'bg-card text-muted-foreground hover:bg-muted border-border'}`}
-                      >
-                        <Star className={`w-3.5 h-3.5 ${item.isFeatured ? 'fill-current' : ''}`} />
-                      </motion.button>
+                      {item.status !== "rejected" && (
+                         <motion.button
+                           whileHover={{ scale: 1.05 }}
+                           whileTap={{ scale: 0.95 }}
+                           onClick={() => handleStatusChange(item.id, "rejected")}
+                           disabled={updateStatus.isPending}
+                           className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold transition-colors border border-red-200/50 shadow-sm disabled:opacity-50"
+                         >
+                           <X className="w-3.5 h-3.5" />
+                           Reject
+                         </motion.button>
+                      )}
 
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setConfirmDelete(item.id)}
-                        className="w-10 flex-shrink-0 flex items-center justify-center py-2.5 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors border border-red-100"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </motion.button>
-                    </div>
-
-                    {/* Re-approve if rejected */}
-                    {item.status === "approved" && (
-                      <div className="mt-2">
-                        
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => handleToggleFeatured(item.id, item.isFeatured ?? false)}
-                        disabled={updateStatus.isPending}
-                        className={`w-10 flex-shrink-0 flex items-center justify-center py-2.5 rounded-xl transition-colors border ${item.isFeatured ? 'bg-amber-100 text-amber-500 border-amber-200' : 'bg-card text-muted-foreground hover:bg-muted border-border'}`}
-                      >
-                        <Star className={`w-3.5 h-3.5 ${item.isFeatured ? 'fill-current' : ''}`} />
-                      </motion.button>
-
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setConfirmDelete(item.id)}
-                          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-red-50 text-red-500 text-xs font-bold hover:bg-red-100 transition-colors border border-red-100"
+                      <div className="flex-shrink-0 flex items-center gap-1 ml-auto">
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => handleToggleFeatured(item.id, item.isFeatured ?? false)}
+                          disabled={updateStatus.isPending}
+                          className={`p-2 rounded-lg transition-all ${item.isFeatured ? 'text-amber-500 bg-amber-50 hover:bg-amber-100 ring-1 ring-amber-200 shadow-sm' : 'text-muted-foreground hover:bg-muted'}`}
                         >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          Delete
+                          <Star className={`w-4 h-4 ${item.isFeatured ? 'fill-current' : ''}`} />
+                        </motion.button>
+
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => setConfirmDelete(item.id)}
+                          className="p-2 rounded-lg text-muted-foreground hover:text-red-500 hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </motion.button>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </motion.div>
               ))}
