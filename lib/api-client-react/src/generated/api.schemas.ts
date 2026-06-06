@@ -910,6 +910,14 @@ export type AdminGetBookingsTrendParams = {
   days?: number;
 };
 
+export type AdminDeleteAllGuests200 = {
+  ok?: boolean;
+};
+
+export type AdminDeleteGuest200 = {
+  ok?: boolean;
+};
+
 export type AdminListMessagesParams = {
   isRead?: boolean;
   limit?: number;

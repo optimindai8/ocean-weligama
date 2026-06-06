@@ -581,4 +581,55 @@ router.get("/v1/admin/guests", requireAdmin, async (req, res) => {
   }
 });
 
+// Delete single guest by email (soft-delete related bookings and messages)
+router.delete("/v1/admin/guests/:email", requireAdmin, async (req, res) => {
+  try {
+    const { email } = req.params as Record<string, string>;
+    const normalizedEmail = decodeURIComponent(email).toLowerCase();
+
+    await db.transaction(async (tx) => {
+      // Soft-delete bookings by this guest
+      await tx
+        .update(bookings)
+        .set({ deletedAt: new Date() })
+        .where(eq(bookings.guestEmail, normalizedEmail));
+
+      // Soft-delete contact messages by this guest
+      await tx
+        .update(contactMessages)
+        .set({ deletedAt: new Date() })
+        .where(eq(contactMessages.email, normalizedEmail));
+    });
+
+    req.log.info({ email: normalizedEmail }, "Guest records deleted");
+    return res.json({ ok: true });
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Delete ALL guests (soft-delete all bookings and messages)
+router.delete("/v1/admin/guests", requireAdmin, async (req, res) => {
+  try {
+    await db.transaction(async (tx) => {
+      await tx
+        .update(bookings)
+        .set({ deletedAt: new Date() })
+        .where(isNull(bookings.deletedAt));
+
+      await tx
+        .update(contactMessages)
+        .set({ deletedAt: new Date() })
+        .where(isNull(contactMessages.deletedAt));
+    });
+
+    req.log.info("All guest records deleted");
+    return res.json({ ok: true });
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;

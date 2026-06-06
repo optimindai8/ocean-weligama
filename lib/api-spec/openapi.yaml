@@ -988,6 +988,48 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/GuestDetail'
+    delete:
+      tags:
+        - Admin
+      summary: Delete all guests
+      operationId: adminDeleteAllGuests
+      security:
+        - AdminAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /v1/admin/guests/{email}:
+    delete:
+      tags:
+        - Admin
+      summary: Delete a guest by email
+      operationId: adminDeleteGuest
+      security:
+        - AdminAuth: []
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
 
   /v1/admin/messages:
     get:

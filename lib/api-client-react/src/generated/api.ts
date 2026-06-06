@@ -19,7 +19,9 @@ import type {
 import type {
   AdminAuthResult,
   AdminBookingList,
+  AdminDeleteAllGuests200,
   AdminDeleteBlog200,
+  AdminDeleteGuest200,
   AdminDeleteService200,
   AdminGetBookingsTrendParams,
   AdminGetRoomAvailabilityParams,
@@ -4066,6 +4068,171 @@ export function useAdminListGuests<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Delete all guests
+ */
+export const getAdminDeleteAllGuestsUrl = () => {
+  return `/api/v1/admin/guests`;
+};
+
+export const adminDeleteAllGuests = async (
+  options?: RequestInit,
+): Promise<AdminDeleteAllGuests200> => {
+  return customFetch<AdminDeleteAllGuests200>(getAdminDeleteAllGuestsUrl(), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getAdminDeleteAllGuestsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteAllGuests>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminDeleteAllGuests>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["adminDeleteAllGuests"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminDeleteAllGuests>>,
+    void
+  > = () => {
+    return adminDeleteAllGuests(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminDeleteAllGuestsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminDeleteAllGuests>>
+>;
+
+export type AdminDeleteAllGuestsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete all guests
+ */
+export const useAdminDeleteAllGuests = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteAllGuests>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminDeleteAllGuests>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getAdminDeleteAllGuestsMutationOptions(options));
+};
+
+/**
+ * @summary Delete a guest by email
+ */
+export const getAdminDeleteGuestUrl = (email: string) => {
+  return `/api/v1/admin/guests/${email}`;
+};
+
+export const adminDeleteGuest = async (
+  email: string,
+  options?: RequestInit,
+): Promise<AdminDeleteGuest200> => {
+  return customFetch<AdminDeleteGuest200>(getAdminDeleteGuestUrl(email), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getAdminDeleteGuestMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteGuest>>,
+    TError,
+    { email: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminDeleteGuest>>,
+  TError,
+  { email: string },
+  TContext
+> => {
+  const mutationKey = ["adminDeleteGuest"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminDeleteGuest>>,
+    { email: string }
+  > = (props) => {
+    const { email } = props ?? {};
+
+    return adminDeleteGuest(email, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminDeleteGuestMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminDeleteGuest>>
+>;
+
+export type AdminDeleteGuestMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a guest by email
+ */
+export const useAdminDeleteGuest = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminDeleteGuest>>,
+    TError,
+    { email: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminDeleteGuest>>,
+  TError,
+  { email: string },
+  TContext
+> => {
+  return useMutation(getAdminDeleteGuestMutationOptions(options));
+};
 
 /**
  * @summary List contact messages

@@ -1265,6 +1265,24 @@ export const AdminListGuestsResponseItem = zod.object({
 export const AdminListGuestsResponse = zod.array(AdminListGuestsResponseItem);
 
 /**
+ * @summary Delete all guests
+ */
+export const AdminDeleteAllGuestsResponse = zod.object({
+  ok: zod.boolean().optional(),
+});
+
+/**
+ * @summary Delete a guest by email
+ */
+export const AdminDeleteGuestParams = zod.object({
+  email: zod.coerce.string(),
+});
+
+export const AdminDeleteGuestResponse = zod.object({
+  ok: zod.boolean().optional(),
+});
+
+/**
  * @summary List contact messages
  */
 export const adminListMessagesQueryLimitDefault = 20;
