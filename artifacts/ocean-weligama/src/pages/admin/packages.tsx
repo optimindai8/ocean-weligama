@@ -439,23 +439,22 @@ export default function AdminPackages() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                   {/* Left Column: Visuals & Basics */}
-                  <div className="space-y-8">
-                    <div className="grid grid-cols-1 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Package Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g. Surfer Starter Package" {...field} className="rounded-xl h-12 text-lg font-semibold" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                  <div className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Package Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. Surfer Starter Package" {...field} className="rounded-xl h-12 text-lg font-semibold" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-
+                    <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="iconEmoji"
@@ -464,33 +463,6 @@ export default function AdminPackages() {
                             <FormLabel>Package Icon (Emoji)</FormLabel>
                             <FormControl>
                               <Input placeholder="e.g. 🏄" {...field} className="rounded-xl h-12 text-lg" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                    </div>
-                  </div>
-
-                  {/* Right Column: Configuration */}
-                  <div className="space-y-8">
-                    <div className="grid grid-cols-1 gap-6">
-
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="basePrice"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price (€)</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">€</span>
-                                <Input type="text" placeholder="0.00" {...field} className="pl-9 rounded-xl font-bold h-12" />
-                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -510,7 +482,47 @@ export default function AdminPackages() {
                           </FormItem>
                         )}
                       />
-                      
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Full Description (Optional)</FormLabel>
+                          <FormControl>
+                            <Textarea 
+                              placeholder="Describe the experience or add additional package notes..." 
+                              className="min-h-[120px] rounded-2xl resize-none p-4" 
+                              {...field} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Right Column: Configuration */}
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="basePrice"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Price (€)</FormLabel>
+                            <FormControl>
+                              <div className="relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">€</span>
+                                <Input type="text" placeholder="0.00" {...field} className="pl-9 rounded-xl font-bold h-12" />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
                       <FormField
                         control={form.control}
                         name="unit"
@@ -535,8 +547,6 @@ export default function AdminPackages() {
                         )}
                       />
                     </div>
-                    
-
 
                     <FormField
                       control={form.control}
@@ -578,12 +588,12 @@ export default function AdminPackages() {
                       )}
                     />
 
-                    <div className="flex gap-4 pt-4">
+                    <div className="flex flex-col gap-3 pt-2">
                       <FormField
                         control={form.control}
                         name="isActive"
                         render={({ field }) => (
-                          <FormItem className="flex-1 flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
+                          <FormItem className="flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
                             <div className="space-y-0.5">
                               <FormLabel className="text-sm font-bold">Active</FormLabel>
                               <p className="text-[10px] text-muted-foreground">Visible to guests.</p>
@@ -602,10 +612,10 @@ export default function AdminPackages() {
                         control={form.control}
                         name="isFeatured"
                         render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-muted/20 flex-1">
+                          <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-amber-50/50 border-amber-100">
                             <div className="space-y-0.5">
-                              <FormLabel className="text-base">Activate Most Popular Tag</FormLabel>
-                              <FormDescription>
+                              <FormLabel className="text-sm font-bold text-amber-900">Activate Most Popular Tag</FormLabel>
+                              <FormDescription className="text-[10px] text-amber-700">
                                 Display this package with a 'Most Popular' tag.
                               </FormDescription>
                             </div>
@@ -613,6 +623,7 @@ export default function AdminPackages() {
                               <Switch
                                 checked={field.value}
                                 onCheckedChange={field.onChange}
+                                className="data-[state=checked]:bg-amber-500"
                               />
                             </FormControl>
                           </FormItem>
@@ -623,7 +634,7 @@ export default function AdminPackages() {
                         control={form.control}
                         name="isBookable"
                         render={({ field }) => (
-                          <FormItem className="flex-1 flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
+                          <FormItem className="flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
                             <div className="space-y-0.5">
                               <FormLabel className="text-sm font-bold">Bookable</FormLabel>
                               <p className="text-[10px] text-muted-foreground">Accepts bookings.</p>
@@ -639,26 +650,6 @@ export default function AdminPackages() {
                       />
                     </div>
                   </div>
-                </div>
-
-                <div className="space-y-6 pt-6 border-t">
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Description (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea 
-                            placeholder="Describe the experience or add additional package notes..." 
-                            className="min-h-[120px] rounded-2xl resize-none p-4" 
-                            {...field} 
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
 
                 <DialogFooter className="pt-8 border-t border-border">
