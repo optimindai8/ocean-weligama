@@ -1,4 +1,4 @@
-import { useGetMatrixPricing, getGetMatrixPricingQueryKey } from "@workspace/api-client-react";
+import { useGetMatrixPricing, getGetMatrixPricingQueryKey, useListRooms } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
@@ -60,11 +60,13 @@ function MatrixTableInner({
   filteredPackages,
   getPrice,
   formatPrice,
+  roomSlugMap,
 }: {
   filteredRooms: any[];
   filteredPackages: any[];
   getPrice: (roomId: string, packageId: string) => any;
   formatPrice: (n: number) => string;
+  roomSlugMap: Record<string, string>;
 }) {
   const [, setLocation] = useLocation();
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -162,13 +164,20 @@ function MatrixTableInner({
               {filteredRooms.map((room: any) => (
                 <tr key={room.id} className="group transition-colors duration-200 hover:bg-slate-50/50">
                   <td 
-                    onClick={() => setLocation(`/rooms/${room.slug || room.id}`)}
-                    className="p-4 md:p-5 text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-all relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal min-w-[220px] max-w-[280px] cursor-pointer hover:shadow-inner"
+                    onClick={() => {
+                      const slug = roomSlugMap[room.id];
+                      if (slug) setLocation(`/rooms/${slug}`);
+                    }}
+                    className={`p-4 md:p-5 text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-all relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal min-w-[220px] max-w-[280px] ${
+                      roomSlugMap[room.id] ? 'cursor-pointer hover:shadow-inner' : 'cursor-default'
+                    }`}
                   >
                     {room.name}
-                    <div className="flex items-center gap-1.5 text-[10px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 font-sans font-bold uppercase tracking-wider translate-y-1 group-hover:translate-y-0 duration-300">
-                      View Details <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                    </div>
+                    {roomSlugMap[room.id] && (
+                      <div className="flex items-center gap-1.5 text-[10px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 font-sans font-bold uppercase tracking-wider translate-y-1 group-hover:translate-y-0 duration-300">
+                        View Details <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    )}
                   </td>
                   {filteredPackages.map((pkg: any) => {
                     const price = getPrice(room.id!, pkg.id!);
@@ -291,6 +300,15 @@ export function MatrixPricingTable() {
   const { data: matrixData, isLoading } = useGetMatrixPricing({
     query: { queryKey: getGetMatrixPricingQueryKey() },
   });
+  const { data: allRooms } = useListRooms();
+
+  // Build a map from room ID -> slug using the full rooms list
+  const roomSlugMap: Record<string, string> = {};
+  if (Array.isArray(allRooms)) {
+    (allRooms as any[]).forEach((r: any) => {
+      if (r.id && r.slug) roomSlugMap[r.id] = r.slug;
+    });
+  }
 
   if (isLoading) {
     return (
@@ -351,6 +369,7 @@ export function MatrixPricingTable() {
           filteredPackages={filteredPackages}
           getPrice={getPrice}
           formatPrice={formatPrice}
+          roomSlugMap={roomSlugMap}
         />
       </div>
     </section>
