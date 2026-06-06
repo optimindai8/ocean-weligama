@@ -31,6 +31,7 @@ import AdminGallery from "@/pages/admin/gallery";
 import AdminBlogs from "@/pages/admin/blogs";
 import AdminAirport from "@/pages/admin/airport";
 import AdminMatrixPricing from "@/pages/admin/matrix-pricing";
+import AdminGuests from "@/pages/admin/guests";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -83,6 +84,7 @@ function App() {
               <Route path="/ow-admin" component={AdminLoginPage} />
               <Route path="/ow-admin/dashboard" component={AdminDashboard} />
               <Route path="/ow-admin/bookings" component={AdminBookings} />
+              <Route path="/ow-admin/guests" component={AdminGuests} />
               <Route path="/ow-admin/rooms" component={AdminRooms} />
               <Route path="/ow-admin/packages" component={AdminPackages} />
               <Route path="/ow-admin/addons" component={AdminAddons} />
