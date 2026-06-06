@@ -15,11 +15,13 @@ import {
   ImageIcon,
   BookOpen,
   Plane,
+  Users,
 } from "lucide-react";
 
 const NAV = [
   { href: "/ow-admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/ow-admin/bookings", label: "Bookings", icon: Calendar },
+  { href: "/ow-admin/guests", label: "Guest Details", icon: Users },
   { href: "/ow-admin/rooms", label: "Rooms", icon: BedDouble },
   { href: "/ow-admin/packages", label: "Packages", icon: Sparkles },
   { href: "/ow-admin/matrix-pricing", label: "Matrix Pricing", icon: Sparkles },

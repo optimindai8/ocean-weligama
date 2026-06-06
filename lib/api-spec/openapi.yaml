@@ -971,6 +971,24 @@ paths:
                   $ref: "#/components/schemas/Booking"
 
   # ADMIN MESSAGES
+  /v1/admin/guests:
+    get:
+      tags:
+        - Admin
+      summary: List all guests
+      operationId: adminListGuests
+      security:
+        - AdminAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GuestDetail'
+
   /v1/admin/messages:
     get:
       operationId: adminListMessages
@@ -1382,6 +1400,23 @@ paths:
 
 components:
   schemas:
+    GuestDetail:
+      type: object
+      required: [id, name, email, phone, source, lastActiveAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        source:
+          type: string
+        lastActiveAt:
+          type: string
+          format: date-time
     MatrixPricingUpdate:
       type: object
       properties:

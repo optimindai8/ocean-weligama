@@ -513,4 +513,72 @@ router.post("/v1/admin/notifications/mark-read", requireAdmin, async (req, res) 
   }
 });
 
+// Admin Guests
+router.get("/v1/admin/guests", requireAdmin, async (req, res) => {
+  try {
+    const allBookings = await db.select({
+      name: bookings.guestFullName,
+      email: bookings.guestEmail,
+      phone: bookings.guestPhone,
+      createdAt: bookings.createdAt,
+    }).from(bookings).where(isNull(bookings.deletedAt));
+
+    const allMessages = await db.select({
+      name: contactMessages.fullName,
+      email: contactMessages.email,
+      phone: contactMessages.phone,
+      createdAt: contactMessages.createdAt,
+    }).from(contactMessages).where(isNull(contactMessages.deletedAt));
+
+    const guestMap = new Map();
+
+    for (const b of allBookings) {
+      if (!b.email) continue;
+      const key = b.email.toLowerCase();
+      if (!guestMap.has(key)) {
+        guestMap.set(key, {
+          id: key,
+          name: b.name,
+          email: key,
+          phone: b.phone || "",
+          source: "Booking",
+          lastActiveAt: b.createdAt
+        });
+      } else {
+        const existing = guestMap.get(key);
+        if (b.createdAt > existing.lastActiveAt) existing.lastActiveAt = b.createdAt;
+      }
+    }
+
+    for (const m of allMessages) {
+      if (!m.email) continue;
+      const key = m.email.toLowerCase();
+      if (!guestMap.has(key)) {
+        guestMap.set(key, {
+          id: key,
+          name: m.name,
+          email: key,
+          phone: m.phone || "",
+          source: "Message",
+          lastActiveAt: m.createdAt
+        });
+      } else {
+        const existing = guestMap.get(key);
+        if (existing.source !== "Message" && existing.source !== "Booking & Message") {
+          existing.source = "Booking & Message";
+        }
+        if (m.createdAt > existing.lastActiveAt) existing.lastActiveAt = m.createdAt;
+        if (!existing.phone && m.phone) existing.phone = m.phone;
+      }
+    }
+
+    const guests = Array.from(guestMap.values()).sort((a, b) => b.lastActiveAt.getTime() - a.lastActiveAt.getTime());
+
+    return res.json(guests);
+  } catch (err) {
+    req.log.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default router;

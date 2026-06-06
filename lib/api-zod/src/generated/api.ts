@@ -1252,6 +1252,19 @@ export const AdminGetUpcomingCheckinsResponse = zod.array(
 );
 
 /**
+ * @summary List all guests
+ */
+export const AdminListGuestsResponseItem = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  email: zod.string(),
+  phone: zod.string(),
+  source: zod.string(),
+  lastActiveAt: zod.coerce.date(),
+});
+export const AdminListGuestsResponse = zod.array(AdminListGuestsResponseItem);
+
+/**
  * @summary List contact messages
  */
 export const adminListMessagesQueryLimitDefault = 20;

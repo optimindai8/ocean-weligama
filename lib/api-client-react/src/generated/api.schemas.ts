@@ -5,6 +5,15 @@
  * Ocean Weligama API
  * OpenAPI spec version: 0.1.0
  */
+export interface GuestDetail {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  source: string;
+  lastActiveAt: string;
+}
+
 export interface MatrixPricingUpdate {
   roomId: string;
   packageId: string;
