@@ -82,6 +82,7 @@ import {
 const serviceSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   slug: z.string().optional(),
+  iconEmoji: z.string().max(10, "Emoji is too long").optional(),
   description: z.string().optional(),
   highlights: z.array(z.string().min(1)).min(1, "Add at least one item of inclusion"),
   type: z.enum(["main", "optional"]),
@@ -128,6 +129,7 @@ export default function AdminPackages() {
     defaultValues: {
       name: "",
       slug: "",
+      iconEmoji: "🏄",
       description: "",
       highlights: [],
       type: "main",
@@ -147,6 +149,7 @@ export default function AdminPackages() {
       form.reset({
         name: service.name,
         slug: service.slug,
+        iconEmoji: service.iconEmoji || "🏄",
         description: service.description || "",
         highlights: service.highlights || [],
         type: service.type as "main" | "optional",
@@ -163,6 +166,7 @@ export default function AdminPackages() {
       form.reset({
         name: "",
         slug: "",
+        iconEmoji: "🏄",
         description: "",
         highlights: [],
         type: "main",
@@ -437,6 +441,20 @@ export default function AdminPackages() {
                         )}
                       />
 
+
+                      <FormField
+                        control={form.control}
+                        name="iconEmoji"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Package Icon (Emoji)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g. 🏄" {...field} className="rounded-xl h-12 text-lg" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
                     </div>
                   </div>

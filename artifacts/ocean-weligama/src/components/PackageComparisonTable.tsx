@@ -1,19 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 import {
-  Check, Minus, Waves, Dumbbell, Coffee, Star, Gift,
-  Users, Sparkles, ArrowRight, Flame, Leaf,
+  Check, Minus, Star, Sparkles
 } from 'lucide-react';
-import { Link } from 'wouter';
+import { useListServices, type Service } from "@workspace/api-client-react";
 
-/* ─── Package Definitions ─────────────────────────────────────────────────── */
-const packages = [
+/* ─── Package Color Schemes ─────────────────────────────────────────────────── */
+const COLOR_SCHEMES = [
   {
-    id: 'starter',
-    slug: 'surfer-starter-package',
-    name: 'Surfer Starter',
-    subtitle: 'Beginner',
-    tag: 'Perfect Start',
     gradient: 'from-[#1565C0] via-[#1976D2] to-[#42A5F5]',
     headerGrad: 'from-[#0D47A1] to-[#1976D2]',
     lightBg: 'bg-blue-50/70',
@@ -22,16 +16,8 @@ const packages = [
     checkBg: 'bg-blue-100',
     checkText: 'text-blue-700',
     pillBg: 'bg-blue-600',
-    popular: false,
-    emoji: '🏄',
-    tagIcon: <Waves className="w-3 h-3" />,
   },
   {
-    id: 'advance',
-    slug: 'surfer-advance-package',
-    name: 'Surfer Advance',
-    subtitle: 'Intermediate / Advanced',
-    tag: 'Most Popular',
     gradient: 'from-[#006064] via-[#00838F] to-[#26C6DA]',
     headerGrad: 'from-[#004D40] to-[#00838F]',
     lightBg: 'bg-teal-50/70',
@@ -40,16 +26,8 @@ const packages = [
     checkBg: 'bg-teal-100',
     checkText: 'text-teal-700',
     pillBg: 'bg-teal-600',
-    popular: true,
-    emoji: '🌊',
-    tagIcon: <Flame className="w-3 h-3" />,
   },
   {
-    id: 'yoga',
-    slug: 'yoga-surf-retreat',
-    name: 'Yoga & Surf Retreat',
-    subtitle: 'All Levels',
-    tag: 'Mind & Body',
     gradient: 'from-[#1B5E20] via-[#2E7D32] to-[#66BB6A]',
     headerGrad: 'from-[#1B5E20] to-[#388E3C]',
     lightBg: 'bg-green-50/70',
@@ -58,80 +36,26 @@ const packages = [
     checkBg: 'bg-green-100',
     checkText: 'text-green-700',
     pillBg: 'bg-green-600',
-    popular: false,
-    emoji: '🧘',
-    tagIcon: <Leaf className="w-3 h-3" />,
   },
+  {
+    gradient: 'from-[#E65100] via-[#EF6C00] to-[#FFA726]',
+    headerGrad: 'from-[#E65100] to-[#F57C00]',
+    lightBg: 'bg-orange-50/70',
+    accentBorder: 'border-orange-300',
+    accentText: 'text-orange-700',
+    checkBg: 'bg-orange-100',
+    checkText: 'text-orange-700',
+    pillBg: 'bg-orange-600',
+  }
 ];
 
-/* ─── Feature Data ────────────────────────────────────────────────────────── */
-type FeatureValue = boolean | string;
-interface FeatureItem {
-  name: string;
-  values: [FeatureValue, FeatureValue, FeatureValue];
-  highlight?: boolean; // visually emphasize this row
-}
-interface FeatureSection {
-  category: string;
-  icon: React.ElementType;
-  items: FeatureItem[];
-}
-
-const features: FeatureSection[] = [
-  {
-    category: 'Accommodation & Meals',
-    icon: Coffee,
-    items: [
-      { name: '7 Nights Accommodation', values: [true, true, true], highlight: true },
-      { name: 'Daily Breakfast', values: [true, true, true] },
-      { name: 'Daily Dinner', values: [true, true, true] },
-    ],
-  },
-  {
-    category: 'Surfing & Coaching',
-    icon: Waves,
-    items: [
-      { name: 'Surf Lessons', values: ['6 Lessons', '11 Lessons', 'Included'], highlight: true },
-      { name: 'Surf Theory Sessions', values: [true, '+ Coaching', true] },
-      { name: 'Local Surf Guidance & Support', values: [true, false, false] },
-    ],
-  },
-  {
-    category: 'Yoga & Wellness',
-    icon: Dumbbell,
-    items: [
-      { name: 'Complimentary 2 Daily Yoga Sessions', values: [true, true, false], highlight: true },
-      { name: 'Daily Yoga Sessions', values: [false, false, true], highlight: true },
-      { name: 'Sunrise / Sunset Yoga Experiences', values: [false, false, true] },
-    ],
-  },
-  {
-    category: 'Community & Activities',
-    icon: Users,
-    items: [
-      { name: 'Social Activities & Community Events', values: [true, true, false] },
-      { name: 'Social Activities & Wellness Gatherings', values: [false, false, true] },
-    ],
-  },
-  {
-    category: 'Free Inclusions',
-    icon: Gift,
-    items: [
-      { name: 'Free Water Bottles During Stay', values: [true, true, true] },
-      { name: 'Free Surfboard Use During Stay', values: [true, true, true] },
-      { name: 'Free Ocean Air Surf Jersey', values: [true, true, true], highlight: true },
-    ],
-  },
-];
-
-/* ─── Cell Renderer ───────────────────────────────────────────────────────── */
 function CellValue({
   val,
   pkg,
   mini = false,
 }: {
-  val: FeatureValue;
-  pkg: (typeof packages)[0];
+  val: boolean | string;
+  pkg: any;
   mini?: boolean;
 }) {
   if (typeof val === 'boolean') {
@@ -143,9 +67,9 @@ function CellValue({
           transition={{ type: 'spring', stiffness: 400 }}
         >
           <div
-            className={`${mini ? 'w-6 h-6' : 'w-8 h-8'} rounded-full ${pkg.checkBg} flex items-center justify-center shadow-sm`}
+            className={`${mini ? 'w-6 h-6' : 'w-8 h-8'} rounded-full ${pkg.scheme.checkBg} flex items-center justify-center shadow-sm`}
           >
-            <Check size={mini ? 12 : 15} className={pkg.checkText} strokeWidth={3} />
+            <Check size={mini ? 12 : 15} className={pkg.scheme.checkText} strokeWidth={3} />
           </div>
         </motion.div>
       );
@@ -161,43 +85,60 @@ function CellValue({
   return (
     <motion.span
       whileHover={{ scale: 1.06 }}
-      className={`inline-block font-bold ${mini ? 'text-[10px] px-2 py-0.5' : 'text-xs px-3 py-1.5'} rounded-lg ${pkg.lightBg} ${pkg.accentText} shadow-sm border ${pkg.accentBorder}/30`}
+      className={`inline-block font-bold ${mini ? 'text-[10px] px-2 py-0.5' : 'text-xs px-3 py-1.5'} rounded-lg ${pkg.scheme.lightBg} ${pkg.scheme.accentText} shadow-sm border ${pkg.scheme.accentBorder}/30`}
     >
       {val}
     </motion.span>
   );
 }
 
-/* ─── Component ───────────────────────────────────────────────────────────── */
 export function PackageComparisonTable() {
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
-  const [matrixData, setMatrixData] = useState<any>(null);
-  const [loadingMatrix, setLoadingMatrix] = useState(true);
-
-  useEffect(() => {
-    const fetchMatrix = async () => {
-      try {
-        const isDev = import.meta.env.DEV;
-        const apiUrl = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
-        const res = await fetch(`${apiUrl}/v1/matrix-pricing`);
-        if (res.ok) {
-          const json = await res.json();
-          setMatrixData(json);
-        }
-      } catch (err) {
-        console.error("Failed to fetch matrix pricing", err);
-      } finally {
-        setLoadingMatrix(false);
-      }
-    };
-    fetchMatrix();
-  }, []);
+  const { data: rawServices, isLoading } = useListServices();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
+  if (isLoading) {
+    return <div className="py-24 text-center text-slate-500 font-bold">Loading comparison...</div>;
+  }
+
+  const activePackages = (rawServices as Service[] || [])
+    .filter(s => s.type === "main" && s.isActive)
+    .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+    .map((s, idx) => ({
+      ...s,
+      emoji: s.iconEmoji || '🏄',
+      subtitle: s.category || 'Premium',
+      tag: s.isFeatured ? 'Most Popular' : 'Premium',
+      popular: s.isFeatured,
+      scheme: COLOR_SCHEMES[idx % COLOR_SCHEMES.length]
+    }));
+
+  if (activePackages.length === 0) {
+    return null;
+  }
+
+  // Extract unique highlights dynamically
+  const allHighlights = new Set<string>();
+  activePackages.forEach(pkg => {
+    (pkg.highlights || []).forEach(h => allHighlights.add(h));
+  });
+  const uniqueHighlights = Array.from(allHighlights);
+
+  const features = uniqueHighlights.length > 0 ? [
+    {
+      category: 'Package Inclusions',
+      icon: Star,
+      items: uniqueHighlights.map(h => ({
+        name: h,
+        highlight: false,
+        values: activePackages.map(pkg => (pkg.highlights || []).includes(h) ? true : false)
+      }))
+    }
+  ] : [];
+
   return (
     <div ref={ref} className="w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="text-center mb-14">
         <motion.div
@@ -229,14 +170,14 @@ export function PackageComparisonTable() {
           transition={{ delay: 0.2 }}
           className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed"
         >
-          All packages include 7 nights premium accommodation, daily meals, and
+          All packages include premium accommodation, daily meals, and
           the Ocean Air experience. Pick the one that matches your vibe.
         </motion.p>
       </div>
 
       {/* ── Mobile: Card View ────────────────────────────────────────────── */}
       <div className="block lg:hidden space-y-6">
-        {packages.map((pkg, pkgIdx) => (
+        {activePackages.map((pkg, pkgIdx) => (
           <motion.div
             key={pkg.id}
             initial={{ opacity: 0, y: 30 }}
@@ -247,7 +188,7 @@ export function PackageComparisonTable() {
             }`}
           >
             {/* Gradient Header */}
-            <div className={`relative bg-gradient-to-br ${pkg.headerGrad} px-6 py-8 text-white overflow-hidden`}>
+            <div className={`relative bg-gradient-to-br ${pkg.scheme.headerGrad} px-6 py-8 text-white overflow-hidden`}>
               {/* Background wave pattern */}
               <div className="absolute inset-0 opacity-10">
                 <svg viewBox="0 0 200 100" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
@@ -266,7 +207,7 @@ export function PackageComparisonTable() {
               <p className="text-white/80 text-sm font-medium relative z-10">{pkg.subtitle}</p>
 
               <div className={`inline-flex items-center gap-1.5 mt-3 bg-white/15 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-white/20 relative z-10`}>
-                {pkg.tagIcon} {pkg.tag}
+                <Star className="w-3 h-3" /> {pkg.tag}
               </div>
             </div>
 
@@ -300,8 +241,6 @@ export function PackageComparisonTable() {
                 </div>
               ))}
             </div>
-
-            {/* CTA Removed */}
           </motion.div>
         ))}
       </div>
@@ -311,31 +250,29 @@ export function PackageComparisonTable() {
         initial={{ opacity: 0, y: 40 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.3, duration: 0.7 }}
-        className="hidden lg:block overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)]"
+        className="hidden lg:block overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] overflow-x-auto"
       >
-        <table className="w-full text-left border-collapse">
+        <table className="w-full min-w-max text-left border-collapse">
           {/* Table Header */}
           <thead>
             <tr>
-              {/* Feature label column */}
-              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100 w-[28%] align-bottom">
+              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100 w-1/4 align-bottom sticky left-0 z-20">
                 <div className="space-y-2">
                   <h3 className="text-xl font-serif font-bold text-[#0B3D5E]">What's Included</h3>
                   <p className="text-xs text-slate-400 font-medium">Hover a column to explore</p>
                 </div>
               </th>
 
-              {packages.map((pkg, idx) => (
+              {activePackages.map((pkg, idx) => (
                 <th
                   key={pkg.id}
-                  className={`p-6 pb-8 border-b w-[24%] relative transition-all duration-500 ease-out align-bottom cursor-pointer
-                    ${hoveredCol === idx ? `${pkg.lightBg} border-b-2 ${pkg.accentBorder}` : 'bg-white border-slate-100'}
+                  className={`p-6 pb-8 border-b min-w-[200px] relative transition-all duration-500 ease-out align-bottom cursor-pointer
+                    ${hoveredCol === idx ? `${pkg.scheme.lightBg} border-b-2 ${pkg.scheme.accentBorder}` : 'bg-white border-slate-100'}
                     ${pkg.popular ? 'border-t-4 border-t-teal-400' : ''}
                   `}
                   onMouseEnter={() => setHoveredCol(idx)}
                   onMouseLeave={() => setHoveredCol(null)}
                 >
-                  {/* Popular glow */}
                   {pkg.popular && hoveredCol === idx && (
                     <div className="absolute inset-0 bg-gradient-to-b from-teal-50/60 to-transparent pointer-events-none rounded-t-none" />
                   )}
@@ -349,19 +286,18 @@ export function PackageComparisonTable() {
                       <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className={`flex items-center gap-1.5 bg-gradient-to-r ${pkg.gradient} text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1`}
+                        className={`flex items-center gap-1.5 bg-gradient-to-r ${pkg.scheme.gradient} text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1`}
                       >
                         <Star className="w-3 h-3 fill-current" /> Most Popular
                       </motion.div>
                     )}
                     <span className="text-3xl">{pkg.emoji}</span>
-                    <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${pkg.gradient} opacity-80`} />
+                    <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${pkg.scheme.gradient} opacity-80`} />
                     <h4 className="text-[15px] font-bold text-[#0B3D5E] leading-tight">{pkg.name}</h4>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{pkg.subtitle}</span>
 
-                    {/* Tag badge */}
-                    <div className={`inline-flex items-center gap-1 ${pkg.checkBg} ${pkg.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full`}>
-                      {pkg.tagIcon} {pkg.tag}
+                    <div className={`inline-flex items-center gap-1 ${pkg.scheme.checkBg} ${pkg.scheme.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full`}>
+                      <Star className="w-3 h-3" /> {pkg.tag}
                     </div>
                   </motion.div>
                 </th>
@@ -373,11 +309,10 @@ export function PackageComparisonTable() {
           <tbody>
             {features.map((section, sectionIdx) => (
               <React.Fragment key={section.category}>
-                {/* Category header row */}
                 <tr>
                   <td
-                    colSpan={4}
-                    className="bg-gradient-to-r from-slate-50/90 to-white py-4 px-6 border-b border-t border-slate-100/80"
+                    colSpan={activePackages.length + 1}
+                    className="bg-gradient-to-r from-slate-50/90 to-white py-4 px-6 border-b border-t border-slate-100/80 sticky left-0 z-10"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl bg-[#0B3D5E]/8 flex items-center justify-center shadow-sm">
@@ -390,7 +325,6 @@ export function PackageComparisonTable() {
                   </td>
                 </tr>
 
-                {/* Feature rows */}
                 {section.items.map((item, itemIdx) => (
                   <motion.tr
                     key={item.name}
@@ -401,7 +335,7 @@ export function PackageComparisonTable() {
                       item.highlight ? 'hover:bg-amber-50/30' : 'hover:bg-slate-50/50'
                     } group`}
                   >
-                    <td className={`py-4 px-6 text-sm font-medium ${item.highlight ? 'text-[#0B3D5E] font-semibold' : 'text-slate-600'}`}>
+                    <td className={`py-4 px-6 text-sm font-medium sticky left-0 bg-white group-hover:bg-slate-50/50 transition-colors duration-200 z-10 shadow-[1px_0_0_0_#e2e8f0] ${item.highlight ? 'text-[#0B3D5E] font-semibold' : 'text-slate-600'}`}>
                       {item.highlight && (
                         <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#4BBCCC] mr-2 mb-0.5" />
                       )}
@@ -410,34 +344,23 @@ export function PackageComparisonTable() {
 
                     {item.values.map((val, idx) => (
                       <td
-                        key={idx}
+                         key={idx}
                         className={`py-4 px-6 text-sm text-center transition-all duration-500 ease-out ${
-                          hoveredCol === idx ? packages[idx].lightBg : ''
+                          hoveredCol === idx ? activePackages[idx].scheme.lightBg : ''
                         }`}
                         onMouseEnter={() => setHoveredCol(idx)}
                         onMouseLeave={() => setHoveredCol(null)}
                       >
-                        <CellValue val={val} pkg={packages[idx]} />
+                        <CellValue val={val} pkg={activePackages[idx]} />
                       </td>
                     ))}
                   </motion.tr>
                 ))}
               </React.Fragment>
             ))}
-
-            {/* Footer Row */}
-            <tr className="border-t-2 border-slate-100">
-              <td colSpan={4} className="p-6 bg-gradient-to-br from-slate-50 to-white text-center">
-                <p className="text-xs text-slate-400 font-medium italic">
-                  All packages include 7 nights accommodation, daily breakfast &amp; dinner
-                </p>
-              </td>
-            </tr>
           </tbody>
         </table>
       </motion.div>
-
-
 
       {/* ── Trust Badges ────────────────────────────────────────────────── */}
       <motion.div

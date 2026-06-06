@@ -21,6 +21,7 @@ const NAV = [
   { href: "/ow-admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/ow-admin/bookings", label: "Bookings", icon: Calendar },
   { href: "/ow-admin/rooms", label: "Rooms", icon: BedDouble },
+  { href: "/ow-admin/packages", label: "Packages", icon: Sparkles },
   { href: "/ow-admin/matrix-pricing", label: "Matrix Pricing", icon: Sparkles },
   { href: "/ow-admin/addons", label: "Experiences", icon: Tag },
   { href: "/ow-admin/reviews", label: "Reviews", icon: Star },
