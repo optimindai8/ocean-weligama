@@ -4,10 +4,20 @@ import {
   useAdminGetBookingsTrend,
   useAdminGetUpcomingCheckins,
   useAdminListMessages,
+  useAdminListRooms,
+  useAdminListServices,
+  useAdminListReviews,
+  useAdminListGallery,
+  useAdminListBlogs,
   getAdminGetDashboardQueryKey,
   getAdminGetBookingsTrendQueryKey,
   getAdminGetUpcomingCheckinsQueryKey,
   getAdminListMessagesQueryKey,
+  getAdminListRoomsQueryKey,
+  getAdminListServicesQueryKey,
+  getAdminListReviewsQueryKey,
+  getAdminListGalleryQueryKey,
+  getAdminListBlogsQueryKey,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +31,10 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Calendar, Euro, Users, TrendingUp, Mail, Clock } from "lucide-react";
+import { 
+  Calendar, Euro, Users, TrendingUp, Mail, Clock, 
+  BedDouble, PackageOpen, Compass, MessageSquare, CheckCircle, ImageIcon, PenTool 
+} from "lucide-react";
 
 export default function AdminDashboard() {
   const { data: dashboard, isLoading: dashLoading } = useAdminGetDashboard({
@@ -37,6 +50,12 @@ export default function AdminDashboard() {
     query: { queryKey: getAdminListMessagesQueryKey({ isRead: false }) },
   });
 
+  const { data: rooms, isLoading: roomsLoading } = useAdminListRooms({ query: { queryKey: getAdminListRoomsQueryKey() } });
+  const { data: services, isLoading: servicesLoading } = useAdminListServices({ query: { queryKey: getAdminListServicesQueryKey() } });
+  const { data: reviews, isLoading: reviewsLoading } = useAdminListReviews({ query: { queryKey: getAdminListReviewsQueryKey() } });
+  const { data: gallery, isLoading: galleryLoading } = useAdminListGallery({ query: { queryKey: getAdminListGalleryQueryKey() } });
+  const { data: blogs, isLoading: blogsLoading } = useAdminListBlogs({ query: { queryKey: getAdminListBlogsQueryKey() } });
+
   const dash = dashboard as {
     todayBookings: number;
     monthRevenue: string;
@@ -46,11 +65,30 @@ export default function AdminDashboard() {
     recentMessages: number;
   } | undefined;
 
+  const roomsCount = Array.isArray(rooms) ? rooms.length : 0;
+  const packagesCount = Array.isArray(services) ? services.filter((s: any) => s.type === 'main').length : 0;
+  const experiencesCount = Array.isArray(services) ? services.filter((s: any) => s.type === 'optional').length : 0;
+  const unapprovedReviewsCount = Array.isArray(reviews) ? reviews.filter((r: any) => !r.isApproved).length : 0;
+  const approvedReviewsCount = Array.isArray(reviews) ? reviews.filter((r: any) => r.isApproved).length : 0;
+  const unreadMessagesCount = Array.isArray(messages) ? messages.length : dash?.recentMessages ?? 0;
+  const pendingImagesCount = Array.isArray(gallery) ? gallery.filter((g: any) => g.status === 'pending').length : 0;
+  const blogsCount = Array.isArray(blogs) ? blogs.length : 0;
+
+  const isAnyLoading = dashLoading || roomsLoading || servicesLoading || reviewsLoading || galleryLoading || blogsLoading;
+
   const METRICS = [
     { label: "Today's Bookings", value: dash?.todayBookings ?? 0, icon: Calendar, color: "text-blue-500" },
     { label: "Month Revenue", value: `€${dash?.monthRevenue ?? "0"}`, icon: Euro, color: "text-green-500" },
     { label: "Active Guests", value: dash?.activeGuests ?? 0, icon: Users, color: "text-purple-500" },
     { label: "Total Bookings", value: dash?.totalBookings ?? 0, icon: TrendingUp, color: "text-orange-500" },
+    { label: "Total Rooms", value: roomsCount, icon: BedDouble, color: "text-cyan-500" },
+    { label: "Packages", value: packagesCount, icon: PackageOpen, color: "text-indigo-500" },
+    { label: "Experiences", value: experiencesCount, icon: Compass, color: "text-teal-500" },
+    { label: "Unread Messages", value: unreadMessagesCount, icon: Mail, color: "text-rose-500" },
+    { label: "Unapproved Reviews", value: unapprovedReviewsCount, icon: MessageSquare, color: "text-red-500" },
+    { label: "Approved Reviews", value: approvedReviewsCount, icon: CheckCircle, color: "text-emerald-500" },
+    { label: "Pending Images", value: pendingImagesCount, icon: ImageIcon, color: "text-amber-500" },
+    { label: "Total Blogs", value: blogsCount, icon: PenTool, color: "text-sky-500" },
   ];
 
   return (
@@ -67,8 +105,8 @@ export default function AdminDashboard() {
 
         {/* Metric Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {dashLoading
-            ? [1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-32 rounded-[2rem]" />)
+          {isAnyLoading
+            ? [...Array(12)].map((_, i) => <Skeleton key={i} className="h-32 rounded-[2rem]" />)
             : METRICS.map((m, i) => (
                 <motion.div
                   key={m.label}
