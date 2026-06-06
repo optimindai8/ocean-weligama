@@ -501,92 +501,6 @@ export default function AdminPackages() {
                         </FormItem>
                       )}
                     />
-                  </div>
-
-                  {/* Right Column: Configuration */}
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="basePrice"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Price (€)</FormLabel>
-                            <FormControl>
-                              <div className="relative">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-semibold">€</span>
-                                <Input type="text" placeholder="0.00" {...field} className="pl-9 rounded-xl font-bold h-12" />
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="unit"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Pricing Unit</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="rounded-xl h-12 font-semibold">
-                                  <SelectValue placeholder="Select a unit" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="flat_rate">Flat Rate</SelectItem>
-                                <SelectItem value="per_person">Per Person</SelectItem>
-                                <SelectItem value="per_day">Per Day</SelectItem>
-                                <SelectItem value="per_qty">Per Quantity</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <FormField
-                      control={form.control}
-                      name="highlights"
-                      render={({ field }) => (
-                        <FormItem className="space-y-4">
-                          <Label>What's Included (Add One by One)</Label>
-                          <div className="flex gap-2">
-                            <Input 
-                              placeholder="e.g. 7 nights accommodation" 
-                              value={newHighlight} 
-                              onChange={(e) => setNewHighlight(e.target.value)}
-                              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addHighlight())}
-                              className="rounded-xl"
-                            />
-                            <Button type="button" onClick={addHighlight} size="icon" className="rounded-xl shrink-0">
-                              <Plus className="w-5 h-5" />
-                            </Button>
-                          </div>
-                          <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto border border-border p-3 rounded-2xl bg-muted/10">
-                            {field.value?.map((h, i) => (
-                              <div key={i} className="flex items-center justify-between bg-muted/40 hover:bg-muted/70 transition-colors px-3 py-1.5 rounded-xl border border-border/40">
-                                <span className="text-sm font-medium text-foreground">{h}</span>
-                                <button 
-                                  type="button" 
-                                  onClick={() => removeHighlight(i)}
-                                  className="w-6 h-6 rounded-full hover:bg-destructive/10 hover:text-destructive flex items-center justify-center transition-colors text-muted-foreground"
-                                >
-                                  <X className="w-3.5 h-3.5" />
-                                </button>
-                              </div>
-                            ))}
-                            {(!field.value || field.value.length === 0) && (
-                              <p className="text-[11px] text-muted-foreground italic text-center py-4">Add the things included in this package.</p>
-                            )}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
                     <div className="flex flex-col gap-3 pt-2">
                       <FormField
@@ -649,6 +563,49 @@ export default function AdminPackages() {
                         )}
                       />
                     </div>
+                  </div>
+
+                  {/* Right Column: Configuration */}
+                  <div className="space-y-6">
+                    <FormField
+                      control={form.control}
+                      name="highlights"
+                      render={({ field }) => (
+                        <FormItem className="space-y-4">
+                          <Label>What's Included (Add One by One)</Label>
+                          <div className="flex gap-2">
+                            <Input 
+                              placeholder="e.g. 7 nights accommodation" 
+                              value={newHighlight} 
+                              onChange={(e) => setNewHighlight(e.target.value)}
+                              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addHighlight())}
+                              className="rounded-xl"
+                            />
+                            <Button type="button" onClick={addHighlight} size="icon" className="rounded-xl shrink-0">
+                              <Plus className="w-5 h-5" />
+                            </Button>
+                          </div>
+                          <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto border border-border p-3 rounded-2xl bg-muted/10">
+                            {field.value?.map((h, i) => (
+                              <div key={i} className="flex items-center justify-between bg-muted/40 hover:bg-muted/70 transition-colors px-3 py-1.5 rounded-xl border border-border/40">
+                                <span className="text-sm font-medium text-foreground">{h}</span>
+                                <button 
+                                  type="button" 
+                                  onClick={() => removeHighlight(i)}
+                                  className="w-6 h-6 rounded-full hover:bg-destructive/10 hover:text-destructive flex items-center justify-center transition-colors text-muted-foreground"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                            {(!field.value || field.value.length === 0) && (
+                              <p className="text-[11px] text-muted-foreground italic text-center py-4">Add the things included in this package.</p>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </div>
 
