@@ -18,7 +18,6 @@ import {
   ServiceUpdate,
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
-import { MatrixPricingGrid } from "@/components/admin/MatrixPricingGrid";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -321,11 +320,6 @@ export default function AdminPackages() {
               Add New Package
             </Button>
           </motion.div>
-        </div>
-
-        <div className="mb-12">
-          <h2 className="text-2xl font-serif font-black text-[#0B3D5E] mb-6">Room-to-Package Matrix Pricing</h2>
-          <MatrixPricingGrid key={matrixRefreshKey} />
         </div>
 
         {isLoading ? (
