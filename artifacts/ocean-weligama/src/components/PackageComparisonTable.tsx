@@ -95,8 +95,6 @@ function CellValue({
 export function PackageComparisonTable() {
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
   const { data: rawServices, isLoading } = useListServices();
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   if (isLoading) {
     return <div className="py-24 text-center text-slate-500 font-bold">Loading comparison...</div>;
@@ -143,12 +141,13 @@ export function PackageComparisonTable() {
   ] : [];
 
   return (
-    <div ref={ref} className="w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="text-center mb-14">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
           className="inline-flex items-center gap-2 bg-[#0B3D5E]/8 px-5 py-2 rounded-full mb-5 border border-[#0B3D5E]/10"
         >
           <Sparkles className="w-4 h-4 text-[#4BBCCC]" />
@@ -159,7 +158,8 @@ export function PackageComparisonTable() {
 
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
           transition={{ delay: 0.1 }}
           className="text-3xl md:text-5xl font-serif font-bold text-[#0B3D5E] mb-4 leading-tight"
         >
@@ -171,7 +171,8 @@ export function PackageComparisonTable() {
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
           transition={{ delay: 0.2 }}
           className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed"
         >
@@ -186,7 +187,8 @@ export function PackageComparisonTable() {
           <motion.div
             key={pkg.id}
             initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
             transition={{ delay: pkgIdx * 0.12 }}
             className={`relative bg-white rounded-3xl border-2 overflow-hidden shadow-xl ${
               pkg.popular ? 'border-teal-400 shadow-teal-100/60' : 'border-slate-100'
@@ -253,7 +255,8 @@ export function PackageComparisonTable() {
       {/* ── Desktop: Table View ──────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
         transition={{ delay: 0.3, duration: 0.7 }}
         className="hidden lg:block overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] overflow-x-auto"
       >
@@ -334,7 +337,8 @@ export function PackageComparisonTable() {
                   <motion.tr
                     key={item.name}
                     initial={{ opacity: 0 }}
-                    animate={inView ? { opacity: 1 } : {}}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: "-10px" }}
                     transition={{ delay: 0.4 + sectionIdx * 0.06 + itemIdx * 0.03 }}
                     className={`border-b border-slate-50 last:border-slate-100 transition-colors duration-200 ${
                       item.highlight ? 'hover:bg-amber-50/30' : 'hover:bg-slate-50/50'
@@ -370,7 +374,8 @@ export function PackageComparisonTable() {
       {/* ── Trust Badges ────────────────────────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
         transition={{ delay: 0.7 }}
         className="flex flex-wrap items-center justify-center gap-5 mt-4 pb-12 text-slate-400"
       >
