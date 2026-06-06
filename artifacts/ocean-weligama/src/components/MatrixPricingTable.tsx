@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
 import { Sparkles, ArrowRight, CheckCircle2, Star, Waves, Flame, Leaf, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocation } from "wouter";
 
 const EXCLUDED_PACKAGES = [
   "Moderate Surf / Guiding",
@@ -65,6 +66,7 @@ function MatrixTableInner({
   getPrice: (roomId: string, packageId: string) => any;
   formatPrice: (n: number) => string;
 }) {
+  const [, setLocation] = useLocation();
   const bodyRef = useRef<HTMLDivElement>(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
@@ -159,10 +161,13 @@ function MatrixTableInner({
             <tbody className="divide-y divide-slate-50 bg-white">
               {filteredRooms.map((room: any) => (
                 <tr key={room.id} className="group transition-colors duration-200 hover:bg-slate-50/50">
-                  <td className="p-4 md:p-5 text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-colors relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal min-w-[220px] max-w-[280px]">
+                  <td 
+                    onClick={() => setLocation(`/rooms/${room.slug || room.id}`)}
+                    className="p-4 md:p-5 text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-all relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal min-w-[220px] max-w-[280px] cursor-pointer hover:shadow-inner"
+                  >
                     {room.name}
-                    <div className="flex items-center gap-1.5 text-[10px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 font-sans font-bold uppercase tracking-wider">
-                      View Details <ArrowRight className="w-3 h-3" />
+                    <div className="flex items-center gap-1.5 text-[10px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 font-sans font-bold uppercase tracking-wider translate-y-1 group-hover:translate-y-0 duration-300">
+                      View Details <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </td>
                   {filteredPackages.map((pkg: any) => {
