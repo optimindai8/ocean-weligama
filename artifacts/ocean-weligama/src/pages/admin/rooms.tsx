@@ -488,17 +488,17 @@ export default function AdminRooms() {
         )}
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl p-0 gap-0 flex flex-col">
-            <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-xl border-b px-8 py-6 flex items-center justify-between">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden rounded-3xl p-0 gap-0 flex flex-col">
+            <div className="bg-white/80 backdrop-blur-xl border-b px-8 py-6 flex items-center justify-between shrink-0 z-10">
               <div>
                 <DialogTitle className="text-2xl font-serif">{editingRoom ? "Edit Room" : "Create New Room"}</DialogTitle>
                 <DialogDescription>Configure details, pricing, and upload the image gallery.</DialogDescription>
               </div>
             </div>
 
-            <div className="p-8 overflow-y-auto flex-1">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-10">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="flex flex-col flex-1 overflow-hidden">
+                <div className="p-8 overflow-y-auto flex-1 space-y-10">
                   
                   {/* Basic Information */}
                   <div className="space-y-6">
@@ -744,8 +744,10 @@ export default function AdminRooms() {
                       )} />
                     </div>
                   </div>
+                </div>
 
-                  <DialogFooter className="sticky bottom-0 bg-white/80 backdrop-blur-xl border-t p-6 -mx-8 -mb-8 rounded-b-3xl mt-8">
+                <div className="bg-white/80 backdrop-blur-xl border-t p-6 px-8 shrink-0">
+                  <DialogFooter>
                     <Button 
                       type="button" 
                       variant="outline" 
@@ -771,9 +773,9 @@ export default function AdminRooms() {
                       ) : (editingRoom ? "Save Changes" : "Create Room")}
                     </Button>
                   </DialogFooter>
-                </form>
-              </Form>
-            </div>
+                </div>
+              </form>
+            </Form>
           </DialogContent>
         </Dialog>
 
