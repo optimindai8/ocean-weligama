@@ -9,6 +9,8 @@ import {
   availability,
   bookings,
   gallery,
+  rooms,
+  roomPackagePrices,
 } from "@workspace/db";
 import { eq, and, isNull, desc, ne } from "drizzle-orm";
 import { requireAdmin } from "../lib/auth";
@@ -82,6 +84,25 @@ router.post("/v1/admin/services", requireAdmin, async (req, res) => {
         description: description || "",
         shortDesc: shortDesc || null,
       });
+
+      // 4. Auto-populate default matrix prices (0.00) for all existing rooms if this is a main package
+      if (service.type === "main") {
+        const allRooms = await tx
+          .select({ id: rooms.id })
+          .from(rooms)
+          .where(isNull(rooms.deletedAt));
+
+        if (allRooms.length > 0) {
+          await tx.insert(roomPackagePrices).values(
+            allRooms.map((room) => ({
+              roomId: room.id,
+              packageId: service.id,
+              price: "0.00",
+              dailyPrice: "0.00",
+            }))
+          );
+        }
+      }
 
       return { ...service, name, description, shortDesc };
     });

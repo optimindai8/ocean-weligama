@@ -9,6 +9,8 @@ import {
   useAdminUpdateService,
   useAdminDeleteService,
   getAdminListServicesQueryKey,
+  getListServicesQueryKey,
+  getGetMatrixPricingQueryKey,
 } from "@workspace/api-client-react";
 import {
   Service,
@@ -105,6 +107,7 @@ export default function AdminPackages() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [newHighlight, setNewHighlight] = useState("");
   const [activeTab, setActiveTab] = useState<"main" | "optional">("main");
+  const [matrixRefreshKey, setMatrixRefreshKey] = useState(0);
 
   const { data: services, isLoading } = useAdminListServices({
     query: { queryKey: getAdminListServicesQueryKey() },
@@ -213,6 +216,9 @@ export default function AdminPackages() {
             toast({ title: "Package updated successfully" });
             setIsDialogOpen(false);
             queryClient.invalidateQueries({ queryKey: getAdminListServicesQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListServicesQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetMatrixPricingQueryKey() });
+            setMatrixRefreshKey(prev => prev + 1);
           },
           onError: (err: any) => {
             toast({ 
@@ -231,6 +237,9 @@ export default function AdminPackages() {
             toast({ title: "Package created successfully" });
             setIsDialogOpen(false);
             queryClient.invalidateQueries({ queryKey: getAdminListServicesQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getListServicesQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetMatrixPricingQueryKey() });
+            setMatrixRefreshKey(prev => prev + 1);
           },
           onError: (err: any) => {
             toast({ 
@@ -253,6 +262,9 @@ export default function AdminPackages() {
           toast({ title: "Package deleted successfully" });
           setDeletingId(null);
           queryClient.invalidateQueries({ queryKey: getAdminListServicesQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getListServicesQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetMatrixPricingQueryKey() });
+          setMatrixRefreshKey(prev => prev + 1);
         },
         onError: (err: any) => {
           toast({ 
@@ -272,6 +284,9 @@ export default function AdminPackages() {
         onSuccess: () => {
           toast({ title: service.isActive ? "Package deactivated" : "Package activated" });
           queryClient.invalidateQueries({ queryKey: getAdminListServicesQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getListServicesQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetMatrixPricingQueryKey() });
+          setMatrixRefreshKey(prev => prev + 1);
         },
         onError: () => toast({ variant: "destructive", title: "Update failed" }),
       }
@@ -310,7 +325,7 @@ export default function AdminPackages() {
 
         <div className="mb-12">
           <h2 className="text-2xl font-serif font-black text-[#0B3D5E] mb-6">Room-to-Package Matrix Pricing</h2>
-          <MatrixPricingGrid />
+          <MatrixPricingGrid key={matrixRefreshKey} />
         </div>
 
         {isLoading ? (
@@ -331,9 +346,14 @@ export default function AdminPackages() {
               >
                 <div className="flex items-start justify-between mb-6">
                   <div className="w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-2xl shadow-md shadow-slate-200/50 group-hover:scale-105 transition-transform bg-slate-50">
-                    <Sparkles className="w-6 h-6 text-[#0B3D5E]/30" />
+                    <span>{service.iconEmoji || "🏄"}</span>
                   </div>
                   <div className="flex items-center gap-2">
+                    {service.isFeatured && (
+                      <Badge className="rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 bg-amber-100 text-amber-850 flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 fill-amber-500 text-amber-500" /> Most Popular
+                      </Badge>
+                    )}
                     <Badge className={`rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 ${service.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-500"}`}>
                       {service.isActive ? "Active" : "Inactive"}
                     </Badge>
@@ -588,11 +608,11 @@ export default function AdminPackages() {
                         control={form.control}
                         name="isFeatured"
                         render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-muted/20">
+                          <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-muted/20 flex-1">
                             <div className="space-y-0.5">
-                              <FormLabel className="text-base">Show on Home Page</FormLabel>
+                              <FormLabel className="text-base">Activate Most Popular Tag</FormLabel>
                               <FormDescription>
-                                Display this package on the main home page
+                                Display this package with a 'Most Popular' tag.
                               </FormDescription>
                             </div>
                             <FormControl>

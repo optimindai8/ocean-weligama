@@ -1426,6 +1426,10 @@ components:
                 type: string
               slug:
                 type: string
+              isFeatured:
+                type: boolean
+              iconEmoji:
+                type: string
         prices:
           type: array
           items:

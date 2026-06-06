@@ -25,14 +25,14 @@ router.get("/v1/admin/matrix-pricing", requireAdmin, async (req, res) => {
     const sTranslations = await db.select().from(serviceTranslations).where(eq(serviceTranslations.locale, "en"));
 
     const packagesRecords = await db
-      .select({ id: services.id, slug: services.slug })
+      .select({ id: services.id, slug: services.slug, isFeatured: services.isFeatured, iconEmoji: services.iconEmoji })
       .from(services)
       .where(and(eq(services.type, "main"), eq(services.isActive, true)))
       .orderBy(services.sortOrder);
       
     const mainPackages = packagesRecords.map(p => {
       const t = sTranslations.find(tr => tr.serviceId === p.id);
-      return { id: p.id, name: t?.name ?? p.slug, slug: p.slug };
+      return { id: p.id, name: t?.name ?? p.slug, slug: p.slug, isFeatured: p.isFeatured, iconEmoji: p.iconEmoji };
     });
 
     const prices = await db.select().from(roomPackagePrices);

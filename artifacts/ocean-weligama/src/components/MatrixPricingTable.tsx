@@ -116,7 +116,7 @@ function MatrixTableInner({
                 <div className="text-xs font-light text-slate-400 font-sans mt-1">Select your comfort</div>
               </th>
               {filteredPackages.map((pkg: any) => {
-                const isPopular = pkg.name?.toLowerCase().includes('advance');
+                const isPopular = pkg.isFeatured;
                 const meta = PACKAGE_META.find(m => pkg.name?.toLowerCase().includes(m.nameMatch)) || PACKAGE_META[0];
                 return (
                   <th key={pkg.id} className={`p-6 pb-8 border-b relative transition-all duration-500 ease-out align-bottom bg-white border-slate-100 ${isPopular ? 'border-t-4 border-t-teal-400' : ''} min-w-[220px]`}>
@@ -131,7 +131,7 @@ function MatrixTableInner({
                           <Star className="w-3 h-3 fill-current" /> Most Popular
                         </motion.div>
                       )}
-                      <span className="text-3xl">{meta.emoji}</span>
+                      <span className="text-3xl">{pkg.iconEmoji || meta.emoji}</span>
                       <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${meta.gradient} opacity-80`} />
                       <h4 className="text-[15px] font-bold text-[#0B3D5E] leading-tight mt-1">{pkg.name}</h4>
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{meta.subtitle}</span>
@@ -167,7 +167,7 @@ function MatrixTableInner({
                   </td>
                   {filteredPackages.map((pkg: any) => {
                     const price = getPrice(room.id!, pkg.id!);
-                    const isPopular = pkg.name?.toLowerCase().includes('advance');
+                    const isPopular = pkg.isFeatured;
                     return (
                       <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 min-w-[220px] ${isPopular ? 'bg-teal-50/10' : ''}`}>
                         {price && price !== "0" && price !== "0.00" ? (

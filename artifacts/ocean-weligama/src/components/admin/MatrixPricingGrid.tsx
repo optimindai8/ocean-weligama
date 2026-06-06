@@ -14,6 +14,8 @@ interface Package {
   id: string;
   name: string;
   slug: string;
+  isFeatured?: boolean;
+  iconEmoji?: string;
 }
 
 interface PriceRecord {

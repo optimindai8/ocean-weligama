@@ -21,6 +21,8 @@ export type MatrixPricingDataPackagesItem = {
   id?: string;
   name?: string;
   slug?: string;
+  isFeatured?: boolean;
+  iconEmoji?: string;
 };
 
 export type MatrixPricingDataPricesItem = {

@@ -47,6 +47,7 @@ import {
   Home,
   RotateCcw,
   HeartHandshake,
+  Clock,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import {

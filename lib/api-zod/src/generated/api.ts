@@ -240,6 +240,8 @@ export const GetMatrixPricingResponse = zod.object({
         id: zod.string().uuid().optional(),
         name: zod.string().optional(),
         slug: zod.string().optional(),
+        isFeatured: zod.boolean().optional(),
+        iconEmoji: zod.string().optional(),
       }),
     )
     .optional(),
@@ -1330,6 +1332,8 @@ export const AdminGetMatrixPricingResponse = zod.object({
         id: zod.string().uuid().optional(),
         name: zod.string().optional(),
         slug: zod.string().optional(),
+        isFeatured: zod.boolean().optional(),
+        iconEmoji: zod.string().optional(),
       }),
     )
     .optional(),
