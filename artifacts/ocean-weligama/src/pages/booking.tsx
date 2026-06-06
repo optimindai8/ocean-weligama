@@ -46,6 +46,7 @@ import {
   ChevronRight,
   Home,
   RotateCcw,
+  HeartHandshake,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
 import {
@@ -1341,31 +1342,32 @@ export default function BookingPage() {
                   className="space-y-5"
                 >
                   {/* ── Airport Transfer limit warning ── */}
-                  {guestCount !== 3 && (
+                  {guestCount > 3 && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                      className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5 flex items-start gap-4"
+                      className="bg-sky-50 border border-sky-200 rounded-2xl p-5 flex items-start gap-4 shadow-sm"
                     >
-                      <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
-                        <Users className="w-5 h-5 text-amber-600" />
+                      <div className="w-10 h-10 bg-sky-100 rounded-xl flex items-center justify-center shrink-0 shadow-inner">
+                        <HeartHandshake className="w-5 h-5 text-sky-600" />
                       </div>
                       <div>
-                        <p className="font-bold text-amber-900 text-sm">Airport Transfer Unavailable</p>
-                        <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-                          Airport pick-up and drop-off is available for exactly <strong>3 guests</strong> only.
-                          You have <strong>{guestCount} guest{guestCount !== 1 ? 's' : ''}</strong> selected. Please adjust your guest count to 3 to select this option.
+                        <p className="font-serif font-bold text-sky-900 text-[15px]">Traveling with a larger group?</p>
+                        <p className="text-xs text-sky-800 mt-1.5 leading-relaxed">
+                          We noticed you have a wonderful group of <strong>{guestCount} guests</strong>! Our standard online airport transfers are designed for up to 3 people. 
+                          However, we’d love to arrange a comfortable and spacious vehicle just for your group. 
+                          <strong> If you need to choose this option you need to ask it in the Hotel</strong>, and we will handle all your special transfer needs personally.
                         </p>
                       </div>
                     </motion.div>
                   )}
 
                   {/* ── Pickup card ── */}
-                  <div className={`rounded-[2rem] border-2 transition-all duration-400 overflow-hidden ${guestCount !== 3 ? "opacity-60 border-transparent bg-slate-50/70" : watchPickup ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
+                  <div className={`rounded-[2rem] border-2 transition-all duration-400 overflow-hidden ${guestCount > 3 ? "opacity-60 border-transparent bg-slate-50/70" : watchPickup ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
                     <button
                       type="button"
                       onClick={() => {
-                        if (guestCount !== 3) {
-                          toast({ variant: "destructive", title: "Transfer Unavailable", description: "You need to select exactly 3 guests to get this option." });
+                        if (guestCount > 3) {
+                          toast({ variant: "destructive", title: "Transfer Unavailable", description: "This option is available online for up to 3 guests. Please contact the hotel for larger groups." });
                           return;
                         }
                         form.setValue("airportPickup", !watchPickup);
@@ -1480,12 +1482,12 @@ export default function BookingPage() {
                   </div>
 
                   {/* ── Drop card ── */}
-                  <div className={`rounded-[2rem] border-2 transition-all duration-400 ${guestCount !== 3 ? "opacity-60 border-transparent bg-slate-50/70" : watchDrop ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
+                  <div className={`rounded-[2rem] border-2 transition-all duration-400 ${guestCount > 3 ? "opacity-60 border-transparent bg-slate-50/70" : watchDrop ? "border-primary bg-white shadow-xl shadow-primary/8 z-10" : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white"}`}>
                     <button
                       type="button"
                       onClick={() => {
-                        if (guestCount !== 3) {
-                          toast({ variant: "destructive", title: "Transfer Unavailable", description: "You need to select exactly 3 guests to get this option." });
+                        if (guestCount > 3) {
+                          toast({ variant: "destructive", title: "Transfer Unavailable", description: "This option is available online for up to 3 guests. Please contact the hotel for larger groups." });
                           return;
                         }
                         form.setValue("airportDrop", !watchDrop);
