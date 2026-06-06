@@ -102,7 +102,7 @@ function MatrixTableInner({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden relative max-w-[1100px] mx-auto"
+      className="bg-white rounded-[2rem] shadow-[0_12px_40px_rgb(0,0,0,0.06)] border border-slate-100 overflow-hidden relative max-w-7xl w-full mx-auto"
     >
       {/* Horizontally scrollable wrapper */}
       <div className="overflow-x-auto relative z-10">
@@ -111,9 +111,9 @@ function MatrixTableInner({
         <table className="w-full text-left border-collapse">
           <thead>
             <tr>
-              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-lg md:text-xl min-w-[220px] max-w-[280px] align-bottom">
+              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-base md:text-lg min-w-[220px] max-w-[280px] align-bottom">
                 Room Type
-                <div className="text-xs font-light text-slate-400 font-sans mt-1">Select your comfort</div>
+                <div className="text-[10px] font-light text-slate-400 font-sans mt-1 uppercase tracking-widest">Select your comfort</div>
               </th>
               {filteredPackages.map((pkg: any) => {
                 const isPopular = pkg.isFeatured;
@@ -133,8 +133,8 @@ function MatrixTableInner({
                       )}
                       <span className="text-3xl">{pkg.iconEmoji || meta.emoji}</span>
                       <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${meta.gradient} opacity-80`} />
-                      <h4 className="text-[15px] font-bold text-[#0B3D5E] leading-tight mt-1">{pkg.name}</h4>
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{meta.subtitle}</span>
+                      <h4 className="text-[14px] font-serif font-bold text-[#0B3D5E] leading-tight mt-1">{pkg.name}</h4>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{meta.subtitle}</span>
                       <div className={`inline-flex items-center gap-1 ${meta.checkBg} ${meta.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full mt-1`}>
                         {meta.tagIcon} {meta.tag}
                       </div>
@@ -159,9 +159,9 @@ function MatrixTableInner({
             <tbody className="divide-y divide-slate-50 bg-white">
               {filteredRooms.map((room: any) => (
                 <tr key={room.id} className="group transition-colors duration-200 hover:bg-slate-50/50">
-                  <td className="p-5 md:p-6 text-sm md:text-base text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-colors relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal min-w-[220px] max-w-[280px]">
+                  <td className="p-4 md:p-5 text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-colors relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal min-w-[220px] max-w-[280px]">
                     {room.name}
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-2 font-bold uppercase tracking-wider">
+                    <div className="flex items-center gap-1.5 text-[10px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 font-sans font-bold uppercase tracking-wider">
                       View Details <ArrowRight className="w-3 h-3" />
                     </div>
                   </td>
@@ -172,7 +172,7 @@ function MatrixTableInner({
                       <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 min-w-[220px] ${isPopular ? 'bg-teal-50/10' : ''}`}>
                         {price && price !== "0" && price !== "0.00" ? (
                           <div className="flex flex-col items-center justify-center gap-1 group/price">
-                            <span className={`text-lg md:text-xl font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
+                            <span className={`text-base md:text-lg font-serif font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
                               {formatPrice(parseFloat(price as string))}
                             </span>
                           </div>
