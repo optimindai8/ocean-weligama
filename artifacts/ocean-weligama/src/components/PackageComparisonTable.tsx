@@ -210,8 +210,8 @@ export function PackageComparisonTable() {
               )}
 
               <span className="text-4xl mb-3 block relative z-10">{pkg.emoji}</span>
-              <h3 className="text-xl font-bold mb-1 relative z-10">{pkg.name}</h3>
-              <p className="text-white/80 text-sm font-medium relative z-10">{pkg.subtitle}</p>
+              <h3 className="text-xl font-serif font-bold mb-1 relative z-10">{pkg.name}</h3>
+              <p className="text-white/80 text-xs font-medium relative z-10 uppercase tracking-widest">{pkg.subtitle}</p>
 
               <div className={`inline-flex items-center gap-1.5 mt-3 bg-white/15 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-white/20 relative z-10`}>
                 <Star className="w-3 h-3" /> {pkg.tag}
@@ -301,8 +301,8 @@ export function PackageComparisonTable() {
                     )}
                     <span className="text-3xl">{pkg.emoji}</span>
                     <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${pkg.scheme.gradient} opacity-80`} />
-                    <h4 className="text-[15px] font-bold text-[#0B3D5E] leading-tight">{pkg.name}</h4>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{pkg.subtitle}</span>
+                    <h4 className="text-[14px] font-serif font-bold text-[#0B3D5E] leading-tight">{pkg.name}</h4>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{pkg.subtitle}</span>
 
                     <div className={`inline-flex items-center gap-1 ${pkg.scheme.checkBg} ${pkg.scheme.accentText} text-[9px] font-bold px-2.5 py-1 rounded-full`}>
                       <Star className="w-3 h-3" /> {pkg.tag}
@@ -344,7 +344,7 @@ export function PackageComparisonTable() {
                       item.highlight ? 'hover:bg-amber-50/30' : 'hover:bg-slate-50/50'
                     } group`}
                   >
-                    <td className={`py-4 px-6 text-sm font-medium sticky left-0 bg-white group-hover:bg-slate-50/50 transition-colors duration-200 z-10 shadow-[1px_0_0_0_#e2e8f0] ${item.highlight ? 'text-[#0B3D5E] font-semibold' : 'text-slate-600'}`}>
+                    <td className={`py-4 px-6 text-sm font-serif sticky left-0 bg-white group-hover:bg-slate-50/50 transition-colors duration-200 z-10 shadow-[1px_0_0_0_#e2e8f0] ${item.highlight ? 'text-[#0B3D5E] font-bold' : 'text-slate-600 font-medium'}`}>
                       {item.highlight && (
                         <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#4BBCCC] mr-2 mb-0.5" />
                       )}
