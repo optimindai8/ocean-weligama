@@ -103,7 +103,7 @@ export function PackageComparisonTable() {
   }
 
   const activePackages = (rawServices as Service[] || [])
-    .filter(s => s.type === "main" && s.isActive)
+    .filter(s => s.type === "main" && s.isActive !== false)
     .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
     .map((s, idx) => ({
       ...s,
@@ -115,7 +115,12 @@ export function PackageComparisonTable() {
     }));
 
   if (activePackages.length === 0) {
-    return null;
+    return (
+      <div className="py-24 text-center">
+        <h3 className="text-2xl font-serif text-[#0B3D5E] mb-2">No Packages Available</h3>
+        <p className="text-slate-500">Check back later for our exclusive retreat packages.</p>
+      </div>
+    );
   }
 
   // Extract unique highlights dynamically

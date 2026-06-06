@@ -44,7 +44,7 @@ export function MatrixPricingGrid() {
     try {
       const isDev = import.meta.env.DEV;
       const apiUrl = isDev ? (import.meta.env.VITE_API_URL || "http://localhost:8080") : "";
-      const res = await fetch(`${apiUrl}/v1/admin/matrix-pricing`, {
+      const res = await fetch(`${apiUrl}/api/v1/admin/matrix-pricing`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("ow-admin-token")}`,
         },
@@ -106,7 +106,7 @@ export function MatrixPricingGrid() {
         dailyPrice: (parseFloat(record.price) / 7).toFixed(2),
       };
 
-      const res = await fetch(`${apiUrl}/v1/admin/matrix-pricing`, {
+      const res = await fetch(`${apiUrl}/api/v1/admin/matrix-pricing`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
