@@ -295,7 +295,7 @@ export default function RoomDetailPage() {
                     <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
                       <Check className="w-4 h-4 text-green-600" />
                     </div>
-                    <span className="text-sm font-bold text-foreground">Free cancellation (48h)</span>
+                    <span className="text-sm font-bold text-foreground">Free cancellation</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
