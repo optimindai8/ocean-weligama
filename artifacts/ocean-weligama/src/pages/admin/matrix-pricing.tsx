@@ -105,7 +105,7 @@ export default function AdminMatrixPricing() {
             <table className="w-full min-w-max text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-100">
-                  <th className="px-6 py-4 text-left font-bold text-slate-700 whitespace-nowrap sticky left-0 z-20 bg-slate-50 shadow-[1px_0_0_0_#f1f5f9]">
+                  <th className="px-6 py-4 text-left font-bold text-slate-700 whitespace-nowrap sticky left-0 z-40 bg-slate-50 shadow-[1px_0_0_0_#f1f5f9]">
                     Rooms
                   </th>
                   {packages.map(pkg => (
@@ -115,10 +115,10 @@ export default function AdminMatrixPricing() {
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="">
                 {rooms.map(room => (
-                  <tr key={room.id} className="hover:bg-slate-50 transition-colors group">
-                    <td className="px-6 py-5 font-bold text-slate-800 whitespace-nowrap sticky left-0 z-10 bg-white group-hover:bg-slate-50 shadow-[1px_0_0_0_#f1f5f9] transition-colors">
+                  <tr key={room.id} className="hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-0">
+                    <td className="px-6 py-5 font-bold text-slate-800 whitespace-nowrap sticky left-0 z-30 bg-white group-hover:bg-slate-50 shadow-[1px_0_0_0_#f1f5f9] transition-colors">
                       {room.name}
                     </td>
                     {packages.map(pkg => {
