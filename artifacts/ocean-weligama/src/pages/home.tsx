@@ -202,7 +202,7 @@ export default function Home() {
                     {item.icon}
                   </div>
                 </div>
-                <h4 className="font-bold text-foreground text-xs sm:text-sm md:text-base mb-1 tracking-tight">{item.title}</h4>
+                <h4 className="font-bold text-[#0B3D5E] text-xs sm:text-sm md:text-base mb-1 tracking-tight">{item.title}</h4>
                 <p className="text-muted-foreground text-[8px] sm:text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium">{item.desc}</p>
               </motion.div>
             ))}
@@ -221,7 +221,7 @@ export default function Home() {
             >
               The Ocean Air Experience
             </motion.span>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-4">Surf • Stay • Taste • Explore</h2>
+            <h2 className="text-3xl md:text-5xl font-serif font-bold text-[#0B3D5E] mb-4">Surf • Stay • Taste • Explore</h2>
             <div className="w-24 h-1 bg-primary mx-auto rounded-full" />
           </div>
 
@@ -385,7 +385,7 @@ export default function Home() {
 
                 {/* Clean Background Text */}
                 <div className="block mt-6 px-2 text-center transition-opacity duration-500">
-                  <h4 className="text-lg md:text-xl font-serif font-bold text-foreground line-clamp-2 mb-1">{room.name}</h4>
+                  <h4 className="text-lg md:text-xl font-serif font-bold text-[#0B3D5E] line-clamp-2 mb-1">{room.name}</h4>
                   <p className="text-primary text-sm font-black">{formatPrice(room.basePricePerNight)} / night</p>
                 </div>
               </motion.div>
@@ -486,7 +486,7 @@ export default function Home() {
               <span className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block">
                 Why Choose Us
               </span>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground mb-6 leading-tight">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#0B3D5E] mb-6 leading-tight">
                 More Than Just A <span className="text-primary italic">Stay</span>
               </h2>
               <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
@@ -659,7 +659,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-4xl md:text-5xl font-serif font-bold text-foreground"
+                className="text-4xl md:text-5xl font-serif font-bold text-[#0B3D5E]"
               >
                 Latest on the Blog
               </motion.h2>
@@ -711,7 +711,7 @@ export default function Home() {
                     </p>
                   </div>
                   
-                  <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 text-foreground group-hover:text-primary transition-colors duration-300 leading-snug">
+                  <h3 className="text-xl md:text-2xl font-bold font-serif mb-3 text-[#0B3D5E] group-hover:text-primary transition-colors duration-300 leading-snug">
                     {blog.title}
                   </h3>
                   
@@ -747,7 +747,7 @@ export default function Home() {
             >
               Got Questions?
             </motion.span>
-            <h2 className="text-4xl font-serif font-bold text-foreground mb-4">Frequently Asked Questions</h2>
+            <h2 className="text-4xl font-serif font-bold text-[#0B3D5E] mb-4">Frequently Asked Questions</h2>
           </div>
           
           <div className="space-y-4">
@@ -769,7 +769,7 @@ export default function Home() {
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                   className="w-full px-6 py-5 flex items-center justify-between text-left"
                 >
-                  <span className="font-bold text-foreground pr-4">{faq.q}</span>
+                  <span className="font-bold text-[#0B3D5E] pr-4">{faq.q}</span>
                   <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${openFaq === idx ? 'rotate-180 text-primary' : ''}`} />
                 </button>
                 <AnimatePresence>
