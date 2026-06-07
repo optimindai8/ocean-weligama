@@ -112,10 +112,10 @@ function MatrixTableInner({
       <div className="overflow-x-auto relative z-10">
 
         {/* ── HEADER TABLE ── always visible */}
-        <table className="w-full text-left border-collapse">
+        <table className="w-full min-w-max text-left border-collapse">
           <thead>
             <tr>
-              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-base md:text-lg min-w-[220px] max-w-[280px] align-bottom">
+              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-base md:text-lg min-w-[220px] max-w-[280px] align-bottom sticky left-0 z-30 shadow-[1px_0_0_0_#f1f5f9]">
                 Room Type
                 <div className="text-[10px] font-light text-slate-400 font-sans mt-1 uppercase tracking-widest">Select your comfort</div>
               </th>
@@ -159,7 +159,7 @@ function MatrixTableInner({
             scrollBehavior: "smooth",
           }}
         >
-          <table className="w-full text-left border-collapse">
+          <table className="w-full min-w-max text-left border-collapse">
             <tbody className="divide-y divide-slate-50 bg-white">
               {filteredRooms.map((room: any) => (
                 <tr key={room.id} className="group transition-colors duration-200 hover:bg-slate-50/50">
@@ -168,7 +168,7 @@ function MatrixTableInner({
                       const slug = roomSlugMap[room.id];
                       if (slug) setLocation(`/rooms/${slug}`);
                     }}
-                    className={`p-4 md:p-5 text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50/50 transition-all relative z-10 font-medium border-r border-slate-50 leading-relaxed whitespace-normal min-w-[220px] max-w-[280px] ${
+                    className={`p-4 md:p-5 text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50 transition-all sticky left-0 z-20 font-medium border-r border-slate-50 shadow-[1px_0_0_0_#f1f5f9] leading-relaxed whitespace-normal min-w-[220px] max-w-[280px] ${
                       roomSlugMap[room.id] ? 'cursor-pointer hover:shadow-inner' : 'cursor-default'
                     }`}
                   >
