@@ -264,7 +264,7 @@ export function PackageComparisonTable() {
           {/* Table Header */}
           <thead>
             <tr>
-              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100 w-1/4 align-bottom sticky left-0 z-20">
+              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100 w-1/4 align-bottom sticky left-0 z-30">
                 <div className="space-y-2">
                   <h3 className="text-xl font-serif font-bold text-[#0B3D5E]">What's Included</h3>
                   <p className="text-xs text-slate-400 font-medium">Hover a column to explore</p>
@@ -320,7 +320,7 @@ export function PackageComparisonTable() {
                 <tr>
                   <td
                     colSpan={activePackages.length + 1}
-                    className="bg-gradient-to-r from-slate-50/90 to-white py-4 px-6 border-b border-t border-slate-100/80 sticky left-0 z-10"
+                    className="bg-gradient-to-r from-slate-50 to-white py-4 px-6 border-b border-t border-slate-100/80 sticky left-0 z-20"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-xl bg-[#0B3D5E]/8 flex items-center justify-center shadow-sm">
@@ -341,10 +341,10 @@ export function PackageComparisonTable() {
                     viewport={{ once: true, margin: "-10px" }}
                     transition={{ delay: 0.4 + sectionIdx * 0.06 + itemIdx * 0.03 }}
                     className={`border-b border-slate-50 last:border-slate-100 transition-colors duration-200 ${
-                      item.highlight ? 'hover:bg-amber-50/30' : 'hover:bg-slate-50/50'
+                      item.highlight ? 'hover:bg-amber-50' : 'hover:bg-slate-50'
                     } group`}
                   >
-                    <td className={`py-4 px-6 text-sm font-serif sticky left-0 bg-white group-hover:bg-slate-50/50 transition-colors duration-200 z-10 shadow-[1px_0_0_0_#e2e8f0] ${item.highlight ? 'text-[#0B3D5E] font-bold' : 'text-slate-600 font-medium'}`}>
+                    <td className={`py-4 px-6 text-sm font-serif sticky left-0 bg-white group-hover:bg-slate-50 transition-colors duration-200 z-20 shadow-[1px_0_0_0_#e2e8f0] ${item.highlight ? 'text-[#0B3D5E] font-bold' : 'text-slate-600 font-medium'}`}>
                       {item.highlight && (
                         <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#4BBCCC] mr-2 mb-0.5" />
                       )}
