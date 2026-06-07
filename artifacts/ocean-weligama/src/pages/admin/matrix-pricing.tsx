@@ -102,7 +102,7 @@ export default function AdminMatrixPricing() {
 
         <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-max text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-100">
                   <th className="px-6 py-4 text-left font-bold text-slate-700 whitespace-nowrap sticky left-0 z-20 bg-slate-50 shadow-[1px_0_0_0_#f1f5f9]">
