@@ -16,6 +16,7 @@ import {
   BookOpen,
   Plane,
   Users,
+  HelpCircle,
 } from "lucide-react";
 
 const NAV = [
@@ -31,6 +32,7 @@ const NAV = [
   { href: "/ow-admin/gallery", label: "Gallery", icon: ImageIcon },
   { href: "/ow-admin/blogs", label: "Blogs", icon: BookOpen },
   { href: "/ow-admin/airport", label: "Airport", icon: Plane },
+  { href: "/ow-admin/faq", label: "FAQ", icon: HelpCircle },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -1,153 +1,96 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Footer } from "@/components/footer";
-import { ChevronDown, MessageCircle, HelpCircle, Waves, Plane, Bed, Wifi, CreditCard, Search, Map, Sun, CalendarCheck, ShieldCheck, Sparkles } from "lucide-react";
+import { ChevronDown, MessageCircle, HelpCircle, Waves, Plane, Bed, Wifi, CreditCard, Search, Map, Sun, CalendarCheck, ShieldCheck, Sparkles, Loader2 } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 
-const FAQ_DATA = [
-  {
-    category: "The Stay",
-    icon: Bed,
-    items: [
-      {
-        question: "What is the check-in and check-out time?",
-        icon: Clock,
-        answer: "Check-in begins at 2:00 PM, and check-out is by 11:00 AM. We understand travel schedules can vary, so if you need an earlier check-in or a later check-out, please contact our concierge in advance and we will do our absolute best to accommodate you based on availability."
-      },
-      {
-        question: "Is breakfast included in the room rate?",
-        icon: Sun,
-        answer: "Yes, most of our direct bookings and packages include a complimentary, freshly prepared breakfast. You can choose between a hearty traditional Sri Lankan breakfast or a healthy Continental option, served daily in our ocean-view dining area."
-      },
-      {
-        question: "Do you have high-speed Wi-Fi available?",
-        icon: Wifi,
-        answer: "Absolutely. We provide complimentary high-speed fiber-optic Wi-Fi throughout the entire property, including all rooms, common areas, and the restaurant, making it perfect for remote workers or sharing your vacation moments."
-      },
-      {
-        question: "Are all rooms air-conditioned?",
-        icon: Sparkles,
-        answer: "Yes, every room at Ocean Weligama is fully air-conditioned and features ceiling fans, ensuring you have a cool and comfortable sanctuary to return to after a long day in the tropical sun."
-      },
-      {
-        question: "Can I request a late check-out?",
-        icon: CalendarCheck,
-        answer: "Late check-outs are subject to room availability on the day of your departure. A half-day charge may apply for check-outs past 2:00 PM. We also offer secure luggage storage and access to our lounge and shower facilities if you have a late flight."
-      }
-    ]
-  },
-  {
-    category: "Surf & Wellness",
-    icon: Waves,
-    items: [
-      {
-        question: "How far is the beach from the guest house?",
-        icon: Map,
-        answer: "Ocean Weligama is located just a stone's throw away from Weligama beach. A short, beautiful 2-minute walk is all it takes to feel the sand between your toes and paddle out to the lineup."
-      },
-      {
-        question: "Are surfing lessons suitable for complete beginners?",
-        icon: Waves,
-        answer: "Yes! Weligama is globally renowned as one of the best and safest bays for beginner surfers. Our ISA-certified instructors provide personalized, step-by-step guidance ensuring you catch your very first wave safely and confidently."
-      },
-      {
-        question: "Do I need to bring my own surfboard?",
-        icon: Waves,
-        answer: "Not at all. We have a comprehensive quiver of high-quality surfboards for rent, ranging from soft-top longboards for beginners to performance shortboards for advanced riders. You can rent them daily or include them in your package."
-      },
-      {
-        question: "Are yoga classes included in my stay?",
-        icon: Sun,
-        answer: "Yoga sessions are included if you book our specialized 'Yoga & Surf Retreat Package'. For guests on room-only or surf-only packages, you can easily add morning or sunset yoga sessions as an optional 'Experience' during or after booking."
-      },
-      {
-        question: "Do you offer packages for advanced surfers?",
-        icon: ShieldCheck,
-        answer: "Yes, we offer an 'Advanced Surf Package' tailored for experienced surfers. Instead of basic lessons, this package includes guided surf trips to hidden reef breaks around the south coast (like Mirissa, Midigama, and Ram's) with our local surf guides."
-      }
-    ]
-  },
-  {
-    category: "Bookings & Payments",
-    icon: CreditCard,
-    items: [
-      {
-        question: "How does the deposit and payment system work?",
-        icon: CreditCard,
-        answer: `Payment Policy
-To confirm your reservation at Ocean Air, full payment is required in advance.
+// Icon map for categories (matches by keyword)
+const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
+  "The Stay": Bed,
+  "Surf & Wellness": Waves,
+  "Bookings & Payments": CreditCard,
+  "The Journey": Plane,
+};
 
-Once you send us your reservation request, we will send you a secure payment link with all booking details to complete your reservation confirmation.`
-      },
-      {
-        question: "What is your cancellation policy?",
-        icon: ShieldCheck,
-        answer: `Payment Policy
-To confirm your reservation at Ocean Air, full payment is required in advance.
-
-Once you send us your reservation request, we will send you a secure payment link with all booking details to complete your reservation confirmation.
-
-Cancellation & Modification Policy
-• 30+ Days Before Arrival
-Cancellations or booking modifications made 30 days or more before arrival are fully refundable.
-
-• Within 30 Days of Arrival
-Cancellations or modifications made within 30 days of arrival will be charged the total reservation amount.
-
-• No-Show
-In case of a no-show, the full booking amount will be charged.
-
-We appreciate your understanding and support, as every reservation helps us continue growing and providing the best experience for our guests.`
-      },
-      {
-        question: "Can I customize my package with different add-ons?",
-        icon: Sparkles,
-        answer: "Absolutely. Our booking engine allows you to first select your preferred Surf or Yoga package, and then independently add specific 'Experiences' such as Whale Watching, Safari Trips, Cookery Classes, or Scooter Rentals to create your perfect bespoke itinerary."
-      }
-    ]
-  },
-  {
-    category: "The Journey",
-    icon: Plane,
-    items: [
-      {
-        question: "Do you offer airport transfers from Colombo (CMB)?",
-        icon: Plane,
-        answer: "Yes, we provide seamless, private, air-conditioned airport transfers directly from Bandaranaike International Airport (CMB) to Ocean Weligama. You can seamlessly add this to your booking during checkout by providing your flight details."
-      },
-      {
-        question: "What other activities can I do around Weligama?",
-        icon: Map,
-        answer: "Beyond surfing and yoga, the south coast is vibrant and full of adventure! We can arrange whale watching tours in Mirissa, Udawalawe National Park safaris, local Sri Lankan cookery classes, and scooter rentals to explore hidden beaches."
-      }
-    ]
-  }
-];
+function getCategoryIcon(category: string) {
+  // Try exact match first
+  if (CATEGORY_ICONS[category]) return CATEGORY_ICONS[category];
+  // Fuzzy match
+  if (category.toLowerCase().includes("stay") || category.toLowerCase().includes("room")) return Bed;
+  if (category.toLowerCase().includes("surf") || category.toLowerCase().includes("yoga") || category.toLowerCase().includes("wellness")) return Waves;
+  if (category.toLowerCase().includes("book") || category.toLowerCase().includes("payment") || category.toLowerCase().includes("cancel")) return CreditCard;
+  if (category.toLowerCase().includes("journey") || category.toLowerCase().includes("travel") || category.toLowerCase().includes("transfer")) return Plane;
+  return HelpCircle;
+}
 
 // Helper icon component since Lucide icons need to be imported
 function Clock(props: any) {
   return <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
 }
 
+const API_URL = import.meta.env.DEV
+  ? import.meta.env.VITE_API_URL || "http://localhost:8080"
+  : "";
+
+type FaqItem = {
+  id: string;
+  category: string;
+  question: string;
+  answer: string;
+  sortOrder: number;
+};
+
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [openIndex, setOpenIndex] = useState<string | null>(null);
+  const [dbFaqs, setDbFaqs] = useState<FaqItem[]>([]);
+  const [dbLoading, setDbLoading] = useState(true);
 
-  const categories = ["All", ...FAQ_DATA.map(d => d.category)];
+  // Fetch FAQs from database
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/v1/faqs`);
+        if (res.ok) {
+          const data = await res.json();
+          setDbFaqs(data);
+        }
+      } catch {
+        // silently fall back to empty (will show no dynamic FAQs)
+      } finally {
+        setDbLoading(false);
+      }
+    })();
+  }, []);
 
-  const filteredFaqs = useMemo(() => {
-    return FAQ_DATA.map(section => {
-      const items = section.items.filter(item => 
-        item.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
-        item.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  // Build sections from DB FAQs
+  const dbSections = useMemo(() => {
+    const map: Record<string, FaqItem[]> = {};
+    dbFaqs.forEach((f) => {
+      if (!map[f.category]) map[f.category] = [];
+      map[f.category].push(f);
+    });
+    return Object.entries(map).map(([category, items]) => ({ category, items }));
+  }, [dbFaqs]);
+
+  const allCategories = useMemo(() => {
+    return ["All", ...Array.from(new Set(dbFaqs.map((f) => f.category))).sort()];
+  }, [dbFaqs]);
+
+  const filteredSections = useMemo(() => {
+    return dbSections.map((section) => {
+      const items = section.items.filter(
+        (item) =>
+          item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.answer.toLowerCase().includes(searchQuery.toLowerCase())
       );
       return { ...section, items };
-    }).filter(section => {
+    }).filter((section) => {
       const categoryMatch = activeCategory === "All" || section.category === activeCategory;
       return categoryMatch && section.items.length > 0;
     });
-  }, [searchQuery, activeCategory]);
+  }, [dbSections, searchQuery, activeCategory]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#0B3D5E] selection:bg-primary selection:text-white overflow-hidden">
@@ -186,7 +129,7 @@ export default function FAQPage() {
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
-                  setOpenIndex(null); // Close accordion on search
+                  setOpenIndex(null);
                 }}
                 className="flex-1 bg-transparent border-none outline-none text-base placeholder:text-muted-foreground/60 py-3 pr-4"
               />
@@ -201,10 +144,10 @@ export default function FAQPage() {
             </div>
           </motion.div>
 
-          {/* Category Chips with Animated Background */}
+          {/* Category Chips */}
           <div className="w-full flex overflow-x-auto hide-scrollbar smooth-inertia pt-2 pb-6 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0 sm:justify-center">
             <div className="flex gap-2 p-1.5 bg-white border border-[#0B3D5E]/10 rounded-full shadow-sm w-max mx-auto">
-              {categories.map((cat) => {
+              {allCategories.map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
                   <button
@@ -234,99 +177,117 @@ export default function FAQPage() {
 
           {/* Accordion Content */}
           <div className="space-y-12">
-            <AnimatePresence mode="popLayout">
-              {filteredFaqs.length > 0 ? filteredFaqs.map((section, sIdx) => (
-                <motion.div 
-                  key={section.category}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
-                  transition={{ duration: 0.5, delay: sIdx * 0.1 }}
-                  className="space-y-6"
-                >
-                  <div className="flex items-center gap-4 px-2">
-                    <div className="w-10 h-10 rounded-xl bg-[#0B3D5E] text-white flex items-center justify-center shadow-lg shadow-[#0B3D5E]/20">
-                      <section.icon className="w-5 h-5" />
-                    </div>
-                    <h2 className="text-2xl font-serif font-bold text-[#0B3D5E]">{section.category}</h2>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    {section.items.map((faq, iIdx) => {
-                      const id = `${section.category}-${iIdx}`;
-                      const isOpen = openIndex === id;
-                      const Icon = faq.icon;
+            {dbLoading ? (
+              <div className="flex flex-col items-center justify-center py-24">
+                <Loader2 className="w-8 h-8 text-[#0B3D5E] animate-spin mb-4" />
+                <p className="text-muted-foreground text-sm">Loading questions...</p>
+              </div>
+            ) : (
+              <AnimatePresence mode="popLayout">
+                {filteredSections.length > 0 ? filteredSections.map((section, sIdx) => {
+                  const CategoryIcon = getCategoryIcon(section.category);
+                  return (
+                    <motion.div 
+                      key={section.category}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
+                      transition={{ duration: 0.5, delay: sIdx * 0.1 }}
+                      className="space-y-6"
+                    >
+                      <div className="flex items-center gap-4 px-2">
+                        <div className="w-10 h-10 rounded-xl bg-[#0B3D5E] text-white flex items-center justify-center shadow-lg shadow-[#0B3D5E]/20">
+                          <CategoryIcon className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-2xl font-serif font-bold text-[#0B3D5E]">{section.category}</h2>
+                      </div>
                       
-                      return (
-                        <motion.div 
-                          key={id}
-                          layout="position"
-                          className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
-                            isOpen 
-                              ? "bg-white border-[#0B3D5E] shadow-xl shadow-[#0B3D5E]/5" 
-                              : "bg-white/80 border-[#0B3D5E]/10 hover:border-[#0B3D5E]/30 hover:bg-white"
-                          }`}
-                        >
-                          <button 
-                            onClick={() => setOpenIndex(isOpen ? null : id)}
-                            className="w-full px-6 py-5 flex items-start sm:items-center justify-between text-left gap-4"
-                          >
-                            <div className="flex items-start sm:items-center gap-4 flex-1">
-                              <div className={`mt-0.5 sm:mt-0 p-2 rounded-lg transition-colors duration-300 ${isOpen ? "bg-[#0B3D5E]/5 text-[#0B3D5E]" : "bg-muted text-muted-foreground group-hover:bg-[#0B3D5E]/5 group-hover:text-[#0B3D5E]"}`}>
-                                <Icon className="w-4 h-4" />
-                              </div>
-                              <span className={`text-base sm:text-[17px] font-bold transition-colors duration-300 flex-1 leading-snug ${isOpen ? "text-[#0B3D5E]" : "text-[#0B3D5E]/80 group-hover:text-[#0B3D5E]"}`}>
-                                {faq.question}
-                              </span>
-                            </div>
-                            <div className={`shrink-0 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-500 ${
-                              isOpen 
-                                ? "border-[#0B3D5E] bg-[#0B3D5E] text-white rotate-180" 
-                                : "border-border text-muted-foreground group-hover:border-[#0B3D5E]/30 group-hover:text-[#0B3D5E]"
-                            }`}>
-                              <ChevronDown className="w-4 h-4" />
-                            </div>
-                          </button>
+                      <div className="space-y-3">
+                        {section.items.map((faq, iIdx) => {
+                          const id = `${section.category}-${faq.id}`;
+                          const isOpen = openIndex === id;
                           
-                          <AnimatePresence>
-                            {isOpen && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
+                          return (
+                            <motion.div 
+                              key={faq.id}
+                              layout="position"
+                              className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
+                                isOpen 
+                                  ? "bg-white border-[#0B3D5E] shadow-xl shadow-[#0B3D5E]/5" 
+                                  : "bg-white/80 border-[#0B3D5E]/10 hover:border-[#0B3D5E]/30 hover:bg-white"
+                              }`}
+                            >
+                              <button 
+                                onClick={() => setOpenIndex(isOpen ? null : id)}
+                                className="w-full px-6 py-5 flex items-start sm:items-center justify-between text-left gap-4"
                               >
-                                <div className="px-6 pb-6 pt-0 sm:pl-[4.5rem]">
-                                  <p className="text-[15px] text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                                    {faq.answer}
-                                  </p>
+                                <div className="flex items-start sm:items-center gap-4 flex-1">
+                                  <div className={`mt-0.5 sm:mt-0 p-2 rounded-lg transition-colors duration-300 ${isOpen ? "bg-[#0B3D5E]/5 text-[#0B3D5E]" : "bg-muted text-muted-foreground group-hover:bg-[#0B3D5E]/5 group-hover:text-[#0B3D5E]"}`}>
+                                    <HelpCircle className="w-4 h-4" />
+                                  </div>
+                                  <span className={`text-base sm:text-[17px] font-bold transition-colors duration-300 flex-1 leading-snug ${isOpen ? "text-[#0B3D5E]" : "text-[#0B3D5E]/80 group-hover:text-[#0B3D5E]"}`}>
+                                    {faq.question}
+                                  </span>
                                 </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </motion.div>
-              )) : (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="py-16 text-center border border-dashed border-[#0B3D5E]/20 rounded-[2rem] bg-white/50"
-                >
-                  <Search className="w-12 h-12 text-[#0B3D5E]/20 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold text-[#0B3D5E] mb-2">No results found</h3>
-                  <p className="text-muted-foreground">We couldn't find any questions matching "{searchQuery}".</p>
-                  <button 
-                    onClick={() => setSearchQuery("")}
-                    className="mt-4 text-[#4BBCCC] font-bold hover:underline text-sm"
+                                <div className={`shrink-0 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-500 ${
+                                  isOpen 
+                                    ? "border-[#0B3D5E] bg-[#0B3D5E] text-white rotate-180" 
+                                    : "border-border text-muted-foreground group-hover:border-[#0B3D5E]/30 group-hover:text-[#0B3D5E]"
+                                }`}>
+                                  <ChevronDown className="w-4 h-4" />
+                                </div>
+                              </button>
+                              
+                              <AnimatePresence>
+                                {isOpen && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
+                                  >
+                                    <div className="px-6 pb-6 pt-0 sm:pl-[4.5rem]">
+                                      <p className="text-[15px] text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                                        {faq.answer}
+                                      </p>
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  );
+                }) : (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="py-16 text-center border border-dashed border-[#0B3D5E]/20 rounded-[2rem] bg-white/50"
                   >
-                    Clear search
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    <Search className="w-12 h-12 text-[#0B3D5E]/20 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-[#0B3D5E] mb-2">
+                      {searchQuery ? "No results found" : "No FAQs yet"}
+                    </h3>
+                    <p className="text-muted-foreground">
+                      {searchQuery 
+                        ? `We couldn't find any questions matching "${searchQuery}".`
+                        : "Check back soon — our team is adding answers."
+                      }
+                    </p>
+                    {searchQuery && (
+                      <button 
+                        onClick={() => setSearchQuery("")}
+                        className="mt-4 text-[#4BBCCC] font-bold hover:underline text-sm"
+                      >
+                        Clear search
+                      </button>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
 
           {/* Premium Concierge CTA */}

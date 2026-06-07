@@ -10,3 +10,4 @@ export * from "./pricing";
 export * from "./analytics";
 export * from "./blogs";
 export * from "./airport";
+export * from "./faq";

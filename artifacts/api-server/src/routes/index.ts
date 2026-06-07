@@ -16,6 +16,7 @@ import blogsRouter from "./blogs";
 import adminBlogsRouter from "./admin-blogs";
 import airportPricingRouter from "./airport-pricing";
 import adminMatrixPricingRouter from "./admin-matrix-pricing";
+import adminFaqRouter from "./admin-faq";
 
 const router: IRouter = Router();
 
@@ -36,5 +37,6 @@ router.use(blogsRouter);
 router.use(adminBlogsRouter);
 router.use(airportPricingRouter);
 router.use(adminMatrixPricingRouter);
+router.use(adminFaqRouter);
 
 export default router;
