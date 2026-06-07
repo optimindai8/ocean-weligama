@@ -74,12 +74,30 @@ const FAQ_DATA = [
       {
         question: "How does the deposit and payment system work?",
         icon: CreditCard,
-        answer: "To secure your reservation, we typically require a 25% to 50% deposit depending on the package, payable securely online. The remaining balance can be settled upon arrival at the property via credit card or cash."
+        answer: `Payment Policy
+To confirm your reservation at Ocean Air, full payment is required in advance.
+
+Once you send us your reservation request, we will send you a secure payment link with all booking details to complete your reservation confirmation.`
       },
       {
         question: "What is your cancellation policy?",
         icon: ShieldCheck,
-        answer: "Bookings cancelled up to 14 days before arrival receive a full refund of the deposit. Cancellations within 14 days of arrival may incur a fee. We always recommend comprehensive travel insurance to cover unexpected changes to your plans."
+        answer: `Payment Policy
+To confirm your reservation at Ocean Air, full payment is required in advance.
+
+Once you send us your reservation request, we will send you a secure payment link with all booking details to complete your reservation confirmation.
+
+Cancellation & Modification Policy
+• 30+ Days Before Arrival
+Cancellations or booking modifications made 30 days or more before arrival are fully refundable.
+
+• Within 30 Days of Arrival
+Cancellations or modifications made within 30 days of arrival will be charged the total reservation amount.
+
+• No-Show
+In case of a no-show, the full booking amount will be charged.
+
+We appreciate your understanding and support, as every reservation helps us continue growing and providing the best experience for our guests.`
       },
       {
         question: "Can I customize my package with different add-ons?",
@@ -279,7 +297,7 @@ export default function FAQPage() {
                                 transition={{ duration: 0.3, ease: [0.2, 0.8, 0.2, 1] }}
                               >
                                 <div className="px-6 pb-6 pt-0 sm:pl-[4.5rem]">
-                                  <p className="text-[15px] text-muted-foreground leading-relaxed">
+                                  <p className="text-[15px] text-muted-foreground leading-relaxed whitespace-pre-wrap">
                                     {faq.answer}
                                   </p>
                                 </div>
