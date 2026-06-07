@@ -199,58 +199,87 @@ export default function GalleryPage() {
             })}
           </div>
 
-          {/* Gallery Grid */}
+          {/* Gallery Grid -> 3D Horizontal Scroll Box */}
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="aspect-[4/5] rounded-[2rem] bg-muted animate-pulse" />
-              ))}
+            <div className="bg-white/40 backdrop-blur-xl border border-white/40 rounded-[3rem] p-6 md:p-10 shadow-[0_20px_80px_rgba(0,0,0,0.05)]">
+              <div className="flex gap-6 overflow-hidden">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="w-[300px] shrink-0 aspect-[4/5] rounded-[2rem] bg-white/50 animate-pulse" />
+                ))}
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-              <AnimatePresence mode="popLayout">
-                {allItems.map((item, idx) => {
-                  const isStaggered = idx % 4 === 1 || idx % 4 === 3;
-                  return (
-                    <motion.div
-                      key={item.id}
-                      layout
-                      initial={{ opacity: 0, y: 50 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      transition={{ duration: 0.6, delay: idx * 0.04, type: "spring", damping: 25 }}
-                      viewport={{ once: true }}
-                      className={`relative group ${isStaggered ? "lg:mt-12" : ""}`}
-                      onClick={() => setSelectedImg({ url: item.url, alt: item.altText ?? "", caption: item.caption ?? undefined })}
-                    >
-                      <div className="absolute -inset-4 bg-primary/10 rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10" />
+            <div className="bg-white/60 backdrop-blur-2xl border border-white/60 rounded-[3rem] p-6 md:p-10 shadow-[0_30px_100px_rgba(0,0,0,0.06)] relative">
+              
+              {/* Fade gradients for smooth scrolling edges */}
+              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white/60 to-transparent z-10 pointer-events-none rounded-l-[3rem]" />
+              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white/60 to-transparent z-10 pointer-events-none rounded-r-[3rem]" />
+              
+              <div 
+                className="flex overflow-x-auto gap-6 sm:gap-8 pb-8 pt-4 px-4 sm:px-8 snap-x snap-mandatory hide-scrollbar smooth-inertia items-center" 
+                style={{ perspective: "1500px" }}
+              >
+                <AnimatePresence mode="popLayout">
+                  {allItems.map((item, idx) => {
+                    return (
                       <motion.div
-                        whileHover={{ scale: 1.05, y: -8 }}
-                        className="relative rounded-[2rem] overflow-hidden cursor-pointer shadow-xl border border-white/5"
+                        key={item.id}
+                        layout
+                        initial={{ opacity: 0, rotateY: 20, x: 50, scale: 0.9 }}
+                        whileInView={{ opacity: 1, rotateY: 0, x: 0, scale: 1 }}
+                        whileHover={{ scale: 1.05, rotateY: -8, rotateX: 5, zIndex: 50 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        className="relative group shrink-0 w-[260px] sm:w-[320px] lg:w-[380px] snap-center cursor-pointer"
+                        style={{ transformStyle: "preserve-3d" }}
+                        onClick={() => setSelectedImg({ url: item.url, alt: item.altText ?? "", caption: item.caption ?? undefined })}
                       >
-                        <img
-                          src={item.thumbnailUrl ?? item.url}
-                          alt={item.altText ?? ""}
-                          className="w-full aspect-[4/5] object-cover transition-transform duration-1000 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6">
-                          <span className="text-accent text-[8px] font-black uppercase tracking-[0.3em]">{item.category}</span>
-                          <h4 className="text-white font-serif text-lg leading-tight">{item.altText}</h4>
-                        </div>
-                        <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 backdrop-blur-2xl border border-white/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
-                          <Maximize2 className="text-white w-4 h-4" />
+                        {/* 3D Dynamic Shadow */}
+                        <div className="absolute -inset-4 bg-primary/20 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition-all duration-700 -z-10 translate-y-4 group-hover:translate-y-8" />
+                        
+                        <div className="relative rounded-[2rem] overflow-hidden shadow-xl shadow-black/10 border-2 border-white/50 group-hover:border-white transition-colors duration-500 bg-white">
+                          <img
+                            src={item.thumbnailUrl ?? item.url}
+                            alt={item.altText ?? ""}
+                            className="w-full aspect-[4/5] object-cover transition-transform duration-[1.5s] group-hover:scale-110"
+                          />
+                          
+                          {/* Inner Shadow / Overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D5E]/90 via-[#0B3D5E]/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 md:p-8">
+                            <motion.span 
+                              initial={{ y: 20, opacity: 0 }}
+                              whileHover={{ y: 0, opacity: 1 }}
+                              className="text-[#4BBCCC] text-[10px] font-black uppercase tracking-[0.3em] mb-2"
+                            >
+                              {item.category}
+                            </motion.span>
+                            <motion.h4 
+                              initial={{ y: 20, opacity: 0 }}
+                              whileHover={{ y: 0, opacity: 1 }}
+                              className="text-white font-serif text-xl md:text-2xl leading-tight"
+                            >
+                              {item.altText || "Ocean Memory"}
+                            </motion.h4>
+                          </div>
+                          
+                          {/* Floating View Icon */}
+                          <div className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/20 backdrop-blur-xl border border-white/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 shadow-lg translate-y-4 group-hover:translate-y-0">
+                            <Maximize2 className="text-white w-5 h-5" />
+                          </div>
                         </div>
                       </motion.div>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-              {allItems.length === 0 && (
-                <div className="col-span-full text-center py-20 text-muted-foreground">
-                  <Camera className="w-12 h-12 mx-auto mb-4 opacity-30" />
-                  <p className="text-lg">No images in this category yet.</p>
-                </div>
-              )}
+                    );
+                  })}
+                </AnimatePresence>
+                
+                {allItems.length === 0 && (
+                  <div className="w-full flex flex-col items-center justify-center py-20 text-muted-foreground">
+                    <Camera className="w-12 h-12 mb-4 opacity-30" />
+                    <p className="text-lg font-serif">No images in this category yet.</p>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
