@@ -491,7 +491,7 @@ export default function AdminBookings() {
                                  )}
                                  <div>
                                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold mb-0.5">Room {i + 1}</p>
-                                   <p className="font-bold text-foreground text-sm leading-tight mb-0.5 line-clamp-1">{roomName}</p>
+                                   <p className="font-bold text-foreground text-sm leading-tight mb-0.5">{roomName}</p>
                                  </div>
                                </div>
                              );
