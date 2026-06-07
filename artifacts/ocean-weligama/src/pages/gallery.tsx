@@ -216,7 +216,7 @@ export default function GalleryPage() {
               <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white/60 to-transparent z-10 pointer-events-none rounded-r-[3rem]" />
               
               <div 
-                className="flex overflow-x-auto gap-6 sm:gap-8 pb-8 pt-4 px-4 sm:px-8 snap-x snap-mandatory hide-scrollbar smooth-inertia items-center" 
+                className="flex overflow-x-auto gap-4 sm:gap-6 pb-8 pt-4 px-4 sm:px-8 hide-scrollbar smooth-inertia items-center" 
                 style={{ perspective: "1500px" }}
               >
                 <AnimatePresence mode="popLayout">
@@ -231,7 +231,7 @@ export default function GalleryPage() {
                         exit={{ opacity: 0, scale: 0.8 }}
                         transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
                         viewport={{ once: true, margin: "-50px" }}
-                        className="relative group shrink-0 w-[260px] sm:w-[320px] lg:w-[380px] snap-center cursor-pointer"
+                        className="relative group shrink-0 w-[220px] sm:w-[280px] lg:w-[320px] cursor-pointer"
                         style={{ transformStyle: "preserve-3d" }}
                         onClick={() => setSelectedImg({ url: item.url, alt: item.altText ?? "", caption: item.caption ?? undefined })}
                       >
