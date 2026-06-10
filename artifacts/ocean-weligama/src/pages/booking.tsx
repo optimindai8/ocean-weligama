@@ -458,6 +458,14 @@ export default function BookingPage() {
     return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   };
 
+  const listRoomsParams: any = {};
+  if (dateRange.from && dateRange.to) {
+    listRoomsParams.checkIn = toStrSafe(dateRange.from);
+    listRoomsParams.checkOut = toStrSafe(dateRange.to);
+  }
+  const { data: rooms,    isLoading: roomsLoading } = useListRooms(listRoomsParams);
+  const { data: services }                           = useListServices();
+
   // Derive priceData locally to ensure immediate responsiveness
   const priceData = useMemo(() => {
     if (selectedRoomIds.length === 0) return null;
@@ -474,13 +482,6 @@ export default function BookingPage() {
       isMatrixBooking: !!matrixPrice,
     };
   }, [rooms, selectedRoomIds, matrixPrice, nights]);
-  const listRoomsParams: any = {};
-  if (dateRange.from && dateRange.to) {
-    listRoomsParams.checkIn = toStrSafe(dateRange.from);
-    listRoomsParams.checkOut = toStrSafe(dateRange.to);
-  }
-  const { data: rooms,    isLoading: roomsLoading } = useListRooms(listRoomsParams);
-  const { data: services }                           = useListServices();
   const checkAvail = useCheckAvailabilityAndPrice();
   const createBook = useCreateBooking();
 
