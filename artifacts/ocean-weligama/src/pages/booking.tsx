@@ -662,11 +662,8 @@ export default function BookingPage() {
         },
       });
       setPriceData(res);
-      if ((res as any).available) {
-        goToStep("airport");
-      } else {
-        setShowUnavailablePopup(true);
-      }
+      // Seamlessly go to the next step without blocking on availability
+      goToStep("airport");
     } catch {
       toast({ variant: "destructive", title: "Could not check availability" });
     }
@@ -1392,8 +1389,7 @@ export default function BookingPage() {
                 <StepNav
                   onBack={() => goToStep("guests")}
                   onContinue={handleRoomContinue}
-                  continueLabel="Check Availability"
-                  skipLabel="Skip to Airport Transfer"
+                  continueLabel="Continue to Details"
                   onSkip={() => goToStep("airport")}
                   loading={checkAvail.isPending}
                 />
