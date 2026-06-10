@@ -436,7 +436,6 @@ export default function BookingPage() {
   const [selectedRoomIds,       setSelectedRoomIds]       = useState<string[]>(() => loadState("roomIds", []));
   const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>(() => loadState("serviceIds", []));
   const [serviceQuantities,     setServiceQuantities]     = useState<Record<string, number>>(() => loadState("serviceQuantities", {}));
-  const [priceData,             setPriceData]             = useState<any>(() => loadState("priceData", null));
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
   const [highlightCustomizations, setHighlightCustomizations] = useState<Record<string, Record<number, number>>>(() => loadState("highlightCustom", {}));
   const [matrixPrice, setMatrixPrice] = useState<any>(() => loadState("matrixPrice", null));
@@ -449,7 +448,6 @@ export default function BookingPage() {
   useEffect(() => { saveState("roomIds", selectedRoomIds); }, [selectedRoomIds]);
   useEffect(() => { saveState("serviceIds", selectedDbServiceIds); }, [selectedDbServiceIds]);
   useEffect(() => { saveState("serviceQuantities", serviceQuantities); }, [serviceQuantities]);
-  useEffect(() => { saveState("priceData", priceData); }, [priceData]);
   useEffect(() => { saveState("highlightCustom", highlightCustomizations); }, [highlightCustomizations]);
   useEffect(() => { saveState("matrixPrice", matrixPrice); }, [matrixPrice]);
 
@@ -459,6 +457,23 @@ export default function BookingPage() {
   const toStrSafe = (d: Date) => {
     return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   };
+
+  // Derive priceData locally to ensure immediate responsiveness
+  const priceData = useMemo(() => {
+    if (selectedRoomIds.length === 0) return null;
+    const room = Array.isArray(rooms) ? rooms.find(r => r.id === selectedRoomIds[0]) : null;
+    if (!room) return null;
+    const roomRatePerNight = !!matrixPrice ? 0 : parseFloat(room.basePricePerNight);
+    const roomSubtotal = roomRatePerNight * nights;
+    const cleaningFee = parseFloat(room.cleaningFee || "0");
+    return {
+      available: true,
+      roomRatePerNight: roomRatePerNight.toString(),
+      roomSubtotal: roomSubtotal.toString(),
+      cleaningFee: cleaningFee.toString(),
+      isMatrixBooking: !!matrixPrice,
+    };
+  }, [rooms, selectedRoomIds, matrixPrice, nights]);
   const listRoomsParams: any = {};
   if (dateRange.from && dateRange.to) {
     listRoomsParams.checkIn = toStrSafe(dateRange.from);
@@ -651,20 +666,7 @@ export default function BookingPage() {
       toast({ variant: "destructive", title: "Please go back and select your dates" }); return;
     }
     
-    // Set priceData synchronously to bypass the slow "checking" step
-    const room = Array.isArray(rooms) ? rooms.find(r => r.id === selectedRoomIds[0]) : null;
-    if (room) {
-      const roomRatePerNight = !!matrixPrice ? 0 : parseFloat(room.basePricePerNight);
-      const roomSubtotal = roomRatePerNight * nights;
-      const cleaningFee = parseFloat(room.cleaningFee || "0");
-      setPriceData({
-        available: true,
-        roomRatePerNight: roomRatePerNight.toString(),
-        roomSubtotal: roomSubtotal.toString(),
-        cleaningFee: cleaningFee.toString(),
-      });
-    }
-
+    // priceData is now dynamically calculated, so we don't need to manually set it.
     // Seamlessly go to the next step without blocking on availability
     goToStep("airport");
   }
@@ -1986,7 +1988,6 @@ export default function BookingPage() {
                                     isMatrixBooking: !!matrixPrice,
                                   }
                                 });
-                                setPriceData(newRes);
                                 if ((newRes as any).available) {
                                   goToStep("airport");
                                 } else {
