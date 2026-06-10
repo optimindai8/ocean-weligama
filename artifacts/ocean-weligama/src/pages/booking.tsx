@@ -659,6 +659,7 @@ export default function BookingPage() {
           serviceIds: selectedDbServiceIds,
           serviceQuantities,
           serviceCustomizations: getServiceCustomizations(),
+          isMatrixBooking: !!matrixPrice,
         },
       });
       setPriceData(res);
@@ -730,6 +731,7 @@ export default function BookingPage() {
           guestCount, serviceIds: selectedDbServiceIds,
           serviceQuantities,
           serviceCustomizations: getServiceCustomizations(),
+          isMatrixBooking: !!matrixPrice,
         },
       });
       clearState();
@@ -1983,6 +1985,7 @@ export default function BookingPage() {
                                     serviceIds: selectedDbServiceIds,
                                     serviceQuantities,
                                     serviceCustomizations: getServiceCustomizations(),
+                                    isMatrixBooking: !!matrixPrice,
                                   }
                                 });
                                 setPriceData(newRes);

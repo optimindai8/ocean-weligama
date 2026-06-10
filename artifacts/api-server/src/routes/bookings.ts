@@ -30,7 +30,7 @@ function calculateNights(checkIn: string, checkOut: string): number {
 
 router.post("/v1/bookings/check", async (req, res) => {
   try {
-    const { roomId, roomIds: inputRoomIds, checkIn, checkOut, guestCount, serviceIds = [], serviceQuantities = {}, airportPickupPrice = 0, airportDropPrice = 0 } = req.body;
+    const { roomId, roomIds: inputRoomIds, checkIn, checkOut, guestCount, serviceIds = [], serviceQuantities = {}, airportPickupPrice = 0, airportDropPrice = 0, isMatrixBooking = false } = req.body;
     const roomIdsArray = inputRoomIds && inputRoomIds.length > 0 ? inputRoomIds : (roomId ? [roomId] : []);
 
     if (roomIdsArray.length === 0) {
@@ -84,7 +84,7 @@ router.post("/v1/bookings/check", async (req, res) => {
       cleaningFee += parseFloat(r.cleaningFee ?? "0");
     }
     
-    const roomSubtotal = totalRoomRate * nights;
+    let roomSubtotal = totalRoomRate * nights;
 
     let servicesSubtotal = 0;
     if (serviceIds.length > 0) {
@@ -109,9 +109,15 @@ router.post("/v1/bookings/check", async (req, res) => {
           // So the package addon price is (Matrix Daily Price - Room Base Price).
           let price = parseFloat(service.basePrice);
           if (matrixPrice && service.type === "main") {
-            const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
-            price = parseFloat(matrixPrice.dailyPrice) - roomBase;
-            if (price < 0) price = 0;
+            if (isMatrixBooking) {
+              price = parseFloat(matrixPrice.dailyPrice);
+              totalRoomRate -= parseFloat(selectedRooms[0].basePricePerNight);
+              roomSubtotal = totalRoomRate * nights;
+            } else {
+              const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
+              price = parseFloat(matrixPrice.dailyPrice) - roomBase;
+              if (price < 0) price = 0;
+            }
           }
           let qty = 1;
           if (serviceQuantities && typeof serviceQuantities[sId] === "number") {
@@ -181,6 +187,7 @@ router.post("/v1/bookings", async (req, res) => {
       airportPickupPrice = 0,
       airportDropPrice = 0,
       flightDetails,
+      isMatrixBooking = false,
     } = req.body;
     const roomIdsArray = inputRoomIds && inputRoomIds.length > 0 ? inputRoomIds : (roomId ? [roomId] : []);
 
@@ -213,7 +220,7 @@ router.post("/v1/bookings", async (req, res) => {
       cleaningFee += parseFloat(r.cleaningFee ?? "0");
     }
     
-    const roomSubtotal = totalRoomRate * nights;
+    let roomSubtotal = totalRoomRate * nights;
 
     let servicesSubtotal = 0;
     const serviceDetails: Array<{
@@ -245,9 +252,15 @@ router.post("/v1/bookings", async (req, res) => {
           const matrixPrice = matrixPrices.find(m => m.packageId === sId && m.roomId === roomIdsArray[0]);
           let price = parseFloat(service.basePrice);
           if (matrixPrice && service.type === "main") {
-            const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
-            price = parseFloat(matrixPrice.dailyPrice) - roomBase;
-            if (price < 0) price = 0;
+            if (isMatrixBooking) {
+              price = parseFloat(matrixPrice.dailyPrice);
+              totalRoomRate -= parseFloat(selectedRooms[0].basePricePerNight);
+              roomSubtotal = totalRoomRate * nights;
+            } else {
+              const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
+              price = parseFloat(matrixPrice.dailyPrice) - roomBase;
+              if (price < 0) price = 0;
+            }
           }
           let qty = 1;
           if (serviceQuantities && typeof serviceQuantities[sId] === "number") {
