@@ -497,7 +497,9 @@ export default function BookingPage() {
             if (price < 0) price = 0;
           }
           let qty = 1;
-          if (serviceQuantities && typeof serviceQuantities[svcId] === "number") {
+          if (matrixPrice && svc.id === matrixPrice.packageId) {
+            qty = nights;
+          } else if (serviceQuantities && typeof serviceQuantities[svcId] === "number") {
             qty = serviceQuantities[svcId];
           } else if (svc.unit === "per_person") {
             qty = guestCount;
