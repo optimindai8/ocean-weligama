@@ -829,22 +829,40 @@ export default function AdminBookings() {
                         <CreditCard className="w-4 h-4" /> Payment Summary
                       </h3>
                       <div className="space-y-2.5 pb-4 border-b border-border text-sm">
-                        <div className="flex justify-between items-center">
-                          <span className="text-muted-foreground">Room Price ({selectedBooking.nights} nights)</span>
-                          <span className="font-semibold text-foreground">
-                            €{selectedBooking.roomRatePerNight} × {selectedBooking.nights} = €{selectedBooking.roomSubtotal}
-                          </span>
-                        </div>
+                        {parseFloat(selectedBooking.roomRatePerNight || "0") === 0 && selectedBooking.services?.length > 0 ? (
+                          <div className="flex justify-between items-center">
+                            <span className="text-muted-foreground">
+                              Room Price ({selectedBooking.nights} nights) + {
+                                selectedBooking.services.find((s: any) => {
+                                  const srv = servicesList?.find(x => x.id === s.serviceId || x.name === s.serviceName);
+                                  return srv?.type === "main" || srv?.category?.toLowerCase()?.includes("package");
+                                })?.serviceName || "Packages"
+                              }
+                            </span>
+                            <span className="font-semibold text-foreground">
+                              €{selectedBooking.servicesSubtotal}
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex justify-between items-center">
+                              <span className="text-muted-foreground">Room Price ({selectedBooking.nights} nights)</span>
+                              <span className="font-semibold text-foreground">
+                                €{selectedBooking.roomRatePerNight} × {selectedBooking.nights} = €{selectedBooking.roomSubtotal}
+                              </span>
+                            </div>
+                            {parseFloat(selectedBooking.servicesSubtotal || "0") > 0 && (
+                              <div className="flex justify-between items-center">
+                                <span className="text-muted-foreground">Add-ons & Packages Subtotal</span>
+                                <span className="font-semibold text-foreground">€{selectedBooking.servicesSubtotal}</span>
+                              </div>
+                            )}
+                          </>
+                        )}
                         {parseFloat(selectedBooking.cleaningFee || "0") > 0 && (
                           <div className="flex justify-between items-center">
                             <span className="text-muted-foreground">Cleaning Fee</span>
                             <span className="font-semibold text-foreground">€{selectedBooking.cleaningFee}</span>
-                          </div>
-                        )}
-                        {parseFloat(selectedBooking.servicesSubtotal || "0") > 0 && (
-                          <div className="flex justify-between items-center">
-                            <span className="text-muted-foreground">Add-ons & Packages Subtotal</span>
-                            <span className="font-semibold text-foreground">€{selectedBooking.servicesSubtotal}</span>
                           </div>
                         )}
                         <div className="flex justify-between items-center pt-1.5">
