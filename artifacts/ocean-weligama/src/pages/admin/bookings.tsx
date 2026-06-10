@@ -829,48 +829,83 @@ export default function AdminBookings() {
                         <CreditCard className="w-4 h-4" /> Payment Summary
                       </h3>
                       <div className="space-y-2.5 pb-4 border-b border-border text-sm">
+                        {/* 1. Room / Main Package */}
                         {parseFloat(selectedBooking.roomRatePerNight || "0") === 0 && selectedBooking.services?.length > 0 ? (
+                          (() => {
+                            const mainPkg = selectedBooking.services.find((s: any) => {
+                              const srv = servicesList?.find(x => x.id === s.serviceId || x.name === s.serviceName);
+                              return srv?.type === "main" || srv?.category?.toLowerCase()?.includes("package");
+                            });
+                            return mainPkg ? (
+                              <div className="flex justify-between items-center">
+                                <span className="text-muted-foreground">
+                                  Room Price ({selectedBooking.nights} nights) + {mainPkg.serviceName}
+                                </span>
+                                <span className="font-semibold text-foreground">
+                                  €{parseFloat(mainPkg.subtotal).toFixed(2)}
+                                </span>
+                              </div>
+                            ) : null;
+                          })()
+                        ) : (
                           <div className="flex justify-between items-center">
-                            <span className="text-muted-foreground">
-                              Room Price ({selectedBooking.nights} nights) + {
-                                selectedBooking.services.find((s: any) => {
-                                  const srv = servicesList?.find(x => x.id === s.serviceId || x.name === s.serviceName);
-                                  return srv?.type === "main" || srv?.category?.toLowerCase()?.includes("package");
-                                })?.serviceName || "Packages"
-                              }
-                            </span>
+                            <span className="text-muted-foreground">Room Price ({selectedBooking.nights} nights)</span>
                             <span className="font-semibold text-foreground">
-                              €{selectedBooking.servicesSubtotal}
+                              €{selectedBooking.roomRatePerNight} × {selectedBooking.nights} = €{selectedBooking.roomSubtotal}
                             </span>
                           </div>
-                        ) : (
-                          <>
-                            <div className="flex justify-between items-center">
-                              <span className="text-muted-foreground">Room Price ({selectedBooking.nights} nights)</span>
-                              <span className="font-semibold text-foreground">
-                                €{selectedBooking.roomRatePerNight} × {selectedBooking.nights} = €{selectedBooking.roomSubtotal}
-                              </span>
-                            </div>
-                            {parseFloat(selectedBooking.servicesSubtotal || "0") > 0 && (
-                              <div className="flex justify-between items-center">
-                                <span className="text-muted-foreground">Add-ons & Packages Subtotal</span>
-                                <span className="font-semibold text-foreground">€{selectedBooking.servicesSubtotal}</span>
-                              </div>
-                            )}
-                          </>
                         )}
+
+                        {/* 2. Other Services / Add-ons */}
+                        {selectedBooking.services?.map((s: any, idx: number) => {
+                          const srv = servicesList?.find(x => x.id === s.serviceId || x.name === s.serviceName);
+                          const isMatrixMain = parseFloat(selectedBooking.roomRatePerNight || "0") === 0 && (srv?.type === "main" || srv?.category?.toLowerCase()?.includes("package"));
+                          
+                          if (isMatrixMain && (selectedBooking.services.find((m: any) => {
+                            const mSrv = servicesList?.find(x => x.id === m.serviceId || x.name === m.serviceName);
+                            return mSrv?.type === "main" || mSrv?.category?.toLowerCase()?.includes("package");
+                          })?.serviceId === s.serviceId || selectedBooking.services.find((m: any) => {
+                            const mSrv = servicesList?.find(x => x.id === m.serviceId || x.name === m.serviceName);
+                            return mSrv?.type === "main" || mSrv?.category?.toLowerCase()?.includes("package");
+                          })?.serviceName === s.serviceName)) {
+                            return null; // Already rendered with room
+                          }
+                          
+                          return (
+                            <div key={`addon-${idx}`} className="flex justify-between items-center">
+                              <span className="text-muted-foreground">{s.serviceName} <span className="text-[10px] ml-1 bg-slate-100 px-1.5 py-0.5 rounded-md text-slate-500 uppercase tracking-wider">{getUnitLabel(srv?.unit, s.quantity)}</span></span>
+                              <span className="font-semibold text-foreground">€{parseFloat(s.subtotal).toFixed(2)}</span>
+                            </div>
+                          );
+                        })}
+
+                        {/* 3. Airport Transfers */}
+                        {parseFloat(selectedBooking.airportPickupPrice || "0") > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-muted-foreground">Airport Pick-up Transfer</span>
+                            <span className="font-semibold text-foreground">€{parseFloat(selectedBooking.airportPickupPrice).toFixed(2)}</span>
+                          </div>
+                        )}
+                        {parseFloat(selectedBooking.airportDropPrice || "0") > 0 && (
+                          <div className="flex justify-between items-center">
+                            <span className="text-muted-foreground">Airport Drop-off Transfer</span>
+                            <span className="font-semibold text-foreground">€{parseFloat(selectedBooking.airportDropPrice).toFixed(2)}</span>
+                          </div>
+                        )}
+
+                        {/* 4. Cleaning Fee */}
                         {parseFloat(selectedBooking.cleaningFee || "0") > 0 && (
                           <div className="flex justify-between items-center">
                             <span className="text-muted-foreground">Cleaning Fee</span>
                             <span className="font-semibold text-foreground">€{selectedBooking.cleaningFee}</span>
                           </div>
                         )}
-                        <div className="flex justify-between items-center pt-1.5">
-                          <span className="text-muted-foreground">Payment Status</span>
-                          <Badge className={PAYMENT_COLORS[selectedBooking.paymentStatus] || "bg-muted text-muted-foreground"} variant="outline">
-                            {selectedBooking.paymentStatus}
-                          </Badge>
-                        </div>
+                      </div>
+                      <div className="flex justify-between items-center pt-1.5">
+                        <span className="text-muted-foreground">Payment Status</span>
+                        <Badge className={PAYMENT_COLORS[selectedBooking.paymentStatus] || "bg-muted text-muted-foreground"} variant="outline">
+                          {selectedBooking.paymentStatus}
+                        </Badge>
                       </div>
                       <div className="flex justify-between items-center pt-4 gap-4">
                         <span className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Total price = Room price + Packages + Experiences + airport transfer</span>
