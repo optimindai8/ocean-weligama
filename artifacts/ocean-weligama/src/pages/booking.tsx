@@ -488,7 +488,14 @@ export default function BookingPage() {
       for (const svcId of selectedDbServiceIds) {
         const svc = services.find(s => s.id === svcId);
         if (svc) {
-          const price = parseFloat(svc.basePrice || "0");
+          let price = parseFloat(svc.basePrice || "0");
+          if (matrixPrice && svc.id === matrixPrice.packageId) {
+            // Matrix Daily Price covers room and package.
+            // We subtract the room base price so the total reflects the exact matrix rate.
+            const roomBase = parseFloat(priceData.roomRatePerNight || "0");
+            price = parseFloat(matrixPrice.dailyPrice) - roomBase;
+            if (price < 0) price = 0;
+          }
           let qty = 1;
           if (serviceQuantities && typeof serviceQuantities[svcId] === "number") {
             qty = serviceQuantities[svcId];
