@@ -1389,8 +1389,9 @@ export default function BookingPage() {
                 <StepNav
                   onBack={() => goToStep("guests")}
                   onContinue={handleRoomContinue}
-                  continueLabel="Continue to Details"
-                  onSkip={() => goToStep("airport")}
+                  continueLabel="Choose Airport Transfer"
+                  skipLabel="Skip Experiences"
+                  onSkip={handleRoomContinue}
                   loading={checkAvail.isPending}
                 />
               </motion.div>
