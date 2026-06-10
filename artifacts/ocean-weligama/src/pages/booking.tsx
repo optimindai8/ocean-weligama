@@ -464,12 +464,13 @@ export default function BookingPage() {
     listRoomsParams.checkOut = toStrSafe(dateRange.to);
   }
   const { data: rooms,    isLoading: roomsLoading } = useListRooms(listRoomsParams);
-  const { data: services }                           = useListServices();
+  const { data: allRooms } = useListRooms({});
+  const { data: services } = useListServices();
 
   // Derive priceData locally to ensure immediate responsiveness
   const priceData = useMemo(() => {
     if (selectedRoomIds.length === 0) return null;
-    const room = Array.isArray(rooms) ? rooms.find(r => r.id === selectedRoomIds[0]) : null;
+    const room = Array.isArray(allRooms) ? allRooms.find(r => r.id === selectedRoomIds[0]) : null;
     if (!room) return null;
     const roomRatePerNight = !!matrixPrice ? 0 : parseFloat(room.basePricePerNight);
     const roomSubtotal = roomRatePerNight * nights;
@@ -592,7 +593,7 @@ export default function BookingPage() {
     ? (parseFloat(String(computedTotal)) + airportTotal).toFixed(2)
     : "0.00";
 
-  const selectedRooms = Array.isArray(rooms) ? rooms.filter(r => selectedRoomIds.includes(r.id)) : [];
+  const selectedRooms = Array.isArray(allRooms) ? allRooms.filter(r => selectedRoomIds.includes(r.id)) : [];
 
   // ── Navigation helpers ─────────────────────────────────────────────────────
   function goToStep(id: string) {
@@ -1826,22 +1827,46 @@ export default function BookingPage() {
                         )}
                       </div>
 
-                      {/* Packages & Add-ons (Names Only) */}
+                      {/* Packages & Add-ons */}
                       {selectedDbServiceIds.length > 0 && (
                         <div className="space-y-2.5 pb-5 border-b border-white/15 text-sm">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Included in Room Price</p>
-                          {selectedDbServiceIds.map(id => {
-                            const svc = Array.isArray(services) ? services.find(s => s.id === id) : null;
-                            if (!svc) return null;
-                            return (
-                              <div key={id} className="flex items-center gap-2">
-                                <Check className="w-3.5 h-3.5 text-accent shrink-0" />
-                                <span className="text-white/80 text-xs leading-tight">
-                                  {svc.name}
-                                </span>
-                              </div>
-                            );
-                          })}
+                          {matrixPrice && selectedDbServiceIds.includes(matrixPrice.packageId) && (
+                            <>
+                              <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Included in Room Price</p>
+                              {(() => {
+                                const svc = Array.isArray(services) ? services.find(s => s.id === matrixPrice.packageId) : null;
+                                if (!svc) return null;
+                                return (
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <Check className="w-3.5 h-3.5 text-accent shrink-0" />
+                                    <span className="text-white/80 text-xs leading-tight">
+                                      {svc.name}
+                                    </span>
+                                  </div>
+                                );
+                              })()}
+                            </>
+                          )}
+                          
+                          {selectedDbServiceIds.filter(id => !matrixPrice || id !== matrixPrice.packageId).length > 0 && (
+                            <>
+                              <p className="text-[9px] font-black uppercase tracking-widest text-white/40">Add-ons & Experiences</p>
+                              {selectedDbServiceIds.filter(id => !matrixPrice || id !== matrixPrice.packageId).map(id => {
+                                const svc = Array.isArray(services) ? services.find(s => s.id === id) : null;
+                                if (!svc) return null;
+                                const qty = serviceQuantities[id] || 1;
+                                const unitText = svc.unit === 'per_session' || svc.unit === 'per_lesson' ? ` (${qty} ${svc.unit === 'per_session' ? (qty > 1 ? 'Sessions' : 'Session') : (qty > 1 ? 'Lessons' : 'Lesson')})` : '';
+                                return (
+                                  <div key={id} className="flex items-center gap-2">
+                                    <Check className="w-3.5 h-3.5 text-accent shrink-0" />
+                                    <span className="text-white/80 text-xs leading-tight">
+                                      {svc.name}{unitText}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </>
+                          )}
                         </div>
                       )}
 
