@@ -115,9 +115,9 @@ function MatrixTableInner({
         <table className="w-full min-w-max text-left border-collapse">
           <thead>
             <tr>
-              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-slate-100 font-serif font-bold text-base md:text-lg min-w-[220px] max-w-[280px] align-bottom sticky left-0 z-30 shadow-[1px_0_0_0_#f1f5f9]">
+              <th className="p-4 md:p-6 pb-6 md:pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-r border-slate-100 font-serif font-bold text-sm md:text-lg min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] align-bottom sticky left-0 z-30 shadow-[4px_0_12px_rgb(0,0,0,0.03)]">
                 Room Type
-                <div className="text-[10px] font-light text-slate-400 font-sans mt-1 uppercase tracking-widest">Select your comfort</div>
+                <div className="text-[9px] md:text-[10px] font-light text-slate-400 font-sans mt-1 uppercase tracking-widest hidden sm:block">Select your comfort</div>
               </th>
               {filteredPackages.map((pkg: any) => {
                 const isPopular = pkg.isFeatured;
@@ -168,14 +168,16 @@ function MatrixTableInner({
                       const slug = roomSlugMap[room.id];
                       if (slug) setLocation(`/rooms/${slug}`);
                     }}
-                    className={`p-4 md:p-5 text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50 transition-all sticky left-0 z-20 font-medium border-r border-slate-50 shadow-[1px_0_0_0_#f1f5f9] leading-relaxed whitespace-normal min-w-[220px] max-w-[280px] ${
+                    className={`p-3 md:p-5 text-xs md:text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50 transition-all sticky left-0 z-20 font-medium border-r border-slate-50 shadow-[4px_0_12px_rgb(0,0,0,0.03)] leading-relaxed whitespace-normal min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] ${
                       roomSlugMap[room.id] ? 'cursor-pointer hover:shadow-inner' : 'cursor-default'
                     }`}
                   >
-                    {room.name}
+                    <span className="line-clamp-3 md:line-clamp-none">{room.name}</span>
                     {roomSlugMap[room.id] && (
-                      <div className="flex items-center gap-1.5 text-[10px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 font-sans font-bold uppercase tracking-wider translate-y-1 group-hover:translate-y-0 duration-300">
-                        View Details <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                      <div className="flex items-center gap-1 text-[9px] md:text-[10px] text-[#4BBCCC] opacity-0 group-hover:opacity-100 transition-opacity mt-1.5 font-sans font-bold uppercase tracking-wider translate-y-1 group-hover:translate-y-0 duration-300">
+                        <span className="hidden sm:inline">View Details</span>
+                        <span className="sm:hidden">Details</span>
+                        <ArrowRight className="w-2.5 h-2.5 md:w-3 md:h-3 group-hover:translate-x-1 transition-transform" />
                       </div>
                     )}
                   </td>
@@ -186,52 +188,56 @@ function MatrixTableInner({
                     return (
                       <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 min-w-[220px] ${isPopular ? 'bg-teal-50/10' : ''}`}>
                         {price && price !== "0" && price !== "0.00" ? (
-                          <div className="flex flex-col items-center justify-center gap-2 group/price">
-                            <span className={`text-base md:text-lg font-serif font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
-                              {formatPrice(parseFloat(price as string))}
-                            </span>
-                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest -mt-1">per day</span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                // Store booking context in localStorage
-                                localStorage.setItem('booking_roomIds', JSON.stringify([room.id]));
-                                localStorage.setItem('booking_serviceIds', JSON.stringify([pkg.id]));
-                                localStorage.setItem('booking_stepId', JSON.stringify("dates"));
-                                localStorage.setItem('booking_matrixPrice', JSON.stringify({
-                                  roomId: room.id,
-                                  packageId: pkg.id,
-                                  dailyPrice: price,
-                                  packageName: pkg.name,
-                                  roomName: room.name,
-                                }));
-                                // Clear stale data
-                                localStorage.removeItem('booking_dateRange');
-                                localStorage.removeItem('booking_priceData');
-                                localStorage.removeItem('booking_guestCount');
-                                localStorage.removeItem('booking_serviceQuantities');
-                                localStorage.removeItem('booking_highlightCustom');
-                                setLocation('/book');
-                              }}
-                              className={`
-                                group/btn relative overflow-hidden
-                                mt-1 px-5 py-2 rounded-full
-                                text-[11px] font-black uppercase tracking-widest text-white
-                                bg-gradient-to-r ${meta.gradient}
-                                shadow-md hover:shadow-xl
-                                hover:scale-105 active:scale-95
-                                transition-all duration-300 ease-out
-                                cursor-pointer
-                              `}
-                            >
-                              {/* Shine sweep animation */}
-                              <span className="absolute inset-0 w-[40%] bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover/btn:translate-x-[350%] transition-transform duration-700 ease-out pointer-events-none" />
-                              <span className="relative z-10 flex items-center gap-1.5">
-                                Book Now
-                                <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />
+                          <div className="flex flex-col items-center justify-center h-full group/price relative">
+                            <div className="flex flex-col items-center justify-center gap-1 mb-2 md:mb-0 transition-transform duration-300 md:group-hover/price:-translate-y-2">
+                              <span className={`text-base md:text-lg font-serif font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
+                                {formatPrice(parseFloat(price as string))}
                               </span>
-                            </button>
+                              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0">per day</span>
+                            </div>
+                            <div className="md:absolute md:bottom-2 opacity-100 md:opacity-0 md:group-hover/price:opacity-100 transition-all duration-300 translate-y-0 md:translate-y-2 md:group-hover/price:translate-y-0">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // Store booking context in localStorage
+                                  localStorage.setItem('booking_roomIds', JSON.stringify([room.id]));
+                                  localStorage.setItem('booking_serviceIds', JSON.stringify([pkg.id]));
+                                  localStorage.setItem('booking_stepId', JSON.stringify("dates"));
+                                  localStorage.setItem('booking_matrixPrice', JSON.stringify({
+                                    roomId: room.id,
+                                    packageId: pkg.id,
+                                    dailyPrice: price,
+                                    packageName: pkg.name,
+                                    roomName: room.name,
+                                  }));
+                                  // Clear stale data
+                                  localStorage.removeItem('booking_dateRange');
+                                  localStorage.removeItem('booking_priceData');
+                                  localStorage.removeItem('booking_guestCount');
+                                  localStorage.removeItem('booking_serviceQuantities');
+                                  localStorage.removeItem('booking_highlightCustom');
+                                  setLocation('/book');
+                                }}
+                                className={`
+                                  group/btn relative overflow-hidden
+                                  px-5 py-2 rounded-full
+                                  text-[11px] font-black uppercase tracking-widest text-white
+                                  bg-gradient-to-r ${meta.gradient}
+                                  shadow-md hover:shadow-xl
+                                  hover:scale-105 active:scale-95
+                                  transition-all duration-300 ease-out
+                                  cursor-pointer
+                                `}
+                              >
+                                {/* Shine sweep animation */}
+                                <span className="absolute inset-0 w-[40%] bg-gradient-to-r from-transparent via-white/25 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover/btn:translate-x-[350%] transition-transform duration-700 ease-out pointer-events-none" />
+                                <span className="relative z-10 flex items-center gap-1.5">
+                                  Book Now
+                                  <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />
+                                </span>
+                              </button>
+                            </div>
                           </div>
                         ) : (
                           <span className="text-slate-200 font-light text-xl">-</span>
