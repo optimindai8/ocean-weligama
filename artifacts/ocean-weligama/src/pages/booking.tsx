@@ -643,33 +643,30 @@ export default function BookingPage() {
   }, [guestCount]);
 
   // ── Availability check (Step 3 → 4) ───────────────────────────────────────
-  async function handleRoomContinue() {
+  function handleRoomContinue() {
     if (selectedRoomIds.length === 0) {
       toast({ variant: "destructive", title: "Please select at least one room" }); return;
     }
     if (!dateRange.from || !dateRange.to) {
       toast({ variant: "destructive", title: "Please go back and select your dates" }); return;
     }
-    try {
-      const res = await checkAvail.mutateAsync({
-        data: {
-          roomId: selectedRoomIds[0],
-          roomIds: selectedRoomIds,
-          checkIn: toStr(dateRange.from),
-          checkOut: toStr(dateRange.to),
-          guestCount,
-          serviceIds: selectedDbServiceIds,
-          serviceQuantities,
-          serviceCustomizations: getServiceCustomizations(),
-          isMatrixBooking: !!matrixPrice,
-        },
+    
+    // Set priceData synchronously to bypass the slow "checking" step
+    const room = Array.isArray(rooms) ? rooms.find(r => r.id === selectedRoomIds[0]) : null;
+    if (room) {
+      const roomRatePerNight = !!matrixPrice ? 0 : parseFloat(room.basePricePerNight);
+      const roomSubtotal = roomRatePerNight * nights;
+      const cleaningFee = parseFloat(room.cleaningFee || "0");
+      setPriceData({
+        available: true,
+        roomRatePerNight: roomRatePerNight.toString(),
+        roomSubtotal: roomSubtotal.toString(),
+        cleaningFee: cleaningFee.toString(),
       });
-      setPriceData(res);
-      // Seamlessly go to the next step without blocking on availability
-      goToStep("airport");
-    } catch {
-      toast({ variant: "destructive", title: "Could not check availability" });
     }
+
+    // Seamlessly go to the next step without blocking on availability
+    goToStep("airport");
   }
 
   // ── Submit ─────────────────────────────────────────────────────────────────
@@ -1396,7 +1393,6 @@ export default function BookingPage() {
                   continueLabel="Choose Airport Transfer"
                   skipLabel="Skip Experiences"
                   onSkip={handleRoomContinue}
-                  loading={checkAvail.isPending}
                 />
               </motion.div>
             )}
