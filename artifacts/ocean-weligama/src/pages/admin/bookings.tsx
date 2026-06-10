@@ -532,84 +532,99 @@ export default function AdminBookings() {
                               const tag = srv?.category ? (srv.category.toLowerCase().includes("surf") ? "SURF" : srv.category.toUpperCase()) : "SURF";
                               const type = srv?.type ? srv.type.toUpperCase() : "MAIN";
                               
-                              return (
-                                <div key={idx} className="bg-white rounded-[2rem] border-2 border-slate-100 shadow-xl overflow-hidden flex flex-col md:flex-row gap-6 p-6 mb-4">
-                                  {/* Left: Image with Badge */}
-                                  <div className="relative w-full md:w-44 h-44 md:h-36 shrink-0 rounded-2xl overflow-hidden bg-emerald-50">
-                                    {srv?.imageUrl || srv?.heroImageUrl ? (
-                                      <img src={srv.imageUrl || srv?.heroImageUrl} alt={s.serviceName} className="w-full h-full object-cover" />
-                                    ) : (
-                                      <div className="w-full h-full flex items-center justify-center">
-                                        <Award className="w-12 h-12 text-emerald-200" />
-                                      </div>
-                                    )}
-                                    <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm text-[#0B3D5E] font-black text-[8px] uppercase tracking-wider px-2.5 py-1.5 rounded-full shadow-sm z-10 border border-slate-100">
-                                      {tag} {type}
-                                    </div>
-                                  </div>
-
-                                  {/* Right: Content */}
-                                  <div className="flex-1 flex flex-col justify-between">
-                                    <div>
-                                      <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
-                                        <h4 className="text-xl font-serif font-black text-[#0B3D5E] leading-tight">{s.serviceName}</h4>
-                                        <span className="font-black text-2xl text-[#0B3D5E]">{currencySymbol}{s.subtotal}</span>
-                                      </div>
-                                      
-                                      <p className="text-xs text-slate-400 font-mono mb-2">
-                                        {srv?.slug || s.serviceName.toLowerCase().replace(/ /g, "-")}
-                                      </p>
-
-                                      {srv?.description && (
-                                        <p className="text-xs text-slate-600 mb-3 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100/50 italic font-medium">
-                                          {srv.description}
-                                        </p>
-                                      )}
-                                      
-                                      <hr className="border-slate-100 my-3" />
-
-                                      {/* Highlights */}
-                                      {srv?.highlights && srv.highlights.length > 0 && (
-                                        <div className="space-y-2 mt-2">
-                                          {(() => {
-                                            const isExpanded = expandedPkgs[srvIdKey];
-                                            const visibleHighlights = isExpanded ? srv.highlights : srv.highlights.slice(0, 4);
-                                            const hasMore = srv.highlights.length > 4;
-
-                                            return (
-                                              <>
-                                                {visibleHighlights.map((hl: string, i: number) => (
-                                                  <div key={i} className="flex items-start gap-2">
-                                                    <Check className="w-3.5 h-3.5 text-[#4BBCCC] shrink-0 mt-0.5" />
-                                                    <span className="text-slate-600 font-medium text-xs leading-relaxed">{hl}</span>
-                                                  </div>
-                                                ))}
-                                                
-                                                {hasMore && (
-                                                  <button
-                                                    type="button"
-                                                    onClick={(e: React.MouseEvent) => {
-                                                      e.stopPropagation();
-                                                      setExpandedPkgs(prev => ({ ...prev, [srvIdKey]: !prev[srvIdKey] }));
-                                                    }}
-                                                    className="text-[#4BBCCC] hover:text-[#4BBCCC]/80 font-bold text-[10px] italic hover:underline mt-1 inline-block cursor-pointer"
-                                                  >
-                                                    {isExpanded ? "show less highlights" : `+ ${srv.highlights.length - 4} more highlights`}
-                                                  </button>
-                                                )}
-                                              </>
-                                            );
-                                          })()}
+                                return (
+                                  <div key={idx} className="flex flex-col mb-4 gap-2">
+                                    <div className="bg-white rounded-[2rem] border-2 border-slate-100 shadow-xl overflow-hidden flex flex-col md:flex-row gap-6 p-6">
+                                      {/* Left: Image with Badge */}
+                                      <div className="relative w-full md:w-44 h-44 md:h-36 shrink-0 rounded-2xl overflow-hidden bg-emerald-50">
+                                        {srv?.imageUrl || srv?.heroImageUrl ? (
+                                          <img src={srv.imageUrl || srv?.heroImageUrl} alt={s.serviceName} className="w-full h-full object-cover" />
+                                        ) : (
+                                          <div className="w-full h-full flex items-center justify-center">
+                                            <Award className="w-12 h-12 text-emerald-200" />
+                                          </div>
+                                        )}
+                                        <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm text-[#0B3D5E] font-black text-[8px] uppercase tracking-wider px-2.5 py-1.5 rounded-full shadow-sm z-10 border border-slate-100">
+                                          {tag} {type}
                                         </div>
-                                      )}
+                                      </div>
+  
+                                      {/* Right: Content */}
+                                      <div className="flex-1 flex flex-col justify-between">
+                                        <div>
+                                          <div className="flex flex-wrap items-baseline justify-between gap-2 mb-2">
+                                            <h4 className="text-xl font-serif font-black text-[#0B3D5E] leading-tight">{s.serviceName}</h4>
+                                          </div>
+                                          
+                                          <p className="text-xs text-slate-400 font-mono mb-2">
+                                            {srv?.slug || s.serviceName.toLowerCase().replace(/ /g, "-")}
+                                          </p>
+  
+                                          {srv?.description && (
+                                            <p className="text-xs text-slate-600 mb-3 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100/50 italic font-medium">
+                                              {srv.description}
+                                            </p>
+                                          )}
+                                          
+                                          <hr className="border-slate-100 my-3" />
+  
+                                          {/* Highlights */}
+                                          {srv?.highlights && srv.highlights.length > 0 && (
+                                            <div className="space-y-2 mt-2">
+                                              {(() => {
+                                                const isExpanded = expandedPkgs[srvIdKey];
+                                                const visibleHighlights = isExpanded ? srv.highlights : srv.highlights.slice(0, 4);
+                                                const hasMore = srv.highlights.length > 4;
+  
+                                                return (
+                                                  <>
+                                                    {visibleHighlights.map((hl: string, i: number) => (
+                                                      <div key={i} className="flex items-start gap-2">
+                                                        <Check className="w-3.5 h-3.5 text-[#4BBCCC] shrink-0 mt-0.5" />
+                                                        <span className="text-slate-600 font-medium text-xs leading-relaxed">{hl}</span>
+                                                      </div>
+                                                    ))}
+                                                    
+                                                    {hasMore && (
+                                                      <button
+                                                        type="button"
+                                                        onClick={(e: React.MouseEvent) => {
+                                                          e.stopPropagation();
+                                                          setExpandedPkgs(prev => ({ ...prev, [srvIdKey]: !prev[srvIdKey] }));
+                                                        }}
+                                                        className="text-[#4BBCCC] hover:text-[#4BBCCC]/80 font-bold text-[10px] italic hover:underline mt-1 inline-block cursor-pointer"
+                                                      >
+                                                        {isExpanded ? "show less highlights" : `+ ${srv.highlights.length - 4} more highlights`}
+                                                      </button>
+                                                    )}
+                                                  </>
+                                                );
+                                              })()}
+                                            </div>
+                                          )}
+                                        </div>
+                                        <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 font-bold">
+                                          <span>{getUnitLabel(srv?.unit, s.quantity)}</span>
+                                          <Badge className="bg-emerald-50 text-emerald-700 border-none font-bold">Main Package</Badge>
+                                        </div>
+                                      </div>
                                     </div>
-                                    <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500 font-bold">
-                                      <span>{getUnitLabel(srv?.unit, s.quantity)}</span>
-                                      <Badge className="bg-emerald-50 text-emerald-700 border-none font-bold">Main Package</Badge>
+                                    
+                                    {/* Newly Created Section for Room + Package Combined Price */}
+                                    <div className="bg-emerald-50/50 rounded-2xl p-5 border border-emerald-100 flex items-center justify-between shadow-sm">
+                                      <div>
+                                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mb-1">Combined Room & Package Rate</p>
+                                        <p className="text-sm font-bold text-emerald-950">
+                                          {selectedBooking.roomName || "Room"} + {s.serviceName}
+                                        </p>
+                                      </div>
+                                      <div className="text-right">
+                                        <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mb-1 block">Subtotal</span>
+                                        <span className="text-xl font-black text-emerald-700">{currencySymbol}{s.subtotal}</span>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              );
+                                );
                             }
 
                             return (
