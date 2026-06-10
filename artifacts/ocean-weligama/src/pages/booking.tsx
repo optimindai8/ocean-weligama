@@ -44,6 +44,7 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Home,
   RotateCcw,
   HeartHandshake,
@@ -439,6 +440,7 @@ export default function BookingPage() {
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
   const [highlightCustomizations, setHighlightCustomizations] = useState<Record<string, Record<number, number>>>(() => loadState("highlightCustom", {}));
   const [matrixPrice, setMatrixPrice] = useState<any>(() => loadState("matrixPrice", null));
+  const [isMatrixPackageExpanded, setIsMatrixPackageExpanded] = useState(false);
 
 
   useEffect(() => { saveState("stepId", stepId); }, [stepId]);
@@ -961,20 +963,61 @@ export default function BookingPage() {
                   {matrixPrice && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                      className="mt-4 bg-gradient-to-r from-sky-50 to-teal-50 border border-sky-200/60 rounded-2xl px-6 py-4 flex items-center gap-4"
+                      className="mt-4 bg-gradient-to-r from-sky-50 to-teal-50 border border-sky-200/60 rounded-2xl overflow-hidden shadow-sm"
                     >
-                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-sky-100 shrink-0">
-                        <Sparkles className="w-5 h-5 text-sky-600" />
+                      <div 
+                        className="px-6 py-4 flex items-center gap-4 cursor-pointer hover:bg-white/40 transition-colors"
+                        onClick={() => setIsMatrixPackageExpanded(!isMatrixPackageExpanded)}
+                      >
+                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-sky-100 shrink-0">
+                          <Sparkles className="w-5 h-5 text-sky-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-sky-500 mb-0.5">Package Selected</p>
+                          <p className="font-bold text-[#0B3D5E] text-sm truncate">{matrixPrice.packageName}</p>
+                          <p className="text-xs text-muted-foreground truncate">{matrixPrice.roomName} · €{parseFloat(matrixPrice.dailyPrice).toFixed(0)}/day</p>
+                        </div>
+                        <div className="text-right shrink-0 flex items-center gap-3">
+                          <div>
+                            <p className="text-[9px] font-black uppercase tracking-widest text-sky-500">Min Stay</p>
+                            <p className="text-2xl font-bold text-[#0B3D5E]">7<span className="text-xs font-medium text-muted-foreground ml-0.5">nights</span></p>
+                          </div>
+                          <div className={`w-8 h-8 rounded-full bg-white/60 flex items-center justify-center transition-transform duration-300 ${isMatrixPackageExpanded ? 'rotate-180' : ''}`}>
+                            <ChevronDown className="w-4 h-4 text-sky-600" />
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-sky-500 mb-0.5">Package Selected</p>
-                        <p className="font-bold text-[#0B3D5E] text-sm truncate">{matrixPrice.packageName}</p>
-                        <p className="text-xs text-muted-foreground truncate">{matrixPrice.roomName} · €{parseFloat(matrixPrice.dailyPrice).toFixed(0)}/day</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-sky-500">Min Stay</p>
-                        <p className="text-2xl font-bold text-[#0B3D5E]">7<span className="text-xs font-medium text-muted-foreground ml-0.5">nights</span></p>
-                      </div>
+                      
+                      <AnimatePresence>
+                        {isMatrixPackageExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="border-t border-sky-200/50 bg-white/40 px-6 py-5"
+                          >
+                            <p className="text-[10px] font-black text-[#0B3D5E] uppercase tracking-widest mb-3">What's Included</p>
+                            <div className="space-y-2.5">
+                              {(() => {
+                                const selectedPkg = Array.isArray(services) ? services.find((s: any) => s.id === matrixPrice.packageId) : null;
+                                const highlights = selectedPkg?.highlights || [];
+                                if (highlights.length === 0) return <p className="text-sm text-slate-500 italic">No additional details available.</p>;
+                                return highlights.map((hl: string, idx: number) => (
+                                  <motion.div 
+                                    initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.05 }}
+                                    key={idx} className="flex items-start gap-2.5 text-sm text-[#0B3D5E]"
+                                  >
+                                    <div className="w-5 h-5 rounded-full bg-sky-100 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Check className="w-3 h-3 text-sky-600" />
+                                    </div>
+                                    <span className="leading-relaxed">{hl}</span>
+                                  </motion.div>
+                                ));
+                              })()}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </motion.div>
                   )}
 
