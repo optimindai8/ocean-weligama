@@ -399,7 +399,7 @@ export default function BookingPage() {
   };
   const clearState = () => {
     if (typeof window !== 'undefined') {
-      ['stepId', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'serviceQuantities', 'priceData', 'formData', 'highlightCustom'].forEach(k => {
+      ['stepId', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'serviceQuantities', 'priceData', 'formData', 'highlightCustom', 'matrixPrice'].forEach(k => {
         localStorage.removeItem(`booking_${k}`);
       });
     }
@@ -438,6 +438,8 @@ export default function BookingPage() {
   const [priceData,             setPriceData]             = useState<any>(() => loadState("priceData", null));
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
   const [highlightCustomizations, setHighlightCustomizations] = useState<Record<string, Record<number, number>>>(() => loadState("highlightCustom", {}));
+  const [matrixPrice, setMatrixPrice] = useState<any>(() => loadState("matrixPrice", null));
+
 
   useEffect(() => { saveState("stepId", stepId); }, [stepId]);
   useEffect(() => { saveState("guestCount", guestCount); }, [guestCount]);
@@ -447,6 +449,7 @@ export default function BookingPage() {
   useEffect(() => { saveState("serviceQuantities", serviceQuantities); }, [serviceQuantities]);
   useEffect(() => { saveState("priceData", priceData); }, [priceData]);
   useEffect(() => { saveState("highlightCustom", highlightCustomizations); }, [highlightCustomizations]);
+  useEffect(() => { saveState("matrixPrice", matrixPrice); }, [matrixPrice]);
 
   const nights = dateRange.from && dateRange.to
     ? Math.round((dateRange.to.getTime() - dateRange.from.getTime()) / 86400000) : 0;
@@ -463,6 +466,18 @@ export default function BookingPage() {
   const { data: services }                           = useListServices();
   const checkAvail = useCheckAvailabilityAndPrice();
   const createBook = useCreateBooking();
+
+  // Detect if a package (main service) is selected — used for 7-night minimum enforcement
+  const hasPackageSelected = useMemo(() => {
+    if (matrixPrice) return true;
+    if (!Array.isArray(services)) return false;
+    return selectedDbServiceIds.some(id => {
+      const svc = services.find((s: any) => s.id === id);
+      return svc && ((svc as any).type === 'main' || (svc as any).category?.toLowerCase().includes('package'));
+    });
+  }, [matrixPrice, selectedDbServiceIds, services]);
+
+  const minNights = hasPackageSelected ? 7 : 2;
 
   const computedTotal = (() => {
     if (!priceData) return 0;
@@ -904,18 +919,16 @@ export default function BookingPage() {
                       mode="range"
                       selected={dateRange as any}
                       onSelect={(r) => {
-                        const hasPackageSelected = selectedDbServiceIds.some(id => packages.some(p => p.id === id));
                         if (r?.from) {
                           if (!r.to || r.to <= r.from) {
                             const minTo = new Date(r.from);
-                            minTo.setDate(minTo.getDate() + (hasPackageSelected ? 7 : 2));
+                            minTo.setDate(minTo.getDate() + minNights);
                             setDateRange({ from: r.from, to: minTo });
                           } else {
                             const diffDays = Math.round((r.to.getTime() - r.from.getTime()) / 86400000);
-                            const minDays = hasPackageSelected ? 7 : 2;
-                            if (diffDays < minDays) {
+                            if (diffDays < minNights) {
                               const minTo = new Date(r.from);
-                              minTo.setDate(minTo.getDate() + minDays);
+                              minTo.setDate(minTo.getDate() + minNights);
                               setDateRange({ from: r.from, to: minTo });
                             } else {
                               setDateRange({ from: r.from, to: r.to });
@@ -942,6 +955,27 @@ export default function BookingPage() {
                         Reset Dates
                       </button>
                     </div>
+                  )}
+
+                  {/* Matrix price info banner */}
+                  {matrixPrice && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 bg-gradient-to-r from-sky-50 to-teal-50 border border-sky-200/60 rounded-2xl px-6 py-4 flex items-center gap-4"
+                    >
+                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-sky-100 shrink-0">
+                        <Sparkles className="w-5 h-5 text-sky-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-sky-500 mb-0.5">Package Selected</p>
+                        <p className="font-bold text-[#0B3D5E] text-sm truncate">{matrixPrice.packageName}</p>
+                        <p className="text-xs text-muted-foreground truncate">{matrixPrice.roomName} · €{parseFloat(matrixPrice.dailyPrice).toFixed(0)}/day</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-sky-500">Min Stay</p>
+                        <p className="text-2xl font-bold text-[#0B3D5E]">7<span className="text-xs font-medium text-muted-foreground ml-0.5">nights</span></p>
+                      </div>
+                    </motion.div>
                   )}
 
                   <AnimatePresence>
@@ -974,8 +1008,8 @@ export default function BookingPage() {
                       toast({ variant: "destructive", title: "Check-out must be after check-in" });
                       return;
                     }
-                    if (nights < 2) {
-                      toast({ variant: "destructive", title: "Minimum 2 nights required" });
+                    if (nights < minNights) {
+                      toast({ variant: "destructive", title: `Minimum ${minNights} nights required${hasPackageSelected ? ' for package bookings' : ''}` });
                       return;
                     }
                     goToStep("guests");
