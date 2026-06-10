@@ -464,7 +464,7 @@ export default function BookingPage() {
     listRoomsParams.checkOut = toStrSafe(dateRange.to);
   }
   const { data: rooms,    isLoading: roomsLoading } = useListRooms(listRoomsParams);
-  const { data: allRooms } = useListRooms({});
+  const { data: allRooms, isLoading: allRoomsLoading } = useListRooms({});
   const { data: services } = useListServices();
 
   // Derive priceData locally to ensure immediate responsiveness
@@ -1088,7 +1088,7 @@ export default function BookingPage() {
                   sub="Select the perfect space for your island escape."
                 />
 
-                {roomsLoading ? (
+                {allRoomsLoading ? (
                   <div className="grid md:grid-cols-2 gap-6">
                     {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-44 rounded-[2rem]" />)}
                   </div>
@@ -1097,7 +1097,7 @@ export default function BookingPage() {
                     initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
                     className="grid md:grid-cols-2 gap-6"
                   >
-                    {Array.isArray(rooms) && rooms.map(room => (
+                    {Array.isArray(allRooms) && allRooms.map(room => (
                       <RoomCard 
                         key={room.id}
                         room={room}
