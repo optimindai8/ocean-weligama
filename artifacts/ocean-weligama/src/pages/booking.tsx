@@ -531,12 +531,6 @@ export default function BookingPage() {
   const watchDrop      = form.watch("airportDrop");
   const watchSurfboard = form.watch("bringingSurfboard");
 
-  useEffect(() => {
-    if (guestCount !== 3) {
-      if (watchPickup) form.setValue("airportPickup", false);
-      if (watchDrop) form.setValue("airportDrop", false);
-    }
-  }, [guestCount, watchPickup, watchDrop, form]);
 
   // ── Dynamic airport pricing from API ─────────────────────────────────────
   const { data: airportPricingData } = useGetAirportPricing({
