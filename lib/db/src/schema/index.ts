@@ -12,3 +12,4 @@ export * from "./blogs";
 export * from "./airport";
 export * from "./faq";
 export * from "./settings";
+export * from "./offer_ads";

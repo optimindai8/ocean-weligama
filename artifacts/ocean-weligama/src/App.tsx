@@ -33,6 +33,7 @@ import AdminAirport from "@/pages/admin/airport";
 import AdminMatrixPricing from "@/pages/admin/matrix-pricing";
 import AdminGuests from "@/pages/admin/guests";
 import AdminFAQ from "@/pages/admin/faq";
+import AdminOfferAds from "@/pages/admin/offer-ads";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,6 +48,7 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { useLocation } from "wouter";
 import { LanguageProvider } from "@/components/LanguageContext";
+import { OfferAdPopup } from "@/components/OfferAdPopup";
 
 function App() {
   const [location] = useLocation();
@@ -62,7 +64,12 @@ function App() {
       <LanguageProvider>
         <TooltipProvider>
           <div className="min-h-screen flex flex-col">
-          {!isAdminPage && <Navbar />}
+          {!isAdminPage && (
+            <>
+              <Navbar />
+              <OfferAdPopup />
+            </>
+          )}
           <div className="flex-1">
             <Switch>
               {/* Public routes */}
@@ -96,6 +103,7 @@ function App() {
               <Route path="/ow-admin/airport" component={AdminAirport} />
               <Route path="/ow-admin/matrix-pricing" component={AdminMatrixPricing} />
               <Route path="/ow-admin/faq" component={AdminFAQ} />
+              <Route path="/ow-admin/offer-ads" component={AdminOfferAds} />
 
               <Route component={NotFound} />
             </Switch>

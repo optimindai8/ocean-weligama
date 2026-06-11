@@ -33,6 +33,7 @@ const NAV = [
   { href: "/ow-admin/blogs", label: "Blogs", icon: BookOpen },
   { href: "/ow-admin/airport", label: "Airport", icon: Plane },
   { href: "/ow-admin/faq", label: "FAQ", icon: HelpCircle },
+  { href: "/ow-admin/offer-ads", label: "Offer Ads", icon: Sparkles },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
