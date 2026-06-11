@@ -311,7 +311,7 @@ export default function AdminPackages() {
 
   return (
     <AdminLayout>
-      <div className="p-8 md:p-12 max-w-[100rem] 2xl:max-w-[120rem] mx-auto w-full">
+      <div className="p-6 md:p-10 w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
@@ -454,7 +454,7 @@ export default function AdminPackages() {
           </TabsContent>
 
           <TabsContent value="table_sort" className="mt-0 outline-none">
-            <div className="bg-white rounded-[3rem] border border-slate-200 shadow-sm overflow-hidden pb-12 pt-8 px-4">
+            <div className="bg-white rounded-3xl border border-slate-200/80 shadow-lg overflow-hidden">
               <PackageComparisonTable isEditable={true} />
             </div>
           </TabsContent>

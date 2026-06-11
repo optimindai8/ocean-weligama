@@ -225,7 +225,10 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
   };
 
   return (
-    <div className={`w-full mx-auto py-16 px-4 sm:px-6 lg:px-8 ${isEditable ? 'max-w-[100rem] 2xl:max-w-[120rem]' : 'max-w-7xl'}`}>
+    <div className={isEditable
+      ? 'w-full py-10 px-8'
+      : 'w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8'
+    }>
       {/* ── Admin Edit Controls ──────────────────────────────────────────────────────── */}
       {isEditable && (
         <div className="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
@@ -370,23 +373,26 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
         transition={{ delay: 0.3, duration: 0.7 }}
-        className="hidden lg:block overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] overflow-x-auto"
+        className={isEditable
+          ? 'hidden lg:block overflow-x-auto'
+          : 'hidden lg:block overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] overflow-x-auto'
+        }
       >
-        <table className="w-full min-w-max text-left border-collapse">
+        <table className={`w-full text-left border-collapse ${isEditable ? 'table-fixed' : 'min-w-max'}`}>
           {/* Table Header */}
           <thead>
             <tr>
-              <th className="p-6 pb-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100 w-1/4 align-bottom sticky left-0 z-30">
+              <th className={`p-6 pb-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100 align-bottom sticky left-0 z-30 ${isEditable ? 'w-[28%]' : 'w-1/4'}`}>
                 <div className="space-y-2">
                   <h3 className="text-xl font-serif font-bold text-[#0B3D5E]">What's Included</h3>
-                  <p className="text-xs text-slate-400 font-medium">Hover a column to explore</p>
+                  <p className="text-xs text-slate-400 font-medium">{isEditable ? 'Use arrows in edit mode to reorder' : 'Hover a column to explore'}</p>
                 </div>
               </th>
 
               {localPackages.map((pkg, idx) => (
                 <th
                   key={pkg.id}
-                  className={`p-6 pb-8 border-b min-w-[200px] relative transition-all duration-500 ease-out align-bottom cursor-pointer
+                  className={`p-6 pb-8 border-b relative transition-all duration-500 ease-out align-bottom cursor-pointer ${isEditable ? 'min-w-[220px]' : 'min-w-[200px]'}
                     ${hoveredCol === idx && !editMode ? `${pkg.scheme.lightBg} border-b-2 ${pkg.scheme.accentBorder}` : 'bg-white border-slate-100'}
                     ${pkg.popular ? 'border-t-4 border-t-teal-400' : ''}
                   `}
@@ -459,7 +465,7 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
                 viewport={{ once: true, margin: "-10px" }}
                 className={`border-b border-slate-50 last:border-slate-100 transition-colors duration-200 hover:bg-slate-50 group`}
               >
-                <td className={`py-4 px-6 text-sm font-serif sticky left-0 bg-white group-hover:bg-slate-50 transition-colors duration-200 z-20 shadow-[1px_0_0_0_#e2e8f0] text-slate-600 font-medium`}>
+                <td className={`py-5 px-8 text-sm font-serif sticky left-0 bg-white group-hover:bg-slate-50 transition-colors duration-200 z-20 shadow-[1px_0_0_0_#e2e8f0] text-slate-600 font-medium ${isEditable ? 'w-[28%]' : ''}`}>
                   <div className="flex items-center gap-3">
                     {editMode && (
                       <div className="flex flex-col gap-1 shrink-0 mr-2">
@@ -480,7 +486,7 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
                   return (
                     <td
                       key={idx}
-                      className={`py-4 px-6 text-sm text-center transition-all duration-500 ease-out ${
+                      className={`${isEditable ? 'py-5 px-8' : 'py-4 px-6'} text-sm text-center transition-all duration-500 ease-out ${
                         hoveredCol === idx && !editMode ? pkg.scheme.lightBg : ''
                       }`}
                       onMouseEnter={() => !editMode && setHoveredCol(idx)}
