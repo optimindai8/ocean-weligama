@@ -311,7 +311,7 @@ export default function AdminPackages() {
 
   return (
     <AdminLayout>
-      <div className="p-8 md:p-12 max-w-7xl mx-auto">
+      <div className="p-8 md:p-12 max-w-[100rem] 2xl:max-w-[120rem] mx-auto w-full">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
           <motion.div 
             initial={{ opacity: 0, y: -20 }}

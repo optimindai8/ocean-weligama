@@ -225,7 +225,7 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+    <div className={`w-full mx-auto py-16 px-4 sm:px-6 lg:px-8 ${isEditable ? 'max-w-[100rem] 2xl:max-w-[120rem]' : 'max-w-7xl'}`}>
       {/* ── Admin Edit Controls ──────────────────────────────────────────────────────── */}
       {isEditable && (
         <div className="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
