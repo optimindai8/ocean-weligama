@@ -134,8 +134,9 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
 
     // 3. Merge with saved order
     let finalFeatures = uniqueHighlights;
-    if (settingsData && settingsData.value && Array.isArray(settingsData.value)) {
-      const savedOrder = settingsData.value as string[];
+    const rawValue = settingsData?.value;
+    const savedOrder = Array.isArray(rawValue) ? (rawValue as unknown as string[]) : null;
+    if (savedOrder) {
       const orderedExisting = savedOrder.filter(f => uniqueHighlights.includes(f));
       const newFeatures = uniqueHighlights.filter(f => !savedOrder.includes(f));
       finalFeatures = [...orderedExisting, ...newFeatures];
