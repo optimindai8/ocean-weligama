@@ -45,12 +45,13 @@ router.get("/v1/admin/offer-ads", requireAdmin, async (req, res) => {
 // Admin: create offer ad
 router.post("/v1/admin/offer-ads", requireAdmin, async (req, res) => {
   try {
-    const { title, description, imageUrl, isActive, intervalMinutes } = req.body as {
+    const { title, description, imageUrl, isActive, intervalMinutes, offerDays } = req.body as {
       title: string;
       description?: string;
       imageUrl?: string;
       isActive?: boolean;
       intervalMinutes?: number;
+      offerDays?: number;
     };
 
     if (!title) {
@@ -64,7 +65,8 @@ router.post("/v1/admin/offer-ads", requireAdmin, async (req, res) => {
         description: description || null, 
         imageUrl: imageUrl || null, 
         isActive: isActive !== undefined ? isActive : true, 
-        intervalMinutes: intervalMinutes ?? 60 
+        intervalMinutes: intervalMinutes ?? 60,
+        offerDays: offerDays ?? 7,
       })
       .returning();
 
@@ -79,12 +81,13 @@ router.post("/v1/admin/offer-ads", requireAdmin, async (req, res) => {
 router.patch("/v1/admin/offer-ads/:id", requireAdmin, async (req, res) => {
   try {
     const { id } = req.params as Record<string, string>;
-    const { title, description, imageUrl, isActive, intervalMinutes } = req.body as {
+    const { title, description, imageUrl, isActive, intervalMinutes, offerDays } = req.body as {
       title?: string;
       description?: string;
       imageUrl?: string;
       isActive?: boolean;
       intervalMinutes?: number;
+      offerDays?: number;
     };
 
     const [updated] = await db
@@ -95,6 +98,7 @@ router.patch("/v1/admin/offer-ads/:id", requireAdmin, async (req, res) => {
         ...(imageUrl !== undefined && { imageUrl }),
         ...(isActive !== undefined && { isActive }),
         ...(intervalMinutes !== undefined && { intervalMinutes }),
+        ...(offerDays !== undefined && { offerDays }),
         updatedAt: new Date(),
       })
       .where(eq(offerAds.id, id))

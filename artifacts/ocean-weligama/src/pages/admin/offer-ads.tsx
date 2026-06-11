@@ -60,6 +60,7 @@ type OfferAd = {
   imageUrl: string | null;
   isActive: boolean;
   intervalMinutes: number;
+  offerDays: number;
   createdAt: string;
 };
 
@@ -126,10 +127,17 @@ const AdForm = ({ ad, onSubmit, onCancel }: { ad?: OfferAd | null; onSubmit: (e:
           </div>
         )}
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="intervalMinutes">Interval (Minutes)</Label>
-        <Input id="intervalMinutes" name="intervalMinutes" type="number" defaultValue={ad?.intervalMinutes || 60} min={1} required />
-        <p className="text-sm text-muted-foreground">How often this pop-up should appear to a user.</p>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="intervalMinutes">Interval (Minutes)</Label>
+          <Input id="intervalMinutes" name="intervalMinutes" type="number" defaultValue={ad?.intervalMinutes || 60} min={1} required />
+          <p className="text-xs text-muted-foreground">How often pop-up appears.</p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="offerDays">Offer Duration (Days)</Label>
+          <Input id="offerDays" name="offerDays" type="number" defaultValue={ad?.offerDays || 7} min={1} required />
+          <p className="text-xs text-muted-foreground">Days the offer is valid.</p>
+        </div>
       </div>
       <div className="flex items-center space-x-2 pt-2">
         <Switch id="isActive" name="isActive" defaultChecked={ad?.isActive ?? true} />
@@ -268,6 +276,7 @@ export default function AdminOfferAds() {
       imageUrl: formData.get("imageUrl") as string,
       isActive: formData.get("isActive") === "on",
       intervalMinutes: parseInt(formData.get("intervalMinutes") as string) || 60,
+      offerDays: parseInt(formData.get("offerDays") as string) || 7,
     };
 
     if (id) {

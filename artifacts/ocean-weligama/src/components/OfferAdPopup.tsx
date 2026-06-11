@@ -10,6 +10,8 @@ type OfferAd = {
   imageUrl: string | null;
   isActive: boolean;
   intervalMinutes: number;
+  offerDays: number;
+  createdAt: string;
 };
 
 /* ───── floating particle component ───── */
@@ -41,22 +43,25 @@ const FloatingParticle = ({ delay, x, size }: { delay: number; x: number; size: 
   />
 );
 
-/* ───── countdown timer hook ───── */
-const useCountdown = (isVisible: boolean) => {
-  const [timeLeft, setTimeLeft] = useState({ hours: 23, minutes: 59, seconds: 59 });
+const useCountdown = (isVisible: boolean, createdAt?: string, offerDays?: number) => {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    if (!isVisible) return;
-    // Use a pseudo-countdown that resets daily
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    if (!isVisible || !createdAt || !offerDays) return;
+    
+    const end = new Date(createdAt);
+    end.setDate(end.getDate() + offerDays);
 
     const tick = () => {
       const now = new Date();
-      const diff = endOfDay.getTime() - now.getTime();
-      if (diff <= 0) return;
+      const diff = end.getTime() - now.getTime();
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
       setTimeLeft({
-        hours: Math.floor(diff / (1000 * 60 * 60)),
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
         minutes: Math.floor((diff / (1000 * 60)) % 60),
         seconds: Math.floor((diff / 1000) % 60),
       });
@@ -98,7 +103,6 @@ export function OfferAdPopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [showCloseButton, setShowCloseButton] = useState(false);
   const [isHoveringCTA, setIsHoveringCTA] = useState(false);
-  const countdown = useCountdown(isVisible);
 
   const { data: activeAd } = useQuery<OfferAd | null>({
     queryKey: ["public-offer-ad"],
@@ -109,6 +113,8 @@ export function OfferAdPopup() {
     },
     staleTime: 1000 * 60 * 5,
   });
+
+  const countdown = useCountdown(isVisible, activeAd?.createdAt, activeAd?.offerDays);
 
   useEffect(() => {
     if (!activeAd || !activeAd.isActive) return;
@@ -222,18 +228,28 @@ export function OfferAdPopup() {
 
             {/* ─── Image Section ─── */}
             {hasImage ? (
-              <div className="relative w-full h-72 sm:h-96 overflow-hidden">
-                <motion.img
-                  src={activeAd.imageUrl!}
-                  alt={activeAd.title}
-                  className="w-full h-full object-cover"
-                  initial={{ scale: 1.15 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 8, ease: "easeOut" }}
+              <div className="relative w-full h-80 sm:h-[28rem] overflow-hidden bg-black flex flex-col justify-end">
+                {/* Blurred background image for full coverage */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center blur-xl opacity-40 scale-110" 
+                  style={{ backgroundImage: `url(${activeAd.imageUrl})` }} 
                 />
-                {/* Gradient overlays */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D5E] via-[#0B3D5E]/40 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0B3D5E]/30 to-transparent" />
+                
+                {/* Full Uncropped Image */}
+                <div className="absolute inset-0 flex items-center justify-center p-4 pb-32 sm:pb-40">
+                  <motion.img
+                    src={activeAd.imageUrl!}
+                    alt={activeAd.title}
+                    className="max-w-full max-h-full object-contain rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10"
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                  />
+                </div>
+
+                {/* Gradient overlays to ensure text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D5E] via-[#0B3D5E]/60 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0B3D5E]/40 to-transparent pointer-events-none" />
 
                 {/* Floating particles */}
                 <div className="absolute inset-0 overflow-hidden">
@@ -368,7 +384,9 @@ export function OfferAdPopup() {
                     Ends in
                   </span>
                 </motion.div>
-                <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 scale-90 sm:scale-100">
+                  <CountdownDigit value={countdown.days} label="Days" />
+                  <span className="text-2xl font-bold text-white/40 -mt-5">:</span>
                   <CountdownDigit value={countdown.hours} label="Hrs" />
                   <span className="text-2xl font-bold text-white/40 -mt-5">:</span>
                   <CountdownDigit value={countdown.minutes} label="Min" />
@@ -377,52 +395,31 @@ export function OfferAdPopup() {
                 </div>
               </div>
 
-              {/* CTA Button */}
-              <motion.button
+              {/* Text Quote CTA instead of Button */}
+              <motion.div
                 onClick={handleClaim}
                 onMouseEnter={() => setIsHoveringCTA(true)}
                 onMouseLeave={() => setIsHoveringCTA(false)}
-                className="relative w-full py-4 sm:py-5 rounded-2xl font-black text-lg sm:text-xl tracking-wide overflow-hidden cursor-pointer border-0 outline-none"
-                style={{
-                  background: "linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)",
-                  color: "#1a1a00",
-                  boxShadow: isHoveringCTA
-                    ? "0 0 40px rgba(255,215,0,0.5), 0 8px 30px rgba(255,165,0,0.4)"
-                    : "0 0 20px rgba(255,215,0,0.25), 0 4px 15px rgba(255,165,0,0.3)",
-                  transition: "box-shadow 0.3s ease",
-                }}
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
+                className="relative cursor-pointer text-center group"
+                whileHover={{ scale: 1.05 }}
               >
-                {/* Shimmer effect */}
-                <motion.div
-                  className="absolute inset-0 opacity-30"
-                  style={{
-                    background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.8) 50%, transparent 60%)",
-                  }}
-                  animate={{ x: ["-100%", "200%"] }}
-                  transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1, ease: "easeInOut" }}
-                />
-
-                {/* Pulse ring */}
-                <motion.div
-                  className="absolute inset-0 rounded-2xl"
-                  style={{ border: "2px solid rgba(255,215,0,0.5)" }}
-                  animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
-
-                <span className="relative z-10 flex items-center justify-center gap-3">
-                  <Gift className="w-5 h-5 sm:w-6 sm:h-6" />
-                  <span>Claim This Offer Now</span>
-                  <motion.span
-                    animate={{ x: [0, 6, 0] }}
-                    transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
-                  </motion.span>
-                </span>
-              </motion.button>
+                <div className="inline-block relative">
+                  <motion.div 
+                    animate={{ rotate: [0, -3, 3, 0] }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute -inset-4 rounded-full bg-amber-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  />
+                  <p className="relative z-10 text-xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] uppercase tracking-wider font-serif italic mb-1" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+                    "Contact Now & Claim The Offer"
+                  </p>
+                  <div className="flex items-center justify-center text-amber-400 mt-2 gap-2 font-bold text-sm tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                    <span>Click to connect</span>
+                    <motion.span animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
+                      <ArrowRight className="w-4 h-4" />
+                    </motion.span>
+                  </div>
+                </div>
+              </motion.div>
 
               {/* Social proof / urgency text */}
               <motion.p

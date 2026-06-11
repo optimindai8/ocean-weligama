@@ -7,6 +7,7 @@ export const offerAds = pgTable("offer_ads", {
   imageUrl: text("image_url"),
   isActive: boolean("is_active").default(true).notNull(),
   intervalMinutes: integer("interval_minutes").default(60).notNull(),
+  offerDays: integer("offer_days").default(7).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
