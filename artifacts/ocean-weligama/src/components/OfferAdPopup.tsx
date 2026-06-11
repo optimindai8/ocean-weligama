@@ -200,7 +200,7 @@ export function OfferAdPopup() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 30 }}
             transition={{ type: "spring", damping: 22, stiffness: 260, mass: 0.8 }}
-            className="relative w-full max-w-2xl pointer-events-auto z-10 overflow-hidden rounded-[2rem]"
+            className="relative w-full max-w-4xl pointer-events-auto z-10 overflow-hidden rounded-[2rem] flex flex-col"
             style={{
               boxShadow: "0 0 0 1px rgba(255,255,255,0.1), 0 25px 80px rgba(0,0,0,0.5), 0 0 120px rgba(75,188,204,0.15)",
             }}
@@ -228,63 +228,61 @@ export function OfferAdPopup() {
 
             {/* ─── Image Section ─── */}
             {hasImage ? (
-              <div className="relative w-full h-80 sm:h-[28rem] overflow-hidden bg-black flex flex-col justify-end">
-                {/* Blurred background image for full coverage */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center blur-xl opacity-40 scale-110" 
-                  style={{ backgroundImage: `url(${activeAd.imageUrl})` }} 
-                />
-                
-                {/* Full Uncropped Image */}
-                <div className="absolute inset-0 flex items-center justify-center p-4 pb-32 sm:pb-40">
-                  <motion.img
-                    src={activeAd.imageUrl!}
-                    alt={activeAd.title}
-                    className="max-w-full max-h-full object-contain rounded-xl shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10"
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
+              <>
+                <div className="relative w-full h-80 sm:h-[36rem] overflow-hidden bg-black/90">
+                  {/* Blurred background image for full coverage */}
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center blur-2xl opacity-40 scale-110" 
+                    style={{ backgroundImage: `url(${activeAd.imageUrl})` }} 
                   />
-                </div>
-
-                {/* Gradient overlays to ensure text readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D5E] via-[#0B3D5E]/60 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0B3D5E]/40 to-transparent pointer-events-none" />
-
-                {/* Floating particles */}
-                <div className="absolute inset-0 overflow-hidden">
-                  {[...Array(8)].map((_, i) => (
-                    <FloatingParticle key={i} delay={i * 0.5} x={10 + i * 12} size={4 + Math.random() * 6} />
-                  ))}
-                </div>
-
-                {/* Badge */}
-                <motion.div
-                  initial={{ x: -100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-                  className="absolute top-5 left-5 sm:top-6 sm:left-6"
-                >
-                  <div
-                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-amber-900"
-                    style={{
-                      background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
-                      boxShadow: "0 4px 20px rgba(255,215,0,0.4)",
-                    }}
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    <span>EXCLUSIVE OFFER</span>
+                  
+                  {/* Floating particles */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    {[...Array(8)].map((_, i) => (
+                      <FloatingParticle key={i} delay={i * 0.5} x={10 + i * 12} size={4 + Math.random() * 6} />
+                    ))}
                   </div>
-                </motion.div>
 
-                {/* Text on image */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+                  {/* Full Uncropped Image */}
+                  <div className="absolute inset-0 flex items-center justify-center p-6 sm:p-10">
+                    <motion.img
+                      src={activeAd.imageUrl!}
+                      alt={activeAd.title}
+                      className="max-w-full max-h-full object-contain rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.6)] border border-white/20"
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                    />
+                  </div>
+
+                  {/* Badge */}
+                  <motion.div
+                    initial={{ x: -100, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                    className="absolute top-5 left-5 sm:top-8 sm:left-8 z-20"
+                  >
+                    <div
+                      className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold text-amber-900"
+                      style={{
+                        background: "linear-gradient(135deg, #FFD700 0%, #FFA500 100%)",
+                        boxShadow: "0 4px 20px rgba(255,215,0,0.4)",
+                      }}
+                    >
+                      <Sparkles className="w-4 h-4" />
+                      <span>EXCLUSIVE OFFER</span>
+                    </div>
+                  </motion.div>
+                </div>
+
+                {/* ─── Text Section Below Image ─── */}
+                <div className="relative z-10 px-6 pt-8 pb-4 sm:px-12 bg-gradient-to-b from-[#0B3D5E] to-[#0a3350] text-center">
                   <motion.h2
                     initial={{ y: 30, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.15, type: "spring", stiffness: 200 }}
-                    className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-3 tracking-tight leading-[1.1]"
-                    style={{ textShadow: "0 4px 30px rgba(0,0,0,0.5)" }}
+                    className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-4 tracking-tight leading-[1.1]"
+                    style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}
                   >
                     {activeAd.title}
                   </motion.h2>
@@ -293,14 +291,14 @@ export function OfferAdPopup() {
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="text-white/85 text-base sm:text-lg leading-relaxed max-w-lg"
+                      className="text-white/85 text-base sm:text-xl leading-relaxed max-w-3xl mx-auto"
                       style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}
                     >
                       {activeAd.description}
                     </motion.p>
                   )}
                 </div>
-              </div>
+              </>
             ) : (
               /* ─── No Image: Gradient Hero ─── */
               <div
