@@ -5,6 +5,20 @@
  * Ocean Weligama API
  * OpenAPI spec version: 0.1.0
  */
+export type SettingResponseValue = { [key: string]: unknown };
+
+export interface SettingResponse {
+  key: string;
+  value: SettingResponseValue;
+  updatedAt?: string;
+}
+
+export type SettingInputValue = { [key: string]: unknown };
+
+export interface SettingInput {
+  value: SettingInputValue;
+}
+
 export interface GuestDetail {
   id: string;
   name: string;

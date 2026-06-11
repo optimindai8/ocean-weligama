@@ -55,8 +55,59 @@ tags:
     description: Public airport transfer pricing information
   - name: admin-airport-pricing
     description: Admin airport transfer pricing management
+  - name: settings
+    description: Public site settings
+  - name: admin-settings
+    description: Admin site settings management
 
 paths:
+  # SETTINGS
+  /v1/settings/{key}:
+    get:
+      operationId: getSetting
+      tags: [settings]
+      summary: Get setting value
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Setting value
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingResponse"
+        "404":
+          description: Setting not found
+
+  /v1/admin/settings/{key}:
+    patch:
+      operationId: adminUpdateSetting
+      tags: [admin-settings]
+      summary: Update setting
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettingInput"
+      responses:
+        "200":
+          description: Updated setting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettingResponse"
+
   /healthz:
     get:
       operationId: healthCheck
@@ -1442,6 +1493,26 @@ paths:
 
 components:
   schemas:
+    SettingResponse:
+      type: object
+      required: [key, value]
+      properties:
+        key:
+          type: string
+        value:
+          type: object
+          additionalProperties: true
+        updatedAt:
+          type: string
+          format: date-time
+    SettingInput:
+      type: object
+      required: [value]
+      properties:
+        value:
+          type: object
+          additionalProperties: true
+
     GuestDetail:
       type: object
       required: [id, name, email, phone, source, lastActiveAt]

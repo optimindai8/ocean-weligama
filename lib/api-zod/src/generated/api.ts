@@ -8,6 +8,36 @@
 import * as zod from "zod";
 
 /**
+ * @summary Get setting value
+ */
+export const GetSettingParams = zod.object({
+  key: zod.coerce.string(),
+});
+
+export const GetSettingResponse = zod.object({
+  key: zod.string(),
+  value: zod.record(zod.string(), zod.unknown()),
+  updatedAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Update setting
+ */
+export const AdminUpdateSettingParams = zod.object({
+  key: zod.coerce.string(),
+});
+
+export const AdminUpdateSettingBody = zod.object({
+  value: zod.record(zod.string(), zod.unknown()),
+});
+
+export const AdminUpdateSettingResponse = zod.object({
+  key: zod.string(),
+  value: zod.record(zod.string(), zod.unknown()),
+  updatedAt: zod.coerce.date().optional(),
+});
+
+/**
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({

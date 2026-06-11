@@ -79,6 +79,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { PackageComparisonTable } from "@/components/PackageComparisonTable";
 
 const serviceSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -337,107 +339,126 @@ export default function AdminPackages() {
           </motion.div>
         </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Skeleton key={i} className="h-[22rem] rounded-[2.5rem]" />
-            ))}
-          </div>
-        ) : filteredServices.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredServices.map((service, idx) => (
-              <motion.div 
-                key={service.id} 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="group relative bg-white border border-slate-100 rounded-[2.5rem] p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 flex flex-col"
-              >
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-2xl shadow-md shadow-slate-200/50 group-hover:scale-105 transition-transform bg-slate-50">
-                    <span>{service.iconEmoji || "🏄"}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {service.isFeatured && (
-                      <Badge className="rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 bg-amber-100 text-amber-850 flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 fill-amber-500 text-amber-500" /> Most Popular
-                      </Badge>
-                    )}
-                    <Badge className={`rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 ${service.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-500"}`}>
-                      {service.isActive ? "Active" : "Inactive"}
-                    </Badge>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[#0B3D5E] opacity-100 transition-all">
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 rounded-2xl shadow-xl border-slate-100 p-2">
-                        <DropdownMenuItem onClick={() => handleOpenDialog(service)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
-                          <Pencil className="w-4 h-4" /> Edit Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => toggleActive(service)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
-                          {service.isActive ? <><EyeOff className="w-4 h-4" /> Deactivate</> : <><Eye className="w-4 h-4" /> Activate</>}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={() => setDeletingId(service.id)} 
-                          className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-rose-600 focus:text-rose-700 focus:bg-rose-50"
-                        >
-                          <Trash2 className="w-4 h-4" /> Delete Permanently
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
+        <Tabs defaultValue="packages" className="space-y-8">
+          <TabsList className="bg-slate-100 p-1 rounded-2xl">
+            <TabsTrigger value="packages" className="rounded-xl px-6 py-2.5 font-bold data-[state=active]:bg-white data-[state=active]:text-[#0B3D5E] data-[state=active]:shadow-sm">
+              Packages
+            </TabsTrigger>
+            <TabsTrigger value="table_sort" className="rounded-xl px-6 py-2.5 font-bold data-[state=active]:bg-white data-[state=active]:text-[#0B3D5E] data-[state=active]:shadow-sm">
+              Table Sort
+            </TabsTrigger>
+          </TabsList>
 
-                <div className="flex-1">
-                  <h3 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 leading-tight pr-4">{service.name}</h3>
-                  <div className="flex flex-wrap items-center gap-2 mb-4">
-                    <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest text-[#4BBCCC] border-[#4BBCCC]/30 bg-[#4BBCCC]/5 rounded-md px-2 py-0.5">
-                      {getCategoryLabel(service.category)}
-                    </Badge>
-                    <span className="text-[10px] text-slate-400 font-mono font-medium truncate max-w-[120px]">/{service.slug}</span>
-                  </div>
-                  <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 min-h-[4.5rem]">
-                    {service.description || "No description provided."}
-                  </p>
-                </div>
-
-                <div className="pt-6 border-t border-slate-100 mt-auto flex items-end justify-between">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-slate-400 uppercase tracking-widest font-black mb-0.5">Price</span>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-[#0B3D5E]">€{service.basePrice}</span>
+          <TabsContent value="packages" className="mt-0 outline-none">
+            {isLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <Skeleton key={i} className="h-[22rem] rounded-[2.5rem]" />
+                ))}
+              </div>
+            ) : filteredServices.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredServices.map((service, idx) => (
+                  <motion.div 
+                    key={service.id} 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="group relative bg-white border border-slate-100 rounded-[2.5rem] p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-slate-200/50 hover:-translate-y-1 flex flex-col"
+                  >
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-2xl shadow-md shadow-slate-200/50 group-hover:scale-105 transition-transform bg-slate-50">
+                        <span>{service.iconEmoji || "🏄"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {service.isFeatured && (
+                          <Badge className="rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 bg-amber-100 text-amber-850 flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 fill-amber-500 text-amber-500" /> Most Popular
+                          </Badge>
+                        )}
+                        <Badge className={`rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 ${service.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-500"}`}>
+                          {service.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 hover:text-[#0B3D5E] opacity-100 transition-all">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48 rounded-2xl shadow-xl border-slate-100 p-2">
+                            <DropdownMenuItem onClick={() => handleOpenDialog(service)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
+                              <Pencil className="w-4 h-4" /> Edit Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => toggleActive(service)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
+                              {service.isActive ? <><EyeOff className="w-4 h-4" /> Deactivate</> : <><Eye className="w-4 h-4" /> Activate</>}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setDeletingId(service.id)} 
+                              className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-rose-600 focus:text-rose-700 focus:bg-rose-50"
+                            >
+                              <Trash2 className="w-4 h-4" /> Delete Permanently
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
-                  </div>
-                  {service.isBookable && (
-                    <Badge className="bg-[#4BBCCC]/10 text-[#4BBCCC] border-none font-bold text-[10px] uppercase tracking-widest px-3 py-1 flex gap-1.5 items-center rounded-full shadow-sm">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#4BBCCC] animate-pulse" />
-                      Bookable
-                    </Badge>
-                  )}
+
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-serif font-black text-[#0B3D5E] mb-2 leading-tight pr-4">{service.name}</h3>
+                      <div className="flex flex-wrap items-center gap-2 mb-4">
+                        <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest text-[#4BBCCC] border-[#4BBCCC]/30 bg-[#4BBCCC]/5 rounded-md px-2 py-0.5">
+                          {getCategoryLabel(service.category)}
+                        </Badge>
+                        <span className="text-[10px] text-slate-400 font-mono font-medium truncate max-w-[120px]">/{service.slug}</span>
+                      </div>
+                      <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 min-h-[4.5rem]">
+                        {service.description || "No description provided."}
+                      </p>
+                    </div>
+
+                    <div className="pt-6 border-t border-slate-100 mt-auto flex items-end justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-black mb-0.5">Price</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-3xl font-black text-[#0B3D5E]">€{service.basePrice}</span>
+                        </div>
+                      </div>
+                      {service.isBookable && (
+                        <Badge className="bg-[#4BBCCC]/10 text-[#4BBCCC] border-none font-bold text-[10px] uppercase tracking-widest px-3 py-1 flex gap-1.5 items-center rounded-full shadow-sm">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#4BBCCC] animate-pulse" />
+                          Bookable
+                        </Badge>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-sm p-20 flex flex-col items-center justify-center text-center"
+              >
+                <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner">
+                  <Sparkles className="w-10 h-10 text-slate-300" />
                 </div>
+                <h2 className="text-2xl font-black text-[#0B3D5E] mb-2">No packages yet</h2>
+                <p className="text-slate-500 font-medium max-w-md mb-8">
+                  Start adding your packages or retreats to show them to your guests.
+                </p>
+                <Button onClick={() => handleOpenDialog()} className="rounded-full px-8 bg-[#0B3D5E] hover:bg-[#0B3D5E]/90 text-white font-bold h-12 shadow-lg shadow-[#0B3D5E]/20">
+                  Create Your First Package
+                </Button>
               </motion.div>
-            ))}
-          </div>
-        ) : (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-sm p-20 flex flex-col items-center justify-center text-center"
-          >
-            <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner">
-              <Sparkles className="w-10 h-10 text-slate-300" />
+            )}
+          </TabsContent>
+
+          <TabsContent value="table_sort" className="mt-0 outline-none">
+            <div className="bg-white rounded-[3rem] border border-slate-200 shadow-sm overflow-hidden pb-12 pt-8 px-4">
+              <PackageComparisonTable isEditable={true} />
             </div>
-            <h2 className="text-2xl font-black text-[#0B3D5E] mb-2">No packages yet</h2>
-            <p className="text-slate-500 font-medium max-w-md mb-8">
-              Start adding your packages or retreats to show them to your guests.
-            </p>
-            <Button onClick={() => handleOpenDialog()} className="rounded-full px-8 bg-[#0B3D5E] hover:bg-[#0B3D5E]/90 text-white font-bold h-12 shadow-lg shadow-[#0B3D5E]/20">
-              Create Your First Package
-            </Button>
-          </motion.div>
-        )}
+          </TabsContent>
+        </Tabs>
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-[32px] p-8">

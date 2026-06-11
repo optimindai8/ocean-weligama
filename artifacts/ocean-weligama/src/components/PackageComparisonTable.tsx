@@ -1,9 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
-  Check, Minus, Star, Sparkles
+  Check, Minus, Star, Sparkles, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Save, Loader2, Edit2
 } from 'lucide-react';
-import { useListServices, type Service } from "@workspace/api-client-react";
+import { useListServices, useGetSetting, useAdminUpdateSetting, useAdminUpdateService, type Service } from "@workspace/api-client-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 /* ─── Package Color Schemes ─────────────────────────────────────────────────── */
 const COLOR_SCHEMES = [
@@ -92,27 +94,65 @@ function CellValue({
   );
 }
 
-export function PackageComparisonTable() {
+export function PackageComparisonTable({ isEditable = false }: { isEditable?: boolean }) {
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
-  const { data: rawServices, isLoading } = useListServices();
+  const [editMode, setEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  
+  const [localPackages, setLocalPackages] = useState<any[]>([]);
+  const [localFeatures, setLocalFeatures] = useState<string[]>([]);
 
-  if (isLoading) {
+  const { data: rawServices, isLoading: isLoadingServices, refetch: refetchServices } = useListServices();
+  const { data: settingsData, refetch: refetchSettings } = useGetSetting('package_comparison_features', {
+    query: { retry: false }
+  });
+
+  const updateSettingMutation = useAdminUpdateSetting();
+  const updateServiceMutation = useAdminUpdateService();
+
+  useEffect(() => {
+    if (!rawServices) return;
+    
+    // 1. Process Packages
+    const active = (rawServices as Service[])
+      .filter(s => s.type === "main" && s.isActive !== false)
+      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+      .map((s, idx) => ({
+        ...s,
+        emoji: s.iconEmoji || '🏄',
+        subtitle: s.category || 'Premium',
+        tag: s.comparisonLabel || (s.isFeatured ? 'Most Popular' : 'Premium'),
+        popular: s.isFeatured,
+        scheme: COLOR_SCHEMES[idx % COLOR_SCHEMES.length]
+      }));
+    
+    // 2. Process Features
+    const allHighlights = new Set<string>();
+    active.forEach(pkg => {
+      (pkg.highlights || []).forEach((h: string) => allHighlights.add(h));
+    });
+    const uniqueHighlights = Array.from(allHighlights);
+
+    // 3. Merge with saved order
+    let finalFeatures = uniqueHighlights;
+    if (settingsData && settingsData.value && Array.isArray(settingsData.value)) {
+      const savedOrder = settingsData.value as string[];
+      const orderedExisting = savedOrder.filter(f => uniqueHighlights.includes(f));
+      const newFeatures = uniqueHighlights.filter(f => !savedOrder.includes(f));
+      finalFeatures = [...orderedExisting, ...newFeatures];
+    }
+    
+    setLocalPackages(active);
+    setLocalFeatures(finalFeatures);
+    setHasChanges(false);
+  }, [rawServices, settingsData]);
+
+  if (isLoadingServices) {
     return <div className="py-24 text-center text-slate-500 font-bold">Loading comparison...</div>;
   }
 
-  const activePackages = (rawServices as Service[] || [])
-    .filter(s => s.type === "main" && s.isActive !== false)
-    .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
-    .map((s, idx) => ({
-      ...s,
-      emoji: s.iconEmoji || '🏄',
-      subtitle: s.category || 'Premium',
-      tag: s.comparisonLabel || (s.isFeatured ? 'Most Popular' : 'Premium'),
-      popular: s.isFeatured,
-      scheme: COLOR_SCHEMES[idx % COLOR_SCHEMES.length]
-    }));
-
-  if (activePackages.length === 0) {
+  if (localPackages.length === 0) {
     return (
       <div className="py-24 text-center">
         <h3 className="text-2xl font-serif text-[#0B3D5E] mb-2">No Packages Available</h3>
@@ -121,27 +161,105 @@ export function PackageComparisonTable() {
     );
   }
 
-  // Extract unique highlights dynamically
-  const allHighlights = new Set<string>();
-  activePackages.forEach(pkg => {
-    (pkg.highlights || []).forEach(h => allHighlights.add(h));
-  });
-  const uniqueHighlights = Array.from(allHighlights);
+  // --- Sorting Handlers ---
+  const handleMoveColLeft = (idx: number) => {
+    if (idx === 0) return;
+    const newPkgs = [...localPackages];
+    [newPkgs[idx - 1], newPkgs[idx]] = [newPkgs[idx], newPkgs[idx - 1]];
+    setLocalPackages(newPkgs.map((p, i) => ({ ...p, scheme: COLOR_SCHEMES[i % COLOR_SCHEMES.length] })));
+    setHasChanges(true);
+  };
 
-  const features = uniqueHighlights.length > 0 ? [
-    {
-      category: 'Package Inclusions',
-      icon: Star,
-      items: uniqueHighlights.map(h => ({
-        name: h,
-        highlight: false,
-        values: activePackages.map(pkg => (pkg.highlights || []).includes(h) ? true : false)
-      }))
+  const handleMoveColRight = (idx: number) => {
+    if (idx === localPackages.length - 1) return;
+    const newPkgs = [...localPackages];
+    [newPkgs[idx], newPkgs[idx + 1]] = [newPkgs[idx + 1], newPkgs[idx]];
+    setLocalPackages(newPkgs.map((p, i) => ({ ...p, scheme: COLOR_SCHEMES[i % COLOR_SCHEMES.length] })));
+    setHasChanges(true);
+  };
+
+  const handleMoveRowUp = (idx: number) => {
+    if (idx === 0) return;
+    const newFeats = [...localFeatures];
+    [newFeats[idx - 1], newFeats[idx]] = [newFeats[idx], newFeats[idx - 1]];
+    setLocalFeatures(newFeats);
+    setHasChanges(true);
+  };
+
+  const handleMoveRowDown = (idx: number) => {
+    if (idx === localFeatures.length - 1) return;
+    const newFeats = [...localFeatures];
+    [newFeats[idx], newFeats[idx + 1]] = [newFeats[idx + 1], newFeats[idx]];
+    setLocalFeatures(newFeats);
+    setHasChanges(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsSaving(true);
+      
+      await updateSettingMutation.mutateAsync({
+        key: 'package_comparison_features',
+        data: { value: localFeatures }
+      });
+
+      const promises = localPackages.map((pkg, idx) => 
+        updateServiceMutation.mutateAsync({
+          id: pkg.id,
+          data: { sortOrder: idx }
+        })
+      );
+      await Promise.all(promises);
+
+      toast.success("Order saved successfully!");
+      setHasChanges(false);
+      setEditMode(false);
+      refetchServices();
+      refetchSettings();
+    } catch (error) {
+      toast.error("Failed to save order");
+      console.error(error);
+    } finally {
+      setIsSaving(false);
     }
-  ] : [];
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      {/* ── Admin Edit Controls ──────────────────────────────────────────────────────── */}
+      {isEditable && (
+        <div className="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-[#0B3D5E]">Table Order Configuration</h3>
+            <p className="text-sm text-slate-500">Enable edit mode to arrange the comparison table packages and features.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            {editMode ? (
+              <>
+                <Button variant="outline" onClick={() => {
+                  setEditMode(false);
+                  refetchServices();
+                  refetchSettings();
+                }}>
+                  Cancel
+                </Button>
+                {hasChanges && (
+                  <Button onClick={handleSave} disabled={isSaving} className="bg-teal-600 hover:bg-teal-700">
+                    {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    Save Order
+                  </Button>
+                )}
+              </>
+            ) : (
+              <Button onClick={() => setEditMode(true)}>
+                <Edit2 className="w-4 h-4 mr-2" />
+                Edit Order
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="text-center mb-14">
         <motion.div
@@ -183,7 +301,7 @@ export function PackageComparisonTable() {
 
       {/* ── Mobile: Card View ────────────────────────────────────────────── */}
       <div className="block lg:hidden space-y-6">
-        {activePackages.map((pkg, pkgIdx) => (
+        {localPackages.map((pkg, pkgIdx) => (
           <motion.div
             key={pkg.id}
             initial={{ opacity: 0, y: 30 }}
@@ -196,23 +314,19 @@ export function PackageComparisonTable() {
           >
             {/* Gradient Header */}
             <div className={`relative bg-gradient-to-br ${pkg.scheme.headerGrad} px-6 py-8 text-white overflow-hidden`}>
-              {/* Background wave pattern */}
               <div className="absolute inset-0 opacity-10">
                 <svg viewBox="0 0 200 100" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
                   <path d="M0,50 C40,20 80,80 120,50 C160,20 180,70 200,50 L200,100 L0,100 Z" fill="white"/>
                 </svg>
               </div>
-
               {pkg.popular && (
                 <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm text-white text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-full border border-white/30 flex items-center gap-1">
                   <Star className="w-3 h-3 fill-white" /> Most Popular
                 </div>
               )}
-
               <span className="text-4xl mb-3 block relative z-10">{pkg.emoji}</span>
               <h3 className="text-xl font-serif font-bold mb-1 relative z-10">{pkg.name}</h3>
               <p className="text-white/80 text-xs font-medium relative z-10 uppercase tracking-widest">{pkg.subtitle}</p>
-
               <div className={`inline-flex items-center gap-1.5 mt-3 bg-white/15 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border border-white/20 relative z-10`}>
                 <Star className="w-3 h-3" /> {pkg.tag}
               </div>
@@ -220,33 +334,31 @@ export function PackageComparisonTable() {
 
             {/* Features */}
             <div className="p-5 space-y-5">
-              {features.map(section => (
-                <div key={section.category}>
-                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
-                    <div className="w-7 h-7 rounded-lg bg-[#0B3D5E]/5 flex items-center justify-center">
-                      <section.icon className="w-3.5 h-3.5 text-[#0B3D5E]" />
-                    </div>
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
-                      {section.category}
-                    </span>
+              <div>
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+                  <div className="w-7 h-7 rounded-lg bg-[#0B3D5E]/5 flex items-center justify-center">
+                    <Star className="w-3.5 h-3.5 text-[#0B3D5E]" />
                   </div>
-                  <div className="space-y-2.5">
-                    {section.items.map(item => {
-                      const val = item.values[pkgIdx];
-                      return (
-                        <div key={item.name} className="flex items-center justify-between py-1 px-1">
-                          <span className={`text-sm flex-1 pr-3 ${item.highlight ? 'font-semibold text-[#0B3D5E]' : 'text-slate-600'}`}>
-                            {item.name}
-                          </span>
-                          <div className="shrink-0">
-                            <CellValue val={val} pkg={pkg} mini />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                    Package Inclusions
+                  </span>
                 </div>
-              ))}
+                <div className="space-y-2.5">
+                  {localFeatures.map(feat => {
+                    const val = (pkg.highlights || []).includes(feat) ? true : false;
+                    return (
+                      <div key={feat} className="flex items-center justify-between py-1 px-1">
+                        <span className={`text-sm flex-1 pr-3 text-slate-600`}>
+                          {feat}
+                        </span>
+                        <div className="shrink-0">
+                          <CellValue val={val} pkg={pkg} mini />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </motion.div>
         ))}
@@ -271,35 +383,46 @@ export function PackageComparisonTable() {
                 </div>
               </th>
 
-              {activePackages.map((pkg, idx) => (
+              {localPackages.map((pkg, idx) => (
                 <th
                   key={pkg.id}
                   className={`p-6 pb-8 border-b min-w-[200px] relative transition-all duration-500 ease-out align-bottom cursor-pointer
-                    ${hoveredCol === idx ? `${pkg.scheme.lightBg} border-b-2 ${pkg.scheme.accentBorder}` : 'bg-white border-slate-100'}
+                    ${hoveredCol === idx && !editMode ? `${pkg.scheme.lightBg} border-b-2 ${pkg.scheme.accentBorder}` : 'bg-white border-slate-100'}
                     ${pkg.popular ? 'border-t-4 border-t-teal-400' : ''}
                   `}
-                  onMouseEnter={() => setHoveredCol(idx)}
-                  onMouseLeave={() => setHoveredCol(null)}
+                  onMouseEnter={() => !editMode && setHoveredCol(idx)}
+                  onMouseLeave={() => !editMode && setHoveredCol(null)}
                 >
-                  {pkg.popular && hoveredCol === idx && (
+                  {pkg.popular && hoveredCol === idx && !editMode && (
                     <div className="absolute inset-0 bg-gradient-to-b from-teal-50/60 to-transparent pointer-events-none rounded-t-none" />
+                  )}
+
+                  {editMode && (
+                    <div className="absolute top-2 left-0 right-0 flex justify-center gap-2">
+                      <Button variant="outline" size="icon" className="h-6 w-6" disabled={idx === 0} onClick={() => handleMoveColLeft(idx)}>
+                        <ArrowLeft className="h-3 w-3" />
+                      </Button>
+                      <Button variant="outline" size="icon" className="h-6 w-6" disabled={idx === localPackages.length - 1} onClick={() => handleMoveColRight(idx)}>
+                        <ArrowRight className="h-3 w-3" />
+                      </Button>
+                    </div>
                   )}
 
                   <motion.div
                     className="flex flex-col items-center text-center space-y-2 relative z-10"
-                    animate={{ y: hoveredCol === idx ? -5 : 0 }}
+                    animate={{ y: hoveredCol === idx && !editMode ? -5 : 0 }}
                     transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                   >
                     {pkg.popular && (
                       <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className={`flex items-center gap-1.5 bg-gradient-to-r ${pkg.scheme.gradient} text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1`}
+                        className={`flex items-center gap-1.5 bg-gradient-to-r ${pkg.scheme.gradient} text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-teal-200/50 uppercase tracking-[0.15em] mb-1 mt-6`}
                       >
                         <Star className="w-3 h-3 fill-current" /> Most Popular
                       </motion.div>
                     )}
-                    <span className="text-3xl">{pkg.emoji}</span>
+                    <span className="text-3xl mt-4">{pkg.emoji}</span>
                     <div className={`w-14 h-1 rounded-full bg-gradient-to-r ${pkg.scheme.gradient} opacity-80`} />
                     <h4 className="text-[14px] font-serif font-bold text-[#0B3D5E] leading-tight">{pkg.name}</h4>
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{pkg.subtitle}</span>
@@ -315,57 +438,59 @@ export function PackageComparisonTable() {
 
           {/* Table Body */}
           <tbody>
-            {features.map((section, sectionIdx) => (
-              <React.Fragment key={section.category}>
-                <tr>
-                  <td
-                    colSpan={activePackages.length + 1}
-                    className="bg-gradient-to-r from-slate-50 to-white py-4 px-6 border-b border-t border-slate-100/80 sticky left-0 z-20"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-[#0B3D5E]/8 flex items-center justify-center shadow-sm">
-                        <section.icon className="w-4 h-4 text-[#0B3D5E]" />
+            <tr>
+              <td colSpan={localPackages.length + 1} className="bg-gradient-to-r from-slate-50 to-white py-4 px-6 border-b border-t border-slate-100/80 sticky left-0 z-20">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-xl bg-[#0B3D5E]/8 flex items-center justify-center shadow-sm">
+                    <Star className="w-4 h-4 text-[#0B3D5E]" />
+                  </div>
+                  <span className="text-[11px] font-black text-[#0B3D5E] uppercase tracking-[0.18em]">
+                    Package Inclusions
+                  </span>
+                </div>
+              </td>
+            </tr>
+
+            {localFeatures.map((feat, itemIdx) => (
+              <motion.tr
+                key={feat}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, margin: "-10px" }}
+                className={`border-b border-slate-50 last:border-slate-100 transition-colors duration-200 hover:bg-slate-50 group`}
+              >
+                <td className={`py-4 px-6 text-sm font-serif sticky left-0 bg-white group-hover:bg-slate-50 transition-colors duration-200 z-20 shadow-[1px_0_0_0_#e2e8f0] text-slate-600 font-medium`}>
+                  <div className="flex items-center gap-3">
+                    {editMode && (
+                      <div className="flex flex-col gap-1 shrink-0 mr-2">
+                        <Button variant="ghost" size="icon" className="h-4 w-4" disabled={itemIdx === 0} onClick={() => handleMoveRowUp(itemIdx)}>
+                          <ArrowUp className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-4 w-4" disabled={itemIdx === localFeatures.length - 1} onClick={() => handleMoveRowDown(itemIdx)}>
+                          <ArrowDown className="h-3 w-3" />
+                        </Button>
                       </div>
-                      <span className="text-[11px] font-black text-[#0B3D5E] uppercase tracking-[0.18em]">
-                        {section.category}
-                      </span>
-                    </div>
-                  </td>
-                </tr>
+                    )}
+                    <span>{feat}</span>
+                  </div>
+                </td>
 
-                {section.items.map((item, itemIdx) => (
-                  <motion.tr
-                    key={item.name}
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true, margin: "-10px" }}
-                    transition={{ delay: 0.4 + sectionIdx * 0.06 + itemIdx * 0.03 }}
-                    className={`border-b border-slate-50 last:border-slate-100 transition-colors duration-200 ${
-                      item.highlight ? 'hover:bg-amber-50' : 'hover:bg-slate-50'
-                    } group`}
-                  >
-                    <td className={`py-4 px-6 text-sm font-serif sticky left-0 bg-white group-hover:bg-slate-50 transition-colors duration-200 z-20 shadow-[1px_0_0_0_#e2e8f0] ${item.highlight ? 'text-[#0B3D5E] font-bold' : 'text-slate-600 font-medium'}`}>
-                      {item.highlight && (
-                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#4BBCCC] mr-2 mb-0.5" />
-                      )}
-                      {item.name}
+                {localPackages.map((pkg, idx) => {
+                  const val = (pkg.highlights || []).includes(feat) ? true : false;
+                  return (
+                    <td
+                      key={idx}
+                      className={`py-4 px-6 text-sm text-center transition-all duration-500 ease-out ${
+                        hoveredCol === idx && !editMode ? pkg.scheme.lightBg : ''
+                      }`}
+                      onMouseEnter={() => !editMode && setHoveredCol(idx)}
+                      onMouseLeave={() => !editMode && setHoveredCol(null)}
+                    >
+                      <CellValue val={val} pkg={pkg} />
                     </td>
-
-                    {item.values.map((val, idx) => (
-                      <td
-                         key={idx}
-                        className={`py-4 px-6 text-sm text-center transition-all duration-500 ease-out ${
-                          hoveredCol === idx ? activePackages[idx].scheme.lightBg : ''
-                        }`}
-                        onMouseEnter={() => setHoveredCol(idx)}
-                        onMouseLeave={() => setHoveredCol(null)}
-                      >
-                        <CellValue val={val} pkg={activePackages[idx]} />
-                      </td>
-                    ))}
-                  </motion.tr>
-                ))}
-              </React.Fragment>
+                  );
+                })}
+              </motion.tr>
             ))}
           </tbody>
         </table>

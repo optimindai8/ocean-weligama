@@ -11,3 +11,4 @@ export * from "./analytics";
 export * from "./blogs";
 export * from "./airport";
 export * from "./faq";
+export * from "./settings";
