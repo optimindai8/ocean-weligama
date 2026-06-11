@@ -188,14 +188,14 @@ function MatrixTableInner({
                     return (
                       <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 min-w-[220px] ${isPopular ? 'bg-teal-50/10' : ''}`}>
                         {price && price !== "0" && price !== "0.00" ? (
-                          <div className="flex flex-col items-center justify-center h-full lg:h-[104px] w-full group/price relative">
-                            <div className="flex flex-col items-center justify-center gap-1 mb-2 lg:mb-0 transition-transform duration-300 lg:group-hover/price:-translate-y-5 relative z-10">
+                          <div className="flex flex-col items-center justify-center h-full xl:h-[104px] w-full group/price relative">
+                            <div className="flex flex-col items-center justify-center gap-1 mb-2 xl:mb-0 transition-transform duration-300 xl:group-hover/price:-translate-y-5 relative z-10">
                               <span className={`text-base md:text-lg font-serif font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
                                 {formatPrice(parseFloat(price as string))}
                               </span>
                               <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0">per day</span>
                             </div>
-                            <div className="lg:absolute lg:bottom-0 opacity-100 lg:opacity-0 lg:group-hover/price:opacity-100 transition-all duration-300 translate-y-0 lg:translate-y-4 lg:group-hover/price:translate-y-0 z-20">
+                            <div className="xl:absolute xl:bottom-0 opacity-100 xl:opacity-0 xl:group-hover/price:opacity-100 transition-all duration-300 translate-y-0 xl:translate-y-4 xl:group-hover/price:translate-y-0 z-20">
                               <button
                                 type="button"
                                 onClick={(e) => {
