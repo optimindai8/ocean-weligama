@@ -104,9 +104,7 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
   const [localFeatures, setLocalFeatures] = useState<string[]>([]);
 
   const { data: rawServices, isLoading: isLoadingServices, refetch: refetchServices } = useListServices();
-  const { data: settingsData, refetch: refetchSettings } = useGetSetting('package_comparison_features', {
-    query: { retry: false }
-  });
+  const { data: settingsData, refetch: refetchSettings } = useGetSetting('package_comparison_features');
 
   const updateSettingMutation = useAdminUpdateSetting();
   const updateServiceMutation = useAdminUpdateService();
@@ -200,7 +198,7 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
       
       await updateSettingMutation.mutateAsync({
         key: 'package_comparison_features',
-        data: { value: localFeatures }
+        data: { value: localFeatures as unknown as Record<string, unknown> }
       });
 
       const promises = localPackages.map((pkg, idx) => 
