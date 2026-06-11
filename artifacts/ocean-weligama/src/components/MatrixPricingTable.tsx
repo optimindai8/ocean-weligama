@@ -115,7 +115,7 @@ function MatrixTableInner({
         <table className="w-full min-w-max text-left border-collapse">
           <thead>
             <tr>
-              <th className="p-4 md:p-6 pb-6 md:pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-r border-slate-100 font-serif font-bold text-sm md:text-lg min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] align-bottom sticky left-0 z-30 shadow-[4px_0_12px_rgb(0,0,0,0.03)]">
+              <th className="p-4 md:p-6 pb-6 md:pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-r border-slate-100 font-serif font-bold text-sm md:text-lg min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] align-bottom sticky left-0 z-40 shadow-[4px_0_12px_rgb(0,0,0,0.03)]">
                 Room Type
                 <div className="text-[9px] md:text-[10px] font-light text-slate-400 font-sans mt-1 uppercase tracking-widest hidden sm:block">Select your comfort</div>
               </th>
@@ -168,7 +168,7 @@ function MatrixTableInner({
                       const slug = roomSlugMap[room.id];
                       if (slug) setLocation(`/rooms/${slug}`);
                     }}
-                    className={`p-3 md:p-5 text-xs md:text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50 transition-all sticky left-0 z-20 font-medium border-r border-slate-50 shadow-[4px_0_12px_rgb(0,0,0,0.03)] leading-relaxed whitespace-normal min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] ${
+                    className={`p-3 md:p-5 text-xs md:text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50 transition-all sticky left-0 z-30 font-medium border-r border-slate-50 shadow-[4px_0_12px_rgb(0,0,0,0.03)] leading-relaxed whitespace-normal min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] ${
                       roomSlugMap[room.id] ? 'cursor-pointer hover:shadow-inner' : 'cursor-default'
                     }`}
                   >
