@@ -64,7 +64,7 @@ type OfferAd = {
   createdAt: string;
 };
 
-const AdForm = ({ ad, onSubmit, onCancel }: { ad?: OfferAd | null; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void; onCancel: () => void }) => {
+const AdForm = ({ ad, isSaving, onSubmit, onCancel }: { ad?: OfferAd | null; isSaving?: boolean; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void; onCancel: () => void }) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedUrl, setUploadedUrl] = useState(ad?.imageUrl || "");
@@ -144,8 +144,22 @@ const AdForm = ({ ad, onSubmit, onCancel }: { ad?: OfferAd | null; onSubmit: (e:
         <Label htmlFor="isActive">Active (Show to users)</Label>
       </div>
       <div className="pt-4 flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" disabled={isUploading}>Save Ad</Button>
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSaving || isUploading}>Cancel</Button>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}>
+          <Button type="submit" disabled={isUploading || isSaving} className="bg-[#0B3D5E] hover:bg-[#1A6B8A] transition-colors relative overflow-hidden group">
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saving...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2 relative z-10">
+                Save Ad
+              </span>
+            )}
+            {!isSaving && <span className="absolute inset-0 w-[40%] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[300%] transition-transform duration-700 ease-out pointer-events-none" />}
+          </Button>
+        </motion.div>
       </div>
     </form>
   );
@@ -302,17 +316,18 @@ export default function AdminOfferAds() {
           </div>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-all">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Ad
-              </Button>
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="inline-flex items-center justify-center whitespace-nowrap text-sm font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-11 rounded-full px-8 bg-[#0B3D5E] hover:bg-[#1A6B8A] text-white shadow-lg hover:shadow-xl relative overflow-hidden group">
+                <span className="absolute inset-0 w-[40%] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[300%] transition-transform duration-700 ease-out pointer-events-none" />
+                <Plus className="h-4 w-4 mr-2 relative z-10" />
+                <span className="relative z-10">Create Ad</span>
+              </motion.button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>Create New Offer Ad</DialogTitle>
                 <DialogDescription>Add a new promotional pop-up to show on the main website.</DialogDescription>
               </DialogHeader>
-              <AdForm onSubmit={(e) => handleSave(e)} onCancel={() => setIsCreateOpen(false)} />
+              <AdForm onSubmit={(e) => handleSave(e)} onCancel={() => setIsCreateOpen(false)} isSaving={createMutation.isPending || (createMutation as any).isLoading} />
             </DialogContent>
           </Dialog>
         </motion.div>
@@ -323,7 +338,7 @@ export default function AdminOfferAds() {
               <DialogTitle>Edit Offer Ad</DialogTitle>
               <DialogDescription>Make changes to your promotional ad.</DialogDescription>
             </DialogHeader>
-            <AdForm ad={editingAd} onSubmit={(e) => handleSave(e, editingAd?.id)} onCancel={() => setEditingAd(null)} />
+            <AdForm ad={editingAd} onSubmit={(e) => handleSave(e, editingAd?.id)} onCancel={() => setEditingAd(null)} isSaving={updateMutation.isPending || (updateMutation as any).isLoading} />
           </DialogContent>
         </Dialog>
 
