@@ -211,7 +211,7 @@ export default function AdminOfferAds() {
   const { data: ads = [], isLoading } = useQuery<OfferAd[]>({
     queryKey: ["admin-offer-ads"],
     queryFn: async () => {
-      return customFetch("/api/admin/offer-ads");
+      return customFetch("/api/v1/admin/offer-ads");
     },
   });
 
@@ -220,7 +220,7 @@ export default function AdminOfferAds() {
 
   const createMutation = useMutation({
     mutationFn: async (data: Partial<OfferAd>) => {
-      return customFetch("/api/admin/offer-ads", { method: "POST", body: JSON.stringify(data) });
+      return customFetch("/api/v1/admin/offer-ads", { method: "POST", body: JSON.stringify(data) });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-offer-ads"] });
@@ -234,7 +234,7 @@ export default function AdminOfferAds() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<OfferAd> & { id: string }) => {
-      return customFetch(`/api/admin/offer-ads/${data.id}`, { method: "PATCH", body: JSON.stringify(data) });
+      return customFetch(`/api/v1/admin/offer-ads/${data.id}`, { method: "PATCH", body: JSON.stringify(data) });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-offer-ads"] });
@@ -248,7 +248,7 @@ export default function AdminOfferAds() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await apiDelete(`/api/admin/offer-ads/${id}`);
+      await apiDelete(`/api/v1/admin/offer-ads/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-offer-ads"] });
