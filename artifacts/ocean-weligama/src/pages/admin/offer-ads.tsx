@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Edit, AlertTriangle } from "lucide-react";
+import { Plus, Trash2, Edit, AlertTriangle, Upload, ImageIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,11 +29,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { AdminLayout } from "@/components/admin-layout";
+import { motion } from "framer-motion";
 
-const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
+const customFetch = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("ow-admin-token");
   const headers = {
-    "Content-Type": "application/json",
+    ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
@@ -70,7 +72,7 @@ export default function AdminOfferAds() {
   const { data: ads = [], isLoading } = useQuery<OfferAd[]>({
     queryKey: ["admin-offer-ads"],
     queryFn: async () => {
-      return apiFetch("/api/admin/offer-ads");
+      return customFetch("/api/admin/offer-ads");
     },
   });
 
@@ -79,7 +81,7 @@ export default function AdminOfferAds() {
 
   const createMutation = useMutation({
     mutationFn: async (data: Partial<OfferAd>) => {
-      return apiFetch("/api/admin/offer-ads", { method: "POST", body: JSON.stringify(data) });
+      return customFetch("/api/admin/offer-ads", { method: "POST", body: JSON.stringify(data) });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-offer-ads"] });
@@ -93,7 +95,7 @@ export default function AdminOfferAds() {
 
   const updateMutation = useMutation({
     mutationFn: async (data: Partial<OfferAd> & { id: string }) => {
-      return apiFetch(`/api/admin/offer-ads/${data.id}`, { method: "PATCH", body: JSON.stringify(data) });
+      return customFetch(`/api/admin/offer-ads/${data.id}`, { method: "PATCH", body: JSON.stringify(data) });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-offer-ads"] });
@@ -136,35 +138,84 @@ export default function AdminOfferAds() {
     }
   };
 
-  const AdForm = ({ ad, onSubmit }: { ad?: OfferAd | null; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void }) => (
-    <form onSubmit={onSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="title">Title</Label>
-        <Input id="title" name="title" defaultValue={ad?.title || ""} required placeholder="Summer Special 20%" />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea id="description" name="description" defaultValue={ad?.description || ""} placeholder="Get 20% off on your next booking..." />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="imageUrl">Image URL (Optional)</Label>
-        <Input id="imageUrl" name="imageUrl" defaultValue={ad?.imageUrl || ""} placeholder="https://example.com/image.jpg" />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="intervalMinutes">Interval (Minutes)</Label>
-        <Input id="intervalMinutes" name="intervalMinutes" type="number" defaultValue={ad?.intervalMinutes || 60} min={1} required />
-        <p className="text-sm text-muted-foreground">How often this pop-up should appear to a user.</p>
-      </div>
-      <div className="flex items-center space-x-2 pt-2">
-        <Switch id="isActive" name="isActive" defaultChecked={ad?.isActive ?? true} />
-        <Label htmlFor="isActive">Active (Show to users)</Label>
-      </div>
-      <div className="pt-4 flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={() => ad ? setEditingAd(null) : setIsCreateOpen(false)}>Cancel</Button>
-        <Button type="submit">Save</Button>
-      </div>
-    </form>
-  );
+  const AdForm = ({ ad, onSubmit }: { ad?: OfferAd | null; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void }) => {
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadedUrl, setUploadedUrl] = useState(ad?.imageUrl || "");
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const data: any = await customFetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        setUploadedUrl(data.url);
+        toast({ title: "Image uploaded successfully" });
+      } catch (err: any) {
+        toast({ variant: "destructive", title: "Upload failed", description: err.message });
+      } finally {
+        setIsUploading(false);
+      }
+    };
+
+    return (
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="title">Title</Label>
+          <Input id="title" name="title" defaultValue={ad?.title || ""} required placeholder="Summer Special 20%" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea id="description" name="description" defaultValue={ad?.description || ""} placeholder="Get 20% off on your next booking..." />
+        </div>
+        <div className="space-y-2">
+          <Label>Ad Image</Label>
+          <input type="hidden" name="imageUrl" value={uploadedUrl} />
+          {uploadedUrl ? (
+            <div className="relative rounded-xl overflow-hidden border border-slate-200 h-40">
+              <img src={uploadedUrl} alt="Ad Preview" className="w-full h-full object-cover" />
+              <Button type="button" size="icon" variant="destructive" className="absolute top-2 right-2 h-8 w-8 rounded-full" onClick={() => setUploadedUrl("")}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:bg-slate-50 transition-colors">
+              <div className="space-y-1 text-center">
+                <div className="flex text-sm text-slate-600 justify-center">
+                  <label htmlFor="file-upload" className="relative cursor-pointer rounded-md bg-transparent font-medium text-primary hover:text-primary/80">
+                    <div className="flex flex-col items-center gap-2">
+                      {isUploading ? <Loader2 className="h-8 w-8 animate-spin text-primary" /> : <Upload className="h-8 w-8 text-slate-400" />}
+                      <span>{isUploading ? "Uploading..." : "Click to upload an image"}</span>
+                    </div>
+                    <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleImageUpload} disabled={isUploading} accept="image/*" />
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="intervalMinutes">Interval (Minutes)</Label>
+          <Input id="intervalMinutes" name="intervalMinutes" type="number" defaultValue={ad?.intervalMinutes || 60} min={1} required />
+          <p className="text-sm text-muted-foreground">How often this pop-up should appear to a user.</p>
+        </div>
+        <div className="flex items-center space-x-2 pt-2">
+          <Switch id="isActive" name="isActive" defaultChecked={ad?.isActive ?? true} />
+          <Label htmlFor="isActive">Active (Show to users)</Label>
+        </div>
+        <div className="pt-4 flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={() => ad ? setEditingAd(null) : setIsCreateOpen(false)}>Cancel</Button>
+          <Button type="submit" disabled={isUploading}>Save Ad</Button>
+        </div>
+      </form>
+    );
+  };
 
   const AdCard = ({ ad }: { ad: OfferAd }) => (
     <Card key={ad.id} className="relative overflow-hidden group">
@@ -226,73 +277,94 @@ export default function AdminOfferAds() {
   );
 
   return (
-    <div className="container py-8 max-w-5xl">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Offer Ad Post</h1>
-          <p className="text-muted-foreground mt-1">Manage promotional pop-ups for the main website.</p>
-        </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Ad
-            </Button>
-          </DialogTrigger>
+    <AdminLayout>
+      <div className="p-8 md:p-12 max-w-7xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4"
+        >
+          <div>
+            <h1 className="text-4xl font-serif font-black text-[#0B3D5E]">Offer Ads</h1>
+            <p className="text-slate-500 font-medium mt-2 text-sm">Manage promotional pop-ups for the main website.</p>
+          </div>
+          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+            <DialogTrigger asChild>
+              <Button size="lg" className="rounded-full shadow-lg hover:shadow-xl transition-all">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Ad
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[500px]">
+              <DialogHeader>
+                <DialogTitle>Create New Offer Ad</DialogTitle>
+                <DialogDescription>Add a new promotional pop-up to show on the main website.</DialogDescription>
+              </DialogHeader>
+              <AdForm onSubmit={(e) => handleSave(e)} />
+            </DialogContent>
+          </Dialog>
+        </motion.div>
+
+        <Dialog open={!!editingAd} onOpenChange={(open) => !open && setEditingAd(null)}>
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Create New Offer Ad</DialogTitle>
-              <DialogDescription>Add a new promotional pop-up to show on the main website.</DialogDescription>
+              <DialogTitle>Edit Offer Ad</DialogTitle>
+              <DialogDescription>Make changes to your promotional ad.</DialogDescription>
             </DialogHeader>
-            <AdForm onSubmit={(e) => handleSave(e)} />
+            <AdForm ad={editingAd} onSubmit={(e) => handleSave(e, editingAd?.id)} />
           </DialogContent>
         </Dialog>
+
+        {isLoading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="animate-spin h-10 w-10 text-primary" />
+          </div>
+        ) : (
+          <Tabs defaultValue="active" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 max-w-md mb-8 h-12 rounded-full p-1 bg-slate-100">
+              <TabsTrigger value="active" className="rounded-full font-bold text-sm data-[state=active]:bg-white data-[state=active]:text-[#0B3D5E] data-[state=active]:shadow-sm">Currently Running ({activeAds.length})</TabsTrigger>
+              <TabsTrigger value="disabled" className="rounded-full font-bold text-sm data-[state=active]:bg-white data-[state=active]:text-[#0B3D5E] data-[state=active]:shadow-sm">Disabled ({disabledAds.length})</TabsTrigger>
+            </TabsList>
+            <TabsContent value="active" className="space-y-4 mt-0">
+              {activeAds.length === 0 ? (
+                <div className="text-center py-16 border-2 border-dashed border-slate-200 rounded-[2rem] bg-white text-slate-500 shadow-sm flex flex-col items-center">
+                  <div className="p-4 bg-slate-50 rounded-full mb-4">
+                    <ImageIcon className="h-8 w-8 text-slate-300" />
+                  </div>
+                  <p className="font-bold">No active ads running</p>
+                  <p className="text-sm mt-1">Create a new offer ad to see it here.</p>
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {activeAds.map((ad, i) => (
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={ad.id}>
+                      <AdCard ad={ad} />
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+            <TabsContent value="disabled" className="space-y-4 mt-0">
+              {disabledAds.length === 0 ? (
+                <div className="text-center py-16 border-2 border-dashed border-slate-200 rounded-[2rem] bg-white text-slate-500 shadow-sm flex flex-col items-center">
+                  <div className="p-4 bg-slate-50 rounded-full mb-4">
+                    <AlertTriangle className="h-8 w-8 text-slate-300" />
+                  </div>
+                  <p className="font-bold">No disabled ads</p>
+                </div>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {disabledAds.map((ad, i) => (
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} key={ad.id}>
+                      <AdCard ad={ad} />
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
-
-      <Dialog open={!!editingAd} onOpenChange={(open) => !open && setEditingAd(null)}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Edit Offer Ad</DialogTitle>
-            <DialogDescription>Make changes to your promotional ad.</DialogDescription>
-          </DialogHeader>
-          <AdForm ad={editingAd} onSubmit={(e) => handleSave(e, editingAd?.id)} />
-        </DialogContent>
-      </Dialog>
-
-      {isLoading ? (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      ) : (
-        <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mb-8">
-            <TabsTrigger value="active">Currently Running ({activeAds.length})</TabsTrigger>
-            <TabsTrigger value="disabled">Disabled ({disabledAds.length})</TabsTrigger>
-          </TabsList>
-          <TabsContent value="active" className="space-y-4 mt-0">
-            {activeAds.length === 0 ? (
-              <div className="text-center py-12 border rounded-lg bg-card text-muted-foreground">
-                No active ads running.
-              </div>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2">
-                {activeAds.map(ad => <AdCard key={ad.id} ad={ad} />)}
-              </div>
-            )}
-          </TabsContent>
-          <TabsContent value="disabled" className="space-y-4 mt-0">
-            {disabledAds.length === 0 ? (
-              <div className="text-center py-12 border rounded-lg bg-card text-muted-foreground">
-                No disabled ads.
-              </div>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2">
-                {disabledAds.map(ad => <AdCard key={ad.id} ad={ad} />)}
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
-      )}
-    </div>
+    </AdminLayout>
   );
 }
