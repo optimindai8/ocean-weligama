@@ -316,6 +316,11 @@ export default function RoomDetailPage() {
                     onClick={() => {
                       localStorage.setItem('booking_roomIds', JSON.stringify([room.id]));
                       localStorage.setItem('booking_stepId', JSON.stringify("dates"));
+                      // Clear any stale package/matrix selections
+                      localStorage.removeItem('booking_matrixPrice');
+                      localStorage.removeItem('booking_serviceIds');
+                      localStorage.removeItem('booking_serviceQuantities');
+                      localStorage.removeItem('booking_highlightCustom');
                     }}
                     className="w-full bg-[#F0A500] hover:bg-[#D99500] hover:-translate-y-1 text-white rounded-full h-14 font-bold text-lg shadow-[0_10px_20px_rgba(240,165,0,0.2)] hover:shadow-[0_15px_30px_rgba(240,165,0,0.3)] transition-all duration-300"
                     data-testid="button-book-room"
@@ -412,6 +417,11 @@ export default function RoomDetailPage() {
             onClick={() => {
               localStorage.setItem('booking_roomIds', JSON.stringify([room.id]));
               localStorage.setItem('booking_stepId', JSON.stringify("dates"));
+              // Clear any stale package/matrix selections
+              localStorage.removeItem('booking_matrixPrice');
+              localStorage.removeItem('booking_serviceIds');
+              localStorage.removeItem('booking_serviceQuantities');
+              localStorage.removeItem('booking_highlightCustom');
             }}
             className="bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full px-6 h-12 font-bold shadow-md active:scale-95 transition-transform"
             data-testid="button-book-room-mobile"
