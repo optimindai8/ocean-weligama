@@ -407,23 +407,76 @@ export default function BookingConfirmationPage() {
                   <CreditCard className="w-4 h-4" /> Payment Summary
                 </h3>
                 <div className="space-y-4 pb-6 border-b border-border text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-medium">Room{booking.nights ? ` (${booking.nights} nights)` : ''} <span className="block text-[10px] mt-0.5">Includes packages & experiences</span></span>
+                  {/* Room subtotal */}
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="text-muted-foreground font-medium block">Room Price{booking.nights ? ` (${booking.nights} nights)` : ''}</span>
+                      {booking.nights && booking.roomRatePerNight && (
+                        <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">
+                          €{parseFloat(booking.roomRatePerNight).toFixed(2)} × {booking.nights} = €{(parseFloat(booking.roomSubtotal || "0")).toFixed(2)}
+                        </span>
+                      )}
+                    </div>
                     <span className="font-bold text-foreground text-base">
-                      €{((parseFloat(booking.roomSubtotal || "0")) + (parseFloat(booking.servicesSubtotal || "0"))).toFixed(2)}
+                      €{(parseFloat(booking.roomSubtotal || "0")).toFixed(2)}
                     </span>
                   </div>
+
+                  {/* Addons and Packages */}
+                  {booking.services && booking.services.map((s: any, idx: number) => {
+                    const srv = servicesList?.find(
+                      x => x.id === s.serviceId || x.name?.toLowerCase() === s.serviceName?.toLowerCase()
+                    );
+                    return (
+                      <div key={idx} className="flex justify-between items-start">
+                        <div>
+                          <span className="text-muted-foreground font-medium block">{s.serviceName}</span>
+                          <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">{getUnitLabel(srv?.unit, s.quantity)}</span>
+                        </div>
+                        <span className="font-bold text-foreground text-base">
+                          €{(parseFloat(s.subtotal || "0")).toFixed(2)}
+                        </span>
+                      </div>
+                    )
+                  })}
+
+                  {/* Airport Pickup */}
+                  {(booking as any).airportPickup && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground font-medium">Airport Pick-up Transfer</span>
+                      <span className="font-bold text-foreground text-base">€{(parseFloat((booking as any).airportPickupPrice || "0")).toFixed(2)}</span>
+                    </div>
+                  )}
+
+                  {/* Airport Drop */}
+                  {(booking as any).airportDrop && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground font-medium">Airport Drop-off Transfer</span>
+                      <span className="font-bold text-foreground text-base">€{(parseFloat((booking as any).airportDropPrice || "0")).toFixed(2)}</span>
+                    </div>
+                  )}
+
+                  {/* Cleaning Fee */}
                   {parseFloat(booking.cleaningFee || "0") > 0 && (
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground font-medium">Cleaning Fee</span>
-                      <span className="font-bold text-foreground text-base">€{booking.cleaningFee}</span>
+                      <span className="font-bold text-foreground text-base">€{(parseFloat(booking.cleaningFee || "0")).toFixed(2)}</span>
                     </div>
                   )}
+
+                  {/* Payment Status */}
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="text-muted-foreground font-medium">Payment Status</span>
+                    <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${booking.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                      {booking.paymentStatus || 'unpaid'}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex justify-between items-end pt-6 gap-4">
-                  <span className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Total price = Room price + Packages + Experiences + airport transfer</span>
-                  <span className="font-black text-4xl text-primary whitespace-nowrap">
-                    €{(parseFloat(booking.totalAmount || "0")).toFixed(2)}
+
+                <div className="flex flex-col sm:flex-row justify-between sm:items-end pt-6 gap-4">
+                  <span className="font-bold text-[10px] sm:text-xs uppercase tracking-widest text-muted-foreground max-w-[200px] leading-tight">Total price = Room price + Packages + Experiences + airport transfer</span>
+                  <span className="font-black text-3xl sm:text-4xl text-primary whitespace-nowrap">
+                    €{(parseFloat(booking.totalAmount || "0")).toFixed(2)} <span className="text-sm font-bold text-muted-foreground ml-1">{booking.currency || "EUR"}</span>
                   </span>
                 </div>
               </div>
