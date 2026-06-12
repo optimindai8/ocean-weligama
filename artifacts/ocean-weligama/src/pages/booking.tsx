@@ -930,6 +930,32 @@ export default function BookingPage() {
                       mode="range"
                       selected={dateRange as any}
                       onSelect={(r) => {
+                        if (matrixPrice) {
+                          if (r?.from) {
+                            const diffDays = r.to ? Math.round((r.to.getTime() - r.from.getTime()) / 86400000) : 0;
+                            const newTo = new Date(r.from);
+                            newTo.setDate(newTo.getDate() + 7);
+                            
+                            if (r.to && diffDays !== 7) {
+                              if (diffDays > 7) {
+                                toast({ 
+                                  title: "✨ Looking for a longer stay?", 
+                                  description: "Our special packages are perfectly curated for exactly 7 days. If you need to increase the days to more than 7, please contact the hotel directly to arrange a custom experience!",
+                                  className: "bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 text-emerald-900 shadow-xl font-medium",
+                                });
+                              }
+                              setDateRange({ from: r.from, to: newTo });
+                            } else if (!r.to) {
+                              setDateRange({ from: r.from, to: newTo });
+                            } else {
+                              setDateRange({ from: r.from, to: r.to });
+                            }
+                          } else {
+                            setDateRange(r ?? {});
+                          }
+                          return;
+                        }
+
                         if (r?.from) {
                           if (!r.to || r.to <= r.from) {
                             const minTo = new Date(r.from);
