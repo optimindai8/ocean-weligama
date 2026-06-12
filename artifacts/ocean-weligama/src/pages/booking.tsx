@@ -515,7 +515,7 @@ export default function BookingPage() {
           }
           let qty = 1;
           if (matrixPrice && svc.id === matrixPrice.packageId) {
-            qty = nights;
+            qty = nights / 7;
           } else if (serviceQuantities && typeof serviceQuantities[svcId] === "number") {
             qty = serviceQuantities[svcId];
           } else if (svc.unit === "per_person") {
@@ -984,7 +984,7 @@ export default function BookingPage() {
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] font-black uppercase tracking-widest text-sky-500 mb-0.5">Package Selected</p>
                           <p className="font-bold text-[#0B3D5E] text-sm truncate">{matrixPrice.packageName}</p>
-                          <p className="text-xs text-muted-foreground truncate">{matrixPrice.roomName} · €{parseFloat(matrixPrice.dailyPrice).toFixed(0)}/day</p>
+                          <p className="text-xs text-muted-foreground truncate">{matrixPrice.roomName} · €{parseFloat(matrixPrice.dailyPrice).toFixed(0)}/week</p>
                         </div>
                         <div className="text-right shrink-0 flex items-center gap-3">
                           <div>

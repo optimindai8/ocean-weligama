@@ -193,7 +193,7 @@ function MatrixTableInner({
                                 <span className={`text-base md:text-lg font-serif font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
                                   {formatPrice(parseFloat(price as string))}
                                 </span>
-                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0">per day</span>
+                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0">per week</span>
                               </div>
                               <div className="opacity-100 transition-all duration-300 z-20">
                               <button
