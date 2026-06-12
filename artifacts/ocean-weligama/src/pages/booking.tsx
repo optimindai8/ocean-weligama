@@ -595,6 +595,13 @@ export default function BookingPage() {
 
   const selectedRooms = Array.isArray(allRooms) ? allRooms.filter(r => selectedRoomIds.includes(r.id)) : [];
 
+  // Max guest capacity is the sum of maxGuests across all selected rooms
+  const maxGuestCapacity = selectedRooms.length > 0
+    ? selectedRooms.reduce((sum, r) => sum + (r.maxGuests || 2), 0)
+    : 50;
+
+  const [showMaxGuestWarn, setShowMaxGuestWarn] = useState(false);
+
   // ── Navigation helpers ─────────────────────────────────────────────────────
   function goToStep(id: string) {
     const nextIdx = flow.indexOf(id);
@@ -658,6 +665,15 @@ export default function BookingPage() {
       form.setValue("airportDrop", false);
     }
   }, [guestCount]);
+
+  // ── Auto-cap guestCount when selected rooms change ────────────────────────
+  useEffect(() => {
+    if (selectedRooms.length > 0 && guestCount > maxGuestCapacity) {
+      setGuestCount(maxGuestCapacity);
+      setShowMaxGuestWarn(true);
+      setTimeout(() => setShowMaxGuestWarn(false), 4000);
+    }
+  }, [selectedRoomIds.join(',')]);
 
   // ── Availability check (Step 3 → 4) ───────────────────────────────────────
   function handleRoomContinue() {
@@ -860,10 +876,27 @@ export default function BookingPage() {
                   initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
                   className="bg-slate-50/50 rounded-[2.5rem] p-6 md:p-10 border border-slate-100/50"
                 >
+                  {/* Room capacity indicator */}
+                  {selectedRooms.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-center justify-center gap-2 mb-8"
+                    >
+                      {selectedRooms.map((room, i) => (
+                        <div key={room.id} className="flex items-center gap-1.5 bg-white border border-sky-100 rounded-full px-4 py-2 shadow-sm">
+                          <span className="text-lg">{room.iconEmoji || '🏠'}</span>
+                          <span className="text-xs font-bold text-slate-700">{room.name || `Room ${i+1}`}</span>
+                          <span className="text-[10px] font-black text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full ml-1">Max {room.maxGuests}</span>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+
                   <div className="flex items-center justify-center gap-6 md:gap-10">
                     <button
                       type="button"
-                      onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
+                      onClick={() => { setGuestCount(Math.max(1, guestCount - 1)); setShowMaxGuestWarn(false); }}
                       className="w-16 h-16 rounded-full border-2 border-sky-100 text-2xl font-bold text-sky-400 hover:bg-sky-500 hover:border-sky-500 hover:text-white transition-all duration-300 shadow-md flex items-center justify-center"
                     >
                       −
@@ -877,7 +910,9 @@ export default function BookingPage() {
                           animate={{ y: 0, opacity: 1 }}
                           exit={{ y: 16, opacity: 0 }}
                           transition={{ duration: 0.18 }}
-                          className="text-8xl font-bold text-primary leading-none tabular-nums"
+                          className={`text-8xl font-bold leading-none tabular-nums transition-colors duration-300 ${
+                            showMaxGuestWarn ? 'text-rose-500' : 'text-primary'
+                          }`}
                         >
                           {guestCount}
                         </motion.div>
@@ -885,17 +920,78 @@ export default function BookingPage() {
                       <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-3">
                         {guestCount === 1 ? "Traveler" : "Travelers"}
                       </p>
+                      {selectedRooms.length > 0 && (
+                        <p className={`text-[10px] font-bold mt-1 transition-colors duration-300 ${
+                          guestCount >= maxGuestCapacity ? 'text-rose-500' : 'text-sky-500'
+                        }`}>
+                          of {maxGuestCapacity} max
+                        </p>
+                      )}
                     </div>
 
                     <button
                       type="button"
-                      onClick={() => setGuestCount(Math.min(50, guestCount + 1))}
-                      className="w-16 h-16 rounded-full border-2 border-sky-100 text-2xl font-bold text-sky-400 hover:bg-sky-500 hover:border-sky-500 hover:text-white transition-all duration-300 shadow-md flex items-center justify-center"
+                      onClick={() => {
+                        if (selectedRooms.length > 0 && guestCount >= maxGuestCapacity) {
+                          setShowMaxGuestWarn(true);
+                          setTimeout(() => setShowMaxGuestWarn(false), 4000);
+                        } else {
+                          setGuestCount(Math.min(maxGuestCapacity, guestCount + 1));
+                        }
+                      }}
+                      className={`w-16 h-16 rounded-full border-2 text-2xl font-bold transition-all duration-300 shadow-md flex items-center justify-center ${
+                        selectedRooms.length > 0 && guestCount >= maxGuestCapacity
+                          ? 'border-rose-200 text-rose-300 cursor-not-allowed bg-rose-50'
+                          : 'border-sky-100 text-sky-400 hover:bg-sky-500 hover:border-sky-500 hover:text-white'
+                      }`}
                     >
                       +
                     </button>
                   </div>
 
+                  {/* Capacity progress bar */}
+                  {selectedRooms.length > 0 && (
+                    <div className="mt-8 px-4">
+                      <div className="flex justify-between text-[10px] font-bold text-slate-400 mb-2">
+                        <span>1</span>
+                        <span>{maxGuestCapacity} guests max</span>
+                      </div>
+                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <motion.div
+                          className={`h-full rounded-full transition-colors duration-500 ${
+                            guestCount >= maxGuestCapacity
+                              ? 'bg-gradient-to-r from-rose-400 to-rose-500'
+                              : guestCount >= maxGuestCapacity * 0.75
+                              ? 'bg-gradient-to-r from-amber-400 to-orange-400'
+                              : 'bg-gradient-to-r from-sky-400 to-blue-500'
+                          }`}
+                          animate={{ width: `${Math.min(100, (guestCount / maxGuestCapacity) * 100)}%` }}
+                          transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Max guest warning banner */}
+                  <AnimatePresence>
+                    {showMaxGuestWarn && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.97 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                        className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-rose-50 to-orange-50 border border-rose-200 flex items-start gap-3 shadow-lg shadow-rose-100/60"
+                      >
+                        <span className="text-2xl shrink-0">🏠</span>
+                        <div>
+                          <p className="text-sm font-black text-rose-700 mb-0.5">Room Capacity Reached</p>
+                          <p className="text-xs text-rose-600 font-medium leading-snug">
+                            Your selected {selectedRooms.length === 1 ? 'room' : 'rooms'} can comfortably accommodate up to <strong>{maxGuestCapacity} guest{maxGuestCapacity > 1 ? 's' : ''}</strong>. For larger groups, please contact us directly — we'll find the perfect arrangement for your party! 🌊
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                 </motion.div>
 
