@@ -297,22 +297,32 @@ function SeasonCard({
             {/* Active Toggle Button */}
             {adjustment && (
               <motion.button
-                whileTap={{ scale: 0.92 }}
+                whileTap={{ scale: 0.85, rotate: isActive ? -5 : 5 }}
+                whileHover={{ scale: 1.05 }}
                 onClick={(e) => { e.stopPropagation(); onToggleActive(); }}
-                className={`relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-black transition-all duration-300 shadow-md ${
+                className={`relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-black transition-all duration-500 shadow-md ${
                   isActive
-                    ? `bg-gradient-to-r ${season.gradient} text-white shadow-lg hover:shadow-xl`
+                    ? `bg-gradient-to-r ${season.gradient} text-white shadow-lg hover:shadow-xl ring-4 ring-${season.iconColor.split('-')[1]}-200`
                     : "bg-white text-slate-500 border-2 border-slate-200 hover:border-slate-300"
                 }`}
               >
-                {isActive ? (
-                  <><Power className="w-4 h-4" /> Active</>
-                ) : (
-                  <><PowerOff className="w-4 h-4" /> Inactive</>
-                )}
+                <motion.div
+                  initial={false}
+                  animate={{ rotate: isActive ? 360 : 0 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                >
+                  {isActive ? <Power className="w-4 h-4" /> : <PowerOff className="w-4 h-4" />}
+                </motion.div>
+                {isActive ? "Active" : "Inactive"}
+                
                 {/* Glow effect when active */}
                 {isActive && (
-                  <span className={`absolute inset-0 rounded-full bg-gradient-to-r ${season.gradient} blur-md opacity-30 -z-10`} />
+                  <motion.span 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0.3, 0.6, 0.3] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className={`absolute inset-0 rounded-full bg-gradient-to-r ${season.gradient} blur-md -z-10`} 
+                  />
                 )}
               </motion.button>
             )}
@@ -451,9 +461,14 @@ export default function AdminRateAdjustments() {
   // Which adjustment corresponds to which season key
   const getAdjForSeason = (key: string) => {
     const season = SEASONS.find((s) => s.key === key)!;
-    return adjustments.find((a) =>
-      a.seasonName.toLowerCase().includes(key === "summer" ? "april" : "october")
-    ) || adjustments.find((a) => a.seasonName === season.defaultName) || null;
+    return adjustments.find((a) => {
+      const name = a.seasonName.toLowerCase();
+      if (key === "summer") {
+        return name.startsWith("april") || name.includes("high season");
+      } else {
+        return name.startsWith("october") || name.includes("low season");
+      }
+    }) || adjustments.find((a) => a.seasonName === season.defaultName) || null;
   };
 
   async function fetchAdjustments() {
