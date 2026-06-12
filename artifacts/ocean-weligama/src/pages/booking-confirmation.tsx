@@ -407,38 +407,74 @@ export default function BookingConfirmationPage() {
                   <CreditCard className="w-4 h-4" /> Payment Summary
                 </h3>
                 <div className="space-y-4 pb-6 border-b border-border text-sm">
-                  {/* Room subtotal */}
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <span className="text-muted-foreground font-medium block">Room Price{booking.nights ? ` (${booking.nights} nights)` : ''}</span>
-                      {booking.nights && booking.roomRatePerNight && (
-                        <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">
-                          €{parseFloat(booking.roomRatePerNight).toFixed(2)} × {booking.nights} = €{(parseFloat(booking.roomSubtotal || "0")).toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-                    <span className="font-bold text-foreground text-base">
-                      €{(parseFloat(booking.roomSubtotal || "0")).toFixed(2)}
-                    </span>
-                  </div>
+                  {(() => {
+                    // Detect matrix booking: roomSubtotal is 0 and there's a 'main' service
+                    const roomSubtotalVal = parseFloat(booking.roomSubtotal || "0");
+                    const mainService = booking.services?.find((s: any) => {
+                      const srv = servicesList?.find((x: any) => x.id === s.serviceId);
+                      return srv?.type === 'main';
+                    });
+                    const isMatrixBookingView = roomSubtotalVal === 0 && !!mainService;
 
-                  {/* Addons and Packages */}
-                  {booking.services && booking.services.map((s: any, idx: number) => {
-                    const srv = servicesList?.find(
-                      x => x.id === s.serviceId || x.name?.toLowerCase() === s.serviceName?.toLowerCase()
-                    );
                     return (
-                      <div key={idx} className="flex justify-between items-start">
-                        <div>
-                          <span className="text-muted-foreground font-medium block">{s.serviceName}</span>
-                          <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">{getUnitLabel(srv?.unit, s.quantity)}</span>
-                        </div>
-                        <span className="font-bold text-foreground text-base">
-                          €{(parseFloat(s.subtotal || "0")).toFixed(2)}
-                        </span>
-                      </div>
-                    )
-                  })}
+                      <>
+                        {isMatrixBookingView ? (
+                          // Matrix booking: show Room + Package combined
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <span className="text-muted-foreground font-medium block">
+                                Room Price ({booking.nights} nights) + {mainService.serviceName}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">7-night package — room & package included</span>
+                            </div>
+                            <span className="font-bold text-foreground text-base">
+                              €{(parseFloat(mainService.subtotal || "0")).toFixed(2)}
+                            </span>
+                          </div>
+                        ) : (
+                          // Regular booking: show room separately
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <span className="text-muted-foreground font-medium block">Room Price{booking.nights ? ` (${booking.nights} nights)` : ''}</span>
+                              {booking.nights && booking.roomRatePerNight && (
+                                <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">
+                                  €{parseFloat(booking.roomRatePerNight).toFixed(2)} × {booking.nights} = €{(parseFloat(booking.roomSubtotal || "0")).toFixed(2)}
+                                </span>
+                              )}
+                            </div>
+                            <span className="font-bold text-foreground text-base">
+                              €{(parseFloat(booking.roomSubtotal || "0")).toFixed(2)}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* All other services (non-main, or all if not matrix) */}
+                        {booking.services && booking.services
+                          .filter((s: any) => {
+                            if (!isMatrixBookingView) return true;
+                            const srv = servicesList?.find((x: any) => x.id === s.serviceId);
+                            return srv?.type !== 'main';
+                          })
+                          .map((s: any, idx: number) => {
+                            const srv = servicesList?.find(
+                              (x: any) => x.id === s.serviceId
+                            );
+                            return (
+                              <div key={idx} className="flex justify-between items-start">
+                                <div>
+                                  <span className="text-muted-foreground font-medium block">{s.serviceName}</span>
+                                  <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">{getUnitLabel(srv?.unit, s.quantity)}</span>
+                                </div>
+                                <span className="font-bold text-foreground text-base">
+                                  €{(parseFloat(s.subtotal || "0")).toFixed(2)}
+                                </span>
+                              </div>
+                            );
+                          })
+                        }
+                      </>
+                    );
+                  })()}
 
                   {/* Airport Pickup */}
                   {(booking as any).airportPickup && (
@@ -476,7 +512,7 @@ export default function BookingConfirmationPage() {
                 <div className="flex flex-col sm:flex-row justify-between sm:items-end pt-6 gap-4">
                   <span className="font-bold text-[10px] sm:text-xs uppercase tracking-widest text-muted-foreground max-w-[200px] leading-tight">Total price = Room price + Packages + Experiences + airport transfer</span>
                   <span className="font-black text-3xl sm:text-4xl text-primary whitespace-nowrap">
-                    €{(parseFloat(booking.totalAmount || "0")).toFixed(2)} <span className="text-sm font-bold text-muted-foreground ml-1">{booking.currency || "EUR"}</span>
+                    €{(parseFloat(booking.totalAmount || "0")).toFixed(2)}
                   </span>
                 </div>
               </div>
