@@ -510,8 +510,8 @@ export default function AdminRateAdjustments() {
         setAdjustments((prev) => [...prev, created]);
         toast({ title: "✅ Created!", description: "New season created. Activate it to apply prices." });
       }
-    } catch (e) {
-      toast({ title: "Failed to save", variant: "destructive" });
+    } catch (e: any) {
+      toast({ title: "Failed to save", description: e.message || "Unknown error", variant: "destructive" });
     } finally {
       setSavingSeasons((prev) => ({ ...prev, [seasonKey]: false }));
     }
