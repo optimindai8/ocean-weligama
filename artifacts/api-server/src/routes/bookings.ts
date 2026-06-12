@@ -121,7 +121,7 @@ router.post("/v1/bookings/check", async (req, res) => {
           }
           let qty = 1;
           if (matrixPrice && service.type === "main") {
-            qty = nights;
+            qty = nights / 7;
           } else if (serviceQuantities && typeof serviceQuantities[sId] === "number") {
             qty = serviceQuantities[sId];
           } else if (service.unit === "per_person") {
@@ -266,7 +266,7 @@ router.post("/v1/bookings", async (req, res) => {
           }
           let qty = 1;
           if (matrixPrice && service.type === "main") {
-            qty = nights;
+            qty = nights / 7;
           } else if (serviceQuantities && typeof serviceQuantities[sId] === "number") {
             qty = serviceQuantities[sId];
           } else if (service.unit === "per_person") {
