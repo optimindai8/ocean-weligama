@@ -55,3 +55,25 @@ export const roomPackagePrices = pgTable(
     unq: unique("room_package_unq").on(table.roomId, table.packageId),
   })
 );
+
+export const globalRateAdjustments = pgTable("global_rate_adjustments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  seasonName: text("season_name").notNull(),
+  dateFrom: date("date_from"),
+  dateTo: date("date_to"),
+  
+  roomAdjustmentType: text("room_adj_type").default("fixed"),
+  roomAdjustmentValue: decimal("room_adj_value", { precision: 10, scale: 2 }).default("0"),
+  
+  experienceAdjustmentType: text("exp_adj_type").default("fixed"),
+  experienceAdjustmentValue: decimal("exp_adj_value", { precision: 10, scale: 2 }).default("0"),
+  
+  packageAdjustmentType: text("pkg_adj_type").default("fixed"),
+  packageAdjustmentValue: decimal("pkg_adj_value", { precision: 10, scale: 2 }).default("0"),
+
+  isActive: boolean("is_active").default(false),
+  
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+

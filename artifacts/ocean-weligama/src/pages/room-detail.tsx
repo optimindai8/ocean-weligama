@@ -278,7 +278,14 @@ export default function RoomDetailPage() {
               <div className="bg-white rounded-[2rem] p-8 border border-border shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] sticky top-28">
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-foreground">{formatPrice(room.basePricePerNight)}</span>
+                    {room.adjustedPrice ? (
+                      <>
+                        <s className="text-xl font-medium text-muted-foreground mr-2">{formatPrice(room.originalPrice || room.basePricePerNight)}</s>
+                        <span className="text-4xl font-bold text-foreground">{formatPrice(room.adjustedPrice)}</span>
+                      </>
+                    ) : (
+                      <span className="text-4xl font-bold text-foreground">{formatPrice(room.basePricePerNight)}</span>
+                    )}
                     <span className="text-muted-foreground font-medium"> / night</span>
                   </div>
                   {Number(room.cleaningFee) > 0 && (
@@ -408,7 +415,14 @@ export default function RoomDetailPage() {
         <div className="flex flex-col">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1A6B8A] mb-0.5">Starting from</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-xl font-extrabold text-foreground">{formatPrice(room.basePricePerNight)}</span>
+            {room.adjustedPrice ? (
+              <>
+                <s className="text-sm font-medium text-muted-foreground mr-1">{formatPrice(room.originalPrice || room.basePricePerNight)}</s>
+                <span className="text-xl font-extrabold text-foreground">{formatPrice(room.adjustedPrice)}</span>
+              </>
+            ) : (
+              <span className="text-xl font-extrabold text-foreground">{formatPrice(room.basePricePerNight)}</span>
+            )}
             <span className="text-xs text-muted-foreground font-medium">/night</span>
           </div>
         </div>

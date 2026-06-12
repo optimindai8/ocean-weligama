@@ -472,7 +472,11 @@ export default function BookingPage() {
     if (selectedRoomIds.length === 0) return null;
     const room = Array.isArray(allRooms) ? allRooms.find(r => r.id === selectedRoomIds[0]) : null;
     if (!room) return null;
-    const roomRatePerNight = !!matrixPrice ? 0 : parseFloat(room.basePricePerNight);
+    // Use adjustedPrice if available (from global rate adjustments)
+    const effectiveRoomPrice = (room as any).adjustedPrice
+      ? parseFloat((room as any).adjustedPrice)
+      : parseFloat(room.basePricePerNight);
+    const roomRatePerNight = !!matrixPrice ? 0 : effectiveRoomPrice;
     const roomSubtotal = roomRatePerNight * nights;
     const cleaningFee = parseFloat(room.cleaningFee || "0");
     return {
@@ -482,7 +486,7 @@ export default function BookingPage() {
       cleaningFee: cleaningFee.toString(),
       isMatrixBooking: !!matrixPrice,
     };
-  }, [rooms, selectedRoomIds, matrixPrice, nights]);
+  }, [rooms, allRooms, selectedRoomIds, matrixPrice, nights]);
   const checkAvail = useCheckAvailabilityAndPrice();
   const createBook = useCreateBooking();
 
@@ -505,7 +509,8 @@ export default function BookingPage() {
       for (const svcId of selectedDbServiceIds) {
         const svc = services.find(s => s.id === svcId);
         if (svc) {
-          let price = parseFloat(svc.basePrice || "0");
+          // Use adjustedPrice if available (from global rate adjustments)
+          let price = parseFloat((svc as any).adjustedPrice || svc.basePrice || "0");
           if (matrixPrice && svc.id === matrixPrice.packageId) {
             // Matrix Daily Price covers room and package.
             // We subtract the room base price so the total reflects the exact matrix rate.

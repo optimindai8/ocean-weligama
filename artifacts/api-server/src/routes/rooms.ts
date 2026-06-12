@@ -11,10 +11,11 @@ import {
   bookingRooms,
 } from "@workspace/db";
 import { eq, and, isNull, gte, lte, lt, gt, sql, inArray } from "drizzle-orm";
+import { getActiveGlobalRateAdjustment, calculateAdjustedPrice } from "../lib/rateAdjustments";
 
 const router = Router();
 
-async function getRoomWithTranslation(roomId: string, locale: string) {
+async function getRoomWithTranslation(roomId: string, locale: string, activeAdj?: any) {
   const [room] = await db
     .select()
     .from(rooms)
@@ -53,6 +54,14 @@ async function getRoomWithTranslation(roomId: string, locale: string) {
     .where(and(eq(gallery.roomId, roomId), isNull(gallery.deletedAt)))
     .orderBy(gallery.sortOrder);
 
+  let adjustedPrice = null;
+  if (activeAdj) {
+    const calculated = calculateAdjustedPrice(room.basePricePerNight, activeAdj.roomAdjustmentType, activeAdj.roomAdjustmentValue);
+    if (calculated !== parseFloat(room.basePricePerNight).toFixed(2)) {
+      adjustedPrice = calculated;
+    }
+  }
+
   return {
     ...room,
     name: translation?.name ?? "",
@@ -60,6 +69,8 @@ async function getRoomWithTranslation(roomId: string, locale: string) {
     shortDesc: translation?.shortDesc ?? null,
     amenities: roomAmenitiesData.map((a) => a.key),
     images,
+    originalPrice: room.basePricePerNight,
+    adjustedPrice,
   };
 }
 
@@ -112,8 +123,10 @@ router.get("/v1/rooms", async (req, res) => {
       allRooms = allRooms.filter((r) => !unavailableRoomIds.has(r.id));
     }
 
+    const activeAdj = await getActiveGlobalRateAdjustment();
+
     const result = await Promise.all(
-      allRooms.map((room) => getRoomWithTranslation(room.id, locale))
+      allRooms.map((room) => getRoomWithTranslation(room.id, locale, activeAdj))
     );
 
     res.json(result.filter(Boolean));
@@ -140,8 +153,10 @@ router.get("/v1/rooms/featured", async (req, res) => {
       .orderBy(rooms.sortOrder)
       .limit(3);
 
+    const activeAdj = await getActiveGlobalRateAdjustment();
+
     const result = await Promise.all(
-      featuredRooms.map((room) => getRoomWithTranslation(room.id, locale))
+      featuredRooms.map((room) => getRoomWithTranslation(room.id, locale, activeAdj))
     );
 
     res.json(result.filter(Boolean));
@@ -166,7 +181,8 @@ router.get("/v1/rooms/:slug", async (req, res) => {
       return;
     }
 
-    const roomData = await getRoomWithTranslation(room.id, locale);
+    const activeAdj = await getActiveGlobalRateAdjustment();
+    const roomData = await getRoomWithTranslation(room.id, locale, activeAdj);
 
     const images = await db
       .select()
@@ -187,7 +203,7 @@ router.get("/v1/rooms/:slug", async (req, res) => {
       .limit(3);
 
     const relatedRooms = await Promise.all(
-      relatedRoomsRaw.map((r) => getRoomWithTranslation(r.id, locale))
+      relatedRoomsRaw.map((r) => getRoomWithTranslation(r.id, locale, activeAdj))
     );
 
     res.json({

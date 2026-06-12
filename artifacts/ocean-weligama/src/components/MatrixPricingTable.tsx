@@ -182,7 +182,10 @@ function MatrixTableInner({
                     )}
                   </td>
                   {filteredPackages.map((pkg: any) => {
-                    const price = getPrice(room.id!, pkg.id!);
+                    const priceObj = getPrice(room.id!, pkg.id!);
+                    const price = priceObj ? (priceObj.adjustedDailyPrice || priceObj.originalDailyPrice || priceObj.dailyPrice) : null;
+                    const originalPrice = priceObj?.adjustedDailyPrice ? (priceObj.originalDailyPrice || priceObj.dailyPrice) : null;
+                    
                     const isPopular = pkg.isFeatured;
                     const meta = PACKAGE_META.find(m => pkg.name?.toLowerCase().includes(m.nameMatch)) || PACKAGE_META[0];
                     return (
@@ -190,6 +193,9 @@ function MatrixTableInner({
                         {price && price !== "0" && price !== "0.00" ? (
                             <div className="flex flex-col items-center justify-center h-full w-full group/price relative py-2">
                               <div className="flex flex-col items-center justify-center gap-1 mb-3 relative z-10">
+                                {originalPrice && (
+                                  <s className="text-xs text-slate-400 font-medium mb-1">{formatPrice(parseFloat(originalPrice as string))}</s>
+                                )}
                                 <span className={`text-base md:text-lg font-serif font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
                                   {formatPrice(parseFloat(price as string))}
                                 </span>
@@ -379,8 +385,7 @@ export function MatrixPricingTable() {
   );
 
   const getPrice = (roomId: string, packageId: string) => {
-    const p = prices?.find(p => p.roomId === roomId && p.packageId === packageId);
-    return p ? p.dailyPrice : null;
+    return prices?.find(p => p.roomId === roomId && p.packageId === packageId) || null;
   };
 
   if (filteredRooms.length === 0 || filteredPackages.length === 0) {

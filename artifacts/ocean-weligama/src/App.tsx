@@ -34,6 +34,7 @@ import AdminMatrixPricing from "@/pages/admin/matrix-pricing";
 import AdminGuests from "@/pages/admin/guests";
 import AdminFAQ from "@/pages/admin/faq";
 import AdminOfferAds from "@/pages/admin/offer-ads";
+import AdminRateAdjustments from "@/pages/admin/rate-adjustments";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -104,6 +105,7 @@ function App() {
               <Route path="/ow-admin/matrix-pricing" component={AdminMatrixPricing} />
               <Route path="/ow-admin/faq" component={AdminFAQ} />
               <Route path="/ow-admin/offer-ads" component={AdminOfferAds} />
+              <Route path="/ow-admin/rate-adjustments" component={AdminRateAdjustments} />
 
               <Route component={NotFound} />
             </Switch>

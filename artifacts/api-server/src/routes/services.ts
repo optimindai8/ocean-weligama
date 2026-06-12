@@ -2,10 +2,11 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { services, serviceTranslations } from "@workspace/db";
 import { eq, and } from "drizzle-orm";
+import { getActiveGlobalRateAdjustment, calculateAdjustedPrice } from "../lib/rateAdjustments";
 
 const router = Router();
 
-async function getServiceWithTranslation(serviceId: string, locale: string) {
+async function getServiceWithTranslation(serviceId: string, locale: string, activeAdj?: any) {
   const [service] = await db
     .select()
     .from(services)
@@ -23,11 +24,25 @@ async function getServiceWithTranslation(serviceId: string, locale: string) {
     translations.find((t) => t.locale === "en") ??
     translations[0];
 
+  let adjustedPrice = null;
+  if (activeAdj) {
+    const isPackage = service.category?.toLowerCase().includes('package') || service.type === 'main';
+    const adjType = isPackage ? activeAdj.packageAdjustmentType : activeAdj.experienceAdjustmentType;
+    const adjValue = isPackage ? activeAdj.packageAdjustmentValue : activeAdj.experienceAdjustmentValue;
+    
+    const calculated = calculateAdjustedPrice(service.basePrice, adjType, adjValue);
+    if (calculated !== parseFloat(service.basePrice as string).toFixed(2)) {
+      adjustedPrice = calculated;
+    }
+  }
+
   return {
     ...service,
     name: translation?.name ?? service.slug,
     description: translation?.description ?? "",
     shortDesc: translation?.shortDesc ?? null,
+    originalPrice: service.basePrice,
+    adjustedPrice,
   };
 }
 
@@ -41,8 +56,10 @@ router.get("/v1/services", async (req, res) => {
       .where(eq(services.isActive, true))
       .orderBy(services.sortOrder);
 
+    const activeAdj = await getActiveGlobalRateAdjustment();
+
     const result = await Promise.all(
-      allServices.map((s) => getServiceWithTranslation(s.id, locale))
+      allServices.map((s) => getServiceWithTranslation(s.id, locale, activeAdj))
     );
 
     res.json(result.filter(Boolean));
@@ -67,7 +84,8 @@ router.get("/v1/services/:slug", async (req, res) => {
       return;
     }
 
-    const result = await getServiceWithTranslation(service.id, locale);
+    const activeAdj = await getActiveGlobalRateAdjustment();
+    const result = await getServiceWithTranslation(service.id, locale, activeAdj);
     res.json(result);
   } catch (err) {
     req.log.error(err);
@@ -122,12 +140,28 @@ router.get("/v1/matrix-pricing", async (req, res) => {
       };
     });
 
+    const activeAdj = await getActiveGlobalRateAdjustment();
     const prices = await db.select().from(roomPackagePrices);
+    
+    const adjustedPrices = prices.map(p => {
+       let adjustedDailyPrice = null;
+       if (activeAdj) {
+          const calculated = calculateAdjustedPrice(p.dailyPrice, activeAdj.packageAdjustmentType, activeAdj.packageAdjustmentValue);
+          if (calculated !== parseFloat(p.dailyPrice as string).toFixed(2)) {
+             adjustedDailyPrice = calculated;
+          }
+       }
+       return {
+         ...p,
+         originalDailyPrice: p.dailyPrice,
+         adjustedDailyPrice,
+       };
+    });
 
     res.json({
       rooms: roomsMap,
       packages: mainPackages,
-      prices: prices,
+      prices: adjustedPrices,
     });
   } catch (err) {
     req.log.error(err);

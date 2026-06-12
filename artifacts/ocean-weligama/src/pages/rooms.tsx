@@ -158,7 +158,17 @@ export default function RoomsPage() {
                       <div className="flex items-center justify-between opacity-100 transition-opacity duration-700 delay-300">
                         <div className="flex flex-col">
                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">Starting from</span>
-                          <span className="text-xl sm:text-2xl font-bold text-white">{formatPrice(room.basePricePerNight)}<span className="text-xs sm:text-sm font-normal text-white/60">/night</span></span>
+                          <span className="text-xl sm:text-2xl font-bold text-white">
+                            {room.adjustedPrice ? (
+                              <>
+                                <s className="text-sm text-white/50 mr-2">{formatPrice(room.originalPrice || room.basePricePerNight)}</s>
+                                {formatPrice(room.adjustedPrice)}
+                              </>
+                            ) : (
+                              formatPrice(room.basePricePerNight)
+                            )}
+                            <span className="text-xs sm:text-sm font-normal text-white/60">/night</span>
+                          </span>
                         </div>
                         <Link href={`/rooms/${room.slug}`}>
                           <button className="bg-accent text-primary w-11 h-11 sm:w-14 sm:h-14 rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all shadow-2xl">
@@ -172,7 +182,16 @@ export default function RoomsPage() {
                   {/* Clean Background Text */}
                   <div className="block mt-6 px-2 text-center transition-opacity duration-500">
                     <h4 className="text-lg md:text-xl font-serif font-bold text-foreground line-clamp-2 mb-1">{room.name}</h4>
-                    <p className="text-primary text-sm font-black">{formatPrice(room.basePricePerNight)} / night</p>
+                    <p className="text-primary text-sm font-black">
+                      {room.adjustedPrice ? (
+                        <>
+                          <s className="text-muted-foreground font-normal mr-2">{formatPrice(room.originalPrice || room.basePricePerNight)}</s>
+                          {formatPrice(room.adjustedPrice)}
+                        </>
+                      ) : (
+                        formatPrice(room.basePricePerNight)
+                      )} / night
+                    </p>
                   </div>
                 </motion.div>
               )})}

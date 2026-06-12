@@ -17,6 +17,7 @@ import {
   Plane,
   Users,
   HelpCircle,
+  TrendingDown,
 } from "lucide-react";
 
 const NAV = [
@@ -34,6 +35,7 @@ const NAV = [
   { href: "/ow-admin/airport", label: "Airport", icon: Plane },
   { href: "/ow-admin/faq", label: "FAQ", icon: HelpCircle },
   { href: "/ow-admin/offer-ads", label: "Offer Ads", icon: Sparkles },
+  { href: "/ow-admin/rate-adjustments", label: "Rate Adjustment", icon: TrendingDown },
 ];
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {

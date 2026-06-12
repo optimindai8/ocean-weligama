@@ -19,6 +19,7 @@ import adminMatrixPricingRouter from "./admin-matrix-pricing";
 import adminFaqRouter from "./admin-faq";
 import settingsRouter from "./settings";
 import offerAdsRouter from "./offer-ads";
+import adminRateAdjustmentsRouter from "./admin-rate-adjustments";
 
 const router: IRouter = Router();
 
@@ -42,5 +43,6 @@ router.use(adminMatrixPricingRouter);
 router.use(adminFaqRouter);
 router.use(settingsRouter);
 router.use(offerAdsRouter);
+router.use(adminRateAdjustmentsRouter);
 
 export default router;
