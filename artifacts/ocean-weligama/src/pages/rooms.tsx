@@ -160,10 +160,14 @@ export default function RoomsPage() {
                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent mb-1">Starting from</span>
                           <span className="text-xl sm:text-2xl font-bold text-white">
                             {room.adjustedPrice ? (
-                              <>
-                                <s className="text-sm text-white/50 mr-2">{formatPrice(room.originalPrice || room.basePricePerNight)}</s>
-                                {formatPrice(room.adjustedPrice)}
-                              </>
+                              parseFloat(room.adjustedPrice) < parseFloat(room.originalPrice || room.basePricePerNight) ? (
+                                <>
+                                  <s className="text-sm text-white/50 mr-2">{formatPrice(room.originalPrice || room.basePricePerNight)}</s>
+                                  {formatPrice(room.adjustedPrice)}
+                                </>
+                              ) : (
+                                formatPrice(room.adjustedPrice)
+                              )
                             ) : (
                               formatPrice(room.basePricePerNight)
                             )}
@@ -184,10 +188,14 @@ export default function RoomsPage() {
                     <h4 className="text-lg md:text-xl font-serif font-bold text-foreground line-clamp-2 mb-1">{room.name}</h4>
                     <p className="text-primary text-sm font-black">
                       {room.adjustedPrice ? (
-                        <>
-                          <s className="text-muted-foreground font-normal mr-2">{formatPrice(room.originalPrice || room.basePricePerNight)}</s>
-                          {formatPrice(room.adjustedPrice)}
-                        </>
+                        parseFloat(room.adjustedPrice) < parseFloat(room.originalPrice || room.basePricePerNight) ? (
+                          <>
+                            <s className="text-muted-foreground font-normal mr-2">{formatPrice(room.originalPrice || room.basePricePerNight)}</s>
+                            {formatPrice(room.adjustedPrice)}
+                          </>
+                        ) : (
+                          formatPrice(room.adjustedPrice)
+                        )
                       ) : (
                         formatPrice(room.basePricePerNight)
                       )} / night

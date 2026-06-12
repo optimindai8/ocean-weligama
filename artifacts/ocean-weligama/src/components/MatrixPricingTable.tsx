@@ -193,7 +193,7 @@ function MatrixTableInner({
                         {price && price !== "0" && price !== "0.00" ? (
                             <div className="flex flex-col items-center justify-center h-full w-full group/price relative py-2">
                               <div className="flex flex-col items-center justify-center gap-1 mb-3 relative z-10">
-                                {originalPrice && (
+                                {originalPrice && parseFloat(price as string) < parseFloat(originalPrice as string) && (
                                   <s className="text-xs text-slate-400 font-medium mb-1">{formatPrice(parseFloat(originalPrice as string))}</s>
                                 )}
                                 <span className={`text-base md:text-lg font-serif font-black transition-colors tracking-tight ${isPopular ? 'text-[#00838F]' : 'text-[#0B3D5E]'}`}>
