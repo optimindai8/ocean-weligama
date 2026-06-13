@@ -621,12 +621,11 @@ export default function AdminRateAdjustments() {
           {/* How it works */}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { icon: "📝", title: "Set adjustments", desc: "Enter a fixed (€) or percentage (%) change for each price type." },
-              { icon: "💾", title: "Save season", desc: "Save the season. Prices are staged but not yet live." },
-              { icon: "⚡", title: "Activate", desc: "Hit the Activate button to instantly apply prices across the whole website." },
+              { title: "Set adjustments", desc: "Enter a fixed (€) or percentage (%) change for each price type." },
+              { title: "Save season", desc: "Save the season. Prices are staged but not yet live." },
+              { title: "Activate", desc: "Hit the Activate button to instantly apply prices across the whole website." },
             ].map((step, i) => (
               <div key={i} className="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-100 shadow-sm">
-                <span className="text-2xl">{step.icon}</span>
                 <div>
                   <p className="text-sm font-black text-slate-700">{step.title}</p>
                   <p className="text-xs text-slate-400 font-medium mt-0.5">{step.desc}</p>
