@@ -97,7 +97,7 @@ export default function Home() {
             transition={{ duration: 1, ease: "easeOut" }}
           >
             <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
-              Your Ocean Home <br /> <span className="text-accent italic font-normal">in Weligama</span>
+              Your Ocean Home <br /> <span className="text-[#4BBCCC] italic font-normal drop-shadow-lg">in Weligama</span>
             </h1>
           </motion.div>
 
