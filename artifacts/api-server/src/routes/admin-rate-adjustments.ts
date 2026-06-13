@@ -94,10 +94,10 @@ router.put("/v1/admin/rate-adjustments/:id", async (req, res) => {
       return res.status(404).json({ error: "Rate adjustment not found" });
     }
 
-    res.json(updated);
+    return res.json(updated);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
@@ -114,10 +114,10 @@ router.delete("/v1/admin/rate-adjustments/:id", async (req, res) => {
       return res.status(404).json({ error: "Rate adjustment not found" });
     }
 
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

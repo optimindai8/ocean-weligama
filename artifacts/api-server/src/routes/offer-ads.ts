@@ -20,10 +20,10 @@ router.get("/v1/offer-ads/active", async (req, res) => {
       return res.status(200).json(null);
     }
 
-    res.json(activeAd);
+    return res.json(activeAd);
   } catch (err) {
     req.log.error(err);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 
