@@ -96,11 +96,9 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-serif font-bold mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-[#4BBCCC]">
-                Your Ocean Home
-              </span> <br /> 
-              <span className="text-[#0B3D5E] italic font-normal drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]">
+            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
+              Your Ocean Home <br /> 
+              <span className="text-accent italic font-normal drop-shadow-lg">
                 in Weligama
               </span>
             </h1>
