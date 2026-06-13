@@ -181,14 +181,14 @@ export default function AdminReviews() {
                   <div className="flex gap-4">
                     <div className="w-12 h-12 rounded-full overflow-hidden border border-border/50 flex items-center justify-center bg-muted/30 shrink-0">
                       {review.guestAvatarUrl ? (
-                        <img src={review.guestAvatarUrl} alt={review.guestName} className="w-full h-full object-cover" />
+                        <img src={review.guestAvatarUrl} alt={review.guestName || "Guest"} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="text-muted-foreground/30 text-xs font-bold uppercase">{review.guestName.charAt(0)}</div>
+                        <div className="text-muted-foreground/30 text-xs font-bold uppercase">{review.guestName ? review.guestName.charAt(0) : "A"}</div>
                       )}
                     </div>
                     <div>
                       <div className="flex items-center gap-3 mb-1">
-                        <p className="font-bold text-foreground">{review.guestName}</p>
+                        <p className="font-bold text-foreground">{review.guestName || "Anonymous"}</p>
                         {review.guestCountry && (
                           <span className="text-xs text-muted-foreground">{review.guestCountry}</span>
                         )}
