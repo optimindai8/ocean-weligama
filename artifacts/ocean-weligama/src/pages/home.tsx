@@ -96,15 +96,12 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
-              Your Ocean Home <br /> 
-              <span className="relative inline-block mt-1 sm:mt-2">
-                {/* Logo color deep glowing aura */}
-                <span className="absolute inset-0 blur-[30px] bg-[#0B3D5E] opacity-90 rounded-[100%] scale-125 translate-y-1 sm:translate-y-2 z-0"></span>
-                {/* Luminous text gradient */}
-                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-[#4BBCCC] italic font-normal drop-shadow-sm">
-                  in Weligama
-                </span>
+            <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-serif font-bold mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-[#4BBCCC]">
+                Your Ocean Home
+              </span> <br /> 
+              <span className="text-[#0B3D5E] italic font-normal drop-shadow-[0_0_15px_rgba(255,255,255,0.6)]">
+                in Weligama
               </span>
             </h1>
           </motion.div>
