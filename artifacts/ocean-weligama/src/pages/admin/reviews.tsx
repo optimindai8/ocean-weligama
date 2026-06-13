@@ -44,8 +44,8 @@ export default function AdminReviews() {
 
   const reviewList = reviews as any[] | undefined;
   
-  const unapprovedReviews = reviewList?.filter((r) => !r.isApproved) || [];
-  const approvedReviews = reviewList?.filter((r) => r.isApproved) || [];
+  const unapprovedReviews = reviewList?.filter((r) => r && !r.isApproved) || [];
+  const approvedReviews = reviewList?.filter((r) => r && r.isApproved) || [];
   const displayedReviews = activeTab === "unapproved" ? unapprovedReviews : approvedReviews;
 
   function update(id: string, data: Record<string, unknown>) {
@@ -276,7 +276,7 @@ export default function AdminReviews() {
                 </div>
 
                 <p className="relative z-10 text-xs text-muted-foreground mt-3">
-                  {new Date(review.createdAt).toLocaleDateString()}
+                  {review.createdAt && !isNaN(new Date(review.createdAt).getTime()) ? new Date(review.createdAt).toLocaleDateString() : "Unknown date"}
                 </p>
                 </motion.div>
               ))}
