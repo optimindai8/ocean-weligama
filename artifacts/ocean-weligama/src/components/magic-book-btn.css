@@ -15,8 +15,9 @@
 }
 
 .book-btn:hover {
-  background-color: #23c483;
-  box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
+  background-color: hsl(var(--primary));
+  filter: brightness(1.15);
+  box-shadow: 0px 15px 20px rgba(11, 61, 94, 0.3);
   color: #fff;
   transform: translateY(-7px);
 }
