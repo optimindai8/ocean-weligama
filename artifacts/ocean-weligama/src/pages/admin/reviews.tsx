@@ -150,6 +150,7 @@ export default function AdminReviews() {
           </div>
         ) : displayedReviews.length > 0 ? (
           <motion.div 
+            key={activeTab}
             className="space-y-4"
             variants={{
               hidden: { opacity: 0 },
