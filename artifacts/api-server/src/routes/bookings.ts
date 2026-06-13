@@ -10,6 +10,7 @@ import {
   roomTranslations,
   serviceTranslations,
   roomPackagePrices,
+  globalRateAdjustments,
 } from "@workspace/db";
 import { eq, and, gte, lte, lt, gt, isNull, inArray } from "drizzle-orm";
 
@@ -26,6 +27,31 @@ function calculateNights(checkIn: string, checkOut: string): number {
   const start = new Date(checkIn);
   const end = new Date(checkOut);
   return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function applyRateAdjustment(price: number, entityType: "room" | "package" | "experience", adjustment: any) {
+  if (!adjustment) return price;
+  
+  let type = "fixed";
+  let val = 0;
+  
+  if (entityType === "room") {
+    type = adjustment.roomAdjustmentType || "fixed";
+    val = parseFloat(adjustment.roomAdjustmentValue || "0");
+  } else if (entityType === "package") {
+    type = adjustment.packageAdjustmentType || "fixed";
+    val = parseFloat(adjustment.packageAdjustmentValue || "0");
+  } else if (entityType === "experience") {
+    type = adjustment.experienceAdjustmentType || "fixed";
+    val = parseFloat(adjustment.experienceAdjustmentValue || "0");
+  }
+  
+  if (val === 0) return price;
+  
+  if (type === "percentage") {
+    return price + (price * val) / 100;
+  }
+  return price + val;
 }
 
 router.post("/v1/bookings/check", async (req, res) => {
@@ -79,8 +105,22 @@ router.post("/v1/bookings/check", async (req, res) => {
     let totalRoomRate = 0;
     let cleaningFee = 0;
     
+    const adjustments = await db.select().from(globalRateAdjustments).where(eq(globalRateAdjustments.isActive, true));
+    let applicableAdjustment = null;
+    if (adjustments.length > 0) {
+      applicableAdjustment = adjustments.find(adj => {
+        if (!adj.dateFrom || !adj.dateTo) return true;
+        const from = new Date(adj.dateFrom);
+        const to = new Date(adj.dateTo);
+        const checkInDate = new Date(checkIn);
+        return checkInDate >= from && checkInDate <= to;
+      }) || adjustments.find(adj => !adj.dateFrom && !adj.dateTo) || null;
+    }
+
     for (const r of selectedRooms) {
-      totalRoomRate += parseFloat(r.basePricePerNight);
+      let roomPrice = parseFloat(r.basePricePerNight);
+      roomPrice = applyRateAdjustment(roomPrice, "room", applicableAdjustment);
+      totalRoomRate += roomPrice;
       cleaningFee += parseFloat(r.cleaningFee ?? "0");
     }
     
@@ -108,16 +148,25 @@ router.post("/v1/bookings/check", async (req, res) => {
           // Note: The matrix price is an inclusive daily price (Room + Package). 
           // So the package addon price is (Matrix Daily Price - Room Base Price).
           let price = parseFloat(service.basePrice);
+          const isPackage = service.type === "main" || (service.category || "").toLowerCase().includes("package");
+          const entityType = isPackage ? "package" : "experience";
+
           if (matrixPrice && service.type === "main") {
             if (isMatrixBooking) {
-              price = parseFloat(matrixPrice.dailyPrice);
-              totalRoomRate -= parseFloat(selectedRooms[0].basePricePerNight);
+              let mPrice = parseFloat(matrixPrice.dailyPrice);
+              mPrice = applyRateAdjustment(mPrice, "package", applicableAdjustment);
+              price = mPrice;
+              const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
+              totalRoomRate -= applyRateAdjustment(roomBase, "room", applicableAdjustment);
               roomSubtotal = totalRoomRate * nights;
             } else {
               const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
               price = parseFloat(matrixPrice.dailyPrice) - roomBase;
               if (price < 0) price = 0;
+              price = applyRateAdjustment(price, "package", applicableAdjustment);
             }
+          } else {
+            price = applyRateAdjustment(price, entityType, applicableAdjustment);
           }
           let qty = 1;
           if (matrixPrice && service.type === "main") {
@@ -217,8 +266,22 @@ router.post("/v1/bookings", async (req, res) => {
     let totalRoomRate = 0;
     let cleaningFee = 0;
     
+    const adjustments = await db.select().from(globalRateAdjustments).where(eq(globalRateAdjustments.isActive, true));
+    let applicableAdjustment = null;
+    if (adjustments.length > 0) {
+      applicableAdjustment = adjustments.find(adj => {
+        if (!adj.dateFrom || !adj.dateTo) return true;
+        const from = new Date(adj.dateFrom);
+        const to = new Date(adj.dateTo);
+        const checkInDate = new Date(checkIn);
+        return checkInDate >= from && checkInDate <= to;
+      }) || adjustments.find(adj => !adj.dateFrom && !adj.dateTo) || null;
+    }
+
     for (const r of selectedRooms) {
-      totalRoomRate += parseFloat(r.basePricePerNight);
+      let roomPrice = parseFloat(r.basePricePerNight);
+      roomPrice = applyRateAdjustment(roomPrice, "room", applicableAdjustment);
+      totalRoomRate += roomPrice;
       cleaningFee += parseFloat(r.cleaningFee ?? "0");
     }
     
@@ -253,16 +316,25 @@ router.post("/v1/bookings", async (req, res) => {
           // Check for matrix price
           const matrixPrice = matrixPrices.find(m => m.packageId === sId && m.roomId === roomIdsArray[0]);
           let price = parseFloat(service.basePrice);
+          const isPackage = service.type === "main" || (service.category || "").toLowerCase().includes("package");
+          const entityType = isPackage ? "package" : "experience";
+
           if (matrixPrice && service.type === "main") {
             if (isMatrixBooking) {
-              price = parseFloat(matrixPrice.dailyPrice);
-              totalRoomRate -= parseFloat(selectedRooms[0].basePricePerNight);
+              let mPrice = parseFloat(matrixPrice.dailyPrice);
+              mPrice = applyRateAdjustment(mPrice, "package", applicableAdjustment);
+              price = mPrice;
+              const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
+              totalRoomRate -= applyRateAdjustment(roomBase, "room", applicableAdjustment);
               roomSubtotal = totalRoomRate * nights;
             } else {
               const roomBase = parseFloat(selectedRooms[0].basePricePerNight);
               price = parseFloat(matrixPrice.dailyPrice) - roomBase;
               if (price < 0) price = 0;
+              price = applyRateAdjustment(price, "package", applicableAdjustment);
             }
+          } else {
+            price = applyRateAdjustment(price, entityType, applicableAdjustment);
           }
           let qty = 1;
           if (matrixPrice && service.type === "main") {
