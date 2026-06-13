@@ -12,6 +12,38 @@
   transition: all 0.3s ease 0s;
   cursor: pointer;
   outline: none;
+  position: relative;
+}
+
+@keyframes draw-attention-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(11, 61, 94, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(11, 61, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(11, 61, 94, 0);
+  }
+}
+
+.book-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  animation: draw-attention-pulse 2s infinite;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity 0.3s;
+}
+
+.book-btn:hover::after {
+  opacity: 0;
+  animation: none;
 }
 
 .book-btn:hover {
