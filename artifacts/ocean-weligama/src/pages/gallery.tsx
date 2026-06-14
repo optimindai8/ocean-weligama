@@ -135,16 +135,21 @@ export default function GalleryPage() {
             <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-4">Featured Moments</h2>
             <p className="text-muted-foreground text-lg">Curated highlights from life at our villa.</p>
           </div>
-          <motion.button
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3 }}
-            onClick={() => setUploadOpen(true)}
-            className="mt-8 md:mt-0 flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold text-sm tracking-wide hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 hover:scale-105 active:scale-95"
+            className="relative mt-8 md:mt-0"
           >
-            <Plus className="w-4 h-4" />
-            Share Your Memory
-          </motion.button>
+            <div className="absolute inset-0 rounded-full bg-primary animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite] opacity-30 pointer-events-none"></div>
+            <button
+              onClick={() => setUploadOpen(true)}
+              className="relative flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold text-sm tracking-wide hover:bg-primary/90 transition-all shadow-lg hover:shadow-primary/30 hover:scale-105 active:scale-95"
+            >
+              <Plus className="w-4 h-4" />
+              Share Your Memory
+            </button>
+          </motion.div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {FEATURED.map((img, i) => (

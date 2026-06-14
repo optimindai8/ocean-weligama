@@ -322,7 +322,8 @@ export default function RoomDetailPage() {
                   </div>
                 </div>
 
-                <Link href={`/book?room=${room.id}`}>
+                <Link href={`/book?room=${room.id}`} className="block w-full relative">
+                  <div className="absolute inset-0 rounded-full bg-[#F0A500] animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite] opacity-30 pointer-events-none"></div>
                   <Button
                     onClick={() => {
                       localStorage.setItem('booking_roomIds', JSON.stringify([room.id]));
@@ -333,7 +334,7 @@ export default function RoomDetailPage() {
                       localStorage.removeItem('booking_serviceQuantities');
                       localStorage.removeItem('booking_highlightCustom');
                     }}
-                    className="w-full bg-[#F0A500] hover:bg-[#D99500] hover:-translate-y-1 text-white rounded-full h-14 font-bold text-lg shadow-[0_10px_20px_rgba(240,165,0,0.2)] hover:shadow-[0_15px_30px_rgba(240,165,0,0.3)] transition-all duration-300"
+                    className="relative w-full bg-[#F0A500] hover:bg-[#D99500] hover:-translate-y-1 text-white rounded-full h-14 font-bold text-lg shadow-[0_10px_20px_rgba(240,165,0,0.2)] hover:shadow-[0_15px_30px_rgba(240,165,0,0.3)] transition-all duration-300"
                     data-testid="button-book-room"
                   >
                     Book Now
@@ -434,7 +435,8 @@ export default function RoomDetailPage() {
             <span className="text-xs text-muted-foreground font-medium">/night</span>
           </div>
         </div>
-        <Link href={`/book?room=${room.id}`}>
+        <Link href={`/book?room=${room.id}`} className="relative block">
+          <div className="absolute inset-0 rounded-full bg-[#F0A500] animate-[ping_2.5s_cubic-bezier(0,0,0.2,1)_infinite] opacity-30 pointer-events-none"></div>
           <Button
             onClick={() => {
               localStorage.setItem('booking_roomIds', JSON.stringify([room.id]));
@@ -445,7 +447,7 @@ export default function RoomDetailPage() {
               localStorage.removeItem('booking_serviceQuantities');
               localStorage.removeItem('booking_highlightCustom');
             }}
-            className="bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full px-6 h-12 font-bold shadow-md active:scale-95 transition-transform"
+            className="relative bg-[#F0A500] hover:bg-[#D99500] text-white rounded-full px-6 h-12 font-bold shadow-md active:scale-95 transition-transform"
             data-testid="button-book-room-mobile"
           >
             Book Now
