@@ -1,0 +1,97 @@
+.card-0 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+}
+
+.card-0__holo {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 26px;
+  transform-style: preserve-3d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: card0-wobble 6.2s ease-in-out infinite;
+}
+
+@keyframes card0-wobble {
+  0% { transform: rotateX(16deg) rotateY(-18deg); }
+  50% { transform: rotateX(18deg) rotateY(18deg); }
+  100% { transform: rotateX(16deg) rotateY(-18deg); }
+}
+
+.card-0__layer {
+  position: absolute;
+  color: rgba(251, 191, 36, 0.8); /* Gold accent */
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.55));
+  opacity: 0.95;
+  transform-style: preserve-3d;
+}
+
+.card-0__layer--back {
+  opacity: 0.18;
+  filter: blur(1px);
+  transform: translateZ(-70px);
+  color: rgba(251, 191, 36, 0.4);
+}
+.card-0__layer--mid {
+  opacity: 0.42;
+  filter: blur(0.4px);
+  transform: translateZ(-34px);
+  color: rgba(251, 191, 36, 0.6);
+}
+.card-0__layer--front {
+  opacity: 0.98;
+  transform: translateZ(0px);
+  color: rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.6));
+}
+
+.card-0__holo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  background: radial-gradient(
+    circle at 40% 35%,
+    rgba(251, 191, 36, 0.15),
+    rgba(0, 0, 0, 0) 62%
+  );
+  filter: blur(8px);
+  opacity: 0.9;
+  transform: translateZ(-80px);
+}
+
+.card-0__holo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02) 45%,
+    rgba(0, 0, 0, 0)
+  );
+  opacity: 0.55;
+  transform: translateZ(-45px);
+}
+
+@media (max-width: 600px) {
+  .card-0__holo {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-0__holo {
+    animation: none !important;
+  }
+}

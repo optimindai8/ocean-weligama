@@ -12,6 +12,7 @@ import { useLanguage } from "@/components/LanguageContext";
 import { PackageComparisonTable } from "@/components/PackageComparisonTable";
 import { MatrixPricingTable } from "@/components/MatrixPricingTable";
 import { StayInStyleSection } from "@/components/stay-in-style-section";
+import { AnimatedHoloCard } from "@/components/AnimatedHoloCard";
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
   { value: "solo", label: "Solo Traveler Packages" },
@@ -63,8 +64,13 @@ export default function Home() {
         {/* Row 2: Main content — takes all remaining space, centered */}
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4">
 
+          {/* Hologram Card */}
+          <div className="mb-4 md:mb-6 mt-8">
+            <AnimatedHoloCard />
+          </div>
+
           {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10 mt-12">
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
