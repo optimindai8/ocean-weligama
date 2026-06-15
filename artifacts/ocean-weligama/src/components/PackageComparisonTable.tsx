@@ -265,13 +265,13 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="text-center mb-14">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-40px" }}
-          className="inline-flex items-center gap-2 bg-[#0B3D5E]/8 px-5 py-2 rounded-full mb-5 border border-[#0B3D5E]/10"
+          className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-white/70 text-indigo-600 px-5 py-2 rounded-full mb-5 shadow-sm"
         >
-          <Sparkles className="w-4 h-4 text-[#4BBCCC]" />
-          <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#0B3D5E]">
+          <Sparkles className="w-4 h-4 text-indigo-500" />
+          <span className="text-[11px] font-black uppercase tracking-[0.2em] text-indigo-700">
             Compare &amp; Choose
           </span>
         </motion.div>
@@ -310,9 +310,12 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
             transition={{ delay: pkgIdx * 0.12 }}
-            className={`relative bg-white rounded-3xl border-2 overflow-hidden shadow-xl ${
-              pkg.popular ? 'border-teal-400 shadow-teal-100/60' : 'border-slate-100'
+            className={`relative backdrop-blur-md rounded-3xl border overflow-hidden shadow-xl ${
+              pkg.popular
+                ? 'border-teal-300/60 shadow-teal-100/60'
+                : 'border-white/60 shadow-indigo-50/40'
             }`}
+            style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(238,245,253,0.60) 100%)' }}
           >
             {/* Gradient Header */}
             <div className={`relative bg-gradient-to-br ${pkg.scheme.headerGrad} px-6 py-8 text-white overflow-hidden`}>
@@ -337,8 +340,8 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
             {/* Features */}
             <div className="p-5 space-y-5">
               <div>
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
-                  <div className="w-7 h-7 rounded-lg bg-[#0B3D5E]/5 flex items-center justify-center">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/40">
+                  <div className="w-7 h-7 rounded-lg bg-white/50 backdrop-blur-sm flex items-center justify-center">
                     <Star className="w-3.5 h-3.5 text-[#0B3D5E]" />
                   </div>
                   <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
@@ -374,14 +377,17 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
         transition={{ delay: 0.3, duration: 0.7 }}
         className={isEditable
           ? 'hidden lg:block overflow-x-auto'
-          : 'hidden lg:block overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.1)] overflow-x-auto'
+          : 'hidden lg:block overflow-hidden rounded-[2rem] border border-white/60 shadow-[0_30px_80px_-20px_rgba(11,61,94,0.12)] overflow-x-auto backdrop-blur-md'
         }
+        style={!isEditable ? { background: 'linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(238,245,253,0.68) 100%)' } : {}}
       >
         <table className={`w-full text-left border-collapse ${isEditable ? 'table-fixed' : 'min-w-max'}`}>
           {/* Table Header */}
           <thead>
             <tr>
-              <th className={`p-6 pb-8 bg-gradient-to-br from-slate-50 to-white border-b border-slate-100 align-bottom sticky left-0 z-30 ${isEditable ? 'w-[28%]' : 'w-1/4'}`}>
+              <th className={`p-6 pb-8 border-b border-white/40 align-bottom sticky left-0 z-30 ${isEditable ? 'w-[28%]' : 'w-1/4'}`}
+                style={{ background: 'linear-gradient(135deg, rgba(248,250,255,0.95) 0%, rgba(238,245,253,0.90) 100%)' }}
+              >
                 <div className="space-y-2">
                   <h3 className="text-xl font-serif font-bold text-[#0B3D5E]">What's Included</h3>
                   <p className="text-xs text-slate-400 font-medium">{isEditable ? 'Use arrows in edit mode to reorder' : 'Hover a column to explore'}</p>
@@ -392,14 +398,19 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
                 <th
                   key={pkg.id}
                   className={`p-6 pb-8 border-b relative transition-all duration-500 ease-out align-bottom cursor-pointer ${isEditable ? 'min-w-[220px]' : 'min-w-[200px]'}
-                    ${hoveredCol === idx && !editMode ? `${pkg.scheme.lightBg} border-b-2 ${pkg.scheme.accentBorder}` : 'bg-white border-slate-100'}
+                    ${hoveredCol === idx && !editMode ? `border-b-2 ${pkg.scheme.accentBorder}` : 'border-white/40'}
                     ${pkg.popular ? 'border-t-4 border-t-teal-400' : ''}
                   `}
+                  style={{
+                    background: hoveredCol === idx && !editMode
+                      ? `linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(220,240,255,0.85) 100%)`
+                      : `linear-gradient(135deg, rgba(255,255,255,0.60) 0%, rgba(238,245,253,0.50) 100%)`
+                  }}
                   onMouseEnter={() => !editMode && setHoveredCol(idx)}
                   onMouseLeave={() => !editMode && setHoveredCol(null)}
                 >
                   {pkg.popular && hoveredCol === idx && !editMode && (
-                    <div className="absolute inset-0 bg-gradient-to-b from-teal-50/60 to-transparent pointer-events-none rounded-t-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-teal-50/40 to-transparent pointer-events-none rounded-t-none" />
                   )}
 
                   {editMode && (
@@ -444,9 +455,11 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
           {/* Table Body */}
           <tbody>
             <tr>
-              <td colSpan={localPackages.length + 1} className="bg-gradient-to-r from-slate-50 to-white py-4 px-6 border-b border-t border-slate-100/80 sticky left-0 z-20">
+              <td colSpan={localPackages.length + 1} className="py-4 px-6 border-b border-t border-white/30 sticky left-0 z-20"
+                style={{ background: 'linear-gradient(90deg, rgba(238,245,255,0.85) 0%, rgba(248,250,255,0.70) 100%)' }}
+              >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-[#0B3D5E]/8 flex items-center justify-center shadow-sm">
+                  <div className="w-8 h-8 rounded-xl bg-white/60 backdrop-blur-sm flex items-center justify-center shadow-sm border border-white/50">
                     <Star className="w-4 h-4 text-[#0B3D5E]" />
                   </div>
                   <span className="text-[11px] font-black text-[#0B3D5E] uppercase tracking-[0.18em]">
@@ -462,9 +475,12 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, margin: "-10px" }}
-                className={`border-b border-slate-50 last:border-slate-100 transition-colors duration-200 hover:bg-slate-50 group`}
+                className={`border-b border-white/30 last:border-white/20 transition-colors duration-200 group`}
+                style={{ background: itemIdx % 2 === 0 ? 'rgba(255,255,255,0.25)' : 'rgba(238,245,253,0.20)' }}
               >
-                <td className={`py-5 px-8 text-sm font-serif sticky left-0 bg-white group-hover:bg-slate-50 transition-colors duration-200 z-20 shadow-[1px_0_0_0_#e2e8f0] text-slate-600 font-medium ${isEditable ? 'w-[28%]' : ''}`}>
+                <td className={`py-5 px-8 text-sm font-serif sticky left-0 transition-colors duration-200 z-20 shadow-[1px_0_0_0_rgba(255,255,255,0.3)] text-slate-600 font-medium ${isEditable ? 'w-[28%]' : ''}`}
+                  style={{ background: 'rgba(248,250,255,0.88)' }}
+                >
                   <div className="flex items-center gap-3">
                     {editMode && (
                       <div className="flex flex-col gap-1 shrink-0 mr-2">
@@ -485,9 +501,12 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
                   return (
                     <td
                       key={idx}
-                      className={`${isEditable ? 'py-5 px-8' : 'py-4 px-6'} text-sm text-center transition-all duration-500 ease-out ${
-                        hoveredCol === idx && !editMode ? pkg.scheme.lightBg : ''
-                      }`}
+                      className={`${isEditable ? 'py-5 px-8' : 'py-4 px-6'} text-sm text-center transition-all duration-500 ease-out`}
+                      style={{
+                        background: hoveredCol === idx && !editMode
+                          ? `linear-gradient(135deg, rgba(220,240,255,0.50) 0%, rgba(200,230,255,0.35) 100%)`
+                          : 'transparent'
+                      }}
                       onMouseEnter={() => !editMode && setHoveredCol(idx)}
                       onMouseLeave={() => !editMode && setHoveredCol(null)}
                     >
@@ -507,7 +526,7 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
         transition={{ delay: 0.7 }}
-        className="flex flex-wrap items-center justify-center gap-5 mt-4 pb-12 text-slate-400"
+        className="flex flex-wrap items-center justify-center gap-3 mt-6 pb-12"
       >
         {[
           { icon: '🛡️', text: 'Secure Booking' },
@@ -518,8 +537,10 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
         ].map(badge => (
           <motion.div
             key={badge.text}
-            whileHover={{ scale: 1.08, color: '#0B3D5E' }}
-            className="flex items-center gap-2 text-xs font-semibold cursor-default transition-colors duration-200"
+            whileHover={{ scale: 1.06, y: -2 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="flex items-center gap-2 text-xs font-semibold cursor-default px-4 py-2 rounded-full border border-white/70 backdrop-blur-sm text-slate-500 hover:text-[#0B3D5E] transition-colors duration-200 shadow-sm"
+            style={{ background: 'rgba(255,255,255,0.55)' }}
           >
             <span className="text-base">{badge.icon}</span>
             <span>{badge.text}</span>

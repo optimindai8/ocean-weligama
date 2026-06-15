@@ -436,11 +436,16 @@ export default function Home() {
       </section>
 
       {/* Comparison Table Section */}
-      <section className="bg-white">
+      <section
+        className="relative overflow-hidden"
+        style={{ background: 'linear-gradient(160deg, #EEF5FA 0%, #E6EFF6 40%, #EDF2F7 100%)' }}
+      >
+        <div className="absolute top-0 left-1/3 w-96 h-96 bg-sky-200/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-indigo-200/15 rounded-full blur-3xl pointer-events-none" />
         <PackageComparisonTable />
       </section>
 
-      {/* Matrix Pricing Section */}
+      {/* Matrix Pricing Section — component handles its own section wrapper */}
       <MatrixPricingTable />
 
       <StayInStyleSection />

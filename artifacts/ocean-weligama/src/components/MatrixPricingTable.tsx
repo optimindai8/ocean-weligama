@@ -106,7 +106,8 @@ function MatrixTableInner({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="bg-white rounded-[2rem] shadow-[0_12px_40px_rgb(0,0,0,0.06)] border border-slate-100 overflow-hidden relative max-w-7xl w-full mx-auto"
+      className="backdrop-blur-md rounded-[2rem] shadow-[0_12px_40px_rgb(11,61,94,0.10)] border border-white/60 overflow-hidden relative max-w-7xl w-full mx-auto"
+      style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.78) 0%, rgba(238,245,253,0.68) 100%)' }}
     >
       {/* Horizontally scrollable wrapper */}
       <div className="overflow-x-auto relative z-10">
@@ -115,7 +116,9 @@ function MatrixTableInner({
         <table className="w-full min-w-max text-left border-collapse">
           <thead>
             <tr>
-              <th className="p-4 md:p-6 pb-6 md:pb-8 bg-gradient-to-br from-slate-50 to-white text-[#0B3D5E] border-b border-r border-slate-100 font-serif font-bold text-sm md:text-lg min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] align-bottom sticky left-0 z-40 shadow-[4px_0_12px_rgb(0,0,0,0.03)]">
+              <th className="p-4 md:p-6 pb-6 md:pb-8 text-[#0B3D5E] border-b border-r border-white/40 font-serif font-bold text-sm md:text-lg min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] align-bottom sticky left-0 z-40 shadow-[4px_0_12px_rgb(11,61,94,0.05)]"
+                style={{ background: 'linear-gradient(135deg, rgba(248,250,255,0.96) 0%, rgba(238,245,253,0.92) 100%)' }}
+              >
                 Room Type
                 <div className="text-[9px] md:text-[10px] font-light text-slate-400 font-sans mt-1 uppercase tracking-widest hidden sm:block">Select your comfort</div>
               </th>
@@ -123,7 +126,9 @@ function MatrixTableInner({
                 const isPopular = pkg.isFeatured;
                 const meta = PACKAGE_META.find(m => pkg.name?.toLowerCase().includes(m.nameMatch)) || PACKAGE_META[0];
                 return (
-                  <th key={pkg.id} className={`p-6 pb-8 border-b relative transition-all duration-500 ease-out align-bottom bg-white border-slate-100 ${isPopular ? 'border-t-4 border-t-teal-400' : ''} min-w-[220px]`}>
+                  <th key={pkg.id} className={`p-6 pb-8 border-b relative transition-all duration-500 ease-out align-bottom border-white/40 ${isPopular ? 'border-t-4 border-t-teal-400' : ''} min-w-[220px]`}
+                    style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.60) 0%, rgba(238,245,253,0.50) 100%)' }}
+                  >
                     {isPopular && (
                       <div className="absolute inset-0 bg-gradient-to-b from-teal-50/60 to-transparent pointer-events-none rounded-t-none" />
                     )}
@@ -160,17 +165,18 @@ function MatrixTableInner({
           }}
         >
           <table className="w-full min-w-max text-left border-collapse">
-            <tbody className="divide-y divide-slate-50 bg-white">
+            <tbody className="divide-y divide-white/30">
               {filteredRooms.map((room: any) => (
-                <tr key={room.id} className="group transition-colors duration-200 hover:bg-slate-50/50">
-                  <td 
+                <tr key={room.id} className="group transition-colors duration-200 hover:bg-white/40">
+                  <td
                     onClick={() => {
                       const slug = roomSlugMap[room.id];
                       if (slug) setLocation(`/rooms/${slug}`);
                     }}
-                    className={`p-3 md:p-5 text-xs md:text-sm font-serif text-[#0B3D5E] bg-white group-hover:bg-slate-50 transition-all sticky left-0 z-30 font-medium border-r border-slate-50 shadow-[4px_0_12px_rgb(0,0,0,0.03)] leading-relaxed whitespace-normal min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] ${
+                    className={`p-3 md:p-5 text-xs md:text-sm font-serif text-[#0B3D5E] transition-all sticky left-0 z-30 font-medium border-r border-white/30 shadow-[4px_0_12px_rgb(11,61,94,0.04)] leading-relaxed whitespace-normal min-w-[140px] md:min-w-[220px] max-w-[180px] md:max-w-[280px] ${
                       roomSlugMap[room.id] ? 'cursor-pointer hover:shadow-inner' : 'cursor-default'
                     }`}
+                    style={{ background: 'rgba(248,250,255,0.92)' }}
                   >
                     <span className="line-clamp-3 md:line-clamp-none">{room.name}</span>
                     {roomSlugMap[room.id] && (
@@ -189,7 +195,9 @@ function MatrixTableInner({
                     const isPopular = pkg.isFeatured;
                     const meta = PACKAGE_META.find(m => pkg.name?.toLowerCase().includes(m.nameMatch)) || PACKAGE_META[0];
                     return (
-                      <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 min-w-[220px] ${isPopular ? 'bg-teal-50/10' : ''}`}>
+                      <td key={pkg.id} className={`p-4 md:p-6 text-center relative transition-colors duration-200 min-w-[220px]`}
+                        style={{ background: isPopular ? 'rgba(20,184,166,0.04)' : 'transparent' }}
+                      >
                         {price && price !== "0" && price !== "0.00" ? (
                             <div className="flex flex-col items-center justify-center h-full w-full group/price relative py-2">
                               <div className="flex flex-col items-center justify-center gap-1 mb-3 relative z-10">
@@ -267,7 +275,7 @@ function MatrixTableInner({
             left: 0,
             right: 0,
             height: "80px",
-            background: "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 70%, rgba(255,255,255,1) 100%)",
+            background: "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(238,245,253,0.80) 60%, rgba(238,245,253,0.95) 100%)",
             pointerEvents: "none",
             zIndex: 15,
             borderBottomLeftRadius: "2rem",
@@ -298,14 +306,15 @@ function MatrixTableInner({
                 width: "32px",
                 height: "32px",
                 borderRadius: "50%",
-                backgroundColor: "#0B3D5E",
-                border: "none",
+                background: "rgba(11,61,94,0.75)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.3)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
                 color: "white",
-                boxShadow: "0 2px 10px rgba(11,61,94,0.3)",
+                boxShadow: "0 4px 14px rgba(11,61,94,0.25)",
                 transition: "all 0.2s",
               }}
             >
@@ -321,14 +330,15 @@ function MatrixTableInner({
                 width: "32px",
                 height: "32px",
                 borderRadius: "50%",
-                backgroundColor: "#0B3D5E",
-                border: "none",
+                background: "rgba(11,61,94,0.75)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(255,255,255,0.3)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
                 color: "white",
-                boxShadow: "0 2px 10px rgba(11,61,94,0.3)",
+                boxShadow: "0 4px 14px rgba(11,61,94,0.25)",
                 transition: "all 0.2s",
                 animation: "bounce-gentle 2s infinite",
               }}
@@ -393,19 +403,27 @@ export function MatrixPricingTable() {
   }
 
   return (
-    <section className="py-20 bg-[#FAF9F6] relative overflow-hidden">
+    <section
+      className="py-20 relative overflow-hidden"
+      style={{ background: 'linear-gradient(160deg, #EEF5FA 0%, #E6EFF6 40%, #EDF2F7 100%)' }}
+    >
+      {/* Decorative blobs */}
+      <div className="absolute top-0 right-1/4 w-96 h-96 bg-teal-200/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 right-0 w-64 h-64 bg-sky-100/25 rounded-full blur-3xl pointer-events-none" />
+
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-14 space-y-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white shadow-sm border border-[#0B3D5E]/10 text-[#1A6B8A] text-xs font-bold mb-2 uppercase tracking-widest"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/60 backdrop-blur-sm shadow-sm border border-white/70 text-indigo-600 text-xs font-bold mb-2 uppercase tracking-widest"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
             Transparent Pricing
           </motion.div>
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -413,7 +431,7 @@ export function MatrixPricingTable() {
           >
             Perfect Packages, <br className="hidden md:block"/> <span className="text-[#1A6B8A] italic font-light">Tailored for You</span>
           </motion.h2>
-          <p className="text-muted-foreground font-light text-sm md:text-base leading-relaxed px-4 italic">
+          <p className="text-slate-500 font-light text-sm md:text-base leading-relaxed px-4 italic">
             Find the perfect balance of surf, comfort, and value. Our daily rates combine your preferred accommodation with world-class surf experiences.
           </p>
         </div>
