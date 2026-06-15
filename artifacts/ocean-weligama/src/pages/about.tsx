@@ -281,16 +281,25 @@ export default function AboutPage() {
       </section>
 
       {/* Experience Builder Widget ("Sri Lanka at Your Own Pace") */}
-      <section className="py-16 sm:py-24 bg-muted/20">
-        <div className="container mx-auto px-4 max-w-6xl">
+      <section className="py-16 sm:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #EEF5FA 0%, #E6EFF6 40%, #EDF2F7 100%)' }}>
+        {/* Ambient blobs */}
+        <div className="absolute top-0 right-1/4 w-80 h-80 bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <div className="text-center mb-16">
-            <span className="text-primary font-black tracking-[0.3em] uppercase text-xs mb-3 block">
-              Tailored Travel Styles
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground">
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-white/70 text-indigo-600 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-sm mb-3"
+            >
+              <Sparkles className="w-3.5 h-3.5" /> Tailored Travel Styles
+            </motion.span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-[#0B3D5E]">
               Sri Lanka At Your Own Pace
             </h2>
-            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed italic">
+            <p className="text-slate-500 mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed font-light">
               At Ocean Air, we offer much more than just accommodation. Choose to add any activities you like during your stay to create a truly flexible island holiday.
             </p>
           </div>
@@ -298,35 +307,77 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-12 gap-10 items-start">
             {/* Interactive Selector list */}
             <div className="lg:col-span-7 space-y-4">
-              <h3 className="text-base sm:text-lg font-bold text-primary mb-3">
+              <h3 className="text-base sm:text-lg font-bold text-[#0B3D5E] mb-3">
                 Our Custom Add-Ons:
               </h3>
               <div className="grid gap-3">
-                {ACTIVITIES.map((activity) => {
+                {ACTIVITIES.map((activity, idx) => {
                   const Icon = activity.icon;
+                  // Dynamic colors based on category
+                  let grad = "from-teal-400 to-cyan-500";
+                  let glow = "rgba(20,184,166,0.25)";
+                  let iconBg = "rgba(20,184,166,0.12)";
+                  let iconColor = "#14b8a6";
+                  
+                  if (activity.category === "Adventure") {
+                    grad = "from-amber-400 to-orange-500";
+                    glow = "rgba(251,191,36,0.25)";
+                    iconBg = "rgba(251,191,36,0.12)";
+                    iconColor = "#f59e0b";
+                  } else if (activity.category === "Wellness") {
+                    grad = "from-emerald-400 to-teal-500";
+                    glow = "rgba(16,185,129,0.25)";
+                    iconBg = "rgba(16,185,129,0.12)";
+                    iconColor = "#10b981";
+                  } else if (activity.category === "Nature") {
+                    grad = "from-blue-400 to-indigo-500";
+                    glow = "rgba(99,102,241,0.25)";
+                    iconBg = "rgba(99,102,241,0.10)";
+                    iconColor = "#6366f1";
+                  } else if (activity.category === "Culture") {
+                    grad = "from-violet-400 to-purple-500";
+                    glow = "rgba(139,92,246,0.25)";
+                    iconBg = "rgba(139,92,246,0.10)";
+                    iconColor = "#8b5cf6";
+                  }
+
                   return (
-                    <div
+                    <motion.div
                       key={activity.id}
-                      className="group flex items-start gap-4 p-4 sm:p-5 rounded-2xl border transition-all duration-300 bg-white/50 border-border hover:bg-white hover:border-[#4BBCCC]/30"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.05, duration: 0.4 }}
+                      whileHover={{ x: 6, scale: 1.01 }}
+                      className="group relative flex items-start gap-4 p-4 sm:p-5 rounded-2xl border border-white/60 backdrop-blur-md transition-all duration-400 overflow-hidden cursor-pointer"
+                      style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.65) 0%, rgba(238,245,253,0.55) 100%)' }}
                     >
-                      <div className="mt-0.5 p-2 rounded-xl transition-colors bg-primary/5 text-primary group-hover:bg-[#4BBCCC]/10 group-hover:text-[#4BBCCC]">
-                        <Icon className="w-5 h-5" />
-                      </div>
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
+                        style={{ background: `radial-gradient(ellipse at left center, ${glow} 0%, transparent 70%)` }}
+                      />
                       
-                      <div className="flex-1">
+                      <motion.div 
+                        whileHover={{ rotate: 8, scale: 1.1 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+                        className="relative mt-0.5 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border border-white/60 shadow-sm transition-all duration-400 group-hover:shadow-md"
+                        style={{ background: iconBg, backdropFilter: 'blur(8px)' }}
+                      >
+                         <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                           style={{ background: `linear-gradient(135deg, ${glow}, transparent)` }}
+                         />
+                         <Icon className="w-5 h-5 relative z-10" style={{ color: iconColor }} />
+                      </motion.div>
+                      
+                      <div className="flex-1 relative z-10">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-bold text-foreground text-sm sm:text-base">{activity.name}</h4>
-                          <span className={`text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                            activity.category === "Adventure" ? "bg-amber-100 text-amber-800" :
-                            activity.category === "Wellness" ? "bg-emerald-100 text-emerald-800" :
-                            activity.category === "Nature" ? "bg-sky-100 text-sky-800" : "bg-purple-100 text-purple-800"
-                          }`}>
-                            {activity.category}
+                          <h4 className="font-bold text-[#0B3D5E] text-sm sm:text-base">{activity.name}</h4>
+                          <span className={`text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-widest bg-gradient-to-r ${grad} bg-clip-text text-transparent border border-white/50 shadow-sm`} style={{ background: 'rgba(255,255,255,0.7)', WebkitBackgroundClip: 'text' }}>
+                            <span style={{ color: iconColor }}>{activity.category}</span>
                           </span>
                         </div>
-                        <p className="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">{activity.desc}</p>
+                        <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">{activity.desc}</p>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
@@ -334,43 +385,65 @@ export default function AboutPage() {
 
             {/* Info sidebar */}
             <div className="lg:col-span-5 lg:sticky lg:top-24">
-              <div className="bg-primary text-white p-6 sm:p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="relative overflow-hidden rounded-[2.5rem] p-6 sm:p-10 border border-white/20 shadow-[0_32px_80px_rgba(11,61,94,0.2),0_0_0_1px_rgba(255,255,255,0.1)_inset]"
+                style={{ background: 'linear-gradient(135deg, rgba(11,61,94,0.95) 0%, rgba(26,107,138,0.85) 100%)', backdropFilter: 'blur(24px)' }}
+              >
+                {/* Shimmer sweep */}
+                <motion.div
+                  className="absolute inset-0 w-[40%] pointer-events-none z-0"
+                  style={{ background: 'linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)', skewX: '-15deg' }}
+                  animate={{ x: ['-160%', '350%'] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 3 }}
+                />
+
                 {/* Glow ball */}
-                <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-[#4BBCCC]/20 blur-2xl rounded-full pointer-events-none" />
+                <div className="absolute -right-10 -bottom-10 w-44 h-44 bg-[#4BBCCC]/30 blur-[60px] rounded-full pointer-events-none" />
+                <div className="absolute -left-10 -top-10 w-40 h-40 bg-indigo-500/20 blur-[50px] rounded-full pointer-events-none" />
                 
-                <h3 className="text-xl sm:text-2xl font-serif font-bold mb-3 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-[#4BBCCC]" />
+                <h3 className="relative z-10 text-xl sm:text-2xl font-serif font-bold mb-3 flex items-center gap-2 text-white">
+                  <Sparkles className="w-5 h-5 text-teal-400" />
                   Your Tailored Stay
                 </h3>
-                <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6 italic">
+                <p className="relative z-10 text-white/70 text-xs sm:text-sm leading-relaxed mb-6 italic">
                   Add any of these experiences upon check-in or when booking your room. Enjoy Southern Sri Lanka on your own schedule without feeling rushed.
                 </p>
 
-                <div className="border-t border-white/10 pt-6 mb-6">
+                <div className="relative z-10 border-t border-white/10 pt-6 mb-6">
                   <div className="flex items-center gap-3 text-sm text-white/95 font-medium mb-3">
-                    <Check className="w-4 h-4 text-[#4BBCCC]" /> Add during booking
+                    <Check className="w-4 h-4 text-teal-400" /> Add during booking
                   </div>
                   <div className="flex items-center gap-3 text-sm text-white/95 font-medium mb-3">
-                    <Check className="w-4 h-4 text-[#4BBCCC]" /> Or decide when you arrive
+                    <Check className="w-4 h-4 text-teal-400" /> Or decide when you arrive
                   </div>
                   <div className="flex items-center gap-3 text-sm text-white/95 font-medium mb-3">
-                    <Check className="w-4 h-4 text-[#4BBCCC]" /> No strict schedules
+                    <Check className="w-4 h-4 text-teal-400" /> No strict schedules
                   </div>
                   <div className="flex items-center gap-3 text-sm text-white/95 font-medium">
-                    <Check className="w-4 h-4 text-[#4BBCCC]" /> Fully refundable if plans change
+                    <Check className="w-4 h-4 text-teal-400" /> Fully refundable if plans change
                   </div>
                 </div>
 
-                <div className="bg-white/5 p-4 rounded-xl mb-8 border border-white/10 text-xs text-white/80 leading-relaxed space-y-1">
-                  <p><strong>✨ Unrestricted Flexibility:</strong> Stay 2 nights or 2 weeks. Custom build an itinerary that fits your personal budget and pace.</p>
+                <div className="relative z-10 bg-white/5 backdrop-blur-sm p-4 rounded-xl mb-8 border border-white/10 text-xs text-white/80 leading-relaxed shadow-inner">
+                  <p><strong className="text-teal-300">✨ Unrestricted Flexibility:</strong> Stay 2 nights or 2 weeks. Custom build an itinerary that fits your personal budget and pace.</p>
                 </div>
 
-                <Link href="/packages">
-                  <Button className="w-full bg-[#4BBCCC] hover:bg-white text-primary hover:text-primary rounded-full py-6 h-auto text-sm sm:text-base font-bold transition-all shadow-lg hover:scale-[1.02]">
-                    Explore Packages
-                  </Button>
+                <Link href="/packages" className="relative z-10 block">
+                  <button className="group relative w-full h-14 rounded-full text-[#0B3D5E] font-bold text-sm sm:text-base overflow-hidden shadow-lg transition-all duration-400 hover:shadow-xl hover:scale-[1.02]"
+                    style={{ background: 'linear-gradient(135deg, #4BBCCC 0%, #2dd4bf 100%)' }}
+                  >
+                    <span className="absolute inset-0 w-[35%] bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] translate-x-[-160%] group-hover:translate-x-[360%] transition-transform duration-700 ease-out pointer-events-none" />
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      Explore Packages
+                      <ChevronRight className="w-4 h-4" />
+                    </span>
+                  </button>
                 </Link>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -527,82 +600,102 @@ export default function AboutPage() {
       </section>
 
       {/* Rooftop Café Vibe Shift Simulator */}
-      <section className="py-16 sm:py-24 bg-muted/20 overflow-hidden">
-        <div className="container mx-auto px-4 max-w-6xl">
-          {/* Shiftable container block */}
-          <div className={`relative p-6 sm:p-14 rounded-[2.5rem] transition-all duration-[1000ms] shadow-2xl border ${
+      <section className="py-16 sm:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #EEF5FA 0%, #E6EFF6 40%, #EDF2F7 100%)' }}>
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          {/* Shiftable glassmorphism container block */}
+          <div className={`relative p-6 sm:p-14 rounded-[3rem] transition-all duration-[1000ms] shadow-2xl overflow-hidden border ${
             sunsetMode 
-              ? "bg-[linear-gradient(135deg,#1f1330_0%,#431c3c_50%,#5e2637_100%)] text-white border-purple-900/30" 
-              : "bg-[linear-gradient(135deg,#E8F8FA_0%,#F4FBFB_60%,#FAFAF8_100%)] text-foreground border-[#4BBCCC]/20"
-          }`}>
-            {/* Glow orbs */}
-            <div className={`absolute top-[-20%] right-[-10%] w-[300px] h-[300px] blur-[120px] rounded-full transition-all duration-[1000ms] pointer-events-none ${
-              sunsetMode ? "bg-amber-500/20" : "bg-[#4BBCCC]/20"
+              ? "border-purple-500/20 shadow-[0_32px_80px_rgba(67,28,60,0.4)]" 
+              : "border-white/40 shadow-[0_32px_80px_rgba(11,61,94,0.12)]"
+          }`}
+          style={{
+            background: sunsetMode 
+              ? 'linear-gradient(135deg, rgba(31,19,48,0.85) 0%, rgba(67,28,60,0.85) 50%, rgba(94,38,55,0.85) 100%)' 
+              : 'linear-gradient(135deg, rgba(255,255,255,0.75) 0%, rgba(238,247,253,0.65) 50%, rgba(237,242,250,0.7) 100%)',
+            backdropFilter: 'blur(24px)'
+          }}
+          >
+            {/* Ambient glow orbs */}
+            <div className={`absolute top-0 right-0 w-[400px] h-[400px] blur-[120px] rounded-full transition-all duration-[1000ms] pointer-events-none ${
+              sunsetMode ? "bg-amber-500/30" : "bg-[#4BBCCC]/20"
             }`} />
-            <div className={`absolute bottom-[-20%] left-[-10%] w-[300px] h-[300px] blur-[120px] rounded-full transition-all duration-[1000ms] pointer-events-none ${
-              sunsetMode ? "bg-purple-500/10" : "bg-primary/5"
+            <div className={`absolute bottom-0 left-0 w-[400px] h-[400px] blur-[120px] rounded-full transition-all duration-[1000ms] pointer-events-none ${
+              sunsetMode ? "bg-purple-600/20" : "bg-indigo-400/10"
+            }`} />
+            
+            {/* Top accent line */}
+            <div className={`absolute top-0 left-10 right-10 h-px transition-colors duration-[1000ms] ${
+              sunsetMode ? "bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" : "bg-gradient-to-r from-transparent via-teal-400/50 to-transparent"
             }`} />
 
             <div className="relative z-10 grid lg:grid-cols-12 gap-10 sm:gap-14 items-center">
               {/* Text area */}
               <div className="lg:col-span-6 space-y-6">
                 <div className="flex items-center gap-2">
-                  <Coffee className={`w-5 h-5 ${sunsetMode ? "text-amber-400" : "text-[#4BBCCC]"}`} />
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center backdrop-blur-sm border transition-colors duration-[1000ms] ${
+                    sunsetMode ? "bg-amber-500/10 border-amber-500/30" : "bg-[#4BBCCC]/10 border-[#4BBCCC]/30"
+                  }`}>
+                    <Coffee className={`w-4 h-4 ${sunsetMode ? "text-amber-400" : "text-[#4BBCCC]"}`} />
+                  </div>
                   <span className={`text-[10px] font-black uppercase tracking-[0.25em] ${sunsetMode ? "text-amber-400" : "text-[#4BBCCC]"}`}>
-                    Scenic Culinary Social Space
+                    Scenic Culinary Space
                   </span>
                 </div>
 
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold leading-tight">
+                <h2 className={`text-4xl sm:text-5xl md:text-6xl font-serif font-bold leading-tight transition-colors duration-[1000ms] ${sunsetMode ? "text-white" : "text-[#0B3D5E]"}`}>
                   The Rooftop Café
                 </h2>
 
-                <p className={`text-sm sm:text-base leading-relaxed italic transition-colors duration-[1000ms] ${
-                  sunsetMode ? "text-white/80" : "text-muted-foreground"
+                <p className={`text-sm sm:text-base leading-relaxed font-light transition-colors duration-[1000ms] ${
+                  sunsetMode ? "text-white/70" : "text-slate-500"
                 }`}>
                   One of the highlights of Ocean Air is our rooftop café, where guests can enjoy breakfast, fresh food, coffee, tropical drinks, stunning ocean views, and unforgettable sunsets. It’s the perfect place to relax, meet fellow travelers, and unwind after surfing or exploring the area.
                 </p>
 
                 {/* Vibe shift selector */}
                 <div className="pt-2 flex flex-col sm:flex-row sm:items-center gap-4">
-                  <span className={`text-xs sm:text-sm font-bold ${sunsetMode ? "text-white/70" : "text-muted-foreground"}`}>
-                    Experience the Atmosphere:
+                  <span className={`text-xs sm:text-sm font-bold uppercase tracking-widest ${sunsetMode ? "text-white/50" : "text-slate-400"}`}>
+                    Atmosphere:
                   </span>
-                  <div className="bg-black/10 p-1 rounded-full flex self-start border border-black/5">
+                  <div className={`p-1.5 rounded-full flex self-start border backdrop-blur-md transition-colors duration-[1000ms] ${
+                    sunsetMode ? "bg-black/20 border-white/10" : "bg-white/50 border-white/60 shadow-sm"
+                  }`}>
                     <button
                       onClick={() => setSunsetMode(false)}
-                      className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-300 ${
                         !sunsetMode 
-                          ? "bg-white text-primary shadow-sm animate-pulse-highlight" 
-                          : "text-white/60 hover:text-white"
+                          ? "bg-gradient-to-r from-teal-400 to-cyan-500 text-white shadow-md" 
+                          : "text-white/50 hover:text-white"
                       }`}
                     >
-                      <Sun className="w-3.5 h-3.5" /> Morning Vibes
+                      <Sun className="w-4 h-4" /> Morning Vibes
                     </button>
                     <button
                       onClick={() => setSunsetMode(true)}
-                      className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-300 ${
                         sunsetMode 
-                          ? "bg-amber-500 text-white shadow-sm" 
-                          : "text-muted-foreground hover:text-primary"
+                          ? "bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-md" 
+                          : "text-slate-500 hover:text-[#0B3D5E]"
                       }`}
                     >
-                      <Sparkles className="w-3.5 h-3.5" /> Sunset Golden Hour
+                      <Sparkles className="w-4 h-4" /> Golden Hour
                     </button>
                   </div>
                 </div>
 
                 {/* Info grid */}
-                <div className="grid grid-cols-2 gap-6 border-t border-black/10 pt-6">
+                <div className={`grid grid-cols-2 gap-6 border-t pt-6 transition-colors duration-[1000ms] ${
+                  sunsetMode ? "border-white/10" : "border-slate-200/50"
+                }`}>
                   <div>
-                    <h4 className="font-bold text-xs uppercase tracking-widest text-[#4BBCCC] mb-1">Rooftop Food</h4>
-                    <p className={`text-xs transition-colors duration-[1000ms] leading-relaxed ${sunsetMode ? "text-white/60" : "text-muted-foreground"}`}>
+                    <h4 className={`font-bold text-[10px] uppercase tracking-widest mb-2 transition-colors duration-[1000ms] ${sunsetMode ? "text-amber-400" : "text-[#4BBCCC]"}`}>Rooftop Food</h4>
+                    <p className={`text-xs transition-colors duration-[1000ms] leading-relaxed font-light ${sunsetMode ? "text-white/60" : "text-slate-500"}`}>
                       Healthy breakfast, local tropical fruit bowls, local teas, and traditional Sri Lankan delicacies.
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-bold text-xs uppercase tracking-widest text-[#4BBCCC] mb-1">Scenic Socials</h4>
-                    <p className={`text-xs transition-colors duration-[1000ms] leading-relaxed ${sunsetMode ? "text-white/60" : "text-muted-foreground"}`}>
+                    <h4 className={`font-bold text-[10px] uppercase tracking-widest mb-2 transition-colors duration-[1000ms] ${sunsetMode ? "text-amber-400" : "text-[#4BBCCC]"}`}>Scenic Socials</h4>
+                    <p className={`text-xs transition-colors duration-[1000ms] leading-relaxed font-light ${sunsetMode ? "text-white/60" : "text-slate-500"}`}>
                       Breathtaking sunsets and 360-degree ocean views that make it Weligama's favorite unwind spot.
                     </p>
                   </div>
@@ -611,7 +704,9 @@ export default function AboutPage() {
 
               {/* Photo transitions */}
               <div className="lg:col-span-6">
-                <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl bg-black/10 border border-white/10">
+                <div className={`relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border transition-colors duration-[1000ms] ${
+                  sunsetMode ? "border-white/20" : "border-white/60"
+                }`}>
                   <AnimatePresence mode="wait">
                     {!sunsetMode ? (
                       <motion.img
@@ -648,37 +743,78 @@ export default function AboutPage() {
       </section>
 
       {/* 100% Locally Owned Pride section */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="container mx-auto px-4 max-w-6xl">
+      <section className="py-16 sm:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #EDF2F7 0%, #E6EFF6 40%, #EEF5FA 100%)' }}>
+        <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-teal-100/30 blur-[80px] rounded-full -translate-y-1/2 pointer-events-none" />
+        
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
           <div className="text-center mb-16">
-            <span className="text-[#4BBCCC] font-black tracking-[0.3em] uppercase text-xs mb-3 block">
-              Our Identity
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-primary">
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-white/70 text-indigo-600 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-sm mb-3"
+            >
+              <Heart className="w-3.5 h-3.5" /> Our Identity
+            </motion.span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-[#0B3D5E]">
               100% Locally Owned
             </h2>
-            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed italic">
+            <p className="text-slate-500 mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed font-light">
               We are dedicated to building a welcoming, sustainable home away from home, driven by real family values.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {VALUES.map((val, idx) => {
               const Icon = val.icon;
+              let grad = "from-teal-400 to-cyan-500";
+              let glow = "rgba(20,184,166,0.35)";
+              let iconBg = "rgba(20,184,166,0.12)";
+              let iconColor = "#14b8a6";
+              
+              if (idx === 1) {
+                grad = "from-amber-400 to-orange-500";
+                glow = "rgba(251,191,36,0.35)";
+                iconBg = "rgba(251,191,36,0.12)";
+                iconColor = "#f59e0b";
+              } else if (idx === 2) {
+                grad = "from-indigo-400 to-violet-500";
+                glow = "rgba(99,102,241,0.35)";
+                iconBg = "rgba(99,102,241,0.10)";
+                iconColor = "#6366f1";
+              }
+
               return (
                 <motion.div
                   key={val.title}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  className="group relative bg-card p-6 sm:p-10 rounded-[2rem] border border-border/80 hover:border-[#4BBCCC]/50 hover:shadow-2xl transition-all duration-300 flex flex-col text-center"
+                  transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="group relative flex flex-col text-center p-8 sm:p-10 rounded-[2.5rem] border border-white/50 backdrop-blur-xl shadow-xl transition-all duration-500 overflow-hidden"
+                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(238,247,253,0.6) 100%)' }}
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-primary/5 text-primary flex items-center justify-center mx-auto mb-6 transition-all group-hover:bg-[#4BBCCC]/15 group-hover:text-[#4BBCCC] group-hover:scale-110">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-xl font-serif font-bold text-foreground mb-4">{val.title}</h3>
-                  <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground italic">{val.desc}</p>
+                  {/* Hover glow */}
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-[2.5rem] pointer-events-none"
+                    style={{ background: `radial-gradient(circle at center, ${glow.replace('0.35', '0.15')} 0%, transparent 70%)` }}
+                  />
+
+                  <motion.div 
+                    whileHover={{ rotate: 10, scale: 1.15 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+                    className="relative w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-white/60 shadow-sm transition-all duration-400 group-hover:shadow-md"
+                    style={{ background: iconBg, backdropFilter: 'blur(8px)' }}
+                  >
+                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                      style={{ background: `linear-gradient(135deg, ${glow.replace('0.35', '0.2')}, transparent)` }}
+                    />
+                    <Icon className="w-7 h-7 relative z-10" style={{ color: iconColor }} />
+                  </motion.div>
+                  
+                  <h3 className="relative z-10 text-xl font-serif font-bold text-[#0B3D5E] mb-4 leading-tight">{val.title}</h3>
+                  <p className="relative z-10 text-xs sm:text-sm leading-relaxed text-slate-500 font-light">{val.desc}</p>
                 </motion.div>
               );
             })}
