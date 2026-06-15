@@ -251,8 +251,20 @@ export default function RoomDetailPage() {
                 )}
               </div>
 
-              <div className="prose prose-lg text-muted-foreground leading-relaxed mb-12 max-w-none">
-                <p>{room.description}</p>
+              <div className="bg-gradient-to-b from-white to-slate-50/50 rounded-[2rem] p-8 md:p-10 mb-12 border border-white shadow-[0_15px_40px_-10px_rgba(0,0,0,0.08)] relative transition-all duration-500 hover:shadow-[0_20px_50px_-10px_rgba(0,0,0,0.1)] group">
+                {/* Subtle 3D inner highlight to give it depth without clutter */}
+                <div className="absolute inset-0 rounded-[2rem] shadow-[inset_0_2px_6px_rgba(255,255,255,0.9),inset_0_-2px_6px_rgba(0,0,0,0.03)] pointer-events-none" />
+                
+                <div className="relative z-10">
+                  <h3 className="text-xs font-black text-[#0B3D5E] uppercase tracking-[0.2em] mb-6 flex items-center gap-3 opacity-90">
+                    <div className="w-8 h-[2px] bg-gradient-to-r from-[#4BBCCC] to-transparent rounded-full" />
+                    The Sanctuary
+                  </h3>
+                  
+                  <div className="text-slate-600 leading-[1.8] max-w-none whitespace-pre-wrap font-medium text-base md:text-[17px]">
+                    {room.description}
+                  </div>
+                </div>
               </div>
 
               {/* Highlights */}
