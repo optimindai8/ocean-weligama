@@ -12,8 +12,9 @@ export async function getActiveGlobalRateAdjustment() {
 
   // Find the first active one that fits the date range, or has no date range
   const adjustment = activeAdjustments.find((adj) => {
-    if (!adj.dateFrom || !adj.dateTo) return true;
-    return adj.dateFrom <= today && adj.dateTo >= today;
+    if (adj.dateFrom && adj.dateFrom > today) return false;
+    if (adj.dateTo && adj.dateTo < today) return false;
+    return true;
   });
 
   return adjustment || null;
