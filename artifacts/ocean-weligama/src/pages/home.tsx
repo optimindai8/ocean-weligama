@@ -227,6 +227,7 @@ export default function Home() {
                 gradient: 'from-teal-400 to-cyan-500',
                 glow: 'rgba(20,184,166,0.35)',
                 iconBg: 'rgba(20,184,166,0.12)',
+                iconColor: '#14b8a6',
               },
               {
                 icon: (
@@ -241,6 +242,7 @@ export default function Home() {
                 gradient: 'from-blue-400 to-indigo-500',
                 glow: 'rgba(99,102,241,0.35)',
                 iconBg: 'rgba(99,102,241,0.10)',
+                iconColor: '#6366f1',
               },
               {
                 icon: (
@@ -254,6 +256,7 @@ export default function Home() {
                 gradient: 'from-amber-400 to-orange-500',
                 glow: 'rgba(251,191,36,0.35)',
                 iconBg: 'rgba(251,191,36,0.12)',
+                iconColor: '#f59e0b',
               },
               {
                 icon: (
@@ -267,6 +270,7 @@ export default function Home() {
                 gradient: 'from-violet-400 to-purple-500',
                 glow: 'rgba(139,92,246,0.35)',
                 iconBg: 'rgba(139,92,246,0.10)',
+                iconColor: '#8b5cf6',
               },
             ].map((item, idx) => (
               <motion.div
@@ -297,12 +301,8 @@ export default function Home() {
                     className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400"
                     style={{ background: `linear-gradient(135deg, ${item.glow.replace('0.35', '0.20')}, transparent)` }}
                   />
-                  <div className={`relative z-10 bg-gradient-to-br ${item.gradient} bg-clip-text`}
-                    style={{ color: 'transparent', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.12))' }}
-                  >
-                    <div style={{ background: `linear-gradient(135deg, ${item.gradient.includes('teal') ? '#2dd4bf,#06b6d4' : item.gradient.includes('blue') ? '#60a5fa,#818cf8' : item.gradient.includes('amber') ? '#fbbf24,#f97316' : '#a78bfa,#a855f7'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                      {item.icon}
-                    </div>
+                  <div className="relative z-10" style={{ color: item.iconColor }}>
+                    {item.icon}
                   </div>
                 </motion.div>
 
