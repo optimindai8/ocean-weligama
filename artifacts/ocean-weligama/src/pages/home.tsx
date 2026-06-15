@@ -353,7 +353,7 @@ export default function Home() {
                     
                     {room.highlights && room.highlights.length > 0 && (
                       <div className="opacity-100 transition-opacity duration-700 delay-100 mb-4">
-                        <ul className="text-white/95 text-xs sm:text-sm font-medium space-y-2">
+                        <ul className="text-white/95 text-[10px] sm:text-xs font-serif tracking-wide space-y-2">
                           {room.highlights.slice(0, 3).map((h: string, i: number) => (
                             <li key={i} className="flex items-start gap-2.5">
                               <div className="w-1.5 h-1.5 rounded-full bg-accent mt-[6px] shrink-0 shadow-[0_0_5px_rgba(75,188,204,0.8)]" />
