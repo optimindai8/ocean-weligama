@@ -216,18 +216,23 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.25 }}
-              className="relative bg-card/75 backdrop-blur-md p-6 sm:p-10 rounded-[2.5rem] border border-border/80 shadow-xl overflow-hidden"
+              className="relative p-8 sm:p-10 rounded-[2.5rem] border border-white/60 shadow-2xl overflow-hidden backdrop-blur-xl"
+              style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(238,245,253,0.55) 100%)' }}
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#4BBCCC]/10 blur-2xl rounded-full pointer-events-none" />
-              <h3 className="text-lg sm:text-xl font-serif font-bold text-primary mb-4 flex items-center gap-2">
-                <Map className="w-5 h-5 text-[#4BBCCC]" />
+              <div className="absolute top-0 right-0 w-48 h-48 bg-teal-200/40 blur-[50px] rounded-full pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-200/30 blur-[50px] rounded-full pointer-events-none" />
+              
+              <h3 className="relative z-10 text-xl sm:text-2xl font-serif font-bold text-[#0B3D5E] mb-4 flex items-center gap-3">
+                <div className="p-2 bg-teal-50 rounded-xl">
+                  <Map className="w-6 h-6 text-teal-500" />
+                </div>
                 Explore the Neighborhood
               </h3>
-              <p className="text-xs sm:text-sm text-muted-foreground mb-6">
+              <p className="relative z-10 text-sm sm:text-base text-slate-500 mb-8 font-light">
                 Hover or tap on any destination below to discover what surrounds our peaceful tropical escape:
               </p>
 
-              <div className="space-y-3.5">
+              <div className="space-y-4 relative z-10">
                 {NEIGHBORHOOD_SPOTS.map((spot) => {
                   const Icon = spot.icon;
                   const isHovered = hoveredLocation === spot.id;
@@ -237,23 +242,34 @@ export default function AboutPage() {
                       onMouseEnter={() => setHoveredLocation(spot.id)}
                       onMouseLeave={() => setHoveredLocation(null)}
                       onClick={() => setHoveredLocation(hoveredLocation === spot.id ? null : spot.id)}
-                      className={`p-4 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                      className={`group relative p-5 rounded-2xl border transition-all duration-400 cursor-pointer overflow-hidden backdrop-blur-sm ${
                         isHovered 
-                          ? "bg-white border-[#4BBCCC] shadow-md translate-x-2" 
-                          : "bg-white/50 border-border hover:bg-white hover:border-[#4BBCCC]/40"
+                          ? "bg-white/90 border-teal-300/50 shadow-lg translate-x-2 scale-[1.02]" 
+                          : "bg-white/40 border-white/60 hover:bg-white/80 hover:border-teal-200"
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className={`p-2.5 rounded-xl transition-colors ${isHovered ? "bg-[#4BBCCC]/15 text-[#4BBCCC]" : "bg-primary/5 text-primary"}`}>
-                            <Icon className="w-4 h-4 sm:w-5 h-5" />
+                      {/* Subdued inner glow */}
+                      <div className={`absolute inset-0 bg-gradient-to-r from-teal-50/50 to-transparent transition-opacity duration-400 ${isHovered ? 'opacity-100' : 'opacity-0'}`} />
+
+                      <div className="relative z-10 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 flex items-center justify-center rounded-xl transition-all duration-400 shadow-sm border ${
+                            isHovered 
+                              ? "bg-teal-500 border-teal-400 text-white shadow-teal-500/30 scale-110 rotate-3" 
+                              : "bg-white border-white/60 text-[#0B3D5E]"
+                          }`}>
+                            <Icon className="w-5 h-5" />
                           </div>
                           <div>
-                            <h4 className="font-bold text-foreground text-sm sm:text-base">{spot.name}</h4>
-                            <p className="text-[10px] text-muted-foreground font-black tracking-widest uppercase">{spot.distance}</p>
+                            <h4 className={`font-bold transition-colors ${isHovered ? "text-[#0B3D5E]" : "text-slate-700"} text-base sm:text-lg`}>{spot.name}</h4>
+                            <p className="text-[10px] text-teal-600 font-black tracking-[0.2em] uppercase mt-0.5">{spot.distance}</p>
                           </div>
                         </div>
-                        <ChevronRight className={`w-4 h-4 text-muted-foreground/60 transition-transform duration-300 ${isHovered ? "rotate-90 text-[#4BBCCC]" : ""}`} />
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-400 ${
+                          isHovered ? "bg-teal-50 text-teal-600 shadow-sm" : "bg-transparent text-slate-300"
+                        }`}>
+                          <ChevronRight className={`w-5 h-5 transition-transform duration-400 ${isHovered ? "rotate-90 scale-110" : ""}`} />
+                        </div>
                       </div>
                       
                       <AnimatePresence>
@@ -262,10 +278,10 @@ export default function AboutPage() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.25 }}
-                            className="overflow-hidden"
+                            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                            className="relative z-10 overflow-hidden"
                           >
-                            <p className="text-xs sm:text-sm text-muted-foreground mt-3 pt-3 border-t border-dashed border-border leading-relaxed">
+                            <p className="text-sm text-slate-500 mt-4 pt-4 border-t border-teal-100/50 leading-relaxed font-light">
                               {spot.details}
                             </p>
                           </motion.div>
@@ -450,152 +466,190 @@ export default function AboutPage() {
       </section>
 
       {/* Sanctuary Switcher (Basic Private vs Deluxe Ocean View) */}
-      <section className="py-16 sm:py-24 bg-white">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+      <section className="py-16 sm:py-24 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #FAFAFA 0%, #F0F4F8 100%)' }}>
+        {/* Soft ambient backgrounds */}
+        <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-sky-100/40 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-teal-50/40 blur-[100px] rounded-full pointer-events-none" />
+
+        <div className="container mx-auto px-4 max-w-6xl relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
             <div>
-              <span className="text-[#4BBCCC] font-black tracking-[0.3em] uppercase text-xs mb-3 block">
-                Sleep and Sanctuary
-              </span>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-primary">
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-white/70 text-sky-600 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-sm mb-3"
+              >
+                <Sun className="w-3.5 h-3.5" /> Sleep and Sanctuary
+              </motion.span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-[#0B3D5E]">
                 Designed For All Budgets
               </h2>
             </div>
 
-            {/* Room tab triggers */}
-            <div className="bg-primary/5 p-1.5 rounded-full flex self-start md:self-end border border-primary/10">
+            {/* Premium Frosted Room tab triggers */}
+            <div className="relative p-1.5 rounded-full flex self-start md:self-end border border-white/60 shadow-lg backdrop-blur-md"
+                 style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(240,247,255,0.6) 100%)' }}>
               <button
                 onClick={() => setActiveRoomTab("basic")}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 ${
+                className={`relative z-10 px-6 py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-500 ${
                   activeRoomTab === "basic" 
-                    ? "bg-primary text-white shadow-md" 
-                    : "text-muted-foreground hover:text-primary"
+                    ? "text-white shadow-md" 
+                    : "text-slate-500 hover:text-[#0B3D5E]"
                 }`}
               >
+                {activeRoomTab === "basic" && (
+                  <motion.div 
+                    layoutId="activeTabBg" 
+                    className="absolute inset-0 bg-[#0B3D5E] rounded-full -z-10"
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  />
+                )}
                 Basic Private Room
               </button>
               <button
                 onClick={() => setActiveRoomTab("deluxe")}
-                className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 ${
+                className={`relative z-10 px-6 py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-500 ${
                   activeRoomTab === "deluxe" 
-                    ? "bg-primary text-white shadow-md" 
-                    : "text-muted-foreground hover:text-primary"
+                    ? "text-white shadow-md" 
+                    : "text-slate-500 hover:text-[#0B3D5E]"
                 }`}
               >
+                {activeRoomTab === "deluxe" && (
+                  <motion.div 
+                    layoutId="activeTabBg" 
+                    className="absolute inset-0 bg-[#0B3D5E] rounded-full -z-10"
+                    transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                  />
+                )}
                 Deluxe Double (Ocean View)
               </button>
             </div>
           </div>
 
-          <AnimatePresence mode="wait">
-            {activeRoomTab === "basic" ? (
-              <motion.div
-                key="basic-room"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.35 }}
-                className="grid lg:grid-cols-12 gap-10 sm:gap-16 items-center"
-              >
-                <div className="lg:col-span-5 space-y-6">
-                  <span className="bg-amber-100 text-amber-800 text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
-                    Cozy Comfort & Value
-                  </span>
-                  <h3 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Comfortable Basic Private</h3>
-                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed italic">
-                    Traveling on a budget or looking for simple, quiet privacy? Our Basic Private Rooms are prepared with authentic care. Clean, cozy, and quiet, they offer the perfect escape to sleep deeply and recharge after long hours catching waves at Weligama Beach.
-                  </p>
+          <div className="relative p-8 sm:p-12 rounded-[3rem] border border-white/50 shadow-2xl backdrop-blur-xl overflow-hidden"
+               style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(245,250,255,0.4) 100%)' }}>
+            
+            {/* Shimmer overlay for card body */}
+            <motion.div
+              className="absolute inset-0 w-[30%] pointer-events-none z-0"
+              style={{ background: 'linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)', skewX: '-15deg' }}
+              animate={{ x: ['-200%', '400%'] }}
+              transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2 }}
+            />
 
-                  <div className="grid grid-cols-2 gap-4 border-t border-border pt-6 text-xs sm:text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Quiet Village Vibe
+            <AnimatePresence mode="wait">
+              {activeRoomTab === "basic" ? (
+                <motion.div
+                  key="basic-room"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="relative z-10 grid lg:grid-cols-12 gap-10 sm:gap-16 items-center"
+                >
+                  <div className="lg:col-span-5 space-y-6">
+                    <span className="inline-block bg-gradient-to-r from-amber-200 to-orange-200 text-amber-900 border border-amber-300/50 shadow-sm text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
+                      Cozy Comfort & Value
+                    </span>
+                    <h3 className="text-3xl sm:text-4xl font-serif font-bold text-[#0B3D5E]">Comfortable Basic Private</h3>
+                    <p className="text-slate-500 text-sm sm:text-base leading-relaxed font-light">
+                      Traveling on a budget or looking for simple, quiet privacy? Our Basic Private Rooms are prepared with authentic care. Clean, cozy, and quiet, they offer the perfect escape to sleep deeply and recharge after long hours catching waves at Weligama Beach.
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-4 border-t border-slate-200/50 pt-6 text-xs sm:text-sm text-slate-600 font-medium">
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 bg-teal-50 rounded-full"><Check className="w-3 h-3 text-teal-500" /></div> Quiet Village Vibe
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 bg-teal-50 rounded-full"><Check className="w-3 h-3 text-teal-500" /></div> High-speed Wi-Fi
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 bg-teal-50 rounded-full"><Check className="w-3 h-3 text-teal-500" /></div> Cozy Private Space
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 bg-teal-50 rounded-full"><Check className="w-3 h-3 text-teal-500" /></div> Daily Housekeeping
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#4BBCCC]" /> High-speed Wi-Fi
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Cozy Private Space
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Daily Housekeeping
+
+                    <div className="pt-6">
+                      <Link href="/rooms">
+                        <button className="group relative rounded-full bg-[#0B3D5E] text-white px-8 py-4 text-sm font-bold shadow-xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-2xl">
+                          <span className="absolute inset-0 w-[35%] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[350%] transition-transform duration-700 ease-out pointer-events-none" />
+                          View Rates & Details
+                        </button>
+                      </Link>
                     </div>
                   </div>
 
-                  <div className="pt-4">
-                    <Link href="/rooms">
-                      <Button className="rounded-full bg-primary hover:bg-[#0B3D5E] text-white px-8 py-5 h-auto text-xs sm:text-sm font-bold shadow-lg">
-                        View Rates & Details
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-7">
-                  <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl bg-muted border border-border/60">
-                    <img
-                      src="/Comfortable_Basic_Private.jpeg"
-                      alt="Basic Private Room at Ocean Air Weligama"
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
-                  </div>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="deluxe-room"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.35 }}
-                className="grid lg:grid-cols-12 gap-10 sm:gap-16 items-center"
-              >
-                <div className="lg:col-span-5 space-y-6">
-                  <span className="bg-[#4BBCCC]/20 text-[#4BBCCC] text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full">
-                    Premium Coastal Stay
-                  </span>
-                  <h3 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Deluxe Double with Balcony</h3>
-                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed italic">
-                    Upgrade to stunning views. Our Deluxe Double Rooms features spacious designs, modern comforts, private balconies, and beautiful views facing the ocean. Prepared with delicate attention to give you an authentic, refreshing island experience.
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-4 border-t border-border pt-6 text-xs sm:text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Private Balcony
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Beautiful Ocean Views
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Air Conditioning
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#4BBCCC]" /> Authentic Local Styling
+                  <div className="lg:col-span-7">
+                    <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] bg-slate-100 border-4 border-white/80 group">
+                      <img
+                        src="/Comfortable_Basic_Private.jpeg"
+                        alt="Basic Private Room at Ocean Air Weligama"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D5E]/30 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
                   </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="deluxe-room"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="relative z-10 grid lg:grid-cols-12 gap-10 sm:gap-16 items-center"
+                >
+                  <div className="lg:col-span-5 space-y-6">
+                    <span className="inline-block bg-gradient-to-r from-teal-200 to-cyan-200 text-teal-900 border border-teal-300/50 shadow-sm text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">
+                      Premium Coastal Stay
+                    </span>
+                    <h3 className="text-3xl sm:text-4xl font-serif font-bold text-[#0B3D5E]">Deluxe Double with Balcony</h3>
+                    <p className="text-slate-500 text-sm sm:text-base leading-relaxed font-light">
+                      Upgrade to stunning views. Our Deluxe Double Rooms features spacious designs, modern comforts, private balconies, and beautiful views facing the ocean. Prepared with delicate attention to give you an authentic, refreshing island experience.
+                    </p>
 
-                  <div className="pt-4">
-                    <Link href="/rooms">
-                      <Button className="rounded-full bg-primary hover:bg-[#0B3D5E] text-white px-8 py-5 h-auto text-xs sm:text-sm font-bold shadow-lg">
-                        View Rates & Details
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
+                    <div className="grid grid-cols-2 gap-4 border-t border-slate-200/50 pt-6 text-xs sm:text-sm text-slate-600 font-medium">
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 bg-teal-50 rounded-full"><Check className="w-3 h-3 text-teal-500" /></div> Private Balcony
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 bg-teal-50 rounded-full"><Check className="w-3 h-3 text-teal-500" /></div> Beautiful Ocean Views
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 bg-teal-50 rounded-full"><Check className="w-3 h-3 text-teal-500" /></div> Air Conditioning
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="p-1 bg-teal-50 rounded-full"><Check className="w-3 h-3 text-teal-500" /></div> Authentic Local Styling
+                      </div>
+                    </div>
 
-                <div className="lg:col-span-7">
-                  <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl bg-muted border border-border/60">
-                    <img
-                      src="/Deluxe_Double%20with_Balcony.jpeg"
-                      alt="Deluxe Double Room with Balcony at Ocean Air"
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
+                    <div className="pt-6">
+                      <Link href="/rooms">
+                        <button className="group relative rounded-full bg-[#0B3D5E] text-white px-8 py-4 text-sm font-bold shadow-xl overflow-hidden transition-all hover:scale-[1.02] hover:shadow-2xl">
+                          <span className="absolute inset-0 w-[35%] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[350%] transition-transform duration-700 ease-out pointer-events-none" />
+                          View Rates & Details
+                        </button>
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+
+                  <div className="lg:col-span-7">
+                    <div className="relative aspect-[4/3] rounded-[2rem] overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] bg-slate-100 border-4 border-white/80 group">
+                      <img
+                        src="/Deluxe_Double%20with_Balcony.jpeg"
+                        alt="Deluxe Double Room with Balcony at Ocean Air"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D5E]/30 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </section>
 
