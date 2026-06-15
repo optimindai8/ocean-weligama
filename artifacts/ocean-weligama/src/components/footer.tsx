@@ -90,7 +90,7 @@ export function Footer() {
                 <div className="absolute inset-0 bg-white/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
                 <TransparentLogo 
                   src="/logo.jpg" 
-                  className="relative z-10 h-16 w-16 object-contain brightness-0 invert transition-transform duration-500 group-hover:scale-105 drop-shadow-2xl mb-12" 
+                  className="relative z-10 h-16 w-16 object-contain brightness-0 invert transition-transform duration-500 group-hover:scale-105 drop-shadow-2xl mb-16" 
                 />
               </div>
               <div className="flex flex-col">
