@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Plus, X, CheckCircle2, Camera, User } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,6 +25,7 @@ export function Testimonials() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // Form states
   const [name, setName] = useState("");
@@ -37,6 +38,14 @@ export function Testimonials() {
   );
   
   const reviews = reviewData?.reviews ?? [];
+
+  useEffect(() => {
+    if (reviews.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [reviews.length]);
 
   const createReview = useCreateReview();
   const uploadFile = useUploadFile();
@@ -146,36 +155,42 @@ export function Testimonials() {
         </motion.div>
       </div>
 
-      <div className="relative">
+      <div className="relative w-full max-w-5xl mx-auto px-4 py-8">
         {isLoading ? (
-          <div className="flex gap-6 px-3 justify-center">
-             {[1, 2, 3].map((i) => (
-               <div key={i} className="w-[320px] md:w-[380px] h-[220px] bg-white rounded-3xl animate-pulse border border-border/40" />
-             ))}
+          <div className="flex gap-6 justify-center">
+             <div className="w-full max-w-3xl h-[300px] bg-white rounded-3xl animate-pulse border border-border/40" />
           </div>
         ) : reviews.length > 0 ? (
-          <div className="flex overflow-hidden">
-            <motion.div 
-              animate={{ x: ["0%", "-100%"] }}
-              transition={{ 
-                repeat: Infinity, 
-                duration: Math.max(80, reviews.length * 25), 
-                ease: "linear" 
-              }}
-              className="flex gap-6 px-3 hover:[animation-play-state:paused]"
-              style={{ width: "fit-content" }}
-            >
-              {[...reviews, ...reviews, ...reviews, ...reviews].map((review, idx) => (
-                <ReviewCard key={`${review.id}-${idx}`} review={review} />
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              >
+                <ReviewCard review={reviews[currentIndex]} />
+              </motion.div>
+            </AnimatePresence>
+            
+            {/* Pagination Dots */}
+            <div className="flex justify-center gap-2 mt-8">
+              {reviews.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentIndex(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    idx === currentIndex ? "w-8 bg-accent" : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
               ))}
-            </motion.div>
+            </div>
           </div>
         ) : (
           <p className="text-center text-muted-foreground py-12">Be the first to share your experience!</p>
         )}
-        
-        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#FAFAFA] to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#FAFAFA] to-transparent z-10 pointer-events-none" />
       </div>
 
       <AnimatePresence>
@@ -319,30 +334,21 @@ export function Testimonials() {
 
 function ReviewCard({ review }: { review: any }) {
   return (
-    <div className="w-[280px] sm:w-[320px] md:w-[380px] bg-white rounded-3xl p-5 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-border/40 shrink-0 group hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-500">
-      <div className="flex items-center gap-4 mb-6">
-        <div className="w-12 h-12 rounded-full overflow-hidden border border-border/50 flex items-center justify-center bg-muted/30">
-          {review.guestAvatarUrl ? (
-            <img src={review.guestAvatarUrl} alt={review.guestName} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-          ) : (
-            <User className="w-6 h-6 text-muted-foreground/40" />
-          )}
-        </div>
-        <div>
-          <div className="flex gap-0.5 mb-1">
-            {[...Array(review.ratingOverall)].map((_, i) => (
-              <Star key={i} className="w-3 h-3 fill-accent text-accent" />
-            ))}
-          </div>
-          <h4 className="font-bold text-sm text-foreground leading-tight">{review.guestName}</h4>
-        </div>
+    <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl p-8 sm:p-12 md:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-border/40 flex flex-col items-center text-center">
+      <div className="flex gap-1.5 mb-8 sm:mb-10">
+        {[...Array(review.ratingOverall || 5)].map((_, i) => (
+          <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 fill-accent text-accent" />
+        ))}
       </div>
-
-      <h5 className="font-serif font-bold text-lg text-foreground mb-3 leading-tight italic">"{review.title || "Wonderful Stay"}"</h5>
       
-      <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-0">
-        {review.reviewText}
+      <p className="text-xl sm:text-2xl md:text-3xl text-foreground/90 font-serif italic leading-relaxed mb-10 max-w-3xl">
+        "{review.reviewText}"
       </p>
+      
+      <div className="w-16 h-[1px] bg-accent/40 mb-8" />
+      
+      <h4 className="font-bold text-lg sm:text-xl text-foreground mb-1">{review.guestName}</h4>
+      <p className="text-muted-foreground text-sm sm:text-base">{review.title || "Guest"}</p>
     </div>
   );
 }
