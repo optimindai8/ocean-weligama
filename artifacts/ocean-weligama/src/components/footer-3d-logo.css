@@ -8,20 +8,20 @@
 @keyframes bounce {
   0%,
   100% {
-    translate: 0px 66px;
+    translate: 0px 40px;
   }
   50% {
-    translate: 0px 76px;
+    translate: 0px 48px;
   }
 }
 
 @keyframes bounce2 {
   0%,
   100% {
-    translate: 0px 76px;
+    translate: 0px 48px;
   }
   50% {
-    translate: 0px 86px;
+    translate: 0px 56px;
   }
 }
 
@@ -56,12 +56,12 @@
 }
 
 #bounce {
-  animation: bounce 4s ease-in-out infinite;
-  translate: 0px 66px;
+  animation: bounce 3s ease-in-out infinite;
+  translate: 0px 40px;
 }
 
 #bounce2 {
-  animation: bounce2 4s ease-in-out infinite;
-  translate: 0px 76px;
-  animation-delay: 0.5s;
+  animation: bounce2 3s ease-in-out infinite;
+  translate: 0px 48px;
+  animation-delay: 0.4s;
 }
