@@ -186,43 +186,149 @@ export default function Home() {
       </section>
 
       {/* High-End Reassurance Panel (Trust Bar) */}
-      <section className="relative -mt-8 md:-mt-16 z-20 container mx-auto px-4">
-        <div className="bg-white/75 hover:bg-white/85 transition-colors duration-500 backdrop-blur-2xl rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-[0_30px_100px_rgba(0,0,0,0.1)] border border-white/20">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 md:gap-12">
+      <section className="relative -mt-8 md:-mt-20 z-20 container mx-auto px-4">
+        {/* Outer glow */}
+        <div className="absolute inset-0 rounded-[2.5rem] md:rounded-[3.5rem] blur-2xl opacity-30 pointer-events-none"
+          style={{ background: 'linear-gradient(135deg, rgba(75,188,204,0.35) 0%, rgba(11,61,94,0.25) 50%, rgba(99,102,241,0.20) 100%)' }}
+        />
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] border border-white/30 shadow-[0_32px_80px_rgba(11,61,94,0.14),0_0_0_1px_rgba(255,255,255,0.15)_inset]"
+          style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.72) 0%, rgba(238,247,253,0.62) 50%, rgba(237,242,250,0.68) 100%)', backdropFilter: 'blur(24px)' }}
+        >
+          {/* Shimmer sweep */}
+          <motion.div
+            className="absolute inset-0 w-[40%] pointer-events-none z-0"
+            style={{ background: 'linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%)', skewX: '-15deg' }}
+            animate={{ x: ['-160%', '350%'] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 3 }}
+          />
+
+          {/* Top accent line */}
+          <div className="absolute top-0 left-8 right-8 h-px"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(75,188,204,0.6), rgba(99,102,241,0.5), transparent)' }}
+          />
+
+          <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-0">
             {[
-              { icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-              ), title: "Secure Booking", desc: "Instant confirmation" },
-              { icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-              ), title: "100 Steps to Beach", desc: "Prime surf location" },
-              { icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.784.57-1.838-.197-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
-              ), title: "4.9 Guest Rating", desc: "Top-rated hospitality" },
-              { icon: (
-                <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.657M7 20h11a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z" /></svg>
-              ), title: "Expert Surf Hub", desc: "ISA certified team" },
+              {
+                icon: (
+                  <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                ),
+                stat: 'Secure',
+                title: 'Booking',
+                desc: 'Instant Confirmation',
+                gradient: 'from-teal-400 to-cyan-500',
+                glow: 'rgba(20,184,166,0.35)',
+                iconBg: 'rgba(20,184,166,0.12)',
+              },
+              {
+                icon: (
+                  <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                ),
+                stat: '100',
+                title: 'Steps to Beach',
+                desc: 'Prime Surf Location',
+                gradient: 'from-blue-400 to-indigo-500',
+                glow: 'rgba(99,102,241,0.35)',
+                iconBg: 'rgba(99,102,241,0.10)',
+              },
+              {
+                icon: (
+                  <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.784.57-1.838-.197-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                ),
+                stat: '4.9★',
+                title: 'Guest Rating',
+                desc: 'Top-Rated Hospitality',
+                gradient: 'from-amber-400 to-orange-500',
+                glow: 'rgba(251,191,36,0.35)',
+                iconBg: 'rgba(251,191,36,0.12)',
+              },
+              {
+                icon: (
+                  <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.657M7 20h11a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v11a2 2 0 002 2z" />
+                  </svg>
+                ),
+                stat: 'Expert',
+                title: 'Surf Hub',
+                desc: 'ISA Certified Team',
+                gradient: 'from-violet-400 to-purple-500',
+                glow: 'rgba(139,92,246,0.35)',
+                iconBg: 'rgba(139,92,246,0.10)',
+              },
             ].map((item, idx) => (
               <motion.div
                 key={item.title}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                transition={{ delay: idx * 0.1, duration: 0.4 }}
                 viewport={{ once: true }}
-                className="flex flex-col items-center text-center group cursor-default"
+                transition={{ delay: idx * 0.1, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                whileHover={{ y: -6, scale: 1.02 }}
+                className={`group relative flex flex-col items-center text-center cursor-default p-6 md:p-10 transition-all duration-400
+                  ${idx < 3 ? 'border-r border-white/25' : ''}`}
               >
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-primary/5 flex items-center justify-center mb-3 md:mb-6 transition-all duration-500 group-hover:bg-primary group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-xl group-hover:shadow-primary/20">
-                  <div className="text-primary group-hover:text-white transition-colors duration-500">
-                    {item.icon}
+                {/* Per-tile hover bg glow */}
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl pointer-events-none"
+                  style={{ background: `radial-gradient(ellipse at center, ${item.glow} 0%, transparent 70%)` }}
+                />
+
+                {/* Icon container */}
+                <motion.div
+                  whileHover={{ rotate: 8, scale: 1.15 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+                  className="relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-4 md:mb-5 shadow-sm border border-white/50 transition-all duration-400 group-hover:shadow-lg"
+                  style={{ background: item.iconBg, backdropFilter: 'blur(8px)' }}
+                >
+                  {/* Icon gradient glow on hover */}
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-400"
+                    style={{ background: `linear-gradient(135deg, ${item.glow.replace('0.35', '0.20')}, transparent)` }}
+                  />
+                  <div className={`relative z-10 bg-gradient-to-br ${item.gradient} bg-clip-text`}
+                    style={{ color: 'transparent', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.12))' }}
+                  >
+                    <div style={{ background: `linear-gradient(135deg, ${item.gradient.includes('teal') ? '#2dd4bf,#06b6d4' : item.gradient.includes('blue') ? '#60a5fa,#818cf8' : item.gradient.includes('amber') ? '#fbbf24,#f97316' : '#a78bfa,#a855f7'})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                      {item.icon}
+                    </div>
                   </div>
-                </div>
-                <h4 className="font-bold text-[#0B3D5E] text-xs sm:text-sm md:text-base mb-1 tracking-tight">{item.title}</h4>
-                <p className="text-muted-foreground text-[8px] sm:text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium">{item.desc}</p>
+                </motion.div>
+
+                {/* Stat */}
+                <span className={`text-xl md:text-2xl font-black mb-0.5 bg-gradient-to-r ${item.gradient} bg-clip-text text-transparent leading-none`}>
+                  {item.stat}
+                </span>
+
+                {/* Title */}
+                <h4 className="font-bold text-[#0B3D5E] text-sm md:text-base mb-1.5 tracking-tight leading-tight">
+                  {item.title}
+                </h4>
+
+                {/* Desc */}
+                <p className="text-slate-400 text-[9px] md:text-[10px] uppercase tracking-[0.22em] font-semibold">
+                  {item.desc}
+                </p>
               </motion.div>
             ))}
           </div>
-        </div>
+
+          {/* Bottom accent line */}
+          <div className="absolute bottom-0 left-8 right-8 h-px"
+            style={{ background: 'linear-gradient(90deg, transparent, rgba(11,61,94,0.12), transparent)' }}
+          />
+        </motion.div>
       </section>
 
       {/* Immersive Experience Section (Surf, Stay, Taste, Explore) */}
