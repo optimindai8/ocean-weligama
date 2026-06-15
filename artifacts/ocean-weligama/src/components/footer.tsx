@@ -82,13 +82,13 @@ export function Footer() {
           <Link href="/">
             <div className="flex items-center gap-4 cursor-pointer group">
               <div className="relative flex items-center justify-center w-24 h-24">
-                <div className="absolute w-[200px] h-[200px] z-0 pointer-events-none left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="absolute w-[150px] h-[150px] z-0 pointer-events-none left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                   <Animated3DBackground />
                 </div>
                 <div className="absolute inset-0 bg-white/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
                 <TransparentLogo 
                   src="/logo.jpg" 
-                  className="relative z-10 h-16 w-16 object-contain brightness-0 invert transition-transform duration-500 group-hover:scale-105 drop-shadow-xl -translate-y-8" 
+                  className="relative z-10 h-16 w-16 object-contain brightness-0 invert transition-transform duration-500 group-hover:scale-105 drop-shadow-xl -translate-y-12" 
                 />
               </div>
               <div className="flex flex-col">
