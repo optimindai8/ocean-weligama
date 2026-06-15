@@ -458,17 +458,13 @@ export default function AdminRateAdjustments() {
   const [expandedSeason, setExpandedSeason] = useState<string | null>("summer");
   const [savingSeasons, setSavingSeasons] = useState<Record<string, boolean>>({});
 
-  // Which adjustment corresponds to which season key
-  const getAdjForSeason = (key: string) => {
+  // Match each season card to its own DB record using the exact defaultName.
+  // "Low Season" card  → only records whose seasonName === "Low Season"
+  // "High Season" card → only records whose seasonName === "High Season"
+  // This ensures saving/activating one card NEVER touches the other.
+  const getAdjForSeason = (key: string): RateAdjustment | null => {
     const season = SEASONS.find((s) => s.key === key)!;
-    return adjustments.find((a) => {
-      const name = (a.seasonName || "").toLowerCase();
-      if (key === "summer") {
-        return name.startsWith("april") || name.includes("low season");
-      } else {
-        return name.startsWith("october") || name.includes("high season");
-      }
-    }) || adjustments.find((a) => a.seasonName === season.defaultName) || null;
+    return adjustments.find((a) => a.seasonName === season.defaultName) ?? null;
   };
 
   async function fetchAdjustments() {
@@ -489,26 +485,29 @@ export default function AdminRateAdjustments() {
     setSavingSeasons((prev) => ({ ...prev, [seasonKey]: true }));
     try {
       const existing = getAdjForSeason(seasonKey);
+      // Always use the fixed defaultName so matching stays exact and stable
+      const canonicalName = SEASONS.find((s) => s.key === seasonKey)!.defaultName;
       const payload = {
         ...formData,
-        seasonName: formData.seasonName || SEASONS.find((s) => s.key === seasonKey)!.defaultName,
+        seasonName: canonicalName,
         isActive: existing?.isActive ?? false,
       };
 
       if (existing) {
+        // Update by ID — only this season's own record is touched
         const updated = await apiFetch(`${API_BASE}/${existing.id}`, {
           method: "PUT",
           body: JSON.stringify(payload),
         });
         setAdjustments((prev) => prev.map((a) => (a.id === existing.id ? updated : a)));
-        toast({ title: "✅ Saved!", description: "Rate adjustment updated. Changes are live on the website." });
+        toast({ title: "✅ Saved!", description: `${canonicalName} updated.` });
       } else {
         const created = await apiFetch(API_BASE, {
           method: "POST",
           body: JSON.stringify(payload),
         });
         setAdjustments((prev) => [...prev, created]);
-        toast({ title: "✅ Created!", description: "New season created. Activate it to apply prices." });
+        toast({ title: "✅ Created!", description: `${canonicalName} created. Activate it to apply prices.` });
       }
     } catch (e: any) {
       toast({ title: "Failed to save", description: e.message || "Unknown error", variant: "destructive" });
@@ -520,10 +519,9 @@ export default function AdminRateAdjustments() {
   async function handleToggleActive(seasonKey: string) {
     const existing = getAdjForSeason(seasonKey);
     if (!existing) return;
-
     const newActive = !existing.isActive;
-
     try {
+      // Update only this season's record by its unique ID — the other season's record is never touched
       const updated = await apiFetch(`${API_BASE}/${existing.id}`, {
         method: "PUT",
         body: JSON.stringify({ ...existing, isActive: newActive }),
@@ -555,8 +553,9 @@ export default function AdminRateAdjustments() {
     }
   }
 
-  const anyActive = adjustments.some((a) => a.isActive);
-  const activeAdj = adjustments.find((a) => a.isActive);
+  const activeAdjustments = adjustments.filter((a) => a.isActive);
+  const anyActive = activeAdjustments.length > 0;
+  const activeAdj = activeAdjustments[0]; // for the status banner (shows first active)
 
   return (
     <AdminLayout>
@@ -657,9 +656,8 @@ export default function AdminRateAdjustments() {
           className="mt-10 p-5 rounded-2xl bg-slate-50 border border-slate-200"
         >
           <p className="text-xs text-slate-500 font-medium text-center">
-            <strong className="text-slate-700">Only one season can be active at a time.</strong> Activating a season automatically deactivates any other.
-            When a season is active, the website shows the original price with a strikethrough and the new adjusted price.
-            Booking totals are recalculated using the adjusted prices.
+            <strong className="text-slate-700">Each season works independently.</strong> Both Low Season and High Season can be saved and activated separately without affecting each other.
+            When a season is active, the website shows the adjusted prices. Booking totals are recalculated automatically.
           </p>
         </motion.div>
       </div>

@@ -261,7 +261,7 @@ export default function RoomDetailPage() {
                     The Sanctuary
                   </h3>
                   
-                  <div className="text-slate-500 leading-relaxed max-w-none whitespace-pre-wrap font-light text-base md:text-lg group-hover:text-slate-700 transition-colors duration-500">
+                  <div className="text-slate-500 leading-relaxed max-w-none whitespace-pre-wrap font-light italic text-sm md:text-base group-hover:text-slate-700 transition-colors duration-500">
                     {room.description}
                   </div>
                 </div>
