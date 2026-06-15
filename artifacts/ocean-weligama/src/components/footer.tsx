@@ -81,8 +81,8 @@ export function Footer() {
         <motion.div variants={itemVariants} className="md:col-span-12 lg:col-span-4 flex flex-col items-start gap-6">
           <Link href="/">
             <div className="flex items-center gap-4 cursor-pointer group">
-              <div className="relative w-28 h-28 flex items-center justify-center">
-                <div className="absolute inset-0 z-0 scale-[1.75] -translate-y-4 pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="relative flex items-center justify-center w-24 h-24">
+                <div className="absolute w-[200px] h-[200px] z-0 pointer-events-none left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                   <Animated3DBackground />
                 </div>
                 <div className="absolute inset-0 bg-white/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
