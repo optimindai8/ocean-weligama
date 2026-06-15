@@ -43,7 +43,7 @@ interface RateAdjustment {
 const SEASONS = [
   {
     key: "summer",
-    label: "April → October",
+    label: "October → April",
     subtitle: "High Season",
     icon: SunMedium,
     gradient: "from-amber-500 via-orange-400 to-yellow-400",
@@ -51,11 +51,11 @@ const SEASONS = [
     border: "border-amber-200",
     activeBg: "bg-amber-500",
     iconColor: "text-amber-500",
-    defaultName: "April to October (High Season)",
+    defaultName: "October to April (High Season)",
   },
   {
     key: "winter",
-    label: "October → April",
+    label: "April → October",
     subtitle: "Low Season",
     icon: Snowflake,
     gradient: "from-sky-500 via-blue-400 to-cyan-400",
@@ -63,7 +63,7 @@ const SEASONS = [
     border: "border-sky-200",
     activeBg: "bg-sky-500",
     iconColor: "text-sky-500",
-    defaultName: "October to April (Low Season)",
+    defaultName: "April to October (Low Season)",
   },
 ];
 
@@ -464,9 +464,9 @@ export default function AdminRateAdjustments() {
     return adjustments.find((a) => {
       const name = a.seasonName.toLowerCase();
       if (key === "summer") {
-        return name.startsWith("april") || name.includes("high season");
+        return name.startsWith("october") || name.includes("high season");
       } else {
-        return name.startsWith("october") || name.includes("low season");
+        return name.startsWith("april") || name.includes("low season");
       }
     }) || adjustments.find((a) => a.seasonName === season.defaultName) || null;
   };
