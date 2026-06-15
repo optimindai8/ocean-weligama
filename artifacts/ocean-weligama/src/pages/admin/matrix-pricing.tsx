@@ -88,14 +88,14 @@ export default function AdminMatrixPricing() {
       const roomPromises = localRooms.map((room, idx) => 
         updateRoomMutation.mutateAsync({
           id: room.id!,
-          data: { sortOrder: idx }
+          data: { sortOrder: idx } as any
         })
       );
       
       const pkgPromises = localPackages.map((pkg, idx) => 
         updateServiceMutation.mutateAsync({
           id: pkg.id!,
-          data: { sortOrder: idx }
+          data: { sortOrder: idx } as any
         })
       );
 
