@@ -62,14 +62,14 @@ export default function Home() {
         <div className="h-24 md:h-28 shrink-0" />
 
         {/* Floating 3D Holograms Around the Video */}
-        <div className="absolute top-32 left-8 md:left-16 xl:left-32 z-20 hidden sm:block opacity-80 hover:opacity-100 transition-opacity">
-          <AnimatedHoloCard icon={Palmtree} className="scale-75 md:scale-90" />
+        <div className="absolute top-24 sm:top-32 left-2 sm:left-8 md:left-16 xl:left-32 z-20 opacity-40 sm:opacity-80 hover:opacity-100 transition-opacity">
+          <AnimatedHoloCard icon={Palmtree} className="scale-50 sm:scale-75 md:scale-90" />
         </div>
-        <div className="absolute top-1/2 right-4 md:right-12 xl:right-24 -translate-y-1/2 z-20 hidden sm:block opacity-80 hover:opacity-100 transition-opacity">
-          <AnimatedHoloCard icon={Compass} className="scale-75 md:scale-100" />
+        <div className="absolute top-1/3 sm:top-1/2 right-0 sm:right-4 md:right-12 xl:right-24 -translate-y-1/2 z-20 opacity-40 sm:opacity-80 hover:opacity-100 transition-opacity">
+          <AnimatedHoloCard icon={Compass} className="scale-50 sm:scale-75 md:scale-100" />
         </div>
-        <div className="absolute bottom-32 left-12 md:left-24 xl:left-40 z-20 hidden md:block opacity-80 hover:opacity-100 transition-opacity">
-          <AnimatedHoloCard icon={Waves} className="scale-75 md:scale-90" />
+        <div className="absolute bottom-32 sm:bottom-32 left-4 sm:left-12 md:left-24 xl:left-40 z-20 opacity-40 sm:opacity-80 hover:opacity-100 transition-opacity">
+          <AnimatedHoloCard icon={Waves} className="scale-50 sm:scale-75 md:scale-90" />
         </div>
 
         {/* Row 2: Main content — takes all remaining space, centered */}
