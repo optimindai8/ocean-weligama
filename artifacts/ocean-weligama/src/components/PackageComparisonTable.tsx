@@ -294,7 +294,7 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ delay: 0.2 }}
-          className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed"
+          className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed italic"
         >
           All packages include premium accommodation, daily meals, and
           the Ocean Air experience. Pick the one that matches your vibe.

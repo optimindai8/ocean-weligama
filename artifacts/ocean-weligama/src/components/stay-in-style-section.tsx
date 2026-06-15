@@ -224,7 +224,7 @@ export function StayInStyleSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-muted-foreground text-lg leading-relaxed"
+            className="text-muted-foreground text-lg leading-relaxed italic"
           >
             Whether you're a solo surfer, a beach-loving couple, or a group of wave-chasers — we've got the perfect spot for you. Think breezy rooms, tropical touches, and all the essentials for a chill stay just steps from the sea.
           </motion.p>

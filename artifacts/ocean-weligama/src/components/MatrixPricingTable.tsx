@@ -413,7 +413,7 @@ export function MatrixPricingTable() {
           >
             Perfect Packages, <br className="hidden md:block"/> <span className="text-[#1A6B8A] italic font-light">Tailored for You</span>
           </motion.h2>
-          <p className="text-muted-foreground font-light text-sm md:text-base leading-relaxed px-4">
+          <p className="text-muted-foreground font-light text-sm md:text-base leading-relaxed px-4 italic">
             Find the perfect balance of surf, comfort, and value. Our daily rates combine your preferred accommodation with world-class surf experiences.
           </p>
         </div>

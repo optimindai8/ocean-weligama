@@ -365,7 +365,7 @@ export default function AboutPage() {
                   <p><strong>✨ Unrestricted Flexibility:</strong> Stay 2 nights or 2 weeks. Custom build an itinerary that fits your personal budget and pace.</p>
                 </div>
 
-                <Link href="/book">
+                <Link href="/packages">
                   <Button className="w-full bg-[#4BBCCC] hover:bg-white text-primary hover:text-primary rounded-full py-6 h-auto text-sm sm:text-base font-bold transition-all shadow-lg hover:scale-[1.02]">
                     Explore Packages
                   </Button>

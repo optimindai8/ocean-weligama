@@ -112,7 +112,7 @@ export default function Home() {
             className="relative inline-block mb-10"
           >
             <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-accent rounded-full" />
-            <p className="text-lg md:text-3xl text-white/90 max-w-3xl mx-auto leading-relaxed pl-4">
+            <p className="text-lg md:text-3xl text-white/90 max-w-3xl mx-auto leading-relaxed pl-4 italic">
               <span className="text-white font-bold">100 steps from the ocean.</span> <br className="md:hidden" />
               Barefoot beach living meets Sri Lankan hospitality.
             </p>
@@ -427,7 +427,7 @@ export default function Home() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-muted-foreground font-light text-base md:text-lg"
+                className="text-muted-foreground font-light text-base md:text-lg italic"
               >
                 Everything you need for the perfect coastal escape
               </motion.p>
@@ -492,7 +492,7 @@ export default function Home() {
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#0B3D5E] mb-6 leading-tight">
                 More Than Just A <span className="text-primary italic">Stay</span>
               </h2>
-              <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
+              <p className="text-muted-foreground text-lg mb-8 leading-relaxed italic">
                 We believe your vacation should be effortless. From the moment you arrive, every detail is handled with warmth and precision, so you can focus entirely on unwinding by the ocean.
               </p>
 
