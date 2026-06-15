@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { TransparentLogo } from "./transparent-logo";
+import { Animated3DBackground } from "./Animated3DBackground";
 import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 
@@ -80,11 +81,14 @@ export function Footer() {
         <motion.div variants={itemVariants} className="md:col-span-12 lg:col-span-4 flex flex-col items-start gap-6">
           <Link href="/">
             <div className="flex items-center gap-4 cursor-pointer group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-white/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative w-28 h-28 flex items-center justify-center">
+                <div className="absolute inset-0 z-0 scale-[1.75] -translate-y-4 pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                  <Animated3DBackground />
+                </div>
+                <div className="absolute inset-0 bg-white/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
                 <TransparentLogo 
                   src="/logo.jpg" 
-                  className="relative h-20 w-20 object-contain brightness-0 invert transition-transform duration-500 group-hover:scale-105" 
+                  className="relative z-10 h-16 w-16 object-contain brightness-0 invert transition-transform duration-500 group-hover:scale-105 drop-shadow-xl" 
                 />
               </div>
               <div className="flex flex-col">
