@@ -98,7 +98,7 @@ export default function Home() {
           >
             <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white mb-8 leading-[1.1] tracking-tight drop-shadow-2xl">
               Your Ocean Home <br /> 
-              <span className="text-accent italic font-normal drop-shadow-lg">
+              <span className="text-amber-400 hover:text-amber-300 transition-all duration-300 cursor-default italic font-normal drop-shadow-lg hover:drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]">
                 in Weligama
               </span>
             </h1>
@@ -111,9 +111,9 @@ export default function Home() {
             transition={{ delay: 0.2, duration: 1 }}
             className="relative inline-block mb-10"
           >
-            <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-accent rounded-full" />
-            <p className="text-lg md:text-3xl text-white/90 max-w-3xl mx-auto leading-relaxed pl-4 italic">
-              <span className="text-white font-bold">100 steps from the ocean.</span> <br className="md:hidden" />
+            <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-amber-400 rounded-full transition-all duration-300 hover:bg-amber-300 hover:shadow-[0_0_15px_rgba(251,191,36,0.5)] cursor-default" />
+            <p className="text-base md:text-2xl text-white/90 max-w-3xl mx-auto leading-relaxed pl-4 italic">
+              <span className="text-white">100 steps from the ocean.</span> <br className="md:hidden" />
               Barefoot beach living meets Sri Lankan hospitality.
             </p>
           </motion.div>
