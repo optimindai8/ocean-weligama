@@ -15,9 +15,9 @@ type Category = typeof CATEGORIES[number];
 
 
 const FEATURED = [
-  { id: "f1", url: "/gallery-sunset.png", alt: "Weligama Sunset", caption: "Sunset Serenity" },
-  { id: "f2", url: "/gallery-interior.png", alt: "Boutique Suite", caption: "Barefoot Luxury" },
-  { id: "f3", url: "/service-surf.png", alt: "Surf Session", caption: "Morning Waves" },
+  { id: "f1", url: "/148597-794221559_small.mp4", alt: "Ocean View", caption: "Ocean Vibes", type: "video" },
+  { id: "f2", url: "/123523-728292591_small.mp4", alt: "Serenity", caption: "Tropical Escape", type: "video" },
+  { id: "f3", url: "/vecteezy_majestic-green-sea-turtle-gliding-over-a-vibrant-coral-reef_71664992.mp4", alt: "Majestic Sea Turtle", caption: "Marine Life", type: "video" },
 ];
 
 const CATEGORY_LABELS: Record<Category, string> = {
@@ -152,19 +152,30 @@ export default function GalleryPage() {
           </motion.div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {FEATURED.map((img, i) => (
+          {FEATURED.map((item, i) => (
             <motion.div
-              key={img.id}
+              key={item.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
               className="relative aspect-[3/4] rounded-[2.5rem] overflow-hidden group cursor-pointer shadow-2xl hover:shadow-primary/20 transition-all duration-500"
-              onClick={() => setSelectedImg(img)}
+              onClick={() => item.type !== 'video' && setSelectedImg(item)}
             >
-              <img src={img.url} alt={img.alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              {item.type === 'video' ? (
+                <video 
+                  src={item.url} 
+                  autoPlay 
+                  muted 
+                  loop 
+                  playsInline 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                />
+              ) : (
+                <img src={item.url} alt={item.alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
-                <h3 className="text-2xl font-serif font-bold text-white mb-1">{img.caption}</h3>
+                <h3 className="text-2xl font-serif font-bold text-white mb-1">{item.caption}</h3>
                 <span className="text-accent text-xs font-bold uppercase tracking-widest">Featured View</span>
               </div>
             </motion.div>
