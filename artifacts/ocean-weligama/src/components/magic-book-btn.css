@@ -4,8 +4,9 @@
   text-transform: uppercase;
   letter-spacing: 2.5px;
   font-weight: 500;
-  color: #fff;
-  background-color: hsl(var(--primary));
+  color: hsl(var(--primary));
+  background-color: #FBBF24;
+  font-weight: 700;
   border: none;
   border-radius: 45px;
   box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
@@ -17,13 +18,13 @@
 
 @keyframes draw-attention-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(11, 61, 94, 0.5);
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.6);
   }
   70% {
-    box-shadow: 0 0 0 15px rgba(11, 61, 94, 0);
+    box-shadow: 0 0 0 15px rgba(251, 191, 36, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(11, 61, 94, 0);
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0);
   }
 }
 
@@ -47,10 +48,10 @@
 }
 
 .book-btn:hover {
-  background-color: hsl(var(--primary));
-  filter: brightness(1.15);
-  box-shadow: 0px 15px 20px rgba(11, 61, 94, 0.3);
-  color: #fff;
+  background-color: #FBBF24;
+  filter: brightness(1.10);
+  box-shadow: 0px 15px 20px rgba(251, 191, 36, 0.4);
+  color: hsl(var(--primary));
   transform: translateY(-7px);
 }
 
