@@ -523,29 +523,13 @@ export default function AdminRateAdjustments() {
 
     const newActive = !existing.isActive;
 
-    // If activating this one, deactivate all others first
-    if (newActive) {
-      for (const adj of adjustments) {
-        if (adj.id !== existing.id && adj.isActive) {
-          await apiFetch(`${API_BASE}/${adj.id}`, {
-            method: "PUT",
-            body: JSON.stringify({ ...adj, isActive: false }),
-          });
-        }
-      }
-    }
-
     try {
       const updated = await apiFetch(`${API_BASE}/${existing.id}`, {
         method: "PUT",
         body: JSON.stringify({ ...existing, isActive: newActive }),
       });
       setAdjustments((prev) =>
-        prev.map((a) => {
-          if (a.id === existing.id) return updated;
-          if (newActive && a.id !== existing.id) return { ...a, isActive: false };
-          return a;
-        })
+        prev.map((a) => (a.id === existing.id ? updated : a))
       );
       toast({
         title: newActive ? "🟢 Season Activated!" : "⚫ Season Deactivated",
