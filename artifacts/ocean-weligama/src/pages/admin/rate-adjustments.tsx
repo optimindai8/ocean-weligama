@@ -43,27 +43,27 @@ interface RateAdjustment {
 const SEASONS = [
   {
     key: "summer",
-    label: "April → October",
-    subtitle: "Low Season",
+    label: "Low Season",
+    subtitle: "Manage base rates",
     icon: SunMedium,
     gradient: "from-amber-500 via-orange-400 to-yellow-400",
     bg: "from-amber-50 to-orange-50",
     border: "border-amber-200",
     activeBg: "bg-amber-500",
     iconColor: "text-amber-500",
-    defaultName: "April to October (Low Season)",
+    defaultName: "Low Season",
   },
   {
     key: "winter",
-    label: "October → April",
-    subtitle: "High Season",
+    label: "High Season",
+    subtitle: "Manage peak rates",
     icon: Snowflake,
     gradient: "from-sky-500 via-blue-400 to-cyan-400",
     bg: "from-sky-50 to-blue-50",
     border: "border-sky-200",
     activeBg: "bg-sky-500",
     iconColor: "text-sky-500",
-    defaultName: "October to April (High Season)",
+    defaultName: "High Season",
   },
 ];
 
