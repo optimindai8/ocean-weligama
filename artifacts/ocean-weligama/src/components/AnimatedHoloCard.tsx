@@ -1,18 +1,24 @@
-import { Palmtree } from "lucide-react";
+import React from "react";
 import "./holo-card.css";
+import { LucideIcon } from "lucide-react";
 
-export const AnimatedHoloCard = () => {
+interface AnimatedHoloCardProps {
+  icon: LucideIcon;
+  className?: string;
+}
+
+export const AnimatedHoloCard: React.FC<AnimatedHoloCardProps> = ({ icon: Icon, className = "" }) => {
   return (
-    <div className="card-0" aria-hidden="true">
+    <div className={`card-0 ${className}`} aria-hidden="true">
       <div className="card-0__holo">
         <div className="card-0__layer card-0__layer--back">
-          <Palmtree className="w-16 h-16 md:w-24 md:h-24" strokeWidth={1.5} />
+          <Icon className="w-16 h-16 md:w-20 md:h-20" strokeWidth={1.5} />
         </div>
         <div className="card-0__layer card-0__layer--mid">
-          <Palmtree className="w-16 h-16 md:w-24 md:h-24" strokeWidth={1.5} />
+          <Icon className="w-16 h-16 md:w-20 md:h-20" strokeWidth={1.5} />
         </div>
         <div className="card-0__layer card-0__layer--front">
-          <Palmtree className="w-16 h-16 md:w-24 md:h-24" strokeWidth={1.5} />
+          <Icon className="w-16 h-16 md:w-20 md:h-20" strokeWidth={1.5} />
         </div>
       </div>
     </div>

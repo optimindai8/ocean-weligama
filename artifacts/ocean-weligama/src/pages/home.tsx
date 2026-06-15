@@ -5,7 +5,7 @@ import { useListServices, useListFeaturedRooms, useListBlogs, useListGallery } f
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import { Users, BedDouble, ArrowRight, ChevronDown, Package, Image as ImageIcon, BookOpen, Sparkles, Check } from "lucide-react";
+import { Users, BedDouble, ArrowRight, ChevronDown, Package, Image as ImageIcon, BookOpen, Sparkles, Check, Palmtree, Compass, Waves } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/components/LanguageContext";
@@ -61,13 +61,19 @@ export default function Home() {
         {/* Row 1: Navbar spacer — always clears the floating navbar */}
         <div className="h-24 md:h-28 shrink-0" />
 
+        {/* Floating 3D Holograms Around the Video */}
+        <div className="absolute top-32 left-8 md:left-16 xl:left-32 z-20 hidden sm:block opacity-80 hover:opacity-100 transition-opacity">
+          <AnimatedHoloCard icon={Palmtree} className="scale-75 md:scale-90" />
+        </div>
+        <div className="absolute top-1/2 right-4 md:right-12 xl:right-24 -translate-y-1/2 z-20 hidden sm:block opacity-80 hover:opacity-100 transition-opacity">
+          <AnimatedHoloCard icon={Compass} className="scale-75 md:scale-100" />
+        </div>
+        <div className="absolute bottom-32 left-12 md:left-24 xl:left-40 z-20 hidden md:block opacity-80 hover:opacity-100 transition-opacity">
+          <AnimatedHoloCard icon={Waves} className="scale-75 md:scale-90" />
+        </div>
+
         {/* Row 2: Main content — takes all remaining space, centered */}
         <div className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4">
-
-          {/* Hologram Card */}
-          <div className="mb-4 md:mb-6 mt-8">
-            <AnimatedHoloCard />
-          </div>
 
           {/* Trust Badges */}
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6 mb-10">
