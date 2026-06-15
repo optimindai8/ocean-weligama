@@ -188,11 +188,11 @@ export default function AboutPage() {
                 Where Sand, Surf, <br /> & Local Vibe Connect
               </h2>
               <div className="space-y-6 text-base sm:text-lg text-muted-foreground leading-relaxed">
-                <p>
+                <p className="italic">
                   Located in a beautiful and peaceful Sri Lankan village just a short walk from the famous Weligama Beach, 
                   <strong> Ocean Air</strong> offers the perfect mix of surfing, relaxation, local culture, and unforgettable island experiences.
                 </p>
-                <p>
+                <p className="italic">
                   We are surrounded by many popular restaurants, cafés, and attractions, all within walking distance, making our location ideal for every type of traveler. Walk down quiet local paths to catch the morning swell, or grab a coffee at nearby hotspots—our boutique escape is built to serve your curiosity.
                 </p>
               </div>
@@ -290,7 +290,7 @@ export default function AboutPage() {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-foreground">
               Sri Lanka At Your Own Pace
             </h2>
-            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
+            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed italic">
               At Ocean Air, we offer much more than just accommodation. Choose to add any activities you like during your stay to create a truly flexible island holiday.
             </p>
           </div>
@@ -342,7 +342,7 @@ export default function AboutPage() {
                   <Sparkles className="w-5 h-5 text-[#4BBCCC]" />
                   Your Tailored Stay
                 </h3>
-                <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6">
+                <p className="text-white/70 text-xs sm:text-sm leading-relaxed mb-6 italic">
                   Add any of these experiences upon check-in or when booking your room. Enjoy Southern Sri Lanka on your own schedule without feeling rushed.
                 </p>
 
@@ -429,7 +429,7 @@ export default function AboutPage() {
                     Cozy Comfort & Value
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Comfortable Basic Private</h3>
-                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed italic">
                     Traveling on a budget or looking for simple, quiet privacy? Our Basic Private Rooms are prepared with authentic care. Clean, cozy, and quiet, they offer the perfect escape to sleep deeply and recharge after long hours catching waves at Weligama Beach.
                   </p>
 
@@ -482,7 +482,7 @@ export default function AboutPage() {
                     Premium Coastal Stay
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Deluxe Double with Balcony</h3>
-                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                  <p className="text-muted-foreground text-sm sm:text-base leading-relaxed italic">
                     Upgrade to stunning views. Our Deluxe Double Rooms features spacious designs, modern comforts, private balconies, and beautiful views facing the ocean. Prepared with delicate attention to give you an authentic, refreshing island experience.
                   </p>
 
@@ -557,7 +557,7 @@ export default function AboutPage() {
                   The Rooftop Café
                 </h2>
 
-                <p className={`text-sm sm:text-base leading-relaxed transition-colors duration-[1000ms] ${
+                <p className={`text-sm sm:text-base leading-relaxed italic transition-colors duration-[1000ms] ${
                   sunsetMode ? "text-white/80" : "text-muted-foreground"
                 }`}>
                   One of the highlights of Ocean Air is our rooftop café, where guests can enjoy breakfast, fresh food, coffee, tropical drinks, stunning ocean views, and unforgettable sunsets. It’s the perfect place to relax, meet fellow travelers, and unwind after surfing or exploring the area.
@@ -657,7 +657,7 @@ export default function AboutPage() {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold text-primary">
               100% Locally Owned
             </h2>
-            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
+            <p className="text-muted-foreground mt-4 max-w-xl mx-auto text-base sm:text-lg leading-relaxed italic">
               We are dedicated to building a welcoming, sustainable home away from home, driven by real family values.
             </p>
           </div>
@@ -678,7 +678,7 @@ export default function AboutPage() {
                     <Icon className="w-6 h-6" />
                   </div>
                   <h3 className="text-xl font-serif font-bold text-foreground mb-4">{val.title}</h3>
-                  <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground">{val.desc}</p>
+                  <p className="text-xs sm:text-sm leading-relaxed text-muted-foreground italic">{val.desc}</p>
                 </motion.div>
               );
             })}
@@ -751,7 +751,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-white/70 text-base sm:text-lg md:text-xl mb-12 leading-relaxed max-w-2xl mx-auto font-light"
+              className="text-white/70 text-base sm:text-lg md:text-xl mb-12 leading-relaxed max-w-2xl mx-auto font-light italic"
             >
               Whether you are looking for adventure, surfing, yoga, nature, or simply a peaceful beach holiday, Ocean Air is ready to give you a unique Sri Lankan experience you will never forget.
             </motion.p>
