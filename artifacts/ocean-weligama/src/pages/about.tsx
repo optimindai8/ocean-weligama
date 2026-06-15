@@ -877,19 +877,21 @@ export default function AboutPage() {
       </section>
 
       {/* Final Invitation Call to Action */}
-      <section className="py-24 sm:py-32 px-4 sm:px-6 relative overflow-hidden bg-white">
-        {/* Subtle background elements for the outer white section to blend seamlessly */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-primary/5 pointer-events-none" />
+      <section className="py-24 sm:py-32 px-4 sm:px-6 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #EDF2F7 0%, #EEF5FA 100%)' }}>
+        {/* Subtle background elements for the outer section to blend seamlessly */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-teal-200/30 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-200/20 blur-[100px] rounded-full pointer-events-none" />
         
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative max-w-6xl mx-auto rounded-[3rem] sm:rounded-[4rem] bg-[#0F172A] overflow-hidden text-center text-white shadow-2xl"
+          className="relative max-w-6xl mx-auto rounded-[3rem] sm:rounded-[4rem] overflow-hidden text-center text-white shadow-[0_32px_80px_rgba(11,61,94,0.3)] border border-white/20 backdrop-blur-2xl"
+          style={{ background: 'linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,58,95,0.75) 100%)' }}
         >
           {/* Animated decorative background elements */}
-          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#4BBCCC]/40 via-transparent to-transparent pointer-events-none" />
+          <div className="absolute inset-0 opacity-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-400/30 via-transparent to-transparent pointer-events-none" />
           
           <motion.div 
             animate={{ 
@@ -908,12 +910,20 @@ export default function AboutPage() {
               rotate: [0, -5, 0]
             }}
             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            className="absolute bottom-10 right-10 text-white/5"
+            className="absolute bottom-10 right-10 text-teal-400/5"
           >
             <Sun className="w-40 h-40 sm:w-64 sm:h-64" />
           </motion.div>
 
-          <div className="relative z-10 px-6 py-20 sm:py-28 backdrop-blur-sm">
+          {/* Shimmer overlay for card body */}
+          <motion.div
+            className="absolute inset-0 w-[40%] pointer-events-none z-0"
+            style={{ background: 'linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%)', skewX: '-15deg' }}
+            animate={{ x: ['-200%', '350%'] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 4 }}
+          />
+
+          <div className="relative z-10 px-6 py-20 sm:py-28">
             <motion.div 
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -921,7 +931,7 @@ export default function AboutPage() {
               transition={{ delay: 0.2, duration: 0.5 }}
               className="flex justify-center mb-8"
             >
-              <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-[#4BBCCC] font-black tracking-[0.3em] uppercase text-xs px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg shadow-black/20">
+              <span className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-teal-300 font-black tracking-[0.3em] uppercase text-xs px-5 py-2.5 rounded-full backdrop-blur-md shadow-lg shadow-black/20">
                 <Sparkles className="w-3.5 h-3.5" /> Your Weligama Escape
               </span>
             </motion.div>
@@ -931,7 +941,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold mb-8 leading-[1.15] max-w-4xl mx-auto tracking-tight"
+              className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold mb-8 leading-[1.15] max-w-4xl mx-auto tracking-tight drop-shadow-md"
             >
               Ready to Discover <br className="hidden sm:block" /> Sri Lanka?
             </motion.h2>
@@ -941,7 +951,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-white/70 text-base sm:text-lg md:text-xl mb-12 leading-relaxed max-w-2xl mx-auto font-light italic"
+              className="text-white/80 text-base sm:text-lg md:text-xl mb-12 leading-relaxed max-w-2xl mx-auto font-light italic"
             >
               Whether you are looking for adventure, surfing, yoga, nature, or simply a peaceful beach holiday, Ocean Air is ready to give you a unique Sri Lankan experience you will never forget.
             </motion.p>
@@ -954,16 +964,16 @@ export default function AboutPage() {
               className="relative inline-block"
             >
               {/* Glowing ring behind the button */}
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-[#4BBCCC] to-sky-400 rounded-full blur-md opacity-30 animate-pulse"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-teal-400 to-sky-400 rounded-full blur-xl opacity-40 animate-pulse"></div>
               
               <Link href="/book">
-                <Button size="lg" className="relative bg-white hover:bg-transparent text-[#0F172A] hover:text-white border-2 border-white px-8 sm:px-14 py-6 sm:py-8 rounded-full font-black text-sm sm:text-base tracking-widest uppercase shadow-2xl hover:scale-[1.03] h-auto transition-all duration-300 group overflow-hidden">
-                  <span className="relative z-10 flex items-center gap-3">
+                <button className="relative group bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 sm:px-14 py-5 sm:py-6 rounded-full font-black text-sm sm:text-base tracking-widest uppercase shadow-[0_0_40px_rgba(45,212,191,0.3)] hover:shadow-[0_0_60px_rgba(45,212,191,0.5)] backdrop-blur-md transition-all duration-300 hover:scale-[1.03] overflow-hidden">
+                  <span className="absolute inset-0 w-[35%] bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[350%] transition-transform duration-700 ease-out pointer-events-none" />
+                  <span className="relative z-10 flex items-center justify-center gap-3">
                     Book Your Experience
                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
                   </span>
-                  <div className="absolute inset-0 bg-[#0F172A] translate-y-[101%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
-                </Button>
+                </button>
               </Link>
             </motion.div>
           </div>
