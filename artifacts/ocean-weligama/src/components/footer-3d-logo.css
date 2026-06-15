@@ -8,20 +8,20 @@
 @keyframes bounce {
   0%,
   100% {
-    translate: 0px 36px;
+    translate: 0px 66px;
   }
   50% {
-    translate: 0px 46px;
+    translate: 0px 76px;
   }
 }
 
 @keyframes bounce2 {
   0%,
   100% {
-    translate: 0px 46px;
+    translate: 0px 76px;
   }
   50% {
-    translate: 0px 56px;
+    translate: 0px 86px;
   }
 }
 
@@ -57,11 +57,11 @@
 
 #bounce {
   animation: bounce 4s ease-in-out infinite;
-  translate: 0px 36px;
+  translate: 0px 66px;
 }
 
 #bounce2 {
   animation: bounce2 4s ease-in-out infinite;
-  translate: 0px 46px;
+  translate: 0px 76px;
   animation-delay: 0.5s;
 }

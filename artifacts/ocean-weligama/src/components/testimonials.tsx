@@ -334,21 +334,40 @@ export function Testimonials() {
 
 function ReviewCard({ review }: { review: any }) {
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl p-8 sm:p-12 md:p-16 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-border/40 flex flex-col items-center text-center">
-      <div className="flex gap-1.5 mb-8 sm:mb-10">
-        {[...Array(review.ratingOverall || 5)].map((_, i) => (
-          <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 fill-accent text-accent" />
-        ))}
+    <div className="relative w-full max-w-4xl mx-auto bg-gradient-to-b from-white to-[#FAFAFA] rounded-[2.5rem] p-8 sm:p-12 md:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.04)] border border-border/40 flex flex-col items-center text-center overflow-hidden group hover:border-accent/30 transition-colors duration-500">
+      
+      {/* Decorative quote background */}
+      <div className="absolute top-4 left-6 sm:top-8 sm:left-10 text-accent/5 text-[8rem] sm:text-[12rem] font-serif leading-none select-none pointer-events-none">"</div>
+
+      <div className="relative z-10 flex flex-col items-center w-full">
+        <div className="flex gap-1.5 mb-8 sm:mb-10">
+          {[...Array(review.ratingOverall || 5)].map((_, i) => (
+            <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 fill-accent text-accent drop-shadow-sm" />
+          ))}
+        </div>
+        
+        <p className="text-xl sm:text-2xl md:text-3xl text-foreground/90 font-serif italic leading-relaxed mb-10 max-w-3xl">
+          "{review.reviewText}"
+        </p>
+        
+        <div className="w-16 h-[2px] bg-accent/40 mb-8 rounded-full" />
+        
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+          {review.guestAvatarUrl ? (
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-accent/20 shadow-md shrink-0">
+              <img src={review.guestAvatarUrl} alt={review.guestName} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-border/50 flex items-center justify-center bg-muted/30 shadow-md shrink-0">
+              <User className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/40" />
+            </div>
+          )}
+          <div className="text-center sm:text-left">
+            <h4 className="font-bold text-lg sm:text-xl text-foreground mb-0.5">{review.guestName}</h4>
+            <p className="text-accent text-sm sm:text-base font-medium tracking-wide">{review.title || "Guest"}</p>
+          </div>
+        </div>
       </div>
-      
-      <p className="text-xl sm:text-2xl md:text-3xl text-foreground/90 font-serif italic leading-relaxed mb-10 max-w-3xl">
-        "{review.reviewText}"
-      </p>
-      
-      <div className="w-16 h-[1px] bg-accent/40 mb-8" />
-      
-      <h4 className="font-bold text-lg sm:text-xl text-foreground mb-1">{review.guestName}</h4>
-      <p className="text-muted-foreground text-sm sm:text-base">{review.title || "Guest"}</p>
     </div>
   );
 }
