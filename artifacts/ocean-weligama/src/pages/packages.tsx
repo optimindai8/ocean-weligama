@@ -40,25 +40,39 @@ export default function PackagesPage() {
 
       <StayInStyleSection />
 
-      {/* Experience Weligama Section */}
       {experienceServices.length > 0 && (
-        <section className="py-24 bg-gradient-to-b from-[#F0F7FA] to-[#E8F1F5] border-t border-[#0B3D5E]/5">
-          <div className="container mx-auto px-4">
+        <section className="py-28 relative overflow-hidden border-t border-[#0B3D5E]/5"
+          style={{ background: 'linear-gradient(160deg, #EEF5FA 0%, #E6EFF6 40%, #EDF2F7 100%)' }}
+        >
+          {/* Decorative blobs */}
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-sky-200/25 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="container mx-auto px-4 relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+              <motion.span
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm border border-white/70 text-indigo-600 text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5" /> Experience Weligama
+              </motion.span>
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-3xl md:text-5xl font-serif font-bold italic text-[#0B3D5E]"
+                transition={{ delay: 0.08 }}
+                className="text-3xl md:text-5xl font-serif font-bold italic text-[#0B3D5E] leading-tight"
               >
-                Experience Weligama
+                Curate Your Perfect Stay
               </motion.h2>
               <motion.p
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="text-muted-foreground font-light text-base md:text-lg"
+                transition={{ delay: 0.16 }}
+                className="text-slate-500 font-light text-base md:text-lg"
               >
                 Everything you need for the perfect coastal escape
               </motion.p>
@@ -68,34 +82,43 @@ export default function PackagesPage() {
               {experienceServices.map((exp, idx) => (
                 <motion.div
                   key={exp.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.08, duration: 0.5 }}
-                  className="group bg-white/90 backdrop-blur-sm border border-[#0B3D5E]/5 rounded-3xl p-8 hover:shadow-xl hover:shadow-[#0B3D5E]/8 transition-all duration-500 hover:-translate-y-1 flex flex-col"
+                  transition={{ delay: idx * 0.09, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="group backdrop-blur-md border border-white/60 rounded-3xl p-7 hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-500 hover:-translate-y-2 flex flex-col relative overflow-hidden"
+                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.62) 0%, rgba(238,245,253,0.52) 100%)' }}
                 >
+                  {/* Shimmer on hover */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl"
+                    style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.05) 0%, rgba(79,172,254,0.04) 100%)' }}
+                  />
+
                   {/* Emoji Icon */}
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#F0F7FA] to-[#E0EFF5] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
+                  <div className="w-14 h-14 bg-white/70 border border-white/90 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-400 shadow-sm group-hover:bg-gradient-to-br group-hover:from-indigo-50 group-hover:to-sky-50 group-hover:border-indigo-100/70 relative z-10">
                     <span className="text-2xl">{exp.iconEmoji || '🌊'}</span>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-serif font-bold text-[#0B3D5E] mb-2 group-hover:text-[#1A6B8A] transition-colors">
+                  <h3 className="text-lg font-serif font-bold text-[#0B3D5E] mb-2 group-hover:text-indigo-700 transition-colors duration-300 relative z-10">
                     {exp.name}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm text-slate-500 font-light leading-relaxed mb-4 flex-1 line-clamp-2">
+                  <p className="text-sm text-slate-500/90 font-light leading-relaxed mb-5 flex-1 line-clamp-2 relative z-10">
                     {exp.shortDesc || exp.description || 'Experience the best of Weligama.'}
                   </p>
 
                   {/* Explore Link */}
                   <Link
                     href={`/packages/${exp.slug}`}
-                    className="inline-flex items-center gap-2 text-[#1A6B8A] font-bold text-sm hover:text-[#0B3D5E] transition-colors group/link w-fit"
+                    className="inline-flex items-center gap-2 text-indigo-600 font-bold text-sm hover:text-[#0B3D5E] transition-colors group/link w-fit relative z-10 mt-auto"
                   >
-                    Explore
-                    <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
+                    <span className="relative">
+                      Explore
+                      <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-[#0B3D5E] group-hover/link:w-full transition-all duration-300" />
+                    </span>
+                    <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform duration-300" />
                   </Link>
                 </motion.div>
               ))}

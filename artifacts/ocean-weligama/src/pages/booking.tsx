@@ -1254,8 +1254,8 @@ export default function BookingPage() {
                 className="w-full max-w-4xl mx-auto"
               >
                 <StepHeader
-                  n={currentStepNumber} iconBg="bg-purple-100"
-                  icon={<Sparkles className="w-9 h-9 text-purple-600" />}
+                  n={currentStepNumber} iconBg="bg-gradient-to-br from-violet-100 to-indigo-100"
+                  icon={<Sparkles className="w-9 h-9 text-violet-600" />}
                   title="Experiences & Packages"
                   sub="Enhance your stay with surf packages and island adventures — all optional."
                 />
@@ -1446,57 +1446,102 @@ export default function BookingPage() {
   
                 {experiences.length > 0 && (
                   <div>
-                    <h2 className="text-2xl font-serif font-bold text-purple-900 mb-6 px-2 flex items-center gap-2"><Sparkles className="w-6 h-6 text-purple-600"/> Add-On Experiences</h2>
+                    <h2 className="text-2xl font-serif font-bold text-[#0B3D5E] mb-8 px-2 flex items-center gap-3">
+                      <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200">
+                        <Sparkles className="w-4.5 h-4.5 text-white"/>
+                      </span>
+                      Add-On Experiences
+                    </h2>
                     <motion.div
-                  initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-                  className="grid sm:grid-cols-2 md:grid-cols-3 gap-5"
-                >
-                  {experiences.map(exp => {
+                      initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1, staggerChildren: 0.08 }}
+                      className="grid sm:grid-cols-2 md:grid-cols-3 gap-5"
+                    >
+                  {experiences.map((exp, idx) => {
                     const isSel = selectedDbServiceIds.includes(exp.id);
                     const tag = getServiceTag(exp.category);
                     const price = `€${parseInt(exp.basePrice)}`;
 
                     return (
-                      <button
+                      <motion.button
                         key={exp.id}
+                        initial={{ opacity: 0, y: 18 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.07, duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] }}
                         onClick={() => toggleService(exp.id)}
-                        className={`group text-left rounded-[1.5rem] border-2 transition-all duration-400 relative overflow-hidden flex flex-col ${
+                        className={`group text-left rounded-3xl transition-all duration-500 relative overflow-hidden flex flex-col backdrop-blur-md ${
                           isSel
-                            ? "border-purple-400 bg-white shadow-lg shadow-purple-100 scale-[1.02] z-10"
-                            : "border-transparent bg-slate-50/70 shadow-sm hover:bg-white hover:border-purple-200 hover:shadow-lg hover:scale-[1.01]"
+                            ? "border-2 border-violet-400/80 bg-white/70 shadow-2xl shadow-violet-200/60 scale-[1.03] z-10 ring-4 ring-violet-100/50"
+                            : "border border-white/60 bg-white/40 shadow-md shadow-slate-200/50 hover:bg-white/65 hover:border-indigo-200/80 hover:shadow-xl hover:shadow-indigo-100/50 hover:scale-[1.02]"
                         }`}
+                        style={{
+                          background: isSel
+                            ? 'linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(237,233,254,0.75) 100%)'
+                            : 'linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(240,245,255,0.45) 100%)'
+                        }}
                       >
-                        <div className="p-6 flex-1 flex flex-col">
-                          {/* Emoji Icon */}
-                          <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm border border-purple-100">
+                        {/* Subtle shimmer overlay */}
+                        <div className={`absolute inset-0 transition-opacity duration-500 pointer-events-none rounded-3xl ${
+                          isSel ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        }`}
+                          style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.06) 0%, rgba(99,102,241,0.04) 100%)' }}
+                        />
+
+                        <div className="p-6 flex-1 flex flex-col relative z-10">
+                          {/* Price badge */}
+                          <div className={`absolute top-4 right-4 px-2.5 py-1 rounded-full text-xs font-black tracking-wide transition-all duration-300 ${
+                            isSel
+                              ? 'bg-violet-500 text-white shadow-md shadow-violet-300/50'
+                              : 'bg-slate-100/80 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600'
+                          }`}>
+                            {price}
+                          </div>
+
+                          {/* Floating Emoji Icon */}
+                          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all duration-400 shadow-sm ${
+                            isSel
+                              ? 'bg-gradient-to-br from-violet-100 to-indigo-100 shadow-violet-200 scale-110 rotate-3 border border-violet-200/60'
+                              : 'bg-white/70 border border-white/80 group-hover:scale-110 group-hover:rotate-3 group-hover:bg-gradient-to-br group-hover:from-indigo-50 group-hover:to-violet-50'
+                          }`}>
                             <span className="text-2xl">{exp.iconEmoji || '🌊'}</span>
                           </div>
 
                           {/* Title */}
-                          <h3 className="text-lg font-serif font-bold text-foreground mb-2 group-hover:text-purple-600 transition-colors">
+                          <h3 className={`text-base font-serif font-bold mb-2 transition-colors duration-300 pr-12 ${
+                            isSel ? 'text-violet-700' : 'text-[#0B3D5E] group-hover:text-indigo-700'
+                          }`}>
                             {exp.name}
                           </h3>
 
                           {/* Description */}
-                          <p className="text-sm text-muted-foreground font-light leading-relaxed mb-6 flex-1 line-clamp-2">
+                          <p className="text-sm text-slate-500/90 font-light leading-relaxed mb-4 flex-1 line-clamp-2">
                             {exp.description || exp.highlights?.[0] || 'Experience the best of Weligama.'}
                           </p>
 
-
+                          {/* Add/Remove indicator */}
+                          <div className={`flex items-center gap-1.5 text-xs font-bold tracking-wide mt-auto transition-all duration-300 ${
+                            isSel ? 'text-violet-600' : 'text-slate-400 group-hover:text-indigo-500'
+                          }`}>
+                            <div className={`w-4 h-4 rounded-full flex items-center justify-center transition-all duration-300 ${
+                              isSel ? 'bg-violet-500 text-white' : 'bg-slate-200 group-hover:bg-indigo-200'
+                            }`}>
+                              {isSel ? <Check className="w-2.5 h-2.5" /> : <span className="text-[10px]">+</span>}
+                            </div>
+                            {isSel ? 'Added' : 'Add to stay'}
+                          </div>
 
                           {isSel && exp.unit !== 'flat_rate' && exp.unit !== 'per_person' && (
-                            <div className="mt-4 pt-4 border-t border-purple-50 flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
+                            <div className="mt-4 pt-4 border-t border-violet-100/70 flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center justify-between">
-                                <label className="text-sm font-bold text-purple-900">{getUnitInputLabel(exp.unit)}</label>
-                                <div className="flex items-center gap-3 bg-purple-50 rounded-full border border-purple-100 px-3 py-1.5 shadow-sm">
-                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: Math.max(1, (p[exp.id] || 1) - 1) }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100 transition-colors">-</button>
-                                  <span className="text-sm font-black text-purple-900 text-center min-w-[40px]">
+                                <label className="text-sm font-bold text-violet-900">{getUnitInputLabel(exp.unit)}</label>
+                                <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm rounded-full border border-violet-200/60 px-2.5 py-1 shadow-sm">
+                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: Math.max(1, (p[exp.id] || 1) - 1) }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-violet-50 text-violet-600 font-bold hover:bg-violet-100 transition-colors">-</button>
+                                  <span className="text-sm font-black text-violet-900 text-center min-w-[36px]">
                                     {serviceQuantities[exp.id] || 1}
                                     {getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1) && (
                                       <span className="text-[10px] ml-1 uppercase tracking-wider">{getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1)}</span>
                                     )}
                                   </span>
-                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || 1) + 1 }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-white text-purple-600 font-bold shadow-sm hover:bg-purple-100 transition-colors">+</button>
+                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || 1) + 1 }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-violet-50 text-violet-600 font-bold hover:bg-violet-100 transition-colors">+</button>
                                 </div>
                               </div>
                             </div>
@@ -1504,14 +1549,15 @@ export default function BookingPage() {
 
                           {isSel && (
                             <motion.div
-                              initial={{ scale: 0 }} animate={{ scale: 1 }}
-                              className="absolute top-4 right-4 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center shadow-lg"
+                              initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }}
+                              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                              className="absolute top-4 left-4 w-6 h-6 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-violet-300/60"
                             >
                               <Check className="w-3 h-3 text-white" />
                             </motion.div>
                           )}
                         </div>
-                      </button>
+                      </motion.button>
                     );
                   })}
                 </motion.div>
