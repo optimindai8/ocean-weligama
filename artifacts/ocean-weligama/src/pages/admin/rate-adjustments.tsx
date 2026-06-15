@@ -462,7 +462,7 @@ export default function AdminRateAdjustments() {
   const getAdjForSeason = (key: string) => {
     const season = SEASONS.find((s) => s.key === key)!;
     return adjustments.find((a) => {
-      const name = a.seasonName.toLowerCase();
+      const name = (a.seasonName || "").toLowerCase();
       if (key === "summer") {
         return name.startsWith("april") || name.includes("low season");
       } else {
