@@ -100,7 +100,7 @@ export function Footer() {
             </div>
           </Link>
           
-          <p className="text-white/70 leading-relaxed max-w-sm font-light text-sm md:text-base">
+          <p className="text-white/80 leading-relaxed max-w-sm font-serif italic tracking-wide text-sm md:text-base">
             Your barefoot luxury home by the Indian Ocean. Experience serenity, comfort, and the soothing rhythm of the waves.
           </p>
           
