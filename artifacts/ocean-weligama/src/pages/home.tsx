@@ -136,7 +136,7 @@ export default function Home() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
           >
-            <Link href="/book">
+            <Link href="/book?new=1">
               <Button size="lg" className="
                 relative overflow-hidden
                 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white rounded-[2rem]

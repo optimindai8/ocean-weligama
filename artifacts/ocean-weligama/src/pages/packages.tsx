@@ -149,7 +149,7 @@ export default function PackagesPage() {
             <div className="absolute -inset-3 bg-gradient-to-r from-amber-400 via-[#F0A500] to-yellow-500 rounded-full blur-xl opacity-60 animate-pulse" style={{ animationDuration: '2s' }} />
             <div className="absolute -inset-1 bg-[#F0A500] rounded-full blur-md opacity-80 animate-pulse" style={{ animationDuration: '1.5s' }} />
             
-            <Link href="/book" className="relative block z-10">
+            <Link href="/book?new=1" className="relative block z-10">
               <Button size="lg" className="rounded-full px-12 h-16 bg-[#F0A500] hover:bg-yellow-400 hover:text-[#0B3D5E] text-white text-lg font-black tracking-widest shadow-2xl transition-all duration-300 hover:scale-105 border border-white/20">
                 Check Availability
               </Button>

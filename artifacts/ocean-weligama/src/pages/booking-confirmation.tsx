@@ -80,7 +80,7 @@ export default function BookingConfirmationPage() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <p className="text-muted-foreground mb-4">No booking reference found.</p>
-          <Link href="/book"><Button>Start a new booking</Button></Link>
+          <Link href="/book?new=1"><Button>Start a new booking</Button></Link>
         </div>
       </div>
     );

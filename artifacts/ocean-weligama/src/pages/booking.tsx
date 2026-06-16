@@ -386,6 +386,15 @@ export default function BookingPage() {
   const [, setLocation]   = useLocation();
   const { toast }         = useToast();
 
+  if (typeof window !== 'undefined' && window.location.search.includes('new=1')) {
+    ['stepId', 'guestCount', 'dateRange', 'roomIds', 'serviceIds', 'serviceQuantities', 'priceData', 'formData', 'highlightCustom', 'matrixPrice'].forEach(k => {
+      localStorage.removeItem(`booking_${k}`);
+    });
+    const url = new URL(window.location.href);
+    url.searchParams.delete('new');
+    window.history.replaceState({}, '', url.toString());
+  }
+
   const loadState = (key: string, def: any) => {
     if (typeof window === 'undefined') return def;
     try {

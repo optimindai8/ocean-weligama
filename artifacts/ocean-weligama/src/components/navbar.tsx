@@ -105,7 +105,7 @@ export function Navbar() {
             <div className="hidden md:block">
               <LanguageSelector />
             </div>
-            <Link href="/book">
+            <Link href="/book?new=1">
               <button className="book-btn">
                 Book Now
               </button>
