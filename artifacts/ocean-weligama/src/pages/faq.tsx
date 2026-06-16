@@ -93,7 +93,6 @@ export default function FAQPage() {
   }, [dbSections, searchQuery, activeCategory]);
 
   return (
-  return (
     <div className="min-h-screen flex flex-col bg-background text-[#0B3D5E] selection:bg-[#4BBCCC] selection:text-white overflow-hidden">
       
       <PageHero

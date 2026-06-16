@@ -94,9 +94,18 @@ function FeaturedCard({ post }: { post: any }) {
   return (
     <motion.div ref={cardRef} style={{ opacity }}>
       <Link href={`/blog/${post.id}`}>
-        <SpotlightCard className="group grid grid-cols-1 lg:grid-cols-2 gap-0 bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-lg hover:shadow-2xl transition-shadow duration-700">
+        <SpotlightCard className="group grid grid-cols-1 lg:grid-cols-2 gap-0 bg-white/40 backdrop-blur-2xl rounded-[2.5rem] overflow-hidden border border-white/60 shadow-[0_20px_60px_rgba(11,61,94,0.08)] hover:shadow-[0_30px_80px_rgba(11,61,94,0.12)] transition-shadow duration-700 relative">
+          
+          {/* Shimmer sweep */}
+          <motion.div
+            className="absolute inset-0 w-[40%] pointer-events-none z-0"
+            style={{ background: 'linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)', skewX: '-15deg' }}
+            animate={{ x: ['-200%', '400%'] }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', repeatDelay: 3 }}
+          />
+
           {/* Image side */}
-          <div className="relative overflow-hidden min-h-[320px] lg:min-h-[520px] bg-slate-100">
+          <div className="relative overflow-hidden min-h-[320px] lg:min-h-[520px] bg-slate-100 z-10">
             <motion.div style={{ y: imgY }} className="absolute inset-[-10%] w-[120%] h-[120%]">
               <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
             </motion.div>
@@ -181,9 +190,13 @@ function PostCard({ post, index }: { post: any; index: number }) {
     >
       <Link href={`/blog/${post.id}`}>
         <TiltCard>
-          <SpotlightCard className="group h-full bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col">
+          <SpotlightCard className="group h-full bg-white/40 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/60 shadow-[0_10px_30px_rgba(11,61,94,0.05)] hover:shadow-[0_20px_50px_rgba(11,61,94,0.1)] transition-all duration-500 flex flex-col relative">
+            
+            {/* Soft inner glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent pointer-events-none z-0" />
+
             {/* Image */}
-            <div className="relative overflow-hidden bg-slate-100" style={{ aspectRatio: "16/10" }}>
+            <div className="relative overflow-hidden bg-slate-100 z-10" style={{ aspectRatio: "16/10" }}>
               <img
                 src={post.image}
                 alt={post.title}
@@ -283,7 +296,7 @@ export default function BlogPage() {
   const otherPosts = filteredBlogs.slice(1);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F9FB] selection:bg-[#0B3D5E] selection:text-white overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background selection:bg-[#0B3D5E] selection:text-white overflow-x-hidden">
 
       <PageHero
         title="Island Stories"
@@ -308,8 +321,12 @@ export default function BlogPage() {
       </PageHero>
 
       {/* Main Content */}
-      <main className="flex-1 py-16 bg-[#F7F9FB]">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <main className="flex-1 py-16 relative" style={{ background: 'linear-gradient(160deg, #F0F4F8 0%, #E2EDF8 100%)' }}>
+        {/* Soft ambient backgrounds */}
+        <div className="absolute top-[10%] right-[-10%] w-[600px] h-[600px] bg-teal-200/30 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-[40%] left-[-10%] w-[500px] h-[500px] bg-sky-200/30 blur-[100px] rounded-full pointer-events-none" />
+
+        <div className="container mx-auto px-4 max-w-7xl relative z-10">
 
           {/* Sticky filter bar */}
           <motion.div
@@ -318,7 +335,7 @@ export default function BlogPage() {
             transition={{ delay: 0.3, duration: 0.5 }}
             className="sticky top-20 z-30 mb-14"
           >
-            <div className={`bg-white/90 backdrop-blur-xl rounded-2xl border transition-all duration-300 p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3 ${isSearchFocused ? "border-[#0B3D5E]/20 shadow-lg shadow-[#0B3D5E]/5" : "border-slate-100 shadow-md"}`}>
+            <div className={`bg-white/40 backdrop-blur-2xl rounded-3xl border border-white/60 transition-all duration-400 p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3 shadow-[0_10px_40px_rgba(11,61,94,0.06)]`}>
               {/* Category pills */}
               <div className="flex flex-wrap gap-2 flex-1">
                 {CATEGORIES.map((cat) => {
@@ -330,20 +347,20 @@ export default function BlogPage() {
                       onClick={() => setActiveCategory(cat)}
                       whileHover={{ scale: 1.04 }}
                       whileTap={{ scale: 0.97 }}
-                      className={`relative flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
+                      className={`relative flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] uppercase tracking-wider font-bold transition-all duration-300 ${
                         isActive
-                          ? "bg-[#0B3D5E] text-white shadow-md shadow-[#0B3D5E]/20"
-                          : "bg-[#F7F9FB] text-slate-500 hover:bg-slate-100 border border-slate-100"
+                          ? "text-white shadow-lg shadow-[#0B3D5E]/20"
+                          : "text-slate-500 hover:text-[#0B3D5E] hover:bg-white/60 bg-white/40 border border-white/60"
                       }`}
                     >
                       {cat}
                       {count > 0 && (
-                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isActive ? "bg-white/20 text-white" : "bg-slate-200 text-slate-500"}`}>
+                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full transition-colors ${isActive ? "bg-white/20 text-white" : "bg-white/60 text-slate-400"}`}>
                           {count}
                         </span>
                       )}
                       {isActive && (
-                        <motion.div layoutId="activePill" className="absolute inset-0 rounded-xl bg-[#0B3D5E]" style={{ zIndex: -1 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} />
+                        <motion.div layoutId="activePill" className="absolute inset-0 rounded-2xl bg-[#0B3D5E]" style={{ zIndex: -1 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} />
                       )}
                     </motion.button>
                   );
@@ -351,8 +368,8 @@ export default function BlogPage() {
               </div>
 
               {/* Search */}
-              <div className="relative w-full md:w-72">
-                <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-200 ${isSearchFocused ? "text-[#0B3D5E]" : "text-slate-300"}`} />
+              <div className="relative w-full md:w-80">
+                <Search className={`absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors duration-200 ${isSearchFocused ? "text-teal-500" : "text-slate-400"}`} />
                 <input
                   type="text"
                   placeholder="Search stories..."
@@ -360,7 +377,7 @@ export default function BlogPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                  className="w-full bg-[#F7F9FB] border border-slate-100 rounded-xl pl-11 pr-4 py-2.5 text-xs text-slate-700 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0B3D5E]/10 focus:bg-white focus:border-[#0B3D5E]/20 transition-all"
+                  className="w-full bg-white/60 backdrop-blur-md border border-white/80 rounded-2xl pl-11 pr-4 py-3 text-sm text-[#0B3D5E] placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-teal-500/20 focus:bg-white focus:border-teal-300 transition-all shadow-sm hover:bg-white/80"
                 />
                 <AnimatePresence>
                   {searchQuery && (
@@ -457,8 +474,16 @@ export default function BlogPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-32 relative rounded-[3rem] overflow-hidden bg-[#0B3D5E] p-8 md:p-20 text-center"
+            className="mt-32 relative rounded-[4rem] overflow-hidden p-8 md:p-20 text-center shadow-[0_32px_80px_rgba(11,61,94,0.3)] border border-white/20 backdrop-blur-2xl"
+            style={{ background: 'linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,58,95,0.75) 100%)' }}
           >
+            {/* Shimmer overlay */}
+            <motion.div
+              className="absolute inset-0 w-[40%] pointer-events-none z-0"
+              style={{ background: 'linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%)', skewX: '-15deg' }}
+              animate={{ x: ['-200%', '350%'] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 4 }}
+            />
             {/* Animated gradient orb */}
             <motion.div
               animate={{ scale: [1, 1.3, 1], x: [0, 30, 0], y: [0, -20, 0] }}
