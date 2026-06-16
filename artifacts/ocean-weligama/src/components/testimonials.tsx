@@ -108,14 +108,19 @@ export function Testimonials() {
   };
 
   return (
-    <section className="py-24 bg-[#FAFAFA] overflow-hidden relative">
+    <section className="py-24 overflow-hidden relative" style={{ background: 'linear-gradient(160deg, #F0F4F8 0%, #E2EDF8 100%)' }}>
+      {/* Soft ambient backgrounds */}
+      <div className="absolute top-20 left-[-10%] w-[500px] h-[500px] bg-teal-200/40 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-20 right-[-10%] w-[600px] h-[600px] bg-sky-200/30 blur-[100px] rounded-full pointer-events-none" />
+
       <div className="container mx-auto px-4 mb-16 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-accent font-black tracking-[0.4em] uppercase text-[10px] mb-4 block"
+          className="inline-flex items-center gap-2 bg-white/40 border border-white/60 text-teal-600 font-black tracking-[0.3em] uppercase text-[10px] px-5 py-2 rounded-full backdrop-blur-md shadow-sm mb-6"
         >
+          <Star className="w-3 h-3 text-teal-500" />
           Testimonials
         </motion.div>
         
@@ -124,9 +129,9 @@ export function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-6"
+          className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#0B3D5E] mb-8"
         >
-          Guest <span className="italic font-normal text-accent">Stories</span>
+          Guest <span className="italic font-normal text-teal-600">Stories</span>
         </motion.h2>
 
         <motion.div
@@ -139,23 +144,23 @@ export function Testimonials() {
             onClick={() => setIsFormOpen(true)}
             className="
               relative overflow-hidden
-              rounded-full px-10 h-14 bg-[#0A192F] hover:bg-[#112240] text-white 
+              rounded-full px-10 h-14 bg-white/60 hover:bg-white text-[#0B3D5E] hover:text-teal-700
               transition-all duration-500 text-xs font-bold tracking-[0.2em] uppercase 
-              shadow-[0_10px_30px_rgba(10,25,47,0.2)] hover:shadow-[0_20px_40px_rgba(10,25,47,0.4)]
-              hover:scale-105 active:scale-95 group border border-[#112240]
+              shadow-lg hover:shadow-xl backdrop-blur-md
+              hover:scale-[1.03] active:scale-95 group border border-white
             "
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-100/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
             
             <span className="relative z-10 flex items-center">
-              <Plus className="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform duration-500" />
+              <Plus className="w-5 h-5 mr-3 group-hover:rotate-90 transition-transform duration-500 text-teal-500" />
               Add Your Review
             </span>
           </Button>
         </motion.div>
       </div>
 
-      <div className="relative w-full max-w-5xl mx-auto px-4 py-8">
+      <div className="relative w-full max-w-5xl mx-auto px-4 py-8 z-10">
         {isLoading ? (
           <div className="flex gap-6 justify-center">
              <div className="w-full max-w-3xl h-[300px] bg-white rounded-3xl animate-pulse border border-border/40" />
@@ -175,13 +180,15 @@ export function Testimonials() {
             </AnimatePresence>
             
             {/* Pagination Dots */}
-            <div className="flex justify-center gap-2 mt-8">
+            <div className="flex justify-center gap-3 mt-10">
               {reviews.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrentIndex(idx)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    idx === currentIndex ? "w-8 bg-accent" : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                  className={`h-2.5 rounded-full transition-all duration-500 shadow-sm ${
+                    idx === currentIndex 
+                      ? "w-10 bg-gradient-to-r from-teal-400 to-sky-400" 
+                      : "w-2.5 bg-white/60 border border-slate-200 hover:bg-white"
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
@@ -334,37 +341,40 @@ export function Testimonials() {
 
 function ReviewCard({ review }: { review: any }) {
   return (
-    <div className="relative w-full max-w-4xl mx-auto bg-gradient-to-b from-white to-[#FAFAFA] rounded-[2.5rem] p-8 sm:p-12 md:p-16 shadow-[0_20px_60px_rgba(0,0,0,0.04)] border border-border/40 flex flex-col items-center text-center overflow-hidden group hover:border-accent/30 transition-colors duration-500">
+    <div className="relative w-full max-w-4xl mx-auto bg-white/40 backdrop-blur-xl rounded-[3rem] p-8 sm:p-12 md:p-16 shadow-[0_30px_80px_rgba(11,61,94,0.07)] border border-white/70 flex flex-col items-center text-center overflow-hidden group hover:border-teal-200/50 transition-all duration-700 hover:shadow-[0_40px_100px_rgba(45,212,191,0.1)]">
+      
+      {/* Ambient card glow */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/60 to-transparent pointer-events-none" />
       
       {/* Decorative quote background */}
-      <div className="absolute top-4 left-6 sm:top-8 sm:left-10 text-accent/5 text-[8rem] sm:text-[12rem] font-serif leading-none select-none pointer-events-none">"</div>
+      <div className="absolute top-4 left-6 sm:top-8 sm:left-10 text-teal-500/10 text-[8rem] sm:text-[12rem] font-serif leading-none select-none pointer-events-none group-hover:text-teal-400/20 transition-colors duration-700">"</div>
 
       <div className="relative z-10 flex flex-col items-center w-full">
-        <div className="flex gap-1.5 mb-8 sm:mb-10">
+        <div className="flex gap-1.5 mb-8 sm:mb-10 p-3 bg-white/50 backdrop-blur-md rounded-full border border-white shadow-sm group-hover:scale-105 transition-transform duration-500">
           {[...Array(review.ratingOverall || 5)].map((_, i) => (
-            <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 fill-accent text-accent drop-shadow-sm" />
+            <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 fill-teal-400 text-teal-400 drop-shadow-sm" />
           ))}
         </div>
         
-        <p className="text-xl sm:text-2xl md:text-3xl text-foreground/90 font-serif italic leading-relaxed mb-10 max-w-3xl">
+        <p className="text-xl sm:text-2xl md:text-3xl text-slate-700 font-serif italic leading-relaxed mb-10 max-w-3xl drop-shadow-sm">
           "{review.reviewText}"
         </p>
         
-        <div className="w-16 h-[2px] bg-accent/40 mb-8 rounded-full" />
+        <div className="w-16 h-[3px] bg-gradient-to-r from-teal-200 via-teal-400 to-teal-200 mb-8 rounded-full opacity-60" />
         
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
           {review.guestAvatarUrl ? (
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-accent/20 shadow-md shrink-0">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-[3px] border-white shadow-lg shrink-0 group-hover:scale-105 transition-transform duration-500">
               <img src={review.guestAvatarUrl} alt={review.guestName} loading="lazy" decoding="async" className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-border/50 flex items-center justify-center bg-muted/30 shadow-md shrink-0">
-              <User className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/40" />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-[3px] border-white flex items-center justify-center bg-white/60 backdrop-blur-sm shadow-lg shrink-0 group-hover:scale-105 transition-transform duration-500">
+              <User className="w-8 h-8 sm:w-10 sm:h-10 text-slate-400" />
             </div>
           )}
           <div className="text-center sm:text-left">
-            <h4 className="font-bold text-lg sm:text-xl text-foreground mb-0.5">{review.guestName}</h4>
-            <p className="text-accent text-sm sm:text-base font-medium tracking-wide">{review.title || "Guest"}</p>
+            <h4 className="font-bold text-lg sm:text-xl text-[#0B3D5E] mb-0.5">{review.guestName}</h4>
+            <p className="text-teal-600 font-bold tracking-widest uppercase text-[10px] sm:text-xs">{review.title || "Guest"}</p>
           </div>
         </div>
       </div>
