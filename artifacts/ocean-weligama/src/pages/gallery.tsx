@@ -184,11 +184,15 @@ export default function GalleryPage() {
       </section>
 
       {/* Main Gallery with Filters */}
-      <section className="py-24 bg-muted/20">
-        <div className="container mx-auto px-4">
+      <section className="py-24 relative overflow-hidden" style={{ background: 'linear-gradient(160deg, #F0F4F8 0%, #E2EDF8 100%)' }}>
+        {/* Soft ambient backgrounds */}
+        <div className="absolute top-0 right-[-10%] w-[600px] h-[600px] bg-teal-200/30 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-sky-200/40 blur-[100px] rounded-full pointer-events-none" />
+
+        <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <span className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-3 block">Complete Collection</span>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground">Explore Weligama</h2>
+            <span className="text-teal-600 font-bold tracking-[0.3em] uppercase text-xs mb-3 block">Complete Collection</span>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#0B3D5E]">Explore Weligama</h2>
           </div>
 
           {/* Filter Bar */}
@@ -200,14 +204,14 @@ export default function GalleryPage() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-sm border ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all duration-400 shadow-sm border backdrop-blur-md ${
                     isActive 
-                      ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-105" 
-                      : "bg-white/80 backdrop-blur-md text-muted-foreground border-border/60 hover:border-primary/30 hover:text-foreground hover:bg-white"
+                      ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/20 scale-105" 
+                      : "bg-white/40 text-slate-500 border-white/60 hover:border-teal-300 hover:text-[#0B3D5E] hover:bg-white/80"
                   }`}
                 >
                   <span>{CATEGORY_LABELS[cat]}</span>
-                  <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-colors ${isActive ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"}`}>
+                  <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-colors ${isActive ? "bg-white/20 text-white" : "bg-white/60 text-slate-400"}`}>
                     {count}
                   </span>
                 </button>
@@ -225,11 +229,19 @@ export default function GalleryPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white/60 backdrop-blur-2xl border border-white/60 rounded-[3rem] p-6 md:p-10 shadow-[0_30px_100px_rgba(0,0,0,0.06)] relative">
+            <div className="bg-white/40 backdrop-blur-2xl border border-white/60 rounded-[3rem] p-6 md:p-10 shadow-[0_30px_100px_rgba(11,61,94,0.08)] relative overflow-hidden group">
               
+              {/* Shimmer overlay for card body */}
+              <motion.div
+                className="absolute inset-0 w-[40%] pointer-events-none z-0"
+                style={{ background: 'linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)', skewX: '-15deg' }}
+                animate={{ x: ['-200%', '400%'] }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2 }}
+              />
+
               {/* Fade gradients for smooth scrolling edges */}
-              <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white/60 to-transparent z-10 pointer-events-none rounded-l-[3rem]" />
-              <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white/60 to-transparent z-10 pointer-events-none rounded-r-[3rem]" />
+              <div className="absolute left-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-r from-white/80 to-transparent z-10 pointer-events-none rounded-l-[3rem]" />
+              <div className="absolute right-0 top-0 bottom-0 w-16 md:w-24 bg-gradient-to-l from-white/80 to-transparent z-10 pointer-events-none rounded-r-[3rem]" />
               
               <div 
                 className="flex overflow-x-auto gap-4 sm:gap-6 pb-8 pt-4 px-4 sm:px-8 hide-scrollbar smooth-inertia items-center" 
