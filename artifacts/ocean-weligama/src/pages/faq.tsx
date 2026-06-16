@@ -144,30 +144,26 @@ export default function FAQPage() {
 
           {/* Category Chips */}
           <div className="w-full flex overflow-x-auto hide-scrollbar smooth-inertia pt-2 pb-6 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0 sm:justify-center">
-            <div className="flex gap-2 p-1.5 bg-white/40 backdrop-blur-md border border-white/60 rounded-full shadow-md w-max mx-auto">
+            <div className="flex gap-3 w-max mx-auto px-2">
               {allCategories.map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
-                  <button
+                  <motion.button
                     key={cat}
                     onClick={() => {
                       setActiveCategory(cat);
                       setOpenIndex(null);
                     }}
-                    className={`relative px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-colors duration-300 ${
-                      isActive ? "text-white" : "text-muted-foreground hover:text-[#0B3D5E]"
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`relative flex items-center justify-center px-6 py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-300 shadow-sm border backdrop-blur-md ${
+                      isActive 
+                        ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/20 scale-105" 
+                        : "bg-white/40 text-slate-500 border-white/60 hover:border-teal-300 hover:text-[#0B3D5E] hover:bg-white/80"
                     }`}
                   >
-                    {isActive && (
-                      <motion.div 
-                        layoutId="activeCategoryIndicator"
-                        className="absolute inset-0 bg-[#0B3D5E] rounded-full shadow-md"
-                        initial={false}
-                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                      />
-                    )}
                     <span className="relative z-10 whitespace-nowrap">{cat}</span>
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>

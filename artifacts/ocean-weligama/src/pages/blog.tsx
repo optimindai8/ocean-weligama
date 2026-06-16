@@ -335,9 +335,9 @@ export default function BlogPage() {
             transition={{ delay: 0.3, duration: 0.5 }}
             className="sticky top-20 z-30 mb-14"
           >
-            <div className={`bg-white/40 backdrop-blur-2xl rounded-3xl border border-white/60 transition-all duration-400 p-3 flex flex-col md:flex-row items-stretch md:items-center gap-3 shadow-[0_10px_40px_rgba(11,61,94,0.06)]`}>
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
               {/* Category pills */}
-              <div className="flex flex-wrap gap-2 flex-1">
+              <div className="flex flex-wrap gap-3">
                 {CATEGORIES.map((cat) => {
                   const isActive = activeCategory === cat;
                   const count = categoryCounts[cat] || 0;
@@ -347,20 +347,17 @@ export default function BlogPage() {
                       onClick={() => setActiveCategory(cat)}
                       whileHover={{ scale: 1.04 }}
                       whileTap={{ scale: 0.97 }}
-                      className={`relative flex items-center gap-2 px-5 py-2.5 rounded-2xl text-[11px] uppercase tracking-wider font-bold transition-all duration-300 ${
+                      className={`relative flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-300 shadow-sm border backdrop-blur-md ${
                         isActive
-                          ? "text-white shadow-lg shadow-[#0B3D5E]/20"
-                          : "text-slate-500 hover:text-[#0B3D5E] hover:bg-white/60 bg-white/40 border border-white/60"
+                          ? "bg-[#0B3D5E] text-white border-[#0B3D5E] shadow-lg shadow-[#0B3D5E]/20 scale-105"
+                          : "bg-white/40 text-slate-500 border-white/60 hover:border-teal-300 hover:text-[#0B3D5E] hover:bg-white/80"
                       }`}
                     >
-                      {cat}
+                      <span className="relative z-10 whitespace-nowrap">{cat}</span>
                       {count > 0 && (
-                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full transition-colors ${isActive ? "bg-white/20 text-white" : "bg-white/60 text-slate-400"}`}>
+                        <span className={`relative z-10 text-[9px] font-black px-1.5 py-0.5 rounded-full transition-colors ${isActive ? "bg-white/20 text-white" : "bg-white/60 text-slate-400"}`}>
                           {count}
                         </span>
-                      )}
-                      {isActive && (
-                        <motion.div layoutId="activePill" className="absolute inset-0 rounded-2xl bg-[#0B3D5E]" style={{ zIndex: -1 }} transition={{ type: "spring", stiffness: 300, damping: 30 }} />
                       )}
                     </motion.button>
                   );
@@ -377,7 +374,7 @@ export default function BlogPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setIsSearchFocused(true)}
                   onBlur={() => setIsSearchFocused(false)}
-                  className="w-full bg-white/60 backdrop-blur-md border border-white/80 rounded-2xl pl-11 pr-4 py-3 text-sm text-[#0B3D5E] placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-teal-500/20 focus:bg-white focus:border-teal-300 transition-all shadow-sm hover:bg-white/80"
+                  className="w-full bg-white/40 backdrop-blur-md border border-white/60 rounded-full pl-11 pr-4 py-3 text-sm text-[#0B3D5E] placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-teal-500/20 focus:bg-white focus:border-teal-300 transition-all shadow-sm hover:bg-white/80 hover:shadow-md"
                 />
                 <AnimatePresence>
                   {searchQuery && (
@@ -386,7 +383,7 @@ export default function BlogPage() {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 text-xs font-bold px-1"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-teal-500 text-xs font-bold transition-colors"
                     >
                       ✕
                     </motion.button>
