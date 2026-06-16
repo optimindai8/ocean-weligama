@@ -93,7 +93,8 @@ export default function FAQPage() {
   }, [dbSections, searchQuery, activeCategory]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#0B3D5E] selection:bg-primary selection:text-white overflow-hidden">
+  return (
+    <div className="min-h-screen flex flex-col bg-background text-[#0B3D5E] selection:bg-[#4BBCCC] selection:text-white overflow-hidden">
       
       <PageHero
         title="Frequently Asked Questions"
@@ -102,12 +103,10 @@ export default function FAQPage() {
         badgeIcon={<HelpCircle className="w-3.5 h-3.5 text-[#4BBCCC]" />}
       />
 
-      <main className="flex-1 py-20 relative">
+      <main className="flex-1 py-20 relative" style={{ background: 'linear-gradient(160deg, #F0F4F8 0%, #E2EDF8 100%)' }}>
         {/* Background decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
-          <div className="absolute top-[-10%] right-[-5%] w-[40rem] h-[40rem] bg-primary/5 rounded-full blur-3xl mix-blend-multiply" />
-          <div className="absolute bottom-[20%] left-[-10%] w-[30rem] h-[30rem] bg-[#4BBCCC]/5 rounded-full blur-3xl mix-blend-multiply" />
-        </div>
+        <div className="absolute top-0 right-[-10%] w-[500px] h-[500px] bg-teal-200/30 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-[20%] left-[-10%] w-[600px] h-[600px] bg-sky-200/30 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="container mx-auto px-4 max-w-4xl relative z-10">
           
@@ -118,9 +117,9 @@ export default function FAQPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mb-12 relative group"
           >
-            <div className="absolute inset-0 bg-primary/5 rounded-2xl blur-xl group-focus-within:bg-primary/10 transition-all duration-500" />
-            <div className="relative flex items-center bg-white border border-[#0B3D5E]/10 rounded-2xl p-2 shadow-sm focus-within:shadow-md focus-within:border-[#0B3D5E]/30 transition-all duration-300">
-              <div className="p-3 text-muted-foreground">
+            <div className="absolute inset-0 bg-teal-400/20 rounded-full blur-2xl group-focus-within:bg-teal-400/30 transition-all duration-500" />
+            <div className="relative flex items-center bg-white/60 backdrop-blur-xl border border-white/80 rounded-full p-2 shadow-lg focus-within:shadow-xl focus-within:border-teal-300 transition-all duration-300 hover:bg-white/80">
+              <div className="p-3 text-teal-600 pl-6">
                 <Search className="w-5 h-5" />
               </div>
               <input 
@@ -146,7 +145,7 @@ export default function FAQPage() {
 
           {/* Category Chips */}
           <div className="w-full flex overflow-x-auto hide-scrollbar smooth-inertia pt-2 pb-6 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0 sm:justify-center">
-            <div className="flex gap-2 p-1.5 bg-white border border-[#0B3D5E]/10 rounded-full shadow-sm w-max mx-auto">
+            <div className="flex gap-2 p-1.5 bg-white/40 backdrop-blur-md border border-white/60 rounded-full shadow-md w-max mx-auto">
               {allCategories.map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
@@ -211,10 +210,10 @@ export default function FAQPage() {
                             <motion.div 
                               key={faq.id}
                               layout="position"
-                              className={`group rounded-2xl border transition-all duration-300 overflow-hidden ${
+                              className={`group rounded-3xl border transition-all duration-400 overflow-hidden backdrop-blur-md ${
                                 isOpen 
-                                  ? "bg-white border-[#0B3D5E] shadow-xl shadow-[#0B3D5E]/5" 
-                                  : "bg-white/80 border-[#0B3D5E]/10 hover:border-[#0B3D5E]/30 hover:bg-white"
+                                  ? "bg-white/90 border-teal-300 shadow-xl shadow-teal-500/10 scale-[1.01]" 
+                                  : "bg-white/40 border-white/60 hover:border-teal-200 hover:bg-white/70 hover:shadow-lg"
                               }`}
                             >
                               <button 
@@ -222,17 +221,17 @@ export default function FAQPage() {
                                 className="w-full px-6 py-5 flex items-start sm:items-center justify-between text-left gap-4"
                               >
                                 <div className="flex items-start sm:items-center gap-4 flex-1">
-                                  <div className={`mt-0.5 sm:mt-0 p-2 rounded-lg transition-colors duration-300 ${isOpen ? "bg-[#0B3D5E]/5 text-[#0B3D5E]" : "bg-muted text-muted-foreground group-hover:bg-[#0B3D5E]/5 group-hover:text-[#0B3D5E]"}`}>
+                                  <div className={`mt-0.5 sm:mt-0 p-2.5 rounded-xl transition-all duration-400 ${isOpen ? "bg-teal-500 text-white shadow-md shadow-teal-500/20" : "bg-white border border-white/60 text-slate-400 group-hover:text-teal-500 group-hover:border-teal-200 shadow-sm"}`}>
                                     <HelpCircle className="w-4 h-4" />
                                   </div>
-                                  <span className={`text-base sm:text-[17px] font-bold transition-colors duration-300 flex-1 leading-snug ${isOpen ? "text-[#0B3D5E]" : "text-[#0B3D5E]/80 group-hover:text-[#0B3D5E]"}`}>
+                                  <span className={`text-base sm:text-lg font-bold transition-colors duration-300 flex-1 leading-snug ${isOpen ? "text-[#0B3D5E]" : "text-slate-600 group-hover:text-[#0B3D5E]"}`}>
                                     {faq.question}
                                   </span>
                                 </div>
                                 <div className={`shrink-0 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-500 ${
                                   isOpen 
-                                    ? "border-[#0B3D5E] bg-[#0B3D5E] text-white rotate-180" 
-                                    : "border-border text-muted-foreground group-hover:border-[#0B3D5E]/30 group-hover:text-[#0B3D5E]"
+                                    ? "border-teal-500 bg-teal-50 text-teal-600 rotate-180 shadow-sm" 
+                                    : "border-white/60 text-slate-400 bg-white/40 group-hover:bg-white group-hover:border-teal-200 group-hover:text-teal-500"
                                 }`}>
                                   <ChevronDown className="w-4 h-4" />
                                 </div>
@@ -264,9 +263,11 @@ export default function FAQPage() {
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="py-16 text-center border border-dashed border-[#0B3D5E]/20 rounded-[2rem] bg-white/50"
+                    className="py-16 text-center border border-white/60 rounded-[3rem] bg-white/40 backdrop-blur-md shadow-lg"
                   >
-                    <Search className="w-12 h-12 text-[#0B3D5E]/20 mx-auto mb-4" />
+                    <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-white/80">
+                      <Search className="w-10 h-10 text-teal-300" />
+                    </div>
                     <h3 className="text-xl font-bold text-[#0B3D5E] mb-2">
                       {searchQuery ? "No results found" : "No FAQs yet"}
                     </h3>
@@ -295,28 +296,40 @@ export default function FAQPage() {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            className="mt-32 relative rounded-[2.5rem] overflow-hidden bg-[#0B3D5E] p-12 md:p-16 text-center group"
+            className="mt-32 relative rounded-[4rem] overflow-hidden p-12 md:p-16 text-center shadow-[0_32px_80px_rgba(11,61,94,0.3)] border border-white/20 backdrop-blur-2xl"
+            style={{ background: 'linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,58,95,0.75) 100%)' }}
           >
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 transition-opacity duration-700 group-hover:opacity-20" />
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2" />
-            <div className="relative z-10 max-w-xl mx-auto">
-              <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-6">Still have questions?</h2>
-              <p className="text-white/80 text-lg mb-10 leading-relaxed font-light">
+            {/* Animated decorative background elements */}
+            <div className="absolute inset-0 opacity-50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-400/30 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-sky-400/20 blur-[80px] rounded-full pointer-events-none" />
+
+            {/* Shimmer overlay */}
+            <motion.div
+              className="absolute inset-0 w-[40%] pointer-events-none z-0"
+              style={{ background: 'linear-gradient(100deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%)', skewX: '-15deg' }}
+              animate={{ x: ['-200%', '350%'] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', repeatDelay: 4 }}
+            />
+
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6 drop-shadow-md">Still have questions?</h2>
+              <p className="text-white/80 text-lg mb-10 leading-relaxed font-light italic">
                 If you couldn't find what you're looking for, our barefoot luxury concierge team is standing by to assist you personally.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a 
                   href="/contact" 
-                  className="w-full sm:w-auto bg-[#F0A500] text-white px-10 py-4 rounded-full font-bold hover:bg-[#D99500] transition-all shadow-xl shadow-[#F0A500]/20 flex items-center justify-center gap-3 hover:scale-105"
+                  className="w-full sm:w-auto bg-white hover:bg-white/90 text-[#0B3D5E] px-10 py-4 rounded-full font-black tracking-widest text-sm uppercase transition-all shadow-[0_0_40px_rgba(255,255,255,0.3)] flex items-center justify-center gap-3 hover:scale-[1.03] overflow-hidden relative group"
                 >
-                  <MessageCircle className="w-5 h-5" />
+                  <span className="absolute inset-0 w-[35%] bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[350%] transition-transform duration-700 ease-out pointer-events-none" />
+                  <MessageCircle className="w-5 h-5 text-teal-500" />
                   Contact Concierge
                 </a>
                 <a 
                   href="https://wa.me/94765791763" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto bg-white/10 text-white backdrop-blur-md border border-white/20 px-10 py-4 rounded-full font-bold hover:bg-white/20 transition-all flex items-center justify-center gap-3"
+                  className="w-full sm:w-auto bg-white/10 text-white backdrop-blur-md border border-white/30 px-10 py-4 rounded-full font-black tracking-widest text-sm uppercase hover:bg-white/20 transition-all flex items-center justify-center gap-3 hover:scale-[1.03] shadow-lg"
                 >
                   WhatsApp Us
                 </a>
