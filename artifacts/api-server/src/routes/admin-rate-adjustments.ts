@@ -9,7 +9,24 @@ const router = Router();
 router.get("/v1/admin/rate-adjustments", async (req, res) => {
   try {
     const adjustments = await db.select().from(globalRateAdjustments).orderBy(globalRateAdjustments.createdAt);
-    res.json(adjustments);
+    
+    // Auto-deactivate logic
+    const now = new Date();
+    const updatedAdjustments = await Promise.all(adjustments.map(async (adj) => {
+      if (adj.isActive && adj.dateTo) {
+        const toDate = new Date(adj.dateTo);
+        if (now > toDate) {
+          const [updated] = await db.update(globalRateAdjustments)
+            .set({ isActive: false })
+            .where(eq(globalRateAdjustments.id, adj.id))
+            .returning();
+          return updated;
+        }
+      }
+      return adj;
+    }));
+
+    res.json(updatedAdjustments);
   } catch (err) {
     req.log.error(err);
     res.status(500).json({ error: "Internal server error" });

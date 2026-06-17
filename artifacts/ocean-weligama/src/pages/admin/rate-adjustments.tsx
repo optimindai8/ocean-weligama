@@ -206,8 +206,8 @@ function SeasonCard({
 }) {
   const [form, setForm] = useState({
     seasonName: adjustment?.seasonName || season.defaultName,
-    dateFrom: adjustment?.dateFrom || "",
-    dateTo: adjustment?.dateTo || "",
+    dateFrom: adjustment?.dateFrom ? new Date(adjustment.dateFrom).toISOString().slice(0, 16) : "",
+    dateTo: adjustment?.dateTo ? new Date(adjustment.dateTo).toISOString().slice(0, 16) : "",
     roomAdjustmentType: adjustment?.roomAdjustmentType || "fixed",
     roomAdjustmentValue: adjustment?.roomAdjustmentValue || "0",
     experienceAdjustmentType: adjustment?.experienceAdjustmentType || "fixed",
@@ -220,8 +220,8 @@ function SeasonCard({
     if (adjustment) {
       setForm({
         seasonName: adjustment.seasonName,
-        dateFrom: adjustment.dateFrom || "",
-        dateTo: adjustment.dateTo || "",
+        dateFrom: adjustment.dateFrom ? new Date(adjustment.dateFrom).toISOString().slice(0, 16) : "",
+        dateTo: adjustment.dateTo ? new Date(adjustment.dateTo).toISOString().slice(0, 16) : "",
         roomAdjustmentType: adjustment.roomAdjustmentType || "fixed",
         roomAdjustmentValue: adjustment.roomAdjustmentValue || "0",
         experienceAdjustmentType: adjustment.experienceAdjustmentType || "fixed",
@@ -351,7 +351,7 @@ function SeasonCard({
                 <div>
                   <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-2 block">Season Start</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     value={form.dateFrom}
                     onChange={(e) => setForm({ ...form, dateFrom: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[#0B3D5E] outline-none text-sm font-bold text-slate-700 transition-colors"
@@ -360,7 +360,7 @@ function SeasonCard({
                 <div>
                   <label className="text-xs font-black uppercase tracking-widest text-slate-500 mb-2 block">Season End</label>
                   <input
-                    type="date"
+                    type="datetime-local"
                     value={form.dateTo}
                     onChange={(e) => setForm({ ...form, dateTo: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-[#0B3D5E] outline-none text-sm font-bold text-slate-700 transition-colors"
@@ -489,6 +489,8 @@ export default function AdminRateAdjustments() {
       const canonicalName = SEASONS.find((s) => s.key === seasonKey)!.defaultName;
       const payload = {
         ...formData,
+        dateFrom: formData.dateFrom ? new Date(formData.dateFrom).toISOString() : null,
+        dateTo: formData.dateTo ? new Date(formData.dateTo).toISOString() : null,
         seasonName: canonicalName,
         isActive: existing?.isActive ?? false,
       };

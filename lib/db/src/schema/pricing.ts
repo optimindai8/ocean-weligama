@@ -59,8 +59,8 @@ export const roomPackagePrices = pgTable(
 export const globalRateAdjustments = pgTable("global_rate_adjustments", {
   id: uuid("id").primaryKey().defaultRandom(),
   seasonName: text("season_name").notNull(),
-  dateFrom: date("date_from"),
-  dateTo: date("date_to"),
+  dateFrom: timestamp("date_from", { withTimezone: true }),
+  dateTo: timestamp("date_to", { withTimezone: true }),
   
   roomAdjustmentType: text("room_adj_type").default("fixed"),
   roomAdjustmentValue: decimal("room_adj_value", { precision: 10, scale: 2 }).default("0"),
