@@ -24,6 +24,14 @@ import {
 } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
+const formatDateTimeLocal = (dateStr: string | null | undefined) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 interface RateAdjustment {
   id: string;
   seasonName: string;
@@ -206,8 +214,8 @@ function SeasonCard({
 }) {
   const [form, setForm] = useState({
     seasonName: adjustment?.seasonName || season.defaultName,
-    dateFrom: adjustment?.dateFrom ? new Date(adjustment.dateFrom).toISOString().slice(0, 16) : "",
-    dateTo: adjustment?.dateTo ? new Date(adjustment.dateTo).toISOString().slice(0, 16) : "",
+    dateFrom: formatDateTimeLocal(adjustment?.dateFrom),
+    dateTo: formatDateTimeLocal(adjustment?.dateTo),
     roomAdjustmentType: adjustment?.roomAdjustmentType || "fixed",
     roomAdjustmentValue: adjustment?.roomAdjustmentValue || "0",
     experienceAdjustmentType: adjustment?.experienceAdjustmentType || "fixed",
@@ -220,8 +228,8 @@ function SeasonCard({
     if (adjustment) {
       setForm({
         seasonName: adjustment.seasonName,
-        dateFrom: adjustment.dateFrom ? new Date(adjustment.dateFrom).toISOString().slice(0, 16) : "",
-        dateTo: adjustment.dateTo ? new Date(adjustment.dateTo).toISOString().slice(0, 16) : "",
+        dateFrom: formatDateTimeLocal(adjustment.dateFrom),
+        dateTo: formatDateTimeLocal(adjustment.dateTo),
         roomAdjustmentType: adjustment.roomAdjustmentType || "fixed",
         roomAdjustmentValue: adjustment.roomAdjustmentValue || "0",
         experienceAdjustmentType: adjustment.experienceAdjustmentType || "fixed",

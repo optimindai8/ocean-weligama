@@ -53,8 +53,8 @@ router.post("/v1/admin/rate-adjustments", async (req, res) => {
       .insert(globalRateAdjustments)
       .values({
         seasonName,
-        dateFrom: dateFrom || null,
-        dateTo: dateTo || null,
+        dateFrom: dateFrom ? new Date(dateFrom) : null,
+        dateTo: dateTo ? new Date(dateTo) : null,
         roomAdjustmentType: roomAdjustmentType || "fixed",
         roomAdjustmentValue: roomAdjustmentValue || "0",
         experienceAdjustmentType: experienceAdjustmentType || "fixed",
@@ -93,8 +93,8 @@ router.put("/v1/admin/rate-adjustments/:id", async (req, res) => {
       .update(globalRateAdjustments)
       .set({
         seasonName,
-        dateFrom: dateFrom || null,
-        dateTo: dateTo || null,
+        dateFrom: dateFrom ? new Date(dateFrom) : null,
+        dateTo: dateTo ? new Date(dateTo) : null,
         roomAdjustmentType: roomAdjustmentType || "fixed",
         roomAdjustmentValue: roomAdjustmentValue ? roomAdjustmentValue.toString() : "0",
         experienceAdjustmentType: experienceAdjustmentType || "fixed",
