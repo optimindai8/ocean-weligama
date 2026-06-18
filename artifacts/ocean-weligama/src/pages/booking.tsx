@@ -781,6 +781,16 @@ export default function BookingPage() {
 
     let sr = data.specialRequests || "";
     if (lines.length) sr = lines.join("\n") + (sr ? "\n" + sr : "");
+
+    // Append claimed offer tag so confirmation/admin pages can parse and display it
+    if (claimedOffer && claimedOffer.roomIds && selectedRoomIds.some((id: string) => claimedOffer.roomIds.includes(id))) {
+      const offerTag = `[Claimed Offer: ${JSON.stringify({
+        title: claimedOffer.title,
+        discountType: claimedOffer.discountType,
+        discountValue: claimedOffer.discountValue,
+      })}]`;
+      sr = offerTag + (sr ? "\n" + sr : "");
+    }
     try {
       const bk = await createBook.mutateAsync({
         data: {
@@ -2026,21 +2036,43 @@ export default function BookingPage() {
                           <>
                             {selectedRooms.map(room => {
                               const hasOffer = claimedOffer && claimedOffer.roomIds && claimedOffer.roomIds.includes(room.id);
+                              const basePrice = (room as any).adjustedPrice ? parseFloat((room as any).adjustedPrice) : parseFloat(room.basePricePerNight);
+                              const discountedPricePerNight = hasOffer
+                                ? (claimedOffer.discountType === "fixed"
+                                    ? Math.max(0, basePrice - parseFloat(claimedOffer.discountValue))
+                                    : Math.max(0, basePrice - (basePrice * parseFloat(claimedOffer.discountValue) / 100)))
+                                : basePrice;
+                              const originalSubtotal = nights > 0 ? (basePrice * nights) : null;
+                              const discountedSubtotal = nights > 0 ? (discountedPricePerNight * nights) : null;
                               return (
                                 <div key={room.id} className="pt-2 border-t border-white/5 mt-2">
                                   <div className="flex justify-between items-center text-xs text-white/80">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-white/60">{room.name} Rate</span>
-                                      {hasOffer && (
-                                        <span className="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg">
-                                          {claimedOffer.discountType === "percentage" ? `${parseFloat(claimedOffer.discountValue)}% OFF` : `€${parseFloat(claimedOffer.discountValue)} OFF`}
+                                    <div className="flex flex-col gap-0.5">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-white/60">{room.name} Rate</span>
+                                        {hasOffer && (
+                                          <span className="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg animate-pulse">
+                                            🎁 {claimedOffer.discountType === "percentage" ? `${parseFloat(claimedOffer.discountValue)}% OFF` : `€${parseFloat(claimedOffer.discountValue)} OFF`}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {hasOffer && nights > 0 && (
+                                        <span className="text-[10px] text-white/40">
+                                          <span className="line-through">€{basePrice.toFixed(2)}</span>
+                                          {" → "}
+                                          <span className="text-green-300 font-bold">€{discountedPricePerNight.toFixed(2)}</span>
+                                          {` × ${nights} nights`}
                                         </span>
                                       )}
                                     </div>
-                                    <span className="font-bold">€{computedTotal}</span>
-                                  </div>
-                                  <div className="flex justify-between text-[10px] text-white/60 mt-1">
-                                    <span>Includes selected packages and experiences</span>
+                                    <div className="flex flex-col items-end">
+                                      {hasOffer && originalSubtotal !== null && (
+                                        <span className="text-[10px] text-white/40 line-through">€{originalSubtotal.toFixed(2)}</span>
+                                      )}
+                                      <span className={`font-bold ${hasOffer ? 'text-green-300' : ''}`}>
+                                        €{discountedSubtotal !== null ? discountedSubtotal.toFixed(2) : discountedPricePerNight.toFixed(2)}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                               );

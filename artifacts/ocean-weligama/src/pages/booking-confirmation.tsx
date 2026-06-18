@@ -57,6 +57,12 @@ function parseSpecialRequests(text: string) {
   return { customizations, message: remainingLines.join("\n").trim() };
 }
 
+function parseClaimedOffer(text: string | undefined): { title: string; discountType: string; discountValue: string } | null {
+  if (!text) return null;
+  const match = text.match(/\[Claimed Offer: ({.+?})\]/);
+  if (!match) return null;
+  try { return JSON.parse(match[1]); } catch { return null; }
+}
 
 export default function BookingConfirmationPage() {
   const [location] = useLocation();
@@ -433,19 +439,52 @@ export default function BookingConfirmationPage() {
                           </div>
                         ) : (
                           // Regular booking: show room separately
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <span className="text-muted-foreground font-medium block">Room Price{booking.nights ? ` (${booking.nights} nights)` : ''}</span>
-                              {booking.nights && booking.roomRatePerNight && (
-                                <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">
-                                  €{parseFloat(booking.roomRatePerNight).toFixed(2)} × {booking.nights} = €{(parseFloat(booking.roomSubtotal || "0")).toFixed(2)}
+                          (() => {
+                            const claimedOffer = parseClaimedOffer(booking.specialRequests);
+                            const origRate = parseFloat(booking.roomRatePerNight || "0");
+                            const origSubtotal = parseFloat(booking.roomSubtotal || "0");
+                            let discountedRate = origRate;
+                            let discountedSubtotal = origSubtotal;
+                            if (claimedOffer) {
+                              const dv = parseFloat(claimedOffer.discountValue);
+                              discountedRate = claimedOffer.discountType === "fixed"
+                                ? Math.max(0, origRate - dv)
+                                : Math.max(0, origRate - (origRate * dv / 100));
+                              discountedSubtotal = discountedRate * (booking.nights || 1);
+                            }
+                            return (
+                              <div className="flex justify-between items-start gap-4">
+                                <div>
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="text-muted-foreground font-medium">Room Price{booking.nights ? ` (${booking.nights} nights)` : ''}</span>
+                                    {claimedOffer && (
+                                      <span className="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">
+                                        🎁 {claimedOffer.discountType === "percentage" ? `${parseFloat(claimedOffer.discountValue)}% OFF` : `€${parseFloat(claimedOffer.discountValue)} OFF`}
+                                      </span>
+                                    )}
+                                  </div>
+                                  {booking.nights && booking.roomRatePerNight && (
+                                    <span className="text-[10px] text-slate-400 font-bold mt-0.5 block">
+                                      {claimedOffer ? (
+                                        <>
+                                          <span className="line-through text-slate-300">€{origRate.toFixed(2)}</span>
+                                          {' → '}
+                                          <span className="text-emerald-600">€{discountedRate.toFixed(2)}</span>
+                                          {` × ${booking.nights} = `}
+                                          <span className="text-emerald-600 font-black">€{discountedSubtotal.toFixed(2)}</span>
+                                        </>
+                                      ) : (
+                                        `€${origRate.toFixed(2)} × ${booking.nights} = €${origSubtotal.toFixed(2)}`
+                                      )}
+                                    </span>
+                                  )}
+                                </div>
+                                <span className={`font-bold text-base shrink-0 ${claimedOffer ? 'text-emerald-600' : 'text-foreground'}`}>
+                                  €{claimedOffer ? discountedSubtotal.toFixed(2) : origSubtotal.toFixed(2)}
                                 </span>
-                              )}
-                            </div>
-                            <span className="font-bold text-foreground text-base">
-                              €{(parseFloat(booking.roomSubtotal || "0")).toFixed(2)}
-                            </span>
-                          </div>
+                              </div>
+                            );
+                          })()
                         )}
 
                         {/* All other services (non-main, or all if not matrix) */}
