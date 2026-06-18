@@ -33,8 +33,6 @@ export function WhatsAppWidget() {
           style={{ background: "#25D366" }}
         />
 
-        {/* Shimmer Effect on Hover */}
-        <span className="absolute inset-0 w-[40%] bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] translate-x-[-160%] group-hover:translate-x-[360%] transition-transform duration-700 ease-out pointer-events-none rounded-full" />
 
         {/* WhatsApp Icon SVG */}
         <svg

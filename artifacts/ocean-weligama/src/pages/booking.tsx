@@ -121,6 +121,7 @@ function getUnitLabel(unit: string | undefined, qty: number) {
   if (unit === 'per_trip') return `${qty > 1 ? 'Trips' : 'Trip'}`;
   if (unit === 'per_lesson') return `${qty > 1 ? 'Lessons' : 'Lesson'}`;
   if (unit === 'per_session') return `${qty > 1 ? 'Sessions' : 'Session'}`;
+  if (unit === 'per_person') return `${qty > 1 ? 'Persons' : 'Person'}`;
   return ``;
 }
 
@@ -130,6 +131,7 @@ function getUnitInputLabel(unit: string | undefined) {
   if (unit === 'per_trip') return 'Number of Trips';
   if (unit === 'per_lesson') return 'Number of Lessons';
   if (unit === 'per_session') return 'Number of Sessions';
+  if (unit === 'per_person') return 'Number of Persons';
   return 'Quantity';
 }
 
@@ -1538,19 +1540,19 @@ export default function BookingPage() {
                             {isSel ? 'Added' : 'Add to stay'}
                           </div>
 
-                          {isSel && exp.unit !== 'flat_rate' && exp.unit !== 'per_person' && (
+                          {isSel && exp.unit !== 'flat_rate' && (
                             <div className="mt-4 pt-4 border-t border-violet-100/70 flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
                               <div className="flex items-center justify-between">
                                 <label className="text-sm font-bold text-violet-900">{getUnitInputLabel(exp.unit)}</label>
                                 <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm rounded-full border border-violet-200/60 px-2.5 py-1 shadow-sm">
-                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: Math.max(1, (p[exp.id] || 1) - 1) }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-violet-50 text-violet-600 font-bold hover:bg-violet-100 transition-colors">-</button>
+                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: Math.max(1, (p[exp.id] || (exp.unit === 'per_person' ? guestCount : exp.unit === 'per_day' ? nights : 1)) - 1) }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-violet-50 text-violet-600 font-bold hover:bg-violet-100 transition-colors">-</button>
                                   <span className="text-sm font-black text-violet-900 text-center min-w-[36px]">
-                                    {serviceQuantities[exp.id] || 1}
-                                    {getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1) && (
-                                      <span className="text-[10px] ml-1 uppercase tracking-wider">{getUnitLabel(exp.unit, serviceQuantities[exp.id] || 1)}</span>
+                                    {serviceQuantities[exp.id] || (exp.unit === 'per_person' ? guestCount : exp.unit === 'per_day' ? nights : 1)}
+                                    {getUnitLabel(exp.unit, serviceQuantities[exp.id] || (exp.unit === 'per_person' ? guestCount : exp.unit === 'per_day' ? nights : 1)) && (
+                                      <span className="text-[10px] ml-1 uppercase tracking-wider">{getUnitLabel(exp.unit, serviceQuantities[exp.id] || (exp.unit === 'per_person' ? guestCount : exp.unit === 'per_day' ? nights : 1))}</span>
                                     )}
                                   </span>
-                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || 1) + 1 }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-violet-50 text-violet-600 font-bold hover:bg-violet-100 transition-colors">+</button>
+                                  <button type="button" onClick={() => setServiceQuantities(p => ({ ...p, [exp.id]: (p[exp.id] || (exp.unit === 'per_person' ? guestCount : exp.unit === 'per_day' ? nights : 1)) + 1 }))} className="w-7 h-7 flex items-center justify-center rounded-full bg-violet-50 text-violet-600 font-bold hover:bg-violet-100 transition-colors">+</button>
                                 </div>
                               </div>
                             </div>
