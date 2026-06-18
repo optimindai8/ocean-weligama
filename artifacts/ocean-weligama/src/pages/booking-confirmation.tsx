@@ -57,7 +57,7 @@ function parseSpecialRequests(text: string) {
   return { customizations, message: remainingLines.join("\n").trim() };
 }
 
-function parseClaimedOffer(text: string | undefined): { title: string; discountType: string; discountValue: string } | null {
+function parseClaimedOffer(text: string | null | undefined): { title: string; discountType: string; discountValue: string } | null {
   if (!text) return null;
   const match = text.match(/\[Claimed Offer: ({.+?})\]/);
   if (!match) return null;
