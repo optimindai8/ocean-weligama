@@ -11,6 +11,9 @@ type OfferAd = {
   isActive: boolean;
   intervalMinutes: number;
   offerDays: number;
+  discountType: string;
+  discountValue: string;
+  roomIds: string[];
   createdAt: string;
 };
 
@@ -164,9 +167,11 @@ export function OfferAdPopup() {
 
   const handleClaim = useCallback(() => {
     handleClose();
-    // Navigate to packages or booking
-    // window.location.href = "/packages";
-  }, [handleClose]);
+    if (activeAd) {
+      sessionStorage.setItem("claimedOffer", JSON.stringify(activeAd));
+      window.location.href = "/booking";
+    }
+  }, [handleClose, activeAd]);
 
   if (!activeAd) return null;
 
@@ -316,35 +321,26 @@ export function OfferAdPopup() {
                   </div>
                 </div>
 
-                {/* Magical Text Quote CTA */}
-                <motion.div
+                <motion.button
                   onClick={handleClaim}
                   onMouseEnter={() => setIsHoveringCTA(true)}
                   onMouseLeave={() => setIsHoveringCTA(false)}
-                  className="relative cursor-pointer group mt-4 inline-block"
+                  className="relative group mt-4 inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full font-bold text-lg bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-xl hover:shadow-2xl hover:scale-105 transition-all overflow-hidden"
                 >
-                  <div className="relative z-10 px-6 py-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm group-hover:bg-white/10 transition-colors duration-500 overflow-hidden">
-                    {/* Glowing background sweep */}
-                    <motion.div 
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-400/20 to-transparent skew-x-12"
-                      animate={{ x: ["-150%", "250%"] }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                    
-                    <p className="relative z-10 text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-[#FFA500] to-[#FFD700] uppercase tracking-wide font-serif italic mb-1" style={{ textShadow: '0 2px 20px rgba(255,215,0,0.4)' }}>
-                      "Contact Now & Claim The Offer"
-                    </p>
-                    <div className="flex items-center justify-center sm:justify-start text-amber-300 mt-2 gap-2 font-bold text-sm tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
-                      <span>Click to connect</span>
-                      <motion.span animate={{ x: [0, 5, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}>
-                        <ArrowRight className="w-4 h-4" />
-                      </motion.span>
-                    </div>
-                  </div>
-                  
-                  {/* Outer glow ring on hover */}
-                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500" />
-                </motion.div>
+                  <span className="relative z-10 font-serif italic tracking-wide uppercase">Claim Offer</span>
+                  <motion.span 
+                    animate={{ x: [0, 5, 0] }} 
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    className="relative z-10"
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </motion.span>
+                  <motion.div 
+                    className="absolute inset-0 bg-white/20 skew-x-12"
+                    animate={{ x: ["-150%", "250%"] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  />
+                </motion.button>
 
                 <motion.p
                   initial={{ opacity: 0 }}

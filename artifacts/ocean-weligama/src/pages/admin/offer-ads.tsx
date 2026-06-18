@@ -61,13 +61,21 @@ type OfferAd = {
   isActive: boolean;
   intervalMinutes: number;
   offerDays: number;
+  discountType: string;
+  discountValue: string;
+  roomIds: string[];
   createdAt: string;
 };
 
-const AdForm = ({ ad, isSaving, onSubmit, onCancel }: { ad?: OfferAd | null; isSaving?: boolean; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void; onCancel: () => void }) => {
+const AdForm = ({ ad, isSaving, onSubmit, onCancel, rooms = [] }: { ad?: OfferAd | null; isSaving?: boolean; onSubmit: (e: React.FormEvent<HTMLFormElement>) => void; onCancel: () => void; rooms?: any[] }) => {
   const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedUrl, setUploadedUrl] = useState(ad?.imageUrl || "");
+  const [selectedRooms, setSelectedRooms] = useState<string[]>(ad?.roomIds || []);
+
+  const toggleRoom = (roomId: string) => {
+    setSelectedRooms(prev => prev.includes(roomId) ? prev.filter(id => id !== roomId) : [...prev, roomId]);
+  };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -138,6 +146,48 @@ const AdForm = ({ ad, isSaving, onSubmit, onCancel }: { ad?: OfferAd | null; isS
           <Input id="offerDays" name="offerDays" type="number" defaultValue={ad?.offerDays || 7} min={1} required />
           <p className="text-xs text-muted-foreground">Days the offer is valid.</p>
         </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4 border-t pt-4 border-slate-100">
+        <div className="space-y-2">
+          <Label htmlFor="discountType">Discount Type</Label>
+          <select 
+            id="discountType" 
+            name="discountType" 
+            defaultValue={ad?.discountType || "percentage"}
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option value="percentage">Percentage (%)</option>
+            <option value="fixed">Fixed Price Amount</option>
+          </select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="discountValue">Discount Value</Label>
+          <Input id="discountValue" name="discountValue" type="number" step="0.01" defaultValue={ad?.discountValue || "0"} min={0} required />
+          <p className="text-xs text-muted-foreground">E.g. 20 for 20%, or 50 for $50 off.</p>
+        </div>
+      </div>
+      <div className="space-y-2 border-t pt-4 border-slate-100">
+        <Label>Applicable Rooms</Label>
+        <p className="text-xs text-muted-foreground mb-2">Select the rooms this offer applies to.</p>
+        <div className="max-h-40 overflow-y-auto border rounded-md p-2 space-y-2 bg-slate-50">
+          <input type="hidden" name="roomIds" value={JSON.stringify(selectedRooms)} />
+          {rooms.length === 0 ? (
+            <div className="text-sm text-slate-500 p-2">No rooms available.</div>
+          ) : (
+            rooms.map((room) => (
+              <label key={room.id} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-100 p-1 rounded transition-colors">
+                <input 
+                  type="checkbox" 
+                  checked={selectedRooms.includes(room.id)}
+                  onChange={() => toggleRoom(room.id)}
+                  className="rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span>{room.name || room.slug}</span>
+              </label>
+            ))
+          )}
+        </div>
+        {selectedRooms.length === 0 && <p className="text-xs text-destructive">At least one room must be selected.</p>}
       </div>
       <div className="flex items-center space-x-2 pt-2">
         <Switch id="isActive" name="isActive" defaultChecked={ad?.isActive ?? true} />
@@ -237,6 +287,13 @@ export default function AdminOfferAds() {
     },
   });
 
+  const { data: roomsData = [] } = useQuery<any[]>({
+    queryKey: ["admin-rooms-for-ads"],
+    queryFn: async () => {
+      return customFetch("/api/v1/admin/rooms");
+    },
+  });
+
   const activeAds = ads.filter(ad => ad.isActive);
   const disabledAds = ads.filter(ad => !ad.isActive);
 
@@ -291,7 +348,15 @@ export default function AdminOfferAds() {
       isActive: formData.get("isActive") === "on",
       intervalMinutes: parseInt(formData.get("intervalMinutes") as string) || 60,
       offerDays: parseInt(formData.get("offerDays") as string) || 7,
+      discountType: formData.get("discountType") as string,
+      discountValue: formData.get("discountValue") as string,
+      roomIds: JSON.parse(formData.get("roomIds") as string || "[]"),
     };
+
+    if (data.roomIds.length === 0) {
+      toast({ variant: "destructive", title: "Error", description: "Please select at least one room." });
+      return;
+    }
 
     if (id) {
       updateMutation.mutate({ ...data, id });
@@ -327,7 +392,7 @@ export default function AdminOfferAds() {
                 <DialogTitle>Create New Offer Ad</DialogTitle>
                 <DialogDescription>Add a new promotional pop-up to show on the main website.</DialogDescription>
               </DialogHeader>
-              <AdForm onSubmit={(e) => handleSave(e)} onCancel={() => setIsCreateOpen(false)} isSaving={createMutation.isPending || (createMutation as any).isLoading} />
+              <AdForm onSubmit={(e) => handleSave(e)} onCancel={() => setIsCreateOpen(false)} isSaving={createMutation.isPending || (createMutation as any).isLoading} rooms={roomsData} />
             </DialogContent>
           </Dialog>
         </motion.div>
@@ -338,7 +403,7 @@ export default function AdminOfferAds() {
               <DialogTitle>Edit Offer Ad</DialogTitle>
               <DialogDescription>Make changes to your promotional ad.</DialogDescription>
             </DialogHeader>
-            <AdForm ad={editingAd} onSubmit={(e) => handleSave(e, editingAd?.id)} onCancel={() => setEditingAd(null)} isSaving={updateMutation.isPending || (updateMutation as any).isLoading} />
+            <AdForm ad={editingAd} onSubmit={(e) => handleSave(e, editingAd?.id)} onCancel={() => setEditingAd(null)} isSaving={updateMutation.isPending || (updateMutation as any).isLoading} rooms={roomsData} />
           </DialogContent>
         </Dialog>
 

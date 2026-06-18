@@ -45,17 +45,23 @@ router.get("/v1/admin/offer-ads", requireAdmin, async (req, res) => {
 // Admin: create offer ad
 router.post("/v1/admin/offer-ads", requireAdmin, async (req, res) => {
   try {
-    const { title, description, imageUrl, isActive, intervalMinutes, offerDays } = req.body as {
+    const { title, description, imageUrl, isActive, intervalMinutes, offerDays, discountType, discountValue, roomIds } = req.body as {
       title: string;
       description?: string;
       imageUrl?: string;
       isActive?: boolean;
       intervalMinutes?: number;
       offerDays?: number;
+      discountType?: string;
+      discountValue?: string | number;
+      roomIds?: string[];
     };
 
     if (!title) {
       return res.status(400).json({ error: "title is required" });
+    }
+    if (!roomIds || roomIds.length === 0) {
+      return res.status(400).json({ error: "At least one room must be selected" });
     }
 
     const [newAd] = await db
@@ -67,6 +73,9 @@ router.post("/v1/admin/offer-ads", requireAdmin, async (req, res) => {
         isActive: isActive !== undefined ? isActive : true, 
         intervalMinutes: intervalMinutes ?? 60,
         offerDays: offerDays ?? 7,
+        discountType: discountType || "percentage",
+        discountValue: discountValue ? String(discountValue) : "0",
+        roomIds: roomIds,
       })
       .returning();
 
@@ -81,14 +90,21 @@ router.post("/v1/admin/offer-ads", requireAdmin, async (req, res) => {
 router.patch("/v1/admin/offer-ads/:id", requireAdmin, async (req, res) => {
   try {
     const { id } = req.params as Record<string, string>;
-    const { title, description, imageUrl, isActive, intervalMinutes, offerDays } = req.body as {
+    const { title, description, imageUrl, isActive, intervalMinutes, offerDays, discountType, discountValue, roomIds } = req.body as {
       title?: string;
       description?: string;
       imageUrl?: string;
       isActive?: boolean;
       intervalMinutes?: number;
       offerDays?: number;
+      discountType?: string;
+      discountValue?: string | number;
+      roomIds?: string[];
     };
+
+    if (roomIds !== undefined && roomIds.length === 0) {
+      return res.status(400).json({ error: "At least one room must be selected" });
+    }
 
     const [updated] = await db
       .update(offerAds)
@@ -99,6 +115,9 @@ router.patch("/v1/admin/offer-ads/:id", requireAdmin, async (req, res) => {
         ...(isActive !== undefined && { isActive }),
         ...(intervalMinutes !== undefined && { intervalMinutes }),
         ...(offerDays !== undefined && { offerDays }),
+        ...(discountType !== undefined && { discountType }),
+        ...(discountValue !== undefined && { discountValue: String(discountValue) }),
+        ...(roomIds !== undefined && { roomIds }),
         updatedAt: new Date(),
       })
       .where(eq(offerAds.id, id))

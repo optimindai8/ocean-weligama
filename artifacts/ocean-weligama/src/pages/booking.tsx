@@ -253,7 +253,7 @@ function StepNav({
   );
 }
 
-function RoomCard({ room, isSelected, onClick }: { room: any, isSelected: boolean, onClick: () => void }) {
+function RoomCard({ room, isSelected, onClick, claimedOffer }: { room: any, isSelected: boolean, onClick: () => void, claimedOffer?: any }) {
   const [currentImgIdx, setCurrentImgIdx] = useState(0);
   
   const allImages = useMemo(() => {
@@ -376,6 +376,33 @@ function RoomCard({ room, isSelected, onClick }: { room: any, isSelected: boolea
           <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">Capacity</p>
           <p className="text-sm font-bold text-muted-foreground">{room.maxGuests} Guests</p>
         </div>
+        <div className="text-right">
+          <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">Price</p>
+          {(() => {
+            let effectiveRoomPrice = (room as any).adjustedPrice ? parseFloat((room as any).adjustedPrice) : parseFloat(room.basePricePerNight);
+            let hasOffer = false;
+            let originalPrice = effectiveRoomPrice;
+            if (claimedOffer && claimedOffer.roomIds && claimedOffer.roomIds.includes(room.id)) {
+              hasOffer = true;
+              const discountVal = parseFloat(claimedOffer.discountValue);
+              if (claimedOffer.discountType === "fixed") {
+                effectiveRoomPrice = Math.max(0, effectiveRoomPrice - discountVal);
+              } else {
+                effectiveRoomPrice = Math.max(0, effectiveRoomPrice - (effectiveRoomPrice * discountVal / 100));
+              }
+            }
+            return (
+              <div className="flex flex-col items-end">
+                {hasOffer && (
+                  <span className="text-xs text-muted-foreground line-through">€{originalPrice.toFixed(0)}</span>
+                )}
+                <span className={`text-lg font-bold ${hasOffer ? 'text-green-600' : 'text-primary'}`}>
+                  €{effectiveRoomPrice.toFixed(0)} <span className="text-xs font-normal text-muted-foreground">/night</span>
+                </span>
+              </div>
+            );
+          })()}
+        </div>
       </div>
     </div>
   );
@@ -478,26 +505,48 @@ export default function BookingPage() {
   const { data: allRooms, isLoading: allRoomsLoading } = useListRooms({});
   const { data: services } = useListServices();
 
+  const claimedOffer = useMemo(() => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const val = sessionStorage.getItem("claimedOffer");
+      return val ? JSON.parse(val) : null;
+    } catch { return null; }
+  }, []);
+
   // Derive priceData locally to ensure immediate responsiveness
   const priceData = useMemo(() => {
     if (selectedRoomIds.length === 0) return null;
     const room = Array.isArray(allRooms) ? allRooms.find(r => r.id === selectedRoomIds[0]) : null;
     if (!room) return null;
     // Use adjustedPrice if available (from global rate adjustments)
-    const effectiveRoomPrice = (room as any).adjustedPrice
+    let effectiveRoomPrice = (room as any).adjustedPrice
       ? parseFloat((room as any).adjustedPrice)
       : parseFloat(room.basePricePerNight);
+
+    let originalRoomRatePerNight = null;
+
+    if (claimedOffer && claimedOffer.roomIds && claimedOffer.roomIds.includes(room.id)) {
+      originalRoomRatePerNight = effectiveRoomPrice;
+      const discountVal = parseFloat(claimedOffer.discountValue);
+      if (claimedOffer.discountType === "fixed") {
+        effectiveRoomPrice = Math.max(0, effectiveRoomPrice - discountVal);
+      } else {
+        effectiveRoomPrice = Math.max(0, effectiveRoomPrice - (effectiveRoomPrice * discountVal / 100));
+      }
+    }
+
     const roomRatePerNight = !!matrixPrice ? 0 : effectiveRoomPrice;
     const roomSubtotal = roomRatePerNight * nights;
     const cleaningFee = parseFloat(room.cleaningFee || "0");
     return {
       available: true,
       roomRatePerNight: roomRatePerNight.toString(),
+      originalRoomRatePerNight: originalRoomRatePerNight ? originalRoomRatePerNight.toString() : null,
       roomSubtotal: roomSubtotal.toString(),
       cleaningFee: cleaningFee.toString(),
       isMatrixBooking: !!matrixPrice,
     };
-  }, [rooms, allRooms, selectedRoomIds, matrixPrice, nights]);
+  }, [rooms, allRooms, selectedRoomIds, matrixPrice, nights, claimedOffer]);
   const checkAvail = useCheckAvailabilityAndPrice();
   const createBook = useCreateBooking();
 
@@ -1167,7 +1216,6 @@ export default function BookingPage() {
                       </AnimatePresence>
                     </motion.div>
                   )}
-
                   <AnimatePresence>
                     {dateRange.from && dateRange.to && (
                       <motion.div
