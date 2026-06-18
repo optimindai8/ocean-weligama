@@ -362,6 +362,12 @@ function RoomCard({ room, isSelected, onClick, claimedOffer }: { room: any, isSe
               <div className="absolute top-3 left-3 bg-black/50 text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-20 backdrop-blur-sm">
                 {currentImgIdx + 1} / {allImages.length}
               </div>
+              {/* Claimed Offer Badge */}
+              {claimedOffer && claimedOffer.roomIds && claimedOffer.roomIds.includes(room.id) && (
+                <div className="absolute top-3 right-3 bg-gradient-to-r from-red-600 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full z-20 shadow-lg animate-pulse">
+                  🎁 Claimed Offer: {claimedOffer.discountType === "percentage" ? `${claimedOffer.discountValue}% OFF` : `€${claimedOffer.discountValue} OFF`}
+                </div>
+              )}
             </>
           )}
         </div>
@@ -375,33 +381,6 @@ function RoomCard({ room, isSelected, onClick, claimedOffer }: { room: any, isSe
         <div>
           <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">Capacity</p>
           <p className="text-sm font-bold text-muted-foreground">{room.maxGuests} Guests</p>
-        </div>
-        <div className="text-right">
-          <p className="text-[9px] font-black uppercase tracking-widest text-amber-400 mb-1">Price</p>
-          {(() => {
-            let effectiveRoomPrice = (room as any).adjustedPrice ? parseFloat((room as any).adjustedPrice) : parseFloat(room.basePricePerNight);
-            let hasOffer = false;
-            let originalPrice = effectiveRoomPrice;
-            if (claimedOffer && claimedOffer.roomIds && claimedOffer.roomIds.includes(room.id)) {
-              hasOffer = true;
-              const discountVal = parseFloat(claimedOffer.discountValue);
-              if (claimedOffer.discountType === "fixed") {
-                effectiveRoomPrice = Math.max(0, effectiveRoomPrice - discountVal);
-              } else {
-                effectiveRoomPrice = Math.max(0, effectiveRoomPrice - (effectiveRoomPrice * discountVal / 100));
-              }
-            }
-            return (
-              <div className="flex flex-col items-end">
-                {hasOffer && (
-                  <span className="text-xs text-muted-foreground line-through">€{originalPrice.toFixed(0)}</span>
-                )}
-                <span className={`text-lg font-bold ${hasOffer ? 'text-green-600' : 'text-primary'}`}>
-                  €{effectiveRoomPrice.toFixed(0)} <span className="text-xs font-normal text-muted-foreground">/night</span>
-                </span>
-              </div>
-            );
-          })()}
         </div>
       </div>
     </div>

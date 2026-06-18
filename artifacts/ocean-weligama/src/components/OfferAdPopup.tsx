@@ -169,7 +169,7 @@ export function OfferAdPopup() {
     handleClose();
     if (activeAd) {
       sessionStorage.setItem("claimedOffer", JSON.stringify(activeAd));
-      window.location.href = "/booking";
+      window.location.href = "/booking?new=1";
     }
   }, [handleClose, activeAd]);
 

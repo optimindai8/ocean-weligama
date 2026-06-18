@@ -387,7 +387,7 @@ export default function AdminOfferAds() {
                 <span className="relative z-10">Create Ad</span>
               </motion.button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>Create New Offer Ad</DialogTitle>
                 <DialogDescription>Add a new promotional pop-up to show on the main website.</DialogDescription>
@@ -398,7 +398,7 @@ export default function AdminOfferAds() {
         </motion.div>
 
         <Dialog open={!!editingAd} onOpenChange={(open) => !open && setEditingAd(null)}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Edit Offer Ad</DialogTitle>
               <DialogDescription>Make changes to your promotional ad.</DialogDescription>
