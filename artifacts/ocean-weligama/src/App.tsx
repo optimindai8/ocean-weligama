@@ -50,6 +50,7 @@ import { Navbar } from "@/components/navbar";
 import { useLocation } from "wouter";
 import { LanguageProvider } from "@/components/LanguageContext";
 import { OfferAdPopup } from "@/components/OfferAdPopup";
+import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 
 function App() {
   const [location] = useLocation();
@@ -69,6 +70,7 @@ function App() {
             <>
               <Navbar />
               <OfferAdPopup />
+              <WhatsAppWidget />
             </>
           )}
           <div className="flex-1">

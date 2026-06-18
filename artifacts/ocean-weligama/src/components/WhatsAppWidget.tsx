@@ -1,0 +1,62 @@
+import { motion } from "framer-motion";
+
+export function WhatsAppWidget() {
+  const whatsappNumber = "94765791763";
+  const whatsappUrl = `https://wa.me/${whatsappNumber}`;
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      <motion.a
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ 
+          type: "spring", 
+          stiffness: 260, 
+          damping: 20, 
+          delay: 1 // Delay appearance slightly
+        }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="relative flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-2xl group cursor-pointer"
+        style={{
+          background: "linear-gradient(135deg, #25D366, #128C7E)",
+        }}
+      >
+        {/* Main Background Pulse */}
+        <motion.div
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0, 0.3] }}
+          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+          className="absolute inset-0 rounded-full"
+          style={{ background: "#25D366" }}
+        />
+
+        {/* Shimmer Effect on Hover */}
+        <span className="absolute inset-0 w-[40%] bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-20deg] translate-x-[-160%] group-hover:translate-x-[360%] transition-transform duration-700 ease-out pointer-events-none rounded-full" />
+
+        {/* WhatsApp Icon SVG */}
+        <svg
+          className="w-8 h-8 sm:w-9 sm:h-9 text-white relative z-10"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.489-1.761-1.663-2.06-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/>
+        </svg>
+
+        {/* Red Notification Badge */}
+        <div className="absolute -top-1 -right-1 z-20">
+          <motion.div
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+            className="absolute inset-0 bg-red-500 rounded-full opacity-60"
+          />
+          <div className="relative flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 bg-red-600 border-2 border-white rounded-full shadow-md text-white text-[10px] sm:text-xs font-bold leading-none">
+            1
+          </div>
+        </div>
+      </motion.a>
+    </div>
+  );
+}
