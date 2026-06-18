@@ -117,9 +117,29 @@ router.post("/v1/bookings/check", async (req, res) => {
       }) || adjustments.find(adj => !adj.dateFrom && !adj.dateTo) || null;
     }
 
+    // Parse Claimed Offer from specialRequests
+    let claimedOffer = null;
+    if (req.body.specialRequests) {
+      const match = req.body.specialRequests.match(/\[Claimed Offer: ({.+?})\]/);
+      if (match) {
+        try { claimedOffer = JSON.parse(match[1]); } catch (e) {}
+      }
+    }
+
     for (const r of selectedRooms) {
       let roomPrice = parseFloat(r.basePricePerNight);
       roomPrice = applyRateAdjustment(roomPrice, "room", applicableAdjustment);
+      
+      if (claimedOffer && req.body.specialRequests && req.body.roomIds && req.body.roomIds.includes(r.id)) {
+        // We assume if room is selected it's in roomIds. Wait, we don't have the exact offer roomIds in the request payload easily except through the tag.
+        // Actually, in the frontend we only inject the tag if the selected room is in the offer's roomIds.
+        // So if the tag exists, we can apply it.
+        const dv = parseFloat(claimedOffer.discountValue);
+        roomPrice = claimedOffer.discountType === "fixed"
+          ? Math.max(0, roomPrice - dv)
+          : Math.max(0, roomPrice - (roomPrice * dv / 100));
+      }
+      
       totalRoomRate += roomPrice;
       cleaningFee += parseFloat(r.cleaningFee ?? "0");
     }
@@ -278,9 +298,26 @@ router.post("/v1/bookings", async (req, res) => {
       }) || adjustments.find(adj => !adj.dateFrom && !adj.dateTo) || null;
     }
 
+    // Parse Claimed Offer from specialRequests
+    let claimedOffer = null;
+    if (specialRequests) {
+      const match = specialRequests.match(/\[Claimed Offer: ({.+?})\]/);
+      if (match) {
+        try { claimedOffer = JSON.parse(match[1]); } catch (e) {}
+      }
+    }
+
     for (const r of selectedRooms) {
       let roomPrice = parseFloat(r.basePricePerNight);
       roomPrice = applyRateAdjustment(roomPrice, "room", applicableAdjustment);
+      
+      if (claimedOffer) {
+        const dv = parseFloat(claimedOffer.discountValue);
+        roomPrice = claimedOffer.discountType === "fixed"
+          ? Math.max(0, roomPrice - dv)
+          : Math.max(0, roomPrice - (roomPrice * dv / 100));
+      }
+
       totalRoomRate += roomPrice;
       cleaningFee += parseFloat(r.cleaningFee ?? "0");
     }

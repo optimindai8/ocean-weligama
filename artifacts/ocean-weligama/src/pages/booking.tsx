@@ -2046,18 +2046,21 @@ export default function BookingPage() {
                               const discountedSubtotal = nights > 0 ? (discountedPricePerNight * nights) : null;
                               return (
                                 <div key={room.id} className="pt-2 border-t border-white/5 mt-2">
-                                  <div className="flex justify-between items-center text-xs text-white/80">
-                                    <div className="flex flex-col gap-0.5">
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-white/60">{room.name} Rate</span>
+                                  <div className="flex justify-between items-start text-xs text-white/80 gap-2">
+                                    <div className="flex flex-col gap-1 flex-1">
+                                      <div className="flex flex-wrap items-center gap-2">
+                                        <span className="text-white/60 leading-tight">{room.name} Rate</span>
                                         {hasOffer && (
-                                          <span className="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg animate-pulse">
+                                          <span 
+                                            className="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.3)] animate-pulse shrink-0 whitespace-nowrap hover:scale-105 hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] transition-all duration-300 cursor-default select-none flex items-center gap-1"
+                                            title={`${claimedOffer.title} applied`}
+                                          >
                                             🎁 {claimedOffer.discountType === "percentage" ? `${parseFloat(claimedOffer.discountValue)}% OFF` : `€${parseFloat(claimedOffer.discountValue)} OFF`}
                                           </span>
                                         )}
                                       </div>
                                       {hasOffer && nights > 0 && (
-                                        <span className="text-[10px] text-white/40">
+                                        <span className="text-[10px] text-white/40 block mt-0.5">
                                           <span className="line-through">€{basePrice.toFixed(2)}</span>
                                           {" → "}
                                           <span className="text-green-300 font-bold">€{discountedPricePerNight.toFixed(2)}</span>
@@ -2065,9 +2068,9 @@ export default function BookingPage() {
                                         </span>
                                       )}
                                     </div>
-                                    <div className="flex flex-col items-end">
+                                    <div className="flex flex-col items-end shrink-0 pt-0.5">
                                       {hasOffer && originalSubtotal !== null && (
-                                        <span className="text-[10px] text-white/40 line-through">€{originalSubtotal.toFixed(2)}</span>
+                                        <span className="text-[10px] text-white/40 line-through mb-0.5">€{originalSubtotal.toFixed(2)}</span>
                                       )}
                                       <span className={`font-bold ${hasOffer ? 'text-green-300' : ''}`}>
                                         €{discountedSubtotal !== null ? discountedSubtotal.toFixed(2) : discountedPricePerNight.toFixed(2)}

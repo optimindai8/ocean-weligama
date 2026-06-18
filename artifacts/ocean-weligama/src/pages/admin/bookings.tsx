@@ -88,6 +88,9 @@ function parseSpecialRequests(text: string) {
     }
     
     if (!inCustomSection) {
+      if (line.startsWith("[Claimed Offer:")) {
+        continue;
+      }
       if (line !== "" || (remainingLines.length > 0 && remainingLines[remainingLines.length - 1] !== "")) {
         remainingLines.push(lines[i]);
       }
