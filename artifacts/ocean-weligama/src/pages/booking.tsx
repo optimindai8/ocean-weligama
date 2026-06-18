@@ -365,7 +365,7 @@ function RoomCard({ room, isSelected, onClick, claimedOffer }: { room: any, isSe
               {/* Claimed Offer Badge */}
               {claimedOffer && claimedOffer.roomIds && claimedOffer.roomIds.includes(room.id) && (
                 <div className="absolute top-3 right-3 bg-gradient-to-r from-red-600 to-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full z-20 shadow-lg animate-pulse">
-                  🎁 Claimed Offer: {claimedOffer.discountType === "percentage" ? `${claimedOffer.discountValue}% OFF` : `€${claimedOffer.discountValue} OFF`}
+                  🎁 Claimed Offer: {claimedOffer.discountType === "percentage" ? `${parseFloat(claimedOffer.discountValue)}% OFF` : `€${parseFloat(claimedOffer.discountValue)} OFF`}
                 </div>
               )}
             </>
@@ -1268,6 +1268,7 @@ export default function BookingPage() {
                         room={room}
                         isSelected={selectedRoomIds.includes(room.id)}
                         onClick={() => setSelectedRoomIds(prev => prev.includes(room.id) ? prev.filter(id => id !== room.id) : [...prev, room.id])}
+                        claimedOffer={claimedOffer}
                       />
                     ))}
                   </motion.div>
@@ -2023,17 +2024,27 @@ export default function BookingPage() {
                         </div>
                         {selectedRooms.length > 0 && (
                           <>
-                            {selectedRooms.map(room => (
-                              <div key={room.id} className="pt-2 border-t border-white/5 mt-2">
-                                <div className="flex justify-between text-xs text-white/80">
-                                  <span className="text-white/60">{room.name} Rate</span>
-                                  <span className="font-bold">€{computedTotal}</span>
+                            {selectedRooms.map(room => {
+                              const hasOffer = claimedOffer && claimedOffer.roomIds && claimedOffer.roomIds.includes(room.id);
+                              return (
+                                <div key={room.id} className="pt-2 border-t border-white/5 mt-2">
+                                  <div className="flex justify-between items-center text-xs text-white/80">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-white/60">{room.name} Rate</span>
+                                      {hasOffer && (
+                                        <span className="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg">
+                                          {claimedOffer.discountType === "percentage" ? `${parseFloat(claimedOffer.discountValue)}% OFF` : `€${parseFloat(claimedOffer.discountValue)} OFF`}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-bold">€{computedTotal}</span>
+                                  </div>
+                                  <div className="flex justify-between text-[10px] text-white/60 mt-1">
+                                    <span>Includes selected packages and experiences</span>
+                                  </div>
                                 </div>
-                                <div className="flex justify-between text-[10px] text-white/60 mt-1">
-                                  <span>Includes selected packages and experiences</span>
-                                </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </>
                         )}
                       </div>
