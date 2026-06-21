@@ -520,7 +520,32 @@ export function PackageComparisonTable({ isEditable = false }: { isEditable?: bo
         </table>
       </motion.div>
 
-
+      {/* ── Trust Badges ────────────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ delay: 0.7 }}
+        className="flex flex-wrap items-center justify-center gap-3 mt-6 pb-12"
+      >
+        {[
+          { text: 'Secure Booking' },
+          { text: 'WhatsApp Support' },
+          { text: 'Customizable Add-ons' },
+          { text: 'Flexible Cancellation' },
+          { text: 'ISA Certified Instructors' },
+        ].map(badge => (
+          <motion.div
+            key={badge.text}
+            whileHover={{ scale: 1.06, y: -2 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className="flex items-center gap-2 text-xs font-semibold cursor-default px-4 py-2 rounded-full border border-white/70 backdrop-blur-sm text-slate-500 hover:text-[#0B3D5E] transition-colors duration-200 shadow-sm"
+            style={{ background: 'rgba(255,255,255,0.55)' }}
+          >
+            <span>{badge.text}</span>
+          </motion.div>
+        ))}
+      </motion.div>
     </div>
   );
 }
