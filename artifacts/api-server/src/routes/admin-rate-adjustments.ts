@@ -2,11 +2,12 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { globalRateAdjustments } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import { requireAdmin } from "../lib/auth.js";
 
 const router = Router();
 
 // Get all rate adjustments
-router.get("/v1/admin/rate-adjustments", async (req, res) => {
+router.get("/v1/admin/rate-adjustments", requireAdmin, async (req, res) => {
   try {
     const adjustments = await db.select().from(globalRateAdjustments).orderBy(globalRateAdjustments.createdAt);
     
@@ -34,7 +35,7 @@ router.get("/v1/admin/rate-adjustments", async (req, res) => {
 });
 
 // Create a new rate adjustment
-router.post("/v1/admin/rate-adjustments", async (req, res) => {
+router.post("/v1/admin/rate-adjustments", requireAdmin, async (req, res) => {
   try {
     const {
       seasonName,
@@ -73,9 +74,9 @@ router.post("/v1/admin/rate-adjustments", async (req, res) => {
 });
 
 // Update a rate adjustment
-router.put("/v1/admin/rate-adjustments/:id", async (req, res) => {
+router.put("/v1/admin/rate-adjustments/:id", requireAdmin, async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as Record<string, string>;
     const {
       seasonName,
       dateFrom,
@@ -119,9 +120,9 @@ router.put("/v1/admin/rate-adjustments/:id", async (req, res) => {
 });
 
 // Delete a rate adjustment
-router.delete("/v1/admin/rate-adjustments/:id", async (req, res) => {
+router.delete("/v1/admin/rate-adjustments/:id", requireAdmin, async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params as Record<string, string>;
     const [deleted] = await db
       .delete(globalRateAdjustments)
       .where(eq(globalRateAdjustments.id, id))

@@ -2,11 +2,12 @@ import { Router } from "express";
 import { db } from "@workspace/db";
 import { gallery } from "@workspace/db";
 import { eq, and, isNull, desc } from "drizzle-orm";
+import { requireAdmin } from "../lib/auth.js";
 
 const router = Router();
 
 // Admin: list ALL images (pending, approved, rejected)
-router.get("/v1/admin/gallery", async (req, res) => {
+router.get("/v1/admin/gallery", requireAdmin, async (req, res) => {
   try {
     const items = await db
       .select()
@@ -35,7 +36,7 @@ router.get("/v1/admin/gallery", async (req, res) => {
 });
 
 // Admin: approve or reject an image
-router.patch("/v1/admin/gallery/:id/status", async (req, res) => {
+router.patch("/v1/admin/gallery/:id/status", requireAdmin, async (req, res) => {
   try {
     const { id } = req.params as Record<string, string>;
     const { status, isFeatured } = req.body as { status?: "approved" | "rejected" | "pending", isFeatured?: boolean };
@@ -73,7 +74,7 @@ router.patch("/v1/admin/gallery/:id/status", async (req, res) => {
 });
 
 // Admin: delete an image (soft delete)
-router.delete("/v1/admin/gallery/:id", async (req, res) => {
+router.delete("/v1/admin/gallery/:id", requireAdmin, async (req, res) => {
   try {
     const { id } = req.params as Record<string, string>;
 

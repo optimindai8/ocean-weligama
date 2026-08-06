@@ -3,10 +3,11 @@ import { db } from "@workspace/db";
 import { users } from "@workspace/db";
 import { eq, isNull } from "drizzle-orm";
 import { signToken, comparePassword, requireAdmin } from "../lib/auth.js";
+import { authEndpointRateLimiter } from "../security/rateLimiter.js";
 
 const router = Router();
 
-router.post("/v1/admin/auth/login", async (req, res) => {
+router.post("/v1/admin/auth/login", authEndpointRateLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
