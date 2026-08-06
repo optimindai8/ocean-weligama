@@ -50,10 +50,21 @@ const useCountdown = (isVisible: boolean, createdAt?: string, offerDays?: number
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    if (!isVisible || !createdAt || !offerDays) return;
+    if (!isVisible) return;
     
-    const end = new Date(createdAt);
-    end.setDate(end.getDate() + offerDays);
+    // Safely parse offerDays, fallback to 3 days if undefined/invalid
+    const validOfferDays = typeof offerDays === "number" && !isNaN(offerDays) && offerDays > 0 
+      ? offerDays 
+      : (offerDays ? (parseInt(String(offerDays), 10) || 3) : 3);
+
+    // Safely parse createdAt, fallback to now if invalid date string
+    let createdDate = createdAt ? new Date(createdAt) : new Date();
+    if (isNaN(createdDate.getTime())) {
+      createdDate = new Date();
+    }
+
+    const end = new Date(createdDate.getTime());
+    end.setDate(end.getDate() + validOfferDays);
 
     const tick = () => {
       const now = new Date();
@@ -62,11 +73,16 @@ const useCountdown = (isVisible: boolean, createdAt?: string, offerDays?: number
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         return;
       }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
       setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
+        days: isNaN(days) || days < 0 ? 0 : days,
+        hours: isNaN(hours) || hours < 0 ? 0 : hours,
+        minutes: isNaN(minutes) || minutes < 0 ? 0 : minutes,
+        seconds: isNaN(seconds) || seconds < 0 ? 0 : seconds,
       });
     };
 
@@ -79,28 +95,31 @@ const useCountdown = (isVisible: boolean, createdAt?: string, offerDays?: number
 };
 
 /* ───── countdown digit ───── */
-const CountdownDigit = ({ value, label }: { value: number; label: string }) => (
-  <div className="flex flex-col items-center">
-    <motion.div
-      key={value}
-      initial={{ rotateX: -90, opacity: 0 }}
-      animate={{ rotateX: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center overflow-hidden"
-      style={{
-        background: "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)",
-        backdropFilter: "blur(10px)",
-        border: "1px solid rgba(255,255,255,0.2)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)",
-      }}
-    >
-      <span className="text-xl sm:text-3xl font-black text-white tabular-nums tracking-tighter">
-        {String(value).padStart(2, "0")}
-      </span>
-    </motion.div>
-    <span className="text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-white/60 mt-2">{label}</span>
-  </div>
-);
+const CountdownDigit = ({ value, label }: { value: number; label: string }) => {
+  const safeVal = typeof value === "number" && !isNaN(value) && value >= 0 ? Math.floor(value) : 0;
+  return (
+    <div className="flex flex-col items-center">
+      <motion.div
+        key={safeVal}
+        initial={{ rotateX: -90, opacity: 0 }}
+        animate={{ rotateX: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)",
+          backdropFilter: "blur(10px)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)",
+        }}
+      >
+        <span className="text-xl sm:text-3xl font-black text-white tabular-nums tracking-tighter">
+          {String(safeVal).padStart(2, "0")}
+        </span>
+      </motion.div>
+      <span className="text-[9px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-white/60 mt-2">{label}</span>
+    </div>
+  );
+};
 
 export function OfferAdPopup() {
   const [isVisible, setIsVisible] = useState(false);

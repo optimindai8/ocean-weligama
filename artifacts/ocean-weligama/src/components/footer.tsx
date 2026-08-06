@@ -98,7 +98,7 @@ export function Footer() {
           </div>
 
           <div className="flex items-center gap-4 shrink-0">
-            <Link href="/booking">
+            <Link href="/book">
               <motion.button 
                 whileHover={{ scale: 1.04, boxShadow: "0 0 30px rgba(75, 188, 204, 0.4)" }}
                 whileTap={{ scale: 0.96 }}
@@ -125,14 +125,14 @@ export function Footer() {
           <Link href="/">
             <div className="flex items-center gap-4 cursor-pointer group p-3 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-cyan-400/40 transition-all duration-500 backdrop-blur-xl">
               {/* Preserved 3D Background Element */}
-              <div className="relative flex items-center justify-center w-[90px] h-[90px] rounded-xl overflow-hidden bg-black/40">
-                <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center scale-125">
+              <div className="relative flex items-center justify-center w-[96px] h-[96px] rounded-2xl overflow-hidden bg-black/50 border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)]">
+                <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center scale-125 translate-y-3.5">
                   <Animated3DBackground />
                 </div>
                 <div className="absolute inset-0 bg-cyan-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
                 <TransparentLogo 
                   src="/logo.jpg" 
-                  className="relative z-10 h-12 w-12 object-contain brightness-0 invert transition-transform duration-500 group-hover:scale-110 drop-shadow-2xl" 
+                  className="relative z-10 h-11 w-11 object-contain brightness-0 invert -translate-y-3.5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-4.5 drop-shadow-[0_8px_16px_rgba(211,164,16,0.6)]" 
                 />
               </div>
               <div className="flex flex-col pr-3">
@@ -269,15 +269,9 @@ export function Footer() {
         </motion.div>
       </motion.div>
 
-      {/* 4. Bottom Copyright & Trust Tagline Bar */}
+      {/* 4. Bottom Copyright Bar */}
       <div className="container mx-auto px-6 mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-white/50 text-xs font-light relative z-10">
-        <div className="flex items-center gap-2">
-          <span>© {new Date().getFullYear()} Ocean Weligama. All rights reserved.</span>
-          <span className="hidden md:inline">•</span>
-          <span className="hidden md:inline-flex items-center gap-1 text-white/40">
-            Made with <Heart className="w-3 h-3 text-rose-500 fill-rose-500 inline" /> in Pelana, Weligama
-          </span>
-        </div>
+        <p>© {new Date().getFullYear()} Ocean Weligama. All rights reserved.</p>
         <div className="flex gap-6 text-white/60">
           <Link href="/cancellation-policy"><span className="hover:text-cyan-300 cursor-pointer transition-colors">Privacy Policy</span></Link>
           <Link href="/cancellation-policy"><span className="hover:text-cyan-300 cursor-pointer transition-colors">Terms of Service</span></Link>
