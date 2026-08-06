@@ -21,7 +21,7 @@ export function SEO({
   noIndex = false,
 }: SEOProps) {
   const fullTitle = title
-    ? `${title} | Ocean Air Weligama`
+    ? `${title} | Ocean Air Weligama Resort & Hotel`
     : defaultSEOConfig.defaultTitle;
 
   const canonicalUrl = getCanonicalUrl(canonicalPath);
@@ -63,10 +63,20 @@ export function SEO({
       el.setAttribute("href", href);
     };
 
-    // 2. Standard Meta Tags
+    // 2. Standard & High-Performance Search Meta Tags
     setMeta("description", description);
     setMeta("keywords", keywords.join(", "));
-    setMeta("robots", noIndex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+    setMeta(
+      "robots",
+      noIndex
+        ? "noindex, nofollow"
+        : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    );
+    setMeta("googlebot", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
+    setMeta("bingbot", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
+    setMeta("revisit-after", "1 days");
+    setMeta("rating", "general");
+    setMeta("author", "Ocean Air Weligama");
 
     // 3. Open Graph Tags
     setMeta("og:site_name", defaultSEOConfig.siteName, true);
@@ -76,6 +86,7 @@ export function SEO({
     setMeta("og:url", canonicalUrl, true);
     setMeta("og:image", ogImage, true);
     setMeta("og:locale", "en_US", true);
+    setMeta("og:locale:alternate", "en_LK", true);
 
     // 4. Twitter Card Tags
     setMeta("twitter:card", "summary_large_image");
@@ -84,18 +95,20 @@ export function SEO({
     setMeta("twitter:description", description);
     setMeta("twitter:image", ogImage);
 
-    // 5. Geo Location Tags
+    // 5. Geo Location Tags (Pinpoint Weligama Bay Coordinates)
     setMeta("geo.region", "LK-31");
-    setMeta("geo.placename", "Weligama, Matara, Sri Lanka");
+    setMeta("geo.placename", "Weligama, Matara, Southern Province, Sri Lanka");
     setMeta("geo.position", `${defaultSEOConfig.location.latitude};${defaultSEOConfig.location.longitude}`);
     setMeta("ICBM", `${defaultSEOConfig.location.latitude}, ${defaultSEOConfig.location.longitude}`);
 
     // 6. Canonical Link (.com vs .lk unified authority)
     setLink("canonical", canonicalUrl);
 
-    // 7. Dual Domain Hreflang Tags (.com and .lk)
+    // 7. Dual Domain & International Hreflang Link Tags
     setLink("alternate", comUrl, "en");
     setLink("alternate", lkUrl, "en-LK");
+    setLink("alternate", comUrl, "en-US");
+    setLink("alternate", comUrl, "en-GB");
     setLink("alternate", comUrl, "x-default");
 
   }, [fullTitle, description, keywords, canonicalUrl, ogImage, ogType, noIndex, comUrl, lkUrl]);

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import {
   generateHotelSchema,
   generateOrganizationSchema,
+  generateWebSiteSchema,
   generateBreadcrumbSchema,
   generateFaqSchema,
 } from "./jsonLd";
@@ -16,6 +17,7 @@ export function StructuredData({ breadcrumbs, faqs }: StructuredDataProps) {
     const schemas: object[] = [
       generateHotelSchema(),
       generateOrganizationSchema(),
+      generateWebSiteSchema(),
     ];
 
     if (breadcrumbs && breadcrumbs.length > 0) {

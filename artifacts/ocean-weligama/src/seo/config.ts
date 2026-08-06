@@ -16,6 +16,7 @@ export interface SEOConfig {
     addressCountry: string;
     latitude: number;
     longitude: number;
+    elevation: string;
   };
   contact: {
     telephone: string;
@@ -25,12 +26,12 @@ export interface SEOConfig {
 
 export const defaultSEOConfig: SEOConfig = {
   siteName: "Ocean Air Weligama",
-  defaultTitle: "Ocean Weligama — #1 Boutique Luxury Resort, Hotel & Surf Sanctuary in Weligama",
-  titleTemplate: "%s | Ocean Air Weligama Resort & Villa",
+  defaultTitle: "Ocean Weligama — #1 Best Weligama Hotel, Beach Villa & Surf Resort Sri Lanka",
+  titleTemplate: "%s | Ocean Air Weligama Resort & Hotel",
   defaultDescription:
-    "Experience Ocean Weligama — Sri Lanka's premier beachfront luxury boutique hotel, villa & surf sanctuary in Weligama Bay. 100 steps from the ocean with world-class rooms, surf lessons, wellness & dining. Book directly on .com or .lk for best rate guarantees.",
+    "Ocean Air Weligama (welgama hotel) — #1 beachfront luxury boutique hotel, villa & surf sanctuary in Weligama Bay, Sri Lanka. 100 steps from the ocean with luxury rooms, surf lessons, whale watching, scooter rentals & dining. Book direct on .com or .lk for best rate guarantees.",
   defaultKeywords: [
-    // Brand & Core Keywords
+    // Primary Keywords & Exact Searches requested by user
     "Ocean",
     "Weligama",
     "Ocean Weligama",
@@ -40,10 +41,24 @@ export const defaultSEOConfig: SEOConfig = {
     "Ocean Air Weligama COM",
     "Ocean Weligama Hotel",
     "Ocean Weligama Resort",
+    "Ocean Weligama Villa",
 
-    // Location & Accommodation Keywords
+    // Misspellings & High-Volume Search Variations
+    "welgama hotel",
+    "welgama hotels",
+    "welgama villa",
+    "welgama resorts",
+    "welligama hotel",
+    "welligama resorts",
+    "welligama beach hotel",
+    "welgama surf",
+    "welgama sri lanka hotel",
+
+    // Target High-Intent Search Phrases
     "Weligama Hotel",
     "Weligama Hotels",
+    "Best Weligama Hotel",
+    "Top Hotel in Weligama",
     "Weligama Villa",
     "Weligama Villas",
     "Weligama Resort",
@@ -56,24 +71,33 @@ export const defaultSEOConfig: SEOConfig = {
     "Boutique Hotel Weligama",
     "Pelana Weligama Hotel",
     "Jayasayurupura Weligama",
+    "Weligama Beach House",
+    "Weligama Boutique Villa",
+    "Weligama Sea View Hotel",
 
-    // Surf & Experience Keywords
+    // Surf, Wellness & Activity Keywords
     "Weligama Surf Hotel",
     "Weligama Surf Camp",
+    "Weligama Surf Resort",
     "Surfing Weligama Sri Lanka",
     "Surf Lessons Weligama",
     "Weligama Surf School",
-    "Whale Watching Weligama",
+    "Whale Watching Weligama Hotel",
     "Weligama Yoga Retreat",
     "Scooter Rental Weligama",
+    "Weligama Airport Transfer",
 
-    // General Tourism & Regional Keywords
+    // Regional & Multilingual Target Queries
     "Best place to stay in Weligama",
     "Sri Lanka South Coast Luxury Hotel",
     "Barefoot Luxury Sri Lanka",
     "Beachside Boutique Villa Weligama",
     "Weligama Bay Accommodation",
     "Direct Booking Weligama Hotel",
+    "Hotel Weligama Sri Lanka",
+    "Weligama Unterkünfte",
+    "Отель Велигама Шри Ланка",
+    "Hôtel Weligama Sri Lanka",
   ],
   primaryDomainCom: "https://oceanairweligama.com",
   primaryDomainLk: "https://oceanairweligama.lk",
@@ -87,6 +111,7 @@ export const defaultSEOConfig: SEOConfig = {
     addressCountry: "LK",
     latitude: 5.9723,
     longitude: 80.4286,
+    elevation: "3m",
   },
   contact: {
     telephone: "+94765791763",

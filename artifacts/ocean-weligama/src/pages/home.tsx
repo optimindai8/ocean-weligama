@@ -37,6 +37,14 @@ export default function Home() {
       <SEO canonicalPath="/" />
       <StructuredData />
       
+      {/* Hidden Crawler Landmarks for Googlebot & Search Indexers */}
+      <h1 className="sr-only">
+        Ocean Air Weligama — #1 Best Weligama Hotel, Beach Villa &amp; Surf Resort in Weligama Bay Sri Lanka (welgama hotel)
+      </h1>
+      <p className="sr-only">
+        Welcome to Ocean Air Weligama, the top luxury boutique hotel, villa, and surf sanctuary located 100 steps from Weligama Beach in Pelana, Weligama, Sri Lanka. Offering ocean view rooms, surf lessons, scooter rentals, whale watching tours, and direct booking guarantees on oceanairweligama.com and oceanairweligama.lk.
+      </p>
+
       {/* Hero Section */}
       <section
         className="relative flex flex-col overflow-hidden"

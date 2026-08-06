@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
   <url>
     <loc>https://oceanairweligama.com/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/"/>
@@ -9,6 +11,17 @@
     <lastmod>2026-08-06</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://oceanairweligama.com/logo.jpg</image:loc>
+      <image:title>Ocean Air Weligama Resort &amp; Hotel</image:title>
+      <image:caption>Ocean Air Weligama beachfront luxury resort in Weligama Bay Sri Lanka</image:caption>
+    </image:image>
+    <video:video>
+      <video:thumbnail_loc>https://oceanairweligama.com/hero-video-poster.jpg</video:thumbnail_loc>
+      <video:title>Ocean Air Weligama Barefoot Beach Experience</video:title>
+      <video:description>Experience barefoot luxury 100 steps from the Indian Ocean at Ocean Air Weligama Sri Lanka.</video:description>
+      <video:content_loc>https://oceanairweligama.com/hero-video.mp4</video:content_loc>
+    </video:video>
   </url>
   <url>
     <loc>https://oceanairweligama.com/rooms</loc>
@@ -17,7 +30,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/rooms"/>
     <lastmod>2026-08-06</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://oceanairweligama.com/packages</loc>
@@ -35,7 +48,7 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/gallery"/>
     <lastmod>2026-08-06</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://oceanairweligama.com/about</loc>
