@@ -21,12 +21,14 @@ export function SEO({
   noIndex = false,
 }: SEOProps) {
   const fullTitle = title
-    ? `${title} | Ocean Air Weligama Resort & Hotel`
+    ? `${title} | Ocean Air Weligama Hotel & Villa`
     : defaultSEOConfig.defaultTitle;
 
   const canonicalUrl = getCanonicalUrl(canonicalPath);
-  const lkUrl = `${defaultSEOConfig.primaryDomainLk}${canonicalPath.startsWith("/") ? canonicalPath : `/${canonicalPath}`}`;
-  const comUrl = `${defaultSEOConfig.primaryDomainCom}${canonicalPath.startsWith("/") ? canonicalPath : `/${canonicalPath}`}`;
+  const pathPart = canonicalPath.startsWith("/") ? canonicalPath : `/${canonicalPath}`;
+  const comUrl = `${defaultSEOConfig.primaryDomainCom}${pathPart}`;
+  const lkUrl = `${defaultSEOConfig.primaryDomainLk}${pathPart}`;
+  const sriLankaUrl = `${defaultSEOConfig.primaryDomainSriLanka}${pathPart}`;
 
   useEffect(() => {
     // 1. Update Title
@@ -76,7 +78,7 @@ export function SEO({
     setMeta("bingbot", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
     setMeta("revisit-after", "1 days");
     setMeta("rating", "general");
-    setMeta("author", "Ocean Air Weligama");
+    setMeta("author", "Ocean Air Weligama Hotel & Villa");
 
     // 3. Open Graph Tags
     setMeta("og:site_name", defaultSEOConfig.siteName, true);
@@ -101,17 +103,17 @@ export function SEO({
     setMeta("geo.position", `${defaultSEOConfig.location.latitude};${defaultSEOConfig.location.longitude}`);
     setMeta("ICBM", `${defaultSEOConfig.location.latitude}, ${defaultSEOConfig.location.longitude}`);
 
-    // 6. Canonical Link (.com vs .lk unified authority)
+    // 6. Canonical Link (.com vs .lk vs oceanairsrilanka.com unified authority)
     setLink("canonical", canonicalUrl);
 
-    // 7. Dual Domain & International Hreflang Link Tags
+    // 7. Multi-Domain & International Hreflang Link Tags
     setLink("alternate", comUrl, "en");
     setLink("alternate", lkUrl, "en-LK");
-    setLink("alternate", comUrl, "en-US");
+    setLink("alternate", sriLankaUrl, "en-US");
     setLink("alternate", comUrl, "en-GB");
     setLink("alternate", comUrl, "x-default");
 
-  }, [fullTitle, description, keywords, canonicalUrl, ogImage, ogType, noIndex, comUrl, lkUrl]);
+  }, [fullTitle, description, keywords, canonicalUrl, ogImage, ogType, noIndex, comUrl, lkUrl, sriLankaUrl]);
 
   return null;
 }

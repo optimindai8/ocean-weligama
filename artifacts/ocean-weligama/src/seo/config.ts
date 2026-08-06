@@ -6,6 +6,7 @@ export interface SEOConfig {
   defaultKeywords: string[];
   primaryDomainCom: string;
   primaryDomainLk: string;
+  primaryDomainSriLanka: string;
   defaultOgImage: string;
   twitterHandle: string;
   location: {
@@ -26,21 +27,24 @@ export interface SEOConfig {
 
 export const defaultSEOConfig: SEOConfig = {
   siteName: "Ocean Air Weligama",
-  defaultTitle: "Ocean Weligama — #1 Best Weligama Hotel, Beach Villa & Surf Resort Sri Lanka",
-  titleTemplate: "%s | Ocean Air Weligama Resort & Hotel",
+  defaultTitle: "Ocean Air Weligama — #1 Beachfront Boutique Luxury Hotel & Villa in Weligama Bay",
+  titleTemplate: "%s | Ocean Air Weligama Hotel & Villa",
   defaultDescription:
-    "Ocean Air Weligama (welgama hotel) — #1 beachfront luxury boutique hotel, villa & surf sanctuary in Weligama Bay, Sri Lanka. 100 steps from the ocean with luxury rooms, surf lessons, whale watching, scooter rentals & dining. Book direct on .com or .lk for best rate guarantees.",
+    "Step into 100% barefoot luxury at Ocean Air Weligama — Sri Lanka's top-rated beachfront boutique hotel & villa in Weligama Bay. 100 steps from the ocean featuring luxury ocean-view suites, certified surf lessons, whale watching tours, private scooter rentals & 24/7 concierge care. Book direct on .com or .lk for best rate guarantees.",
   defaultKeywords: [
-    // Primary Keywords & Exact Searches requested by user
+    // Primary Brand & Search Keywords requested by user
     "Ocean",
     "Weligama",
     "Ocean Weligama",
     "Ocean Air Weligama",
+    "Ocean Air Weligama Hotel & Villa",
+    "Ocean Air Weligama Hotel",
+    "Ocean Air Weligama Villa",
     "Ocean Air Weligama Sri Lanka",
+    "Ocean Air Sri Lanka",
     "Ocean Air Weligama LK",
     "Ocean Air Weligama COM",
     "Ocean Weligama Hotel",
-    "Ocean Weligama Resort",
     "Ocean Weligama Villa",
 
     // Misspellings & High-Volume Search Variations
@@ -54,13 +58,14 @@ export const defaultSEOConfig: SEOConfig = {
     "welgama surf",
     "welgama sri lanka hotel",
 
-    // Target High-Intent Search Phrases
+    // Target High-Intent Tourist Search Phrases
     "Weligama Hotel",
     "Weligama Hotels",
     "Best Weligama Hotel",
     "Top Hotel in Weligama",
     "Weligama Villa",
     "Weligama Villas",
+    "Weligama Hotel & Villa",
     "Weligama Resort",
     "Weligama Resorts",
     "Weligama Beach Hotel",
@@ -101,6 +106,7 @@ export const defaultSEOConfig: SEOConfig = {
   ],
   primaryDomainCom: "https://oceanairweligama.com",
   primaryDomainLk: "https://oceanairweligama.lk",
+  primaryDomainSriLanka: "https://oceanairsrilanka.com",
   defaultOgImage: "https://oceanairweligama.com/logo.jpg",
   twitterHandle: "@oceanairweligama",
   location: {
@@ -120,12 +126,15 @@ export const defaultSEOConfig: SEOConfig = {
 };
 
 /**
- * Resolves canonical URL ensuring both .com and .lk domains unify link authority cleanly.
+ * Resolves canonical URL ensuring .com, .lk, and oceanairsrilanka.com domains unify link authority cleanly.
  */
 export function getCanonicalUrl(path: string = ""): string {
   const cleanPath = path.startsWith("/") ? path : `/${path}`;
   if (typeof window !== "undefined") {
     const host = window.location.hostname;
+    if (host.includes("oceanairsrilanka.com")) {
+      return `${defaultSEOConfig.primaryDomainSriLanka}${cleanPath}`;
+    }
     if (host.endsWith(".lk")) {
       return `${defaultSEOConfig.primaryDomainLk}${cleanPath}`;
     }

@@ -12,15 +12,19 @@ export function generateHotelSchema() {
     alternateName: [
       "Ocean Weligama",
       "Ocean Air Weligama",
+      "Ocean Air Weligama Hotel & Villa",
       "Ocean Air Weligama Villa",
       "Ocean Weligama Hotel",
       "Weligama Hotel",
       "welgama hotel",
+      "Ocean Air Sri Lanka",
     ],
     description: defaultSEOConfig.defaultDescription,
     url: defaultSEOConfig.primaryDomainCom,
     sameAs: [
       defaultSEOConfig.primaryDomainLk,
+      defaultSEOConfig.primaryDomainSriLanka,
+      "https://www.oceanairsrilanka.com",
       "https://www.facebook.com/profile.php?id=61583921572390",
       "https://www.instagram.com/oceanairweligama",
       "https://www.tiktok.com/@oceanairweligama",
@@ -94,7 +98,7 @@ export function generateWebSiteSchema() {
     "@id": `${defaultSEOConfig.primaryDomainCom}/#website`,
     url: defaultSEOConfig.primaryDomainCom,
     name: defaultSEOConfig.siteName,
-    alternateName: ["Ocean Weligama", "Ocean Air Weligama", "welgama hotel"],
+    alternateName: ["Ocean Weligama", "Ocean Air Weligama", "Ocean Air Sri Lanka", "welgama hotel"],
     potentialAction: {
       "@type": "SearchAction",
       target: `${defaultSEOConfig.primaryDomainCom}/rooms?search={search_term_string}`,
@@ -149,6 +153,8 @@ export function generateOrganizationSchema() {
     logo: `${defaultSEOConfig.primaryDomainCom}/logo.jpg`,
     sameAs: [
       defaultSEOConfig.primaryDomainLk,
+      defaultSEOConfig.primaryDomainSriLanka,
+      "https://www.oceanairsrilanka.com",
       "https://www.facebook.com/profile.php?id=61583921572390",
       "https://www.instagram.com/oceanairweligama",
       "https://www.tiktok.com/@oceanairweligama",
