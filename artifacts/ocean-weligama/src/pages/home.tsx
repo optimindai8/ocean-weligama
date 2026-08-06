@@ -39,10 +39,10 @@ export default function Home() {
       
       {/* Hidden Crawler Landmarks for Googlebot & Search Indexers */}
       <h1 className="sr-only">
-        Ocean Air Weligama — #1 Best Weligama Hotel, Beach Villa &amp; Surf Resort in Weligama Bay Sri Lanka (welgama hotel)
+        ocean air weligama — Ocean Air Weligama #1 Beachfront Boutique Luxury Hotel &amp; Villa in Weligama Bay Sri Lanka
       </h1>
       <p className="sr-only">
-        Welcome to Ocean Air Weligama, the top luxury boutique hotel, villa, and surf sanctuary located 100 steps from Weligama Beach in Pelana, Weligama, Sri Lanka. Offering ocean view rooms, surf lessons, scooter rentals, whale watching tours, and direct booking guarantees on oceanairweligama.com and oceanairweligama.lk.
+        Ocean Air Weligama (ocean air weligama sri lanka / welgama hotel) is the premier beachfront boutique hotel &amp; luxury villa in Weligama Bay, Sri Lanka. Located 100 steps from the ocean with ocean view suites, certified surf lessons, whale watching tours, scooter rentals, and 24/7 concierge care. Book direct on oceanairweligama.com, oceanairweligama.lk, or oceanairsrilanka.com.
       </p>
 
       {/* Hero Section */}
@@ -84,18 +84,18 @@ export default function Home() {
           <AnimatedHoloCard icon={Waves} className="scale-50 sm:scale-75 md:scale-90" />
         </div>
 
-        {/* Left Side Vertical Social Media Bar (Visible on All Devices: Mobile, Tablet & Desktop) */}
+        {/* Left Side Vertical Social Media Bar (Identical Layout Across Mobile, Tablet & Laptop) */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.7, duration: 1, ease: "easeOut" }}
-          className="absolute left-2.5 sm:left-5 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3 sm:gap-4 md:gap-5"
+          className="absolute left-2 sm:left-5 md:left-6 lg:left-8 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-2.5 sm:gap-4 md:gap-5"
         >
-          {/* Vertical Accent Line (Subtle top line on tablets and desktops) */}
-          <div className="hidden sm:block w-[2px] h-12 md:h-20 bg-gradient-to-b from-transparent via-white/80 to-white/30 rounded-full shadow-[0_0_12px_rgba(255,255,255,0.4)]" />
+          {/* Vertical Accent Line (Glowing top line visible on ALL devices) */}
+          <div className="block w-[1.5px] sm:w-[2px] h-8 sm:h-12 md:h-20 bg-gradient-to-b from-transparent via-white/80 to-white/30 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.4)]" />
 
           {/* Social Links */}
-          <div className="flex flex-col gap-2.5 sm:gap-3.5">
+          <div className="flex flex-col gap-2 sm:gap-3.5">
             {/* Facebook */}
             <div className="relative group">
               <a
@@ -103,7 +103,7 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/30 sm:bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:text-white hover:bg-white/25 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] transition-all duration-300 transform group-hover:scale-110 shadow-lg"
+                className="w-7.5 h-7.5 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-black/40 sm:bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:text-white hover:bg-white/25 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] transition-all duration-300 transform group-hover:scale-110 shadow-lg"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 sm:w-4 sm:h-4"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
               </a>
@@ -119,7 +119,7 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/30 sm:bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:text-white hover:bg-white/25 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] transition-all duration-300 transform group-hover:scale-110 shadow-lg"
+                className="w-7.5 h-7.5 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-black/40 sm:bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:text-white hover:bg-white/25 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] transition-all duration-300 transform group-hover:scale-110 shadow-lg"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 sm:w-4 sm:h-4"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
               </a>
@@ -135,7 +135,7 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/30 sm:bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:text-white hover:bg-white/25 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] transition-all duration-300 transform group-hover:scale-110 shadow-lg"
+                className="w-7.5 h-7.5 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-black/40 sm:bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:text-white hover:bg-white/25 hover:border-amber-400/60 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] transition-all duration-300 transform group-hover:scale-110 shadow-lg"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 sm:w-4 sm:h-4"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
               </a>

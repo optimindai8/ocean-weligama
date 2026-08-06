@@ -27,23 +27,42 @@ export interface SEOConfig {
 
 export const defaultSEOConfig: SEOConfig = {
   siteName: "Ocean Air Weligama",
-  defaultTitle: "Ocean Air Weligama — #1 Beachfront Boutique Luxury Hotel & Villa in Weligama Bay",
+  defaultTitle: "Ocean Air Weligama  #1 Beachfront Boutique Luxury Hotel & Villa in Weligama Bay",
   titleTemplate: "%s | Ocean Air Weligama Hotel & Villa",
   defaultDescription:
-    "Step into 100% barefoot luxury at Ocean Air Weligama — Sri Lanka's top-rated beachfront boutique hotel & villa in Weligama Bay. 100 steps from the ocean featuring luxury ocean-view suites, certified surf lessons, whale watching tours, private scooter rentals & 24/7 concierge care. Book direct on .com or .lk for best rate guarantees.",
+    "Step into 100% barefoot luxury at Ocean Air Weligama  Sri Lanka's top rated beachfront boutique hotel & villa in Weligama Bay. 100 steps from the ocean featuring luxury ocean-view suites, certified surf lessons, whale watching tours, private scooter rentals & 24/7 concierge care. Book direct on .com or .lk for best rate guarantees.",
   defaultKeywords: [
-    // Primary Brand & Search Keywords requested by user
+    // Exact Brand Search Phrases requested by user for #1 Google Rank
+    "ocean air weligama",
+    "Ocean Air Weligama",
+    "ocean air weligama sri lanka",
+    "Ocean Air Weligama Sri Lanka",
+    "ocean air weligama hotel",
+    "Ocean Air Weligama Hotel",
+    "ocean air weligama villa",
+    "Ocean Air Weligama Villa",
+    "ocean air weligama hotel & villa",
+    "Ocean Air Weligama Hotel & Villa",
+    "ocean air weligama pelana",
+    "Ocean Air Weligama Pelana",
+    "ocean air sri lanka",
+    "Ocean Air Sri Lanka",
+
+    // Domain & Concatenation Search Matches
+    "oceanairweligama",
+    "oceanair weligama",
+    "ocean air welgama",
+    "ocean air welligama",
+    "oceanairweligama.com",
+    "oceanairweligama.lk",
+    "oceanairsrilanka.com",
+    "Ocean Air Weligama LK",
+    "Ocean Air Weligama COM",
+
+    // Core Location & Secondary Searches
     "Ocean",
     "Weligama",
     "Ocean Weligama",
-    "Ocean Air Weligama",
-    "Ocean Air Weligama Hotel & Villa",
-    "Ocean Air Weligama Hotel",
-    "Ocean Air Weligama Villa",
-    "Ocean Air Weligama Sri Lanka",
-    "Ocean Air Sri Lanka",
-    "Ocean Air Weligama LK",
-    "Ocean Air Weligama COM",
     "Ocean Weligama Hotel",
     "Ocean Weligama Villa",
 
