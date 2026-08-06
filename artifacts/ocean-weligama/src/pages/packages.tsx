@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowRight, Waves, Check, Sparkles, HelpCircle } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
-
 import { PackageComparisonTable } from "@/components/PackageComparisonTable";
 import { MatrixPricingTable } from "@/components/MatrixPricingTable";
 import { StayInStyleSection } from "@/components/stay-in-style-section";
+import { SEO, StructuredData } from "@/seo";
 
 export default function PackagesPage() {
   const { data: rawServices, isLoading } = useListServices();
@@ -22,6 +22,18 @@ export default function PackagesPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF9F6] text-[#0B3D5E] overflow-hidden">
+      <SEO
+        title="Surf Packages & Wellness Retreats in Weligama"
+        description="All-inclusive surf lessons, scooter rental, whale watching & wellness packages at Ocean Air Weligama. Book direct for exclusive rate guarantees."
+        canonicalPath="/packages"
+        keywords={["Weligama Surf Package", "Weligama Wellness Retreat", "Surf Lessons Weligama", "Weligama Hotel Package Deals"]}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Packages & Experiences", item: "/packages" },
+        ]}
+      />
 
       <PageHero
         title="Our Curated Packages"

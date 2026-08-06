@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users, BedDouble, Square, ArrowRight, Wind, Wifi, Coffee } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
+import { useLanguage } from "@/components/LanguageContext";
+import { SEO, StructuredData } from "@/seo";
 
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
@@ -14,8 +16,6 @@ const ROOM_CATEGORIES = [
   { value: "couples", label: "Two Person Packages" },
   { value: "family", label: "Family Accommodation" },
 ];
-
-import { useLanguage } from "@/components/LanguageContext";
 
 export default function RoomsPage() {
   const { formatPrice } = useLanguage();
@@ -36,6 +36,18 @@ export default function RoomsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
+      <SEO
+        title="Luxury Rooms & Ocean View Suites in Weligama"
+        description="Explore luxury oceanfront rooms, beach villas & surfer suites at Ocean Air Weligama. 100 steps from the ocean in Weligama Bay, Sri Lanka."
+        canonicalPath="/rooms"
+        keywords={["Weligama Rooms", "Ocean View Suite Weligama", "Weligama Beach Villa", "Weligama Hotel Rooms", "Weligama Accommodation"]}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Rooms & Suites", item: "/rooms" },
+        ]}
+      />
 
       <PageHero
         title="Find Your Ocean Soul"

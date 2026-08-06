@@ -6,6 +6,7 @@ import { useListBlogs, getListBlogsQueryKey } from "@workspace/api-client-react"
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
 import { PageHero } from "@/components/page-hero";
+import { SEO, StructuredData } from "@/seo";
 
 const CATEGORIES = ["All", "Surfing", "Travel", "Food", "Lifestyle", "Yoga"];
 
@@ -297,6 +298,18 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-[#0B3D5E] selection:text-white overflow-x-hidden">
+      <SEO
+        title="Weligama Travel & Surf Journal — Ocean Air Blog"
+        description="Read surf guides, travel tips, local food recommendations & Southern Sri Lanka coastal stories from Ocean Air Weligama."
+        canonicalPath="/blog"
+        keywords={["Weligama Travel Guide", "Surfing Weligama Blog", "Sri Lanka South Coast Travel", "Ocean Weligama Journal"]}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Blog & Stories", item: "/blog" },
+        ]}
+      />
 
       <PageHero
         title="Island Stories"

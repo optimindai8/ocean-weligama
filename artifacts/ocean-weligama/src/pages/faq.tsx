@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Footer } from "@/components/footer";
 import { ChevronDown, MessageCircle, HelpCircle, Waves, Plane, Bed, Wifi, CreditCard, Search, Map, Sun, CalendarCheck, ShieldCheck, Sparkles, Loader2 } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
+import { SEO, StructuredData } from "@/seo";
 
 // Icon map for categories (matches by keyword)
 const CATEGORY_ICONS: Record<string, React.ComponentType<any>> = {
@@ -94,6 +95,19 @@ export default function FAQPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-[#0B3D5E] selection:bg-[#4BBCCC] selection:text-white overflow-hidden">
+      <SEO
+        title="Frequently Asked Questions — Ocean Air Weligama"
+        description="Find answers to all questions regarding Ocean Air Weligama stays, surf lessons, airport transfers, cancellation policies & amenities."
+        canonicalPath="/faq"
+        keywords={["Weligama Hotel FAQ", "Ocean Weligama Questions", "Weligama Surf Camp Info", "Sri Lanka South Coast Stay Questions"]}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "FAQ", item: "/faq" },
+        ]}
+        faqs={dbFaqs.map((f) => ({ question: f.question, answer: f.answer }))}
+      />
       
       <PageHero
         title="Frequently Asked Questions"

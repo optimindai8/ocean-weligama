@@ -13,6 +13,8 @@ import { PackageComparisonTable } from "@/components/PackageComparisonTable";
 import { MatrixPricingTable } from "@/components/MatrixPricingTable";
 import { StayInStyleSection } from "@/components/stay-in-style-section";
 import { AnimatedHoloCard } from "@/components/AnimatedHoloCard";
+import { SEO, StructuredData } from "@/seo";
+
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
   { value: "solo", label: "Solo Traveler Packages" },
@@ -32,6 +34,8 @@ export default function Home() {
 
   return (
     <div className="flex-1">
+      <SEO canonicalPath="/" />
+      <StructuredData />
       
       {/* Hero Section */}
       <section

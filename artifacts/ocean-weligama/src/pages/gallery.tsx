@@ -9,6 +9,7 @@ import { Footer } from "@/components/footer";
 import { X, Maximize2, Camera, Upload, Plus, Check, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { PageHero } from "@/components/page-hero";
+import { SEO, StructuredData } from "@/seo";
 
 const CATEGORIES = ["all", "rooms", "beach", "food", "activities", "property"] as const;
 type Category = typeof CATEGORIES[number];
@@ -120,6 +121,18 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background overflow-hidden">
+      <SEO
+        title="Photo & Video Gallery — Ocean Air Weligama Resort"
+        description="View photos & videos of Ocean Air Weligama resort, rooms, beach, dining & surf spots in Weligama Bay, Sri Lanka."
+        canonicalPath="/gallery"
+        keywords={["Weligama Resort Photos", "Ocean Weligama Gallery", "Weligama Beach House Images", "Weligama Sri Lanka Videos"]}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Gallery", item: "/gallery" },
+        ]}
+      />
 
       <PageHero
         title="Ocean Air Through Our Lens"

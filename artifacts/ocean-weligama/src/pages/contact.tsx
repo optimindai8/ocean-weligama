@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Mail, Clock, MessageCircle, Send, Globe, ShieldCheck, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { PageHero } from "@/components/page-hero";
+import { SEO, StructuredData } from "@/seo";
 
 const contactSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -84,6 +85,18 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
+      <SEO
+        title="Contact Us & Direct Booking — Ocean Air Weligama"
+        description="Contact Ocean Air Weligama resort & villa concierge team via WhatsApp (+94 76 579 1763), email, or contact form for instant 2-hour response times."
+        canonicalPath="/contact"
+        keywords={["Contact Ocean Weligama", "Weligama Hotel Phone Number", "Weligama Villa WhatsApp", "Weligama Accommodation Contact"]}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Contact Concierge", item: "/contact" },
+        ]}
+      />
 
       <PageHero
         title="Let's Connect"

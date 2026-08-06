@@ -23,6 +23,7 @@ import {
   Map 
 } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
+import { SEO, StructuredData } from "@/seo";
 
 // Neighborhood spots list with distances and descriptions
 const NEIGHBORHOOD_SPOTS = [
@@ -158,6 +159,18 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
+      <SEO
+        title="Our Story & Heritage — Ocean Air Weligama"
+        description="Discover Ocean Air Weligama — a 100% locally owned boutique guest house & villa 100 steps from Weligama Beach in Sri Lanka."
+        canonicalPath="/about"
+        keywords={["About Ocean Weligama", "Weligama Hotel History", "Locally Owned Weligama Villa", "Ocean Air Weligama Heritage"]}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Our Story", item: "/about" },
+        ]}
+      />
       
       <PageHero
         title="About Ocean Air"

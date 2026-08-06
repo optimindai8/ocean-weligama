@@ -1,2 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /ow-admin
+Disallow: /ow-admin/
+Disallow: /api/
+Disallow: /api/v1/admin/
+
+Sitemap: https://oceanairweligama.com/sitemap.xml
+Sitemap: https://oceanairweligama.lk/sitemap.xml

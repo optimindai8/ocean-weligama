@@ -1,10 +1,22 @@
 import { motion } from "framer-motion";
 import { ShieldCheck, CreditCard, AlertTriangle, Clock, CheckCircle2 } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
+import { SEO, StructuredData } from "@/seo";
 
 export default function CancellationPolicyPage() {
   return (
     <>
+      <SEO
+        title="Payment & Cancellation Policy — Ocean Air Weligama"
+        description="Review transparent booking, payment & cancellation policies for Ocean Air Weligama resort & villa."
+        canonicalPath="/cancellation-policy"
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Cancellation Policy", item: "/cancellation-policy" },
+        ]}
+      />
       <PageHero
         title="Payment & Cancellation Policy"
         description="Clear, transparent booking terms to give you total peace of mind"
