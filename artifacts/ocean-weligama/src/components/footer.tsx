@@ -123,21 +123,25 @@ export function Footer() {
         {/* Brand Identity & 3D Interactive Canvas Tile */}
         <motion.div variants={itemVariants} className="md:col-span-12 lg:col-span-4 flex flex-col items-start gap-6">
           <Link href="/">
-            <div className="flex items-center gap-4 cursor-pointer group p-3 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-cyan-400/40 transition-all duration-500 backdrop-blur-xl">
-              {/* Preserved 3D Background Element */}
-              <div className="relative flex items-center justify-center w-[96px] h-[96px] rounded-2xl overflow-hidden bg-black/50 border border-white/10 shadow-[inset_0_2px_10px_rgba(0,0,0,0.8)]">
-                <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center scale-125 translate-y-3.5">
+            <div className="flex items-center gap-5 cursor-pointer group">
+              {/* 3D Background Element & Floating Logo */}
+              <div className="relative flex items-center justify-center w-24 h-24 shrink-0">
+                {/* Full 3D animated SVG - fully visible without black box clipping */}
+                <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center scale-110 translate-y-2">
                   <Animated3DBackground />
                 </div>
-                <div className="absolute inset-0 bg-cyan-400/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+                {/* Soft ambient golden & cyan halo */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 via-cyan-400/20 to-transparent rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+                {/* Elevated floating logo */}
                 <TransparentLogo 
                   src="/logo.jpg" 
-                  className="relative z-10 h-11 w-11 object-contain brightness-0 invert -translate-y-3.5 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-4.5 drop-shadow-[0_8px_16px_rgba(211,164,16,0.6)]" 
+                  className="relative z-10 h-12 w-12 object-contain brightness-0 invert -translate-y-3 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-4 drop-shadow-[0_10px_20px_rgba(255,215,0,0.6)]" 
                 />
               </div>
-              <div className="flex flex-col pr-3">
-                <span className="text-2xl font-serif font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-cyan-200">OCEAN AIR</span>
-                <span className="text-[10px] tracking-[0.25em] text-cyan-300 uppercase font-semibold mt-0.5">Boutique Villa &amp; Hotel</span>
+
+              <div className="flex flex-col">
+                <span className="text-2xl lg:text-3xl font-serif font-bold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-cyan-200">OCEAN AIR</span>
+                <span className="text-[10px] tracking-[0.25em] text-cyan-300 uppercase font-semibold mt-1">Boutique Villa &amp; Hotel</span>
               </div>
             </div>
           </Link>
