@@ -68,6 +68,7 @@ export function SEO({
     // 2. Standard & High-Performance Search Meta Tags
     setMeta("description", description);
     setMeta("keywords", keywords.join(", "));
+    setMeta("google-site-verification", "googlef2f7e36381b95335");
     setMeta(
       "robots",
       noIndex
