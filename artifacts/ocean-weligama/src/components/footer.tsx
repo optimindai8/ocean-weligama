@@ -125,17 +125,17 @@ export function Footer() {
           <Link href="/">
             <div className="flex items-center gap-5 cursor-pointer group">
               {/* 3D Background Element & Floating Logo */}
-              <div className="relative flex items-center justify-center w-24 h-24 shrink-0">
-                {/* Full 3D animated SVG - fully visible without black box clipping */}
-                <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center scale-110 translate-y-2">
+              <div className="relative flex items-center justify-center w-28 h-28 shrink-0">
+                {/* Full 3D animated SVG - shifted down */}
+                <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center scale-110 translate-y-6">
                   <Animated3DBackground />
                 </div>
                 {/* Soft ambient golden & cyan halo */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 via-cyan-400/20 to-transparent rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-0" />
-                {/* Elevated floating logo */}
+                {/* Elevated floating logo - floating suspended cleanly above pyramid */}
                 <TransparentLogo 
                   src="/logo.jpg" 
-                  className="relative z-10 h-12 w-12 object-contain brightness-0 invert -translate-y-3 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-4 drop-shadow-[0_10px_20px_rgba(255,215,0,0.6)]" 
+                  className="relative z-10 h-11 w-11 object-contain brightness-0 invert -translate-y-7 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-8 drop-shadow-[0_10px_20px_rgba(255,215,0,0.6)]" 
                 />
               </div>
 
