@@ -116,20 +116,23 @@ export function OfferAdPopup() {
   }, []);
 
   // Compute countdown directly in render — no state init race condition possible
-  const countdown =
-    activeAd?.createdAt && activeAd?.offerDays != null
-      ? computeTimeLeft(activeAd.createdAt, activeAd.offerDays)
-      : { days: 0, hours: 0, minutes: 0, seconds: 0, expired: false };
+  const rawCreatedAt = activeAd ? (activeAd.createdAt || (activeAd as any).created_at) : undefined;
+  const rawOfferDays = activeAd ? (typeof activeAd.offerDays === "number" ? activeAd.offerDays : ((activeAd as any).offer_days ?? 7)) : 7;
+
+  const countdown = rawCreatedAt
+    ? computeTimeLeft(rawCreatedAt, rawOfferDays)
+    : { days: 0, hours: 0, minutes: 0, seconds: 0, expired: false };
 
   useEffect(() => {
-    if (!activeAd || !activeAd.isActive) {
+    if (!activeAd || (activeAd.isActive !== true && (activeAd as any).is_active !== true)) {
       setIsVisible(false);
       return;
     }
 
-    const startTime = new Date(activeAd.createdAt).getTime();
-    const validOfferDays = activeAd.offerDays || 7;
-    const endTimestamp = startTime + validOfferDays * 24 * 60 * 60 * 1000;
+    const createdVal = activeAd.createdAt || (activeAd as any).created_at;
+    const daysVal = typeof activeAd.offerDays === "number" ? activeAd.offerDays : ((activeAd as any).offer_days || 7);
+    const startTime = createdVal ? new Date(createdVal).getTime() : Date.now();
+    const endTimestamp = startTime + daysVal * 24 * 60 * 60 * 1000;
     if (Date.now() >= endTimestamp) {
       setIsVisible(false);
       return;

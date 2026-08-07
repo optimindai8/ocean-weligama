@@ -12,6 +12,10 @@ export function sanitizeValue(val: unknown): unknown {
       .replace(/javascript:/gi, "disabled_javascript:");
   }
 
+  if (val instanceof Date) {
+    return val;
+  }
+
   if (Array.isArray(val)) {
     return val.map(sanitizeValue);
   }
@@ -78,6 +82,10 @@ export function outputSanitizerMiddleware(_req: Request, res: Response, next: Ne
 function stripSensitiveFields(val: any): any {
   if (val === null || val === undefined) return val;
 
+  if (val instanceof Date) {
+    return val;
+  }
+
   if (Array.isArray(val)) {
     return val.map(stripSensitiveFields);
   }
@@ -95,3 +103,4 @@ function stripSensitiveFields(val: any): any {
 
   return val;
 }
+

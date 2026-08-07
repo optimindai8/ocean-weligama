@@ -216,16 +216,26 @@ const AdForm = ({ ad, isSaving, onSubmit, onCancel, rooms = [] }: { ad?: OfferAd
 };
 
 const getRemainingTimeStr = (ad: OfferAd) => {
-  if (!ad.createdAt) return `${ad.offerDays} days total`;
-  const startTime = new Date(ad.createdAt).getTime();
-  const endTimestamp = startTime + (ad.offerDays || 7) * 24 * 60 * 60 * 1000;
+  const createdAtVal = ad.createdAt || (ad as any).created_at;
+  const offerDaysVal = typeof ad.offerDays === "number" ? ad.offerDays : ((ad as any).offer_days || 7);
+  if (!createdAtVal) return `${offerDaysVal} days total`;
+  const startTime = new Date(createdAtVal).getTime();
+  if (isNaN(startTime)) return `${offerDaysVal} days total`;
+  const endTimestamp = startTime + offerDaysVal * 24 * 60 * 60 * 1000;
   const diff = endTimestamp - Date.now();
   if (diff <= 0) return "Expired";
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  if (days > 0) return `${days}d ${hours}h left (${ad.offerDays}d total)`;
+  if (days > 0) return `${days}d ${hours}h left (${offerDaysVal}d total)`;
   const minutes = Math.floor((diff / (1000 * 60)) % 60);
-  return `${hours}h ${minutes}m left (${ad.offerDays}d total)`;
+  return `${hours}h ${minutes}m left (${offerDaysVal}d total)`;
+};
+
+const getCreatedDateStr = (ad: OfferAd) => {
+  const raw = ad.createdAt || (ad as any).created_at;
+  if (!raw) return "Recently";
+  const d = new Date(raw);
+  return isNaN(d.getTime()) ? "Recently" : d.toLocaleDateString();
 };
 
 const AdCard = ({ ad, onEdit, onDelete, onToggleActive }: { ad: OfferAd; onEdit: (ad: OfferAd) => void; onDelete: (id: string) => void; onToggleActive: (id: string, active: boolean) => void }) => (
@@ -276,14 +286,14 @@ const AdCard = ({ ad, onEdit, onDelete, onToggleActive }: { ad: OfferAd; onEdit:
       <div className="space-y-2">
         <div className="flex justify-between text-sm text-muted-foreground items-center">
           <span>Duration: <strong className="text-foreground">{getRemainingTimeStr(ad)}</strong></span>
-          <span>Pop-up: Every {ad.intervalMinutes}m</span>
+          <span>Pop-up: Every {ad.intervalMinutes || (ad as any).interval_minutes || 60}m</span>
         </div>
         <div className="flex justify-between text-sm text-muted-foreground items-center pt-2 border-t border-slate-100">
-          <span className="text-xs">Created: {new Date(ad.createdAt).toLocaleDateString()}</span>
+          <span className="text-xs">Created: {getCreatedDateStr(ad)}</span>
           <div className="flex items-center gap-2">
             <span>Status:</span>
             <Switch 
-              checked={ad.isActive} 
+              checked={ad.isActive ?? (ad as any).is_active} 
               onCheckedChange={(checked) => onToggleActive(ad.id, checked)}
             />
           </div>
