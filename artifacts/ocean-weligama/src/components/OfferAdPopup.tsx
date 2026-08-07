@@ -17,6 +17,23 @@ type OfferAd = {
   createdAt: string;
 };
 
+/* ───── Pure synchronous helper: compute remaining time ───── */
+function computeTimeLeft(createdAt: string, offerDays: number) {
+  const validDays = typeof offerDays === "number" && offerDays > 0 ? offerDays : 7;
+  const start = new Date(createdAt).getTime();
+  if (isNaN(start)) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+  const end = start + validDays * 24 * 60 * 60 * 1000;
+  const diff = end - Date.now();
+  if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+  return {
+    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((diff / (1000 * 60)) % 60),
+    seconds: Math.floor((diff / 1000) % 60),
+    expired: false,
+  };
+}
+
 /* ───── floating particle component ───── */
 const FloatingParticle = ({ delay, x, size }: { delay: number; x: number; size: number }) => (
   <motion.div
@@ -46,70 +63,7 @@ const FloatingParticle = ({ delay, x, size }: { delay: number; x: number; size: 
   />
 );
 
-const useCountdown = (createdAt?: string, offerDays?: number, onExpired?: () => void) => {
-  const calculateTimeLeft = useCallback(() => {
-    if (!createdAt) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    
-    // Safely parse offerDays, fallback to 7 days if undefined/invalid
-    const validOfferDays = typeof offerDays === "number" && !isNaN(offerDays) && offerDays > 0 
-      ? offerDays 
-      : (offerDays ? (parseInt(String(offerDays), 10) || 7) : 7);
 
-    // Parse createdAt
-    const createdDate = new Date(createdAt);
-    if (isNaN(createdDate.getTime())) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-
-    // Exact millisecond end time calculation
-    const endTimestamp = createdDate.getTime() + validOfferDays * 24 * 60 * 60 * 1000;
-    const diff = endTimestamp - Date.now();
-    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-
-    return {
-      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((diff / (1000 * 60)) % 60),
-      seconds: Math.floor((diff / 1000) % 60),
-    };
-  }, [createdAt, offerDays]);
-
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft);
-
-  useEffect(() => {
-    setTimeLeft(calculateTimeLeft());
-    if (!createdAt) return;
-
-    const validOfferDays = typeof offerDays === "number" && !isNaN(offerDays) && offerDays > 0 
-      ? offerDays 
-      : (offerDays ? (parseInt(String(offerDays), 10) || 7) : 7);
-
-    const createdDate = new Date(createdAt);
-    if (isNaN(createdDate.getTime())) return;
-
-    const endTimestamp = createdDate.getTime() + validOfferDays * 24 * 60 * 60 * 1000;
-
-    const tick = () => {
-      const now = Date.now();
-      const diff = endTimestamp - now;
-      if (diff <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        if (onExpired) onExpired();
-        return;
-      }
-      setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        seconds: Math.floor((diff / 1000) % 60),
-      });
-    };
-
-    tick();
-    const interval = setInterval(tick, 1000);
-    return () => clearInterval(interval);
-  }, [createdAt, offerDays, calculateTimeLeft, onExpired]);
-
-  return timeLeft;
-};
 
 /* ───── countdown digit ───── */
 const CountdownDigit = ({ value, label }: { value: number; label: string }) => {
@@ -142,6 +96,8 @@ export function OfferAdPopup() {
   const [isVisible, setIsVisible] = useState(false);
   const [showCloseButton, setShowCloseButton] = useState(false);
   const [isHoveringCTA, setIsHoveringCTA] = useState(false);
+  // Ticker forces re-render every second so countdown.days/hours/minutes/seconds are always fresh
+  const [, setTick] = useState(0);
 
   const { data: activeAd, refetch } = useQuery<OfferAd | null>({
     queryKey: ["public-offer-ad"],
@@ -153,12 +109,17 @@ export function OfferAdPopup() {
     staleTime: 1000 * 60 * 5,
   });
 
-  const handleExpired = useCallback(() => {
-    setIsVisible(false);
-    refetch();
-  }, [refetch]);
+  // Drive re-renders every second so the synchronous countdown is always current
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
 
-  const countdown = useCountdown(activeAd?.createdAt, activeAd?.offerDays, handleExpired);
+  // Compute countdown directly in render — no state init race condition possible
+  const countdown =
+    activeAd?.createdAt && activeAd?.offerDays != null
+      ? computeTimeLeft(activeAd.createdAt, activeAd.offerDays)
+      : { days: 0, hours: 0, minutes: 0, seconds: 0, expired: false };
 
   useEffect(() => {
     if (!activeAd || !activeAd.isActive) {
