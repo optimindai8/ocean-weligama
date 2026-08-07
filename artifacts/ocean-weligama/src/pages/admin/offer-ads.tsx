@@ -215,6 +215,19 @@ const AdForm = ({ ad, isSaving, onSubmit, onCancel, rooms = [] }: { ad?: OfferAd
   );
 };
 
+const getRemainingTimeStr = (ad: OfferAd) => {
+  if (!ad.createdAt) return `${ad.offerDays} days total`;
+  const startTime = new Date(ad.createdAt).getTime();
+  const endTimestamp = startTime + (ad.offerDays || 7) * 24 * 60 * 60 * 1000;
+  const diff = endTimestamp - Date.now();
+  if (diff <= 0) return "Expired";
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  if (days > 0) return `${days}d ${hours}h left (${ad.offerDays}d total)`;
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  return `${hours}h ${minutes}m left (${ad.offerDays}d total)`;
+};
+
 const AdCard = ({ ad, onEdit, onDelete, onToggleActive }: { ad: OfferAd; onEdit: (ad: OfferAd) => void; onDelete: (id: string) => void; onToggleActive: (id: string, active: boolean) => void }) => (
   <Card key={ad.id} className="relative overflow-hidden group">
     <CardHeader>
@@ -260,14 +273,20 @@ const AdCard = ({ ad, onEdit, onDelete, onToggleActive }: { ad: OfferAd; onEdit:
           <img src={ad.imageUrl} alt={ad.title} className="w-full h-full object-cover" />
         </div>
       )}
-      <div className="flex justify-between text-sm text-muted-foreground items-center">
-        <span>Interval: Every {ad.intervalMinutes} mins</span>
-        <div className="flex items-center gap-2">
-          <span>Status:</span>
-          <Switch 
-            checked={ad.isActive} 
-            onCheckedChange={(checked) => onToggleActive(ad.id, checked)}
-          />
+      <div className="space-y-2">
+        <div className="flex justify-between text-sm text-muted-foreground items-center">
+          <span>Duration: <strong className="text-foreground">{getRemainingTimeStr(ad)}</strong></span>
+          <span>Pop-up: Every {ad.intervalMinutes}m</span>
+        </div>
+        <div className="flex justify-between text-sm text-muted-foreground items-center pt-2 border-t border-slate-100">
+          <span className="text-xs">Created: {new Date(ad.createdAt).toLocaleDateString()}</span>
+          <div className="flex items-center gap-2">
+            <span>Status:</span>
+            <Switch 
+              checked={ad.isActive} 
+              onCheckedChange={(checked) => onToggleActive(ad.id, checked)}
+            />
+          </div>
         </div>
       </div>
     </CardContent>

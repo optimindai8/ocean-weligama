@@ -46,31 +46,30 @@ const FloatingParticle = ({ delay, x, size }: { delay: number; x: number; size: 
   />
 );
 
-const useCountdown = (isVisible: boolean, createdAt?: string, offerDays?: number) => {
+const useCountdown = (isVisible: boolean, createdAt?: string, offerDays?: number, onExpired?: () => void) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    if (!isVisible) return;
+    if (!isVisible || !createdAt) return;
     
-    // Safely parse offerDays, fallback to 3 days if undefined/invalid
+    // Safely parse offerDays, fallback to 7 days if undefined/invalid
     const validOfferDays = typeof offerDays === "number" && !isNaN(offerDays) && offerDays > 0 
       ? offerDays 
-      : (offerDays ? (parseInt(String(offerDays), 10) || 3) : 3);
+      : (offerDays ? (parseInt(String(offerDays), 10) || 7) : 7);
 
-    // Safely parse createdAt, fallback to now if invalid date string
-    let createdDate = createdAt ? new Date(createdAt) : new Date();
-    if (isNaN(createdDate.getTime())) {
-      createdDate = new Date();
-    }
+    // Parse createdAt
+    const createdDate = new Date(createdAt);
+    if (isNaN(createdDate.getTime())) return;
 
-    const end = new Date(createdDate.getTime());
-    end.setDate(end.getDate() + validOfferDays);
+    // Exact millisecond end time calculation
+    const endTimestamp = createdDate.getTime() + validOfferDays * 24 * 60 * 60 * 1000;
 
     const tick = () => {
-      const now = new Date();
-      const diff = end.getTime() - now.getTime();
+      const now = Date.now();
+      const diff = endTimestamp - now;
       if (diff <= 0) {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        if (onExpired) onExpired();
         return;
       }
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -89,7 +88,7 @@ const useCountdown = (isVisible: boolean, createdAt?: string, offerDays?: number
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [isVisible, createdAt, offerDays]);
+  }, [isVisible, createdAt, offerDays, onExpired]);
 
   return timeLeft;
 };
@@ -126,7 +125,7 @@ export function OfferAdPopup() {
   const [showCloseButton, setShowCloseButton] = useState(false);
   const [isHoveringCTA, setIsHoveringCTA] = useState(false);
 
-  const { data: activeAd } = useQuery<OfferAd | null>({
+  const { data: activeAd, refetch } = useQuery<OfferAd | null>({
     queryKey: ["public-offer-ad"],
     queryFn: async () => {
       const res = await fetch("/api/v1/offer-ads/active");
@@ -136,16 +135,36 @@ export function OfferAdPopup() {
     staleTime: 1000 * 60 * 5,
   });
 
-  const countdown = useCountdown(isVisible, activeAd?.createdAt, activeAd?.offerDays);
+  const handleExpired = useCallback(() => {
+    setIsVisible(false);
+    refetch();
+  }, [refetch]);
+
+  const countdown = useCountdown(isVisible, activeAd?.createdAt, activeAd?.offerDays, handleExpired);
 
   useEffect(() => {
-    if (!activeAd || !activeAd.isActive) return;
+    if (!activeAd || !activeAd.isActive) {
+      setIsVisible(false);
+      return;
+    }
+
+    const startTime = new Date(activeAd.createdAt).getTime();
+    const validOfferDays = activeAd.offerDays || 7;
+    const endTimestamp = startTime + validOfferDays * 24 * 60 * 60 * 1000;
+    if (Date.now() >= endTimestamp) {
+      setIsVisible(false);
+      return;
+    }
 
     const lastShownKey = `ow_ad_last_shown_${activeAd.id}`;
     let showTimer: ReturnType<typeof setTimeout> | null = null;
 
     const checkAndShow = () => {
       if (isVisible) return;
+      if (Date.now() >= endTimestamp) {
+        setIsVisible(false);
+        return;
+      }
 
       const lastShownStr = localStorage.getItem(lastShownKey);
       let shouldShow = true;
