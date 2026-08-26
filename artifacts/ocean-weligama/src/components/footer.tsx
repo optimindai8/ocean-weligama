@@ -1,7 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { TransparentLogo } from "./transparent-logo";
-import { Animated3DBackground } from "./Animated3DBackground";
 import { ArrowUpRight, MapPin, Phone, Mail, Sparkles, ShieldCheck, Compass, Heart, ArrowRight } from "lucide-react";
 import { useState } from "react";
 
@@ -120,22 +119,18 @@ export function Footer() {
         whileInView="visible"
         viewport={{ once: true, margin: "-80px" }}
       >
-        {/* Brand Identity & 3D Interactive Canvas Tile */}
+        {/* Brand Identity & Logo Tile */}
         <motion.div variants={itemVariants} className="md:col-span-12 lg:col-span-4 flex flex-col items-start gap-6">
           <Link href="/">
             <div className="flex items-center gap-5 cursor-pointer group">
-              {/* 3D Background Element & Floating Logo */}
-              <div className="relative flex items-center justify-center w-28 h-28 shrink-0">
-                {/* Full 3D animated SVG - shifted down */}
-                <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center scale-110 translate-y-6">
-                  <Animated3DBackground />
-                </div>
+              {/* Logo Container */}
+              <div className="relative flex items-center justify-center w-20 h-20 rounded-3xl bg-white/[0.04] border border-white/10 shrink-0 shadow-lg backdrop-blur-md overflow-hidden">
                 {/* Soft ambient golden & cyan halo */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/20 via-cyan-400/20 to-transparent rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-0" />
-                {/* Elevated floating logo - floating suspended cleanly above pyramid */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-amber-400/10 via-cyan-400/10 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+                {/* Centered logo */}
                 <TransparentLogo 
                   src="/logo.jpg" 
-                  className="relative z-10 h-11 w-11 object-contain brightness-0 invert -translate-y-7 transition-all duration-500 group-hover:scale-110 group-hover:-translate-y-8 drop-shadow-[0_10px_20px_rgba(255,215,0,0.6)]" 
+                  className="relative z-10 h-12 w-12 object-contain brightness-0 invert transition-all duration-500 group-hover:scale-110 drop-shadow-[0_8px_16px_rgba(255,215,0,0.4)]" 
                 />
               </div>
 

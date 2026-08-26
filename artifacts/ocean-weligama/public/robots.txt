@@ -6,5 +6,5 @@ Disallow: /api/
 Disallow: /api/v1/admin/
 
 Sitemap: https://oceanairweligama.com/sitemap.xml
-Sitemap: https://oceanairweligama.lk/sitemap.xml
+Sitemap: https://oceanairsrilanka.lk/sitemap.xml
 Sitemap: https://oceanairsrilanka.com/sitemap.xml

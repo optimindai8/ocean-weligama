@@ -42,7 +42,7 @@ export default function Home() {
         ocean air weligama — Ocean Air Weligama #1 Beachfront Boutique Luxury Hotel &amp; Villa in Weligama Bay Sri Lanka
       </h1>
       <p className="sr-only">
-        Ocean Air Weligama (ocean air weligama sri lanka / welgama hotel) is the premier beachfront boutique hotel &amp; luxury villa in Weligama Bay, Sri Lanka. Located 100 steps from the ocean with ocean view suites, certified surf lessons, whale watching tours, scooter rentals, and 24/7 concierge care. Book direct on oceanairweligama.com, oceanairweligama.lk, or oceanairsrilanka.com.
+        Ocean Air Weligama (ocean air weligama sri lanka / welgama hotel) is the premier beachfront boutique hotel &amp; luxury villa in Weligama Bay, Sri Lanka. Located 100 steps from the ocean with ocean view suites, certified surf lessons, whale watching tours, scooter rentals, and 24/7 concierge care. Book direct on oceanairweligama.com, oceanairsrilanka.lk, or oceanairsrilanka.com.
       </p>
 
       {/* Hero Section */}
