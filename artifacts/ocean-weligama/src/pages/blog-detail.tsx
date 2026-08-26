@@ -6,6 +6,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Calendar, ArrowLeft, Share2, Facebook, Twitter, Link as LinkIcon } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { SEO } from "@/seo/SEO";
+import { StructuredData } from "@/seo/StructuredData";
 
 export default function BlogDetailPage() {
   const [, params] = useRoute("/blog/:id");
@@ -63,6 +65,20 @@ export default function BlogDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white">
+      <SEO 
+        title={`${blog.title} — Island Journal`}
+        description={blog.description?.slice(0, 160).replace(/\s+/g, ' ') + '...' || `Read our latest blog post ${blog.title} on Ocean Air Weligama. Discover surfing guides, local tips, and barefoot luxury stories in Sri Lanka.`}
+        canonicalPath={`/blog/${id}`}
+        keywords={["Weligama Blog", blog.category ?? "Sri Lanka Travel", blog.title]}
+        ogImage={blog.image}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Island Journal", item: "/blog" },
+          { name: blog.title, item: `/blog/${id}` },
+        ]}
+      />
 
       <article className="flex-1">
         {/* Hero Section */}

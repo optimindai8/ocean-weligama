@@ -1,13 +1,14 @@
-import { defaultSEOConfig } from "./config";
+import { defaultSEOConfig, getCanonicalUrl } from "./config";
 
 /**
  * Generates Google Rich Snippet JSON-LD for Hotel / LodgingBusiness / Resort / BedAndBreakfast.
  */
 export function generateHotelSchema() {
+  const baseUrl = getCanonicalUrl("/");
   return {
     "@context": "https://schema.org",
     "@type": ["Hotel", "Resort", "LodgingBusiness", "BedAndBreakfast"],
-    "@id": `${defaultSEOConfig.primaryDomainCom}/#hotel`,
+    "@id": `${baseUrl}#hotel`,
     name: defaultSEOConfig.siteName,
     alternateName: [
       "Ocean Weligama",
@@ -20,21 +21,20 @@ export function generateHotelSchema() {
       "Ocean Air Sri Lanka",
     ],
     description: defaultSEOConfig.defaultDescription,
-    url: defaultSEOConfig.primaryDomainCom,
+    url: baseUrl,
     sameAs: [
       defaultSEOConfig.primaryDomainLk,
       defaultSEOConfig.primaryDomainSriLanka,
-      "https://www.oceanairsrilanka.com",
       "https://www.facebook.com/profile.php?id=61583921572390",
       "https://www.instagram.com/oceanairweligama",
       "https://www.tiktok.com/@oceanairweligama",
     ],
     telephone: defaultSEOConfig.contact.telephone,
     email: defaultSEOConfig.contact.email,
-    logo: `${defaultSEOConfig.primaryDomainCom}/logo.jpg`,
+    logo: `${baseUrl}logo.jpg`,
     image: [
-      `${defaultSEOConfig.primaryDomainCom}/hero-video-poster.jpg`,
-      `${defaultSEOConfig.primaryDomainCom}/logo.jpg`,
+      `${baseUrl}hero-video-poster.jpg`,
+      `${baseUrl}logo.jpg`,
     ],
     priceRange: "$$",
     starRating: {
@@ -56,7 +56,7 @@ export function generateHotelSchema() {
       priceCurrency: "USD",
       offerCount: "5",
       availability: "https://schema.org/InStock",
-      url: `${defaultSEOConfig.primaryDomainCom}/rooms`,
+      url: `${baseUrl}rooms`,
     },
     address: {
       "@type": "PostalAddress",
@@ -92,16 +92,17 @@ export function generateHotelSchema() {
  * Generates Google WebSite Schema for Sitelinks SearchBox.
  */
 export function generateWebSiteSchema() {
+  const baseUrl = getCanonicalUrl("/");
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "@id": `${defaultSEOConfig.primaryDomainCom}/#website`,
-    url: defaultSEOConfig.primaryDomainCom,
+    "@id": `${baseUrl}#website`,
+    url: baseUrl,
     name: defaultSEOConfig.siteName,
     alternateName: ["Ocean Weligama", "Ocean Air Weligama", "Ocean Air Sri Lanka", "welgama hotel"],
     potentialAction: {
       "@type": "SearchAction",
-      target: `${defaultSEOConfig.primaryDomainCom}/rooms?search={search_term_string}`,
+      target: `${baseUrl}rooms?search={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
   };
@@ -118,7 +119,7 @@ export function generateBreadcrumbSchema(items: { name: string; item: string }[]
       "@type": "ListItem",
       position: idx + 1,
       name: it.name,
-      item: it.item.startsWith("http") ? it.item : `${defaultSEOConfig.primaryDomainCom}${it.item}`,
+      item: it.item.startsWith("http") ? it.item : getCanonicalUrl(it.item),
     })),
   };
 }
@@ -145,16 +146,16 @@ export function generateFaqSchema(faqs: { question: string; answer: string }[]) 
  * Generates Organization Schema.
  */
 export function generateOrganizationSchema() {
+  const baseUrl = getCanonicalUrl("/");
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: defaultSEOConfig.siteName,
-    url: defaultSEOConfig.primaryDomainCom,
-    logo: `${defaultSEOConfig.primaryDomainCom}/logo.jpg`,
+    url: baseUrl,
+    logo: `${baseUrl}logo.jpg`,
     sameAs: [
       defaultSEOConfig.primaryDomainLk,
       defaultSEOConfig.primaryDomainSriLanka,
-      "https://www.oceanairsrilanka.com",
       "https://www.facebook.com/profile.php?id=61583921572390",
       "https://www.instagram.com/oceanairweligama",
       "https://www.tiktok.com/@oceanairweligama",

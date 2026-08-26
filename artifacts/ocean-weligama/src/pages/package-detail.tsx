@@ -4,6 +4,8 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Check, Sparkles } from "lucide-react";
+import { SEO } from "@/seo/SEO";
+import { StructuredData } from "@/seo/StructuredData";
 
 export default function PackageDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -39,6 +41,19 @@ export default function PackageDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-[#0B3D5E] selection:text-white overflow-x-hidden">
+      <SEO 
+        title={`${service.name} — Surf & Stay Experiences`}
+        description={service.description?.slice(0, 160).replace(/\s+/g, ' ') + '...' || `Book ${service.name} at Ocean Air Weligama. Enjoy luxury sea-view suites, surf lessons, airport transfers & custom barefoot luxury tours.`}
+        canonicalPath={`/packages/${slug}`}
+        keywords={[`${service.name}`, `Weligama ${service.name}`, "Surf Packages Weligama", "Ocean Air Experiences"]}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Experiences", item: "/packages" },
+          { name: service.name, item: `/packages/${slug}` },
+        ]}
+      />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 w-full overflow-hidden" style={{ background: 'linear-gradient(160deg, #F0F4F8 0%, #E2EDF8 100%)' }}>

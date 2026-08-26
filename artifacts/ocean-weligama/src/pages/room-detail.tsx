@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Users, BedDouble, Square, Bath, Wifi, Check, ArrowLeft, ArrowRight, X, Heart, Share, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
+import { SEO } from "@/seo/SEO";
+import { StructuredData } from "@/seo/StructuredData";
 
 export default function RoomDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -61,6 +63,20 @@ export default function RoomDetailPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary selection:text-white pb-24 lg:pb-0">
+      <SEO 
+        title={`${room.name} — Luxury Beachfront Accommodation`}
+        description={room.description?.slice(0, 160).replace(/\s+/g, ' ') + '...' || `Book the luxury ${room.name} at Ocean Air Weligama. Enjoy beachfront views, surf lessons, free Wi-Fi, and 100% barefoot luxury in Weligama Bay.`}
+        canonicalPath={`/rooms/${slug}`}
+        keywords={[`${room.name}`, `Weligama ${room.name}`, "Ocean View Accommodation Weligama", "Ocean Air Weligama"]}
+        ogImage={room.heroImageUrl}
+      />
+      <StructuredData
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Rooms", item: "/rooms" },
+          { name: room.name, item: `/rooms/${slug}` },
+        ]}
+      />
 
       <div className="pt-24 pb-12">
         <div className="container mx-auto px-4">
