@@ -13,6 +13,7 @@ import { MapPin, Phone, Mail, Clock, MessageCircle, Send, Globe, ShieldCheck, Ar
 import { useState } from "react";
 import { PageHero } from "@/components/page-hero";
 import { SEO, StructuredData } from "@/seo";
+import { sendContactNotification } from "@/lib/notifications";
 
 const contactSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -75,6 +76,15 @@ export default function ContactPage() {
           setSubmitted(true);
           toast({ title: "Message delivered!", description: "Check your email for a confirmation shortly." });
           form.reset();
+
+          // Dispatch EmailJS notification to hotel inbox
+          sendContactNotification({
+            fullName: data.fullName,
+            email: data.email,
+            phone: data.phone,
+            subject: data.subject,
+            message: data.message,
+          });
         },
         onError: () => {
           toast({ variant: "destructive", title: "Transmission Error", description: "Please check your connection and try again." });

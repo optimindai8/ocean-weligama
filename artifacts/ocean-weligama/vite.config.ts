@@ -26,6 +26,7 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
       alias: {
         "@": path.resolve(import.meta.dirname, "src"),
         "@assets": path.resolve(import.meta.dirname, "..", "..", "attached_assets"),
+        "@hotel-notifications": path.resolve(import.meta.dirname, "../../hotel-notifications/src"),
       },
       dedupe: ["react", "react-dom"],
     },

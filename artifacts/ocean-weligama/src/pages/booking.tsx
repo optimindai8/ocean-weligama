@@ -51,6 +51,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Footer } from "@/components/footer";
+import { sendBookingNotification } from "@/lib/notifications";
 import {
   Dialog,
   DialogContent,
@@ -807,6 +808,27 @@ export default function BookingPage() {
           isMatrixBooking: !!matrixPrice,
         },
       });
+
+      // Dispatch EmailJS booking notification to hotel inbox
+      const roomNames = selectedRooms.map(r => r.name).join(", ");
+      const finalTotal = (bk as any).totalAmount ? `€${(bk as any).totalAmount}` : `€${grandTotal}`;
+      const calculatedPricePerNight = nights > 0 ? `€${(parseFloat((bk as any).totalAmount || grandTotal) / nights).toFixed(2)}` : finalTotal;
+
+      sendBookingNotification({
+        reference: (bk as any).reference || "PENDING",
+        guestFullName: data.guestFullName,
+        guestEmail: data.guestEmail,
+        guestPhone: data.guestPhone,
+        roomName: roomNames || "Selected Room",
+        checkIn: toStr(dateRange.from),
+        checkOut: toStr(dateRange.to),
+        nights,
+        guestCount,
+        totalPrice: finalTotal,
+        pricePerNight: calculatedPricePerNight,
+        specialRequests: sr,
+      });
+
       clearState();
       setLocation(`/book/confirmation?ref=${(bk as any).reference}`);
     } catch {

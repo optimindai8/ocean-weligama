@@ -78,3 +78,4 @@ Password: OceanAdmin2025!
 
 lsof -ti :8080 | xargs kill -9
 
+Admin panel- <http://localhost:5173/ow-admin>
