@@ -7,6 +7,8 @@ import {
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Footer } from "@/components/footer";
+import { normalizeAssetUrl } from "@/lib/assetUrl";
+import { OptimizedHeroVideo } from "@/components/OptimizedHeroVideo";
 import {
   X,
   Maximize2,
@@ -386,25 +388,14 @@ export default function GalleryPage() {
 
       {/* Cinematic Gallery Video Hero Section */}
       <section className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-[#052439]">
-        {/* Cinematic Video Background */}
-        <div className="absolute inset-0 z-0 bg-slate-950">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            disablePictureInPicture
-            preload="auto"
-            poster="/images/gallery-hero-poster.jpg"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ WebkitPlaysinline: true, WebkitObjectFit: "cover" } as React.CSSProperties}
-          >
-            <source src="/videos/gallery-hero-video.mp4" type="video/mp4" />
-            <source src="/videos/Gallery Video.mp4" type="video/mp4" />
-          </video>
-
+        {/* Cinematic Video Background (Zero-Lag Hardware Accelerated) */}
+        <OptimizedHeroVideo
+          src="/videos/gallery-hero-video.mp4"
+          poster="/images/gallery-hero-poster.jpg"
+          priority={true}
+        >
           {/* Deep coastal ocean overlay for supreme text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#052439]/78 via-[#0B3D5E]/45 to-[#052439]/92" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#052439]/78 via-[#0B3D5E]/45 to-[#052439]/92 pointer-events-none" />
 
           {/* Golden sunrise ambient warmth matching hotel logo yellow */}
           <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[750px] h-[450px] bg-[#FBBF24]/18 rounded-full blur-[140px] pointer-events-none" />
@@ -414,7 +405,7 @@ export default function GalleryPage() {
 
           {/* Bottom subtle edge fade transitioning smoothly into the showcase section */}
           <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-white via-white/40 to-transparent pointer-events-none" />
-        </div>
+        </OptimizedHeroVideo>
 
         {/* Row 1: Navbar Clearance Spacer */}
         <div className="h-24 md:h-32 shrink-0 relative z-10" />
@@ -1075,10 +1066,13 @@ export default function GalleryPage() {
                         {/* Image Container with Consistent Aspect Ratio */}
                         <div className="relative w-full aspect-[4/5] overflow-hidden bg-slate-100">
                           <img
-                            src={item.thumbnailUrl ?? item.url}
+                            src={normalizeAssetUrl(item.thumbnailUrl ?? item.url, "/images/gallery-beach-palm-sunset.jpg")}
                             alt={item.altText ?? ""}
                             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
                             loading="lazy"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/images/gallery-beach-palm-sunset.jpg";
+                            }}
                           />
 
                           {/* Top-Left Category Badge - Comes from Right Side */}
@@ -1184,10 +1178,13 @@ export default function GalleryPage() {
                         >
                           <div className="relative w-full aspect-[4/5] overflow-hidden bg-slate-100">
                             <img
-                              src={item.thumbnailUrl ?? item.url}
+                              src={normalizeAssetUrl(item.thumbnailUrl ?? item.url, "/images/gallery-beach-palm-sunset.jpg")}
                               alt={item.altText ?? ""}
                               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
                               loading="lazy"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = "/images/gallery-beach-palm-sunset.jpg";
+                              }}
                             />
 
                             {/* Top-Left Category Badge - Comes from Right Side */}
@@ -1500,7 +1497,14 @@ export default function GalleryPage() {
                   className="max-w-full max-h-[80vh] object-contain rounded-3xl shadow-2xl border border-white/20"
                 />
               ) : (
-                <img src={selectedImg.url} alt={selectedImg.alt} className="max-w-full max-h-[80vh] object-contain rounded-3xl shadow-2xl" />
+                <img
+                  src={normalizeAssetUrl(selectedImg.url, "/images/gallery-beach-palm-sunset.jpg")}
+                  alt={selectedImg.alt}
+                  className="max-w-full max-h-[80vh] object-contain rounded-3xl shadow-2xl"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = "/images/gallery-beach-palm-sunset.jpg";
+                  }}
+                />
               )}
               {selectedImg.caption && (
                 <div className="mt-4 text-center text-white">

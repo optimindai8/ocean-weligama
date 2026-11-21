@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { Footer } from "@/components/footer";
+import { OptimizedHeroVideo } from "@/components/OptimizedHeroVideo";
 import {
   HelpCircle,
   Waves,
@@ -374,25 +375,14 @@ export default function FAQPage() {
 
       {/* Cinematic FAQ Video Hero Section (Exact Same Architecture as Blog Page) */}
       <section className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-[#052439]">
-        {/* Cinematic Video Background */}
-        <div className="absolute inset-0 z-0 bg-slate-950">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            disablePictureInPicture
-            preload="auto"
-            poster="/images/faq-hero-poster.jpg"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ WebkitPlaysinline: true, WebkitObjectFit: "cover" } as React.CSSProperties}
-          >
-            <source src="/videos/faq-hero-video.mp4" type="video/mp4" />
-            <source src="/videos/Women_dining_at_beachfront_resta…_70701f92_1080p.mp4" type="video/mp4" />
-          </video>
-
+        {/* Cinematic Video Background (Zero-Lag Hardware Accelerated) */}
+        <OptimizedHeroVideo
+          src="/videos/faq-hero-video.mp4"
+          poster="/images/faq-hero-poster.jpg"
+          priority={true}
+        >
           {/* Deep coastal ocean overlay for supreme text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#052439]/78 via-[#0B3D5E]/48 to-[#052439]/92" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#052439]/78 via-[#0B3D5E]/48 to-[#052439]/92 pointer-events-none" />
 
           {/* Golden sunrise ambient warmth matching hotel logo yellow */}
           <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[750px] h-[450px] bg-[#FBBF24]/18 rounded-full blur-[140px] pointer-events-none" />
@@ -402,7 +392,7 @@ export default function FAQPage() {
 
           {/* Bottom subtle edge fade transitioning smoothly into the questions section */}
           <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#F0F4F8] via-[#F0F4F8]/40 to-transparent pointer-events-none" />
-        </div>
+        </OptimizedHeroVideo>
 
         {/* Row 1: Navbar Clearance Spacer */}
         <div className="h-24 md:h-32 shrink-0 relative z-10" />

@@ -15,6 +15,7 @@ import { AnimatedHoloCard } from "@/components/AnimatedHoloCard";
 import { SEO, StructuredData } from "@/seo";
 import { cleanExcerpt } from "@/components/StoryContentRenderer";
 import { normalizeAssetUrl } from "@/lib/assetUrl";
+import { OptimizedHeroVideo } from "@/components/OptimizedHeroVideo";
 
 const ROOM_CATEGORIES = [
   { value: "", label: "All Spaces" },
@@ -1054,25 +1055,15 @@ export default function Home() {
         className="relative flex flex-col overflow-hidden"
         style={{ minHeight: "max(100svh, 800px)" }}
       >
-        {/* Cinematic Video Background */}
-        <div className="absolute inset-0 z-0 bg-slate-950">
-          <video
-            key="hero-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-            disablePictureInPicture
-            preload="auto"
-            poster="/images/hero-video-poster.jpg"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ WebkitPlaysinline: true, WebkitObjectFit: "cover" } as React.CSSProperties}
-          >
-            <source src="/videos/hero-video.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/25" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.45)_100%)]" />
-        </div>
+        {/* Cinematic Video Background (Zero-Lag Hardware Accelerated) */}
+        <OptimizedHeroVideo
+          src="/videos/hero-video.mp4"
+          poster="/images/hero-video-poster.jpg"
+          priority={true}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/25 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,rgba(0,0,0,0.45)_100%)] pointer-events-none" />
+        </OptimizedHeroVideo>
 
         {/* Row 1: Navbar spacer — always clears the floating navbar */}
         <div className="h-24 md:h-28 shrink-0" />
@@ -1565,11 +1556,14 @@ export default function Home() {
                       <div className="group relative h-[380px] sm:h-[420px] md:h-[440px] lg:h-[450px] rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden cursor-pointer shadow-[0_12px_32px_rgba(11,61,94,0.08)] hover:shadow-[0_24px_50px_rgba(251,191,36,0.22)] border border-white/60 hover:border-[#FBBF24]/70 transition-all duration-500 bg-slate-900">
                         {/* Image with smooth zoom */}
                         <img 
-                          src={item.img} 
+                          src={normalizeAssetUrl(item.img, "/images/service-stay.png")} 
                           alt={item.title} 
                           loading="lazy"
                           decoding="async"
                           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108" 
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = "/images/service-stay.png";
+                          }}
                         />
                         
                         {/* Multi-layered cinematic gradient overlays */}
@@ -1767,11 +1761,14 @@ export default function Home() {
                         {/* Photo with smooth zoom */}
                         {coverImg ? (
                           <img
-                            src={coverImg}
+                            src={normalizeAssetUrl(coverImg, "/images/service-stay.png")}
                             alt={room.name}
                             loading="lazy"
                             decoding="async"
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/images/service-stay.png";
+                            }}
                           />
                         ) : (
                           <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0B3D5E] to-slate-900">
@@ -2200,7 +2197,7 @@ export default function Home() {
                   }}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, amount: 0.15 }}
+                  viewport={{ once: true, amount: 0.05 }}
                   style={{ willChange: "transform, opacity" }}
                   className="mb-7"
                 >
@@ -2296,7 +2293,7 @@ export default function Home() {
                     }}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.15 }}
+                    viewport={{ once: true, amount: 0.05 }}
                     style={{ willChange: "transform, opacity" }}
                     className="flex -space-x-3 items-center"
                   >
@@ -2343,7 +2340,7 @@ export default function Home() {
                     }}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.15 }}
+                    viewport={{ once: true, amount: 0.05 }}
                     style={{ willChange: "transform, opacity" }}
                   >
                     <div className="flex items-center gap-1 text-[#FBBF24] mb-0.5">
@@ -2375,7 +2372,7 @@ export default function Home() {
                   }}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, amount: 0.15 }}
+                  viewport={{ once: true, amount: 0.05 }}
                   style={{ willChange: "transform, opacity" }}
                   className="relative w-full max-w-[430px] lg:max-w-[450px]"
                 >
@@ -2445,7 +2442,7 @@ export default function Home() {
                     }}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.15 }}
+                    viewport={{ once: true, amount: 0.05 }}
                     style={{ willChange: "transform, opacity" }}
                     className="absolute -top-3.5 right-3 sm:-top-4 sm:right-4 bg-white/95 backdrop-blur-md px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl shadow-[0_12px_35px_rgba(11,61,94,0.15)] border border-[#FBBF24]/40 flex items-center gap-3 z-20"
                   >
@@ -2620,17 +2617,22 @@ export default function Home() {
                     variants={getGalleryVariants(idx)}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.15 }}
+                    viewport={{ once: true, amount: 0.05 }}
                     style={{ willChange: "transform, opacity" }}
-                    className={`relative group rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden bg-white border border-slate-200/80 shadow-[0_8px_25px_rgba(11,61,94,0.06)] hover:shadow-[0_20px_45px_rgba(251,191,36,0.22),0_10px_25px_rgba(11,61,94,0.08)] hover:border-[#FBBF24]/60 transition-[box-shadow,border-color] duration-500 ${
+                    className={`relative group rounded-[1.75rem] sm:rounded-[2rem] overflow-hidden bg-slate-900 border border-slate-200/80 shadow-[0_8px_25px_rgba(11,61,94,0.06)] hover:shadow-[0_20px_45px_rgba(251,191,36,0.22),0_10px_25px_rgba(11,61,94,0.08)] hover:border-[#FBBF24]/60 transition-[box-shadow,border-color] duration-500 ${
                       idx === 0 ? 'sm:col-span-2 sm:row-span-2 min-h-[340px] md:min-h-[460px]' : 'aspect-square min-h-[200px]'
                     }`}
                   >
                     {/* Image */}
                     <img
-                      src={img.url}
+                      src={normalizeAssetUrl(img.url, "/images/gallery-beach-palm-sunset.jpg")}
                       alt={img.caption || 'Gallery Image'}
+                      loading="eager"
+                      decoding="async"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-108"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/images/gallery-beach-palm-sunset.jpg";
+                      }}
                     />
 
                     {/* Golden top illumination line */}
@@ -2760,7 +2762,7 @@ export default function Home() {
                   }}
                   initial="hidden"
                   whileInView="visible"
-                  viewport={{ once: false, amount: 0.15 }}
+                  viewport={{ once: true, amount: 0.05 }}
                   style={{ willChange: "transform, opacity" }}
                 >
                   <Link href="/blog">
@@ -2817,9 +2819,12 @@ export default function Home() {
                         {/* Compact Image Container */}
                         <div className="aspect-[16/10] overflow-hidden relative m-2.5 rounded-2xl bg-slate-100">
                           <img
-                            src={blog.image}
+                            src={normalizeAssetUrl(blog.image, "/images/service-stay.png")}
                             alt={blog.title}
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-106"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/images/service-stay.png";
+                            }}
                           />
                           <div className="absolute top-2.5 left-2.5 z-10">
                             <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-white/95 backdrop-blur-md text-[#0B3D5E] border border-white/60 shadow-sm">
@@ -2986,7 +2991,7 @@ export default function Home() {
                     }}
                     initial="hidden"
                     whileInView="visible"
-                    viewport={{ once: false, amount: 0.15 }}
+                    viewport={{ once: true, amount: 0.05 }}
                     style={{ willChange: "transform, opacity" }}
                     className={`rounded-2xl transition-[background-color,border-color,box-shadow] duration-200 overflow-hidden ${
                       openFaq === idx

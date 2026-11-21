@@ -54,6 +54,7 @@ import { LanguageProvider } from "@/components/LanguageContext";
 import { OfferAdPopup } from "@/components/OfferAdPopup";
 import { CookieConsentPopup } from "@/components/CookieConsentPopup";
 import { WhatsAppWidget } from "@/components/WhatsAppWidget";
+import { initVideoIdlePreload } from "@/lib/videoCache";
 
 function App() {
   const [location] = useLocation();
@@ -63,6 +64,11 @@ function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location]);
+
+  // Proactive background video pre-warming during idle time for zero-lag page swaps
+  useEffect(() => {
+    initVideoIdlePreload();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -5,7 +5,19 @@ import { Button } from "@/components/ui/button";
 import { TransparentLogo } from "./transparent-logo";
 import { LanguageSelector } from "./LanguageSelector";
 import { Menu, X } from "lucide-react";
+import { prefetchVideo } from "@/lib/videoCache";
 import "./magic-book-btn.css";
+
+const ROUTE_VIDEOS: Record<string, string> = {
+  "/": "/videos/hero-video.mp4",
+  "/rooms": "/videos/rooms-hero-video.mp4",
+  "/packages": "/videos/package-hero-video.mp4",
+  "/gallery": "/videos/gallery-hero-video.mp4",
+  "/blog": "/videos/blog-hero-video.mp4",
+  "/faq": "/videos/faq-hero-video.mp4",
+  "/about": "/videos/about-hero-video.mp4",
+  "/contact": "/videos/contact-page-video.mp4",
+};
 
 export function Navbar() {
   const [location] = useLocation();
@@ -83,7 +95,12 @@ export function Navbar() {
             {navItems.map((item) => {
               const isActive = location === item.path || (item.path !== "/" && location.startsWith(item.path));
               return (
-                <Link key={item.name} href={item.path}>
+                <Link
+                  key={item.name}
+                  href={item.path}
+                  onMouseEnter={() => prefetchVideo(ROUTE_VIDEOS[item.path])}
+                  onTouchStart={() => prefetchVideo(ROUTE_VIDEOS[item.path])}
+                >
                   <span className={`relative px-4 py-2.5 font-bold transition-colors cursor-pointer group text-[13px] rounded-full overflow-hidden block ${isActive ? "text-primary" : "text-foreground/80 hover:text-primary"}`}>
                     <span className="relative z-10">{item.name}</span>
                     <span className={`absolute inset-0 bg-primary/10 transition-transform duration-300 rounded-full origin-center ${isActive ? "scale-100" : "scale-0 group-hover:scale-100"}`}></span>
@@ -144,7 +161,11 @@ export function Navbar() {
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: idx * 0.05 }}
                     >
-                      <Link href={item.path}>
+                      <Link
+                        href={item.path}
+                        onMouseEnter={() => prefetchVideo(ROUTE_VIDEOS[item.path])}
+                        onTouchStart={() => prefetchVideo(ROUTE_VIDEOS[item.path])}
+                      >
                         <div 
                           onClick={() => setIsMobileMenuOpen(false)}
                           className={`

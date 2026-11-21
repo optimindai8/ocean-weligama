@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useSubmitContact, useGetSetting } from "@workspace/api-client-react";
 import { Footer } from "@/components/footer";
+import { OptimizedHeroVideo } from "@/components/OptimizedHeroVideo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -430,25 +431,14 @@ export default function ContactPage() {
 
       {/* Cinematic Contact Video Hero Section (Exact Same Architecture as FAQ & Blog Pages) */}
       <section className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-[#052439]">
-        {/* Cinematic Video Background */}
-        <div className="absolute inset-0 z-0 bg-slate-950">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            disablePictureInPicture
-            preload="auto"
-            poster={heroPoster}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ WebkitPlaysinline: true, WebkitObjectFit: "cover" } as React.CSSProperties}
-          >
-            <source src={heroVideoUrl} type="video/mp4" />
-            <source src="/videos/contact%20page%20video.mp4" type="video/mp4" />
-          </video>
-
+        {/* Cinematic Video Background (Zero-Lag Hardware Accelerated) */}
+        <OptimizedHeroVideo
+          src={heroVideoUrl || "/videos/contact-page-video.mp4"}
+          poster={heroPoster || "/images/contact-hero-poster.jpg"}
+          priority={true}
+        >
           {/* Deep coastal ocean overlay for supreme text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#052439]/78 via-[#0B3D5E]/48 to-[#052439]/92" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#052439]/78 via-[#0B3D5E]/48 to-[#052439]/92 pointer-events-none" />
 
           {/* Golden sunrise ambient warmth matching hotel logo yellow */}
           <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[750px] h-[450px] bg-[#FBBF24]/18 rounded-full blur-[140px] pointer-events-none" />
@@ -458,7 +448,7 @@ export default function ContactPage() {
 
           {/* Bottom subtle edge fade transitioning smoothly into the main contact section */}
           <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#EEF5FA] via-[#EEF5FA]/40 to-transparent pointer-events-none" />
-        </div>
+        </OptimizedHeroVideo>
 
         {/* Row 1: Navbar Clearance Spacer */}
         <div className="h-24 md:h-32 shrink-0 relative z-10" />
