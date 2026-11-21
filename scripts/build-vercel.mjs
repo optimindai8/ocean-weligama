@@ -12,10 +12,10 @@ globalThis.require = createRequire(import.meta.url);
 console.log("Building frontend...");
 execSync("pnpm --filter @workspace/ocean-weligama run build", { stdio: "inherit" });
 
-// Copy the frontend build to the root dist/public directory for Vercel
+// Copy the frontend build to the root dist directory for Vercel
 console.log("Setting up frontend output...");
-const frontendDist = path.resolve(process.cwd(), "artifacts/ocean-weligama/dist/public");
-const vercelDist = path.resolve(process.cwd(), "dist/public");
+const frontendDist = path.resolve(process.cwd(), "artifacts/ocean-weligama/dist");
+const vercelDist = path.resolve(process.cwd(), "dist");
 
 if (fs.existsSync(vercelDist)) {
   fs.rmSync(vercelDist, { recursive: true, force: true });

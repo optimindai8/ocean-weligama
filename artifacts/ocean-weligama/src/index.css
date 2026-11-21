@@ -340,3 +340,1508 @@ html {
   background-color: transparent !important;
   box-shadow: none !important;
 }
+
+/* ─── Ocean Air Hero Check Availability Button ─── */
+.animated-availability-btn {
+  --btn-gold: #FBBF24;
+  --btn-navy: #071E2E;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(7, 30, 46, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 100px;
+  color: var(--btn-gold);
+  border: 2px solid var(--btn-gold);
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.3), 0 8px 30px rgba(251, 191, 36, 0.25);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  text-decoration: none;
+  isolation: isolate;
+}
+
+.animated-availability-btn .btn-content,
+.animated-availability-btn > span:first-child {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  white-space: nowrap;
+}
+
+.animated-availability-btn .btn-text {
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 14px;
+  line-height: 1;
+}
+
+@media (min-width: 640px) {
+  .animated-availability-btn .btn-text {
+    font-size: 17px;
+    letter-spacing: 0.18em;
+  }
+}
+
+.animated-availability-btn .btn-icon,
+.animated-availability-btn svg {
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.2;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1), stroke 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-availability-btn .btn-circle,
+.animated-availability-btn > span:last-child {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: var(--btn-gold);
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.75s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.animated-availability-btn:hover,
+.animated-availability-btn:focus-visible {
+  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.55), 0 20px 50px rgba(251, 191, 36, 0.4);
+  color: var(--btn-navy);
+  transform: translateY(-2px);
+}
+
+.animated-availability-btn:hover .btn-icon,
+.animated-availability-btn:hover svg {
+  transform: scale(1.15) rotate(-3deg);
+  stroke: var(--btn-navy);
+}
+
+.animated-availability-btn:hover .btn-circle,
+.animated-availability-btn:hover > span:last-child,
+.animated-availability-btn:focus-visible .btn-circle,
+.animated-availability-btn:focus-visible > span:last-child {
+  width: 580px;
+  height: 580px;
+  opacity: 1;
+}
+
+.animated-availability-btn:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 0 3px var(--btn-gold);
+}
+
+/* 3D Tilt Card Animation - From Uiverse.io by MuhammadHasann, tailored to Ocean Air */
+.tilt-card-wrapper {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+    "bt-1 bt-2 bt-3"
+    "bt-4 bt-5 bt-6";
+  perspective: 800px;
+  width: 100%;
+  height: 155px;
+  padding: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+@media (min-width: 640px) {
+  .tilt-card-wrapper {
+    height: 165px;
+  }
+}
+
+.tilt-card-wrapper:active {
+  transform: scale(0.96);
+}
+
+.tilt-card-wrapper .hover-zone {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 25;
+}
+
+.tilt-card-wrapper .bt-1 { grid-area: bt-1; }
+.tilt-card-wrapper .bt-2 { grid-area: bt-2; }
+.tilt-card-wrapper .bt-3 { grid-area: bt-3; }
+.tilt-card-wrapper .bt-4 { grid-area: bt-4; }
+.tilt-card-wrapper .bt-5 { grid-area: bt-5; }
+.tilt-card-wrapper .bt-6 { grid-area: bt-6; }
+
+/* 3D Card Tilt on Hover */
+.tilt-card-wrapper .bt-1:hover ~ .tilt-card-inner {
+  transform: rotateX(12deg) rotateY(-12deg) rotateZ(0deg);
+  box-shadow: -5px -5px 22px rgba(251, 191, 36, 0.35), 0 8px 20px rgba(11, 61, 94, 0.08);
+  border-color: rgba(251, 191, 36, 0.9);
+}
+
+.tilt-card-wrapper .bt-2:hover ~ .tilt-card-inner {
+  transform: rotateX(12deg) rotateY(0deg) rotateZ(0deg);
+  box-shadow: 0px -5px 22px rgba(251, 191, 36, 0.35), 0 8px 20px rgba(11, 61, 94, 0.08);
+  border-color: rgba(251, 191, 36, 0.9);
+}
+
+.tilt-card-wrapper .bt-3:hover ~ .tilt-card-inner {
+  transform: rotateX(12deg) rotateY(12deg) rotateZ(0deg);
+  box-shadow: 5px -5px 22px rgba(251, 191, 36, 0.35), 0 8px 20px rgba(11, 61, 94, 0.08);
+  border-color: rgba(251, 191, 36, 0.9);
+}
+
+.tilt-card-wrapper .bt-4:hover ~ .tilt-card-inner {
+  transform: rotateX(-12deg) rotateY(-12deg) rotateZ(0deg);
+  box-shadow: -5px 5px 22px rgba(251, 191, 36, 0.35), 0 8px 20px rgba(11, 61, 94, 0.08);
+  border-color: rgba(251, 191, 36, 0.9);
+}
+
+.tilt-card-wrapper .bt-5:hover ~ .tilt-card-inner {
+  transform: rotateX(-12deg) rotateY(0deg) rotateZ(0deg);
+  box-shadow: 0px 5px 22px rgba(251, 191, 36, 0.35), 0 8px 20px rgba(11, 61, 94, 0.08);
+  border-color: rgba(251, 191, 36, 0.9);
+}
+
+.tilt-card-wrapper .bt-6:hover ~ .tilt-card-inner {
+  transform: rotateX(-12deg) rotateY(12deg) rotateZ(0deg);
+  box-shadow: 5px 5px 22px rgba(251, 191, 36, 0.35), 0 8px 20px rgba(11, 61, 94, 0.08);
+  border-color: rgba(251, 191, 36, 0.9);
+}
+
+/* 3D Pop Up on the Word: Secure, 100, 4.9★, Expert */
+.tilt-card-wrapper .hover-zone:hover ~ .tilt-card-inner .popup-word {
+  transform: translateY(-5px) scale(1.18) translateZ(30px);
+  filter: drop-shadow(0 6px 14px rgba(251, 191, 36, 0.8)) drop-shadow(0 2px 4px rgba(11, 61, 94, 0.35));
+  animation: word-3d-shake 0.5s ease-in-out 0.1s;
+}
+
+.tilt-card-wrapper .hover-zone:hover ~ .tilt-card-inner .icon-box {
+  transform: translateY(-3px) scale(1.14) rotate(6deg) translateZ(18px);
+  background-color: #FBBF24;
+  box-shadow: 0 8px 20px rgba(251, 191, 36, 0.5);
+  border-color: #D97706;
+}
+
+.tilt-card-inner {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.3rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(251, 191, 36, 0.35);
+  box-shadow: 0 4px 16px rgba(11, 61, 94, 0.05);
+  transform-style: preserve-3d;
+  transition: all 0.32s cubic-bezier(0.23, 1, 0.32, 1);
+  padding: 0.85rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  user-select: none;
+  z-index: 10;
+}
+
+.popup-word {
+  display: inline-block;
+  font-weight: 900;
+  transition: all 0.32s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  will-change: transform, filter;
+}
+
+.icon-box {
+  transition: all 0.32s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+  will-change: transform, background-color, box-shadow;
+}
+
+/* Ensure all icon SVGs retain crisp dark navy / black outlines */
+.icon-box svg {
+  color: #0B3D5E !important;
+  stroke: #0B3D5E !important;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Star Icon: Crisp dark navy / black outline with vibrant yellow fill inside in all states */
+.star-icon {
+  color: #0B3D5E !important;
+  stroke: #0B3D5E !important;
+  fill: #FBBF24 !important;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.tilt-card-wrapper .hover-zone:hover ~ .tilt-card-inner .star-icon,
+.tilt-card-inner.is-tapped .star-icon {
+  color: #0B3D5E !important;
+  stroke: #0B3D5E !important;
+  fill: #FBBF24 !important;
+  filter: drop-shadow(0 2px 5px rgba(11, 61, 94, 0.35));
+}
+
+/* Shake keyframes matching Uiverse MuhammadHasann */
+@keyframes word-3d-shake {
+  0% { transform: translateY(-5px) scale(1.18) translateZ(30px) rotate(0deg); }
+  25% { transform: translateY(-7px) scale(1.22) translateZ(34px) rotate(-3deg); }
+  50% { transform: translateY(-5px) scale(1.18) translateZ(30px) rotate(3deg); }
+  75% { transform: translateY(-6px) scale(1.20) translateZ(32px) rotate(-1.5deg); }
+  100% { transform: translateY(-5px) scale(1.18) translateZ(30px) rotate(0deg); }
+}
+
+/* Mobile & Tablet Tap / Click Active State */
+.tilt-card-inner.is-tapped {
+  animation: card-tap-pulse 0.55s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  border-color: #FBBF24 !important;
+  box-shadow: 0 0 25px rgba(251, 191, 36, 0.5), 0 8px 25px rgba(11, 61, 94, 0.12) !important;
+}
+
+.tilt-card-inner.is-tapped .popup-word {
+  transform: translateY(-5px) scale(1.18) translateZ(30px);
+  filter: drop-shadow(0 6px 14px rgba(251, 191, 36, 0.8)) drop-shadow(0 2px 4px rgba(11, 61, 94, 0.35));
+  animation: word-3d-shake 0.5s ease-in-out forwards;
+}
+
+.tilt-card-inner.is-tapped .icon-box {
+  transform: translateY(-3px) scale(1.16) rotate(8deg) translateZ(20px);
+  background-color: #FBBF24;
+  box-shadow: 0 8px 22px rgba(251, 191, 36, 0.5);
+  border-color: #D97706;
+}
+
+@keyframes card-tap-pulse {
+  0% { transform: scale(0.96); }
+  35% { transform: scale(1.03) rotateX(-8deg) rotateY(6deg); }
+  70% { transform: scale(1.01) rotateX(4deg) rotateY(-3deg); }
+  100% { transform: scale(1); }
+}
+
+/* ==========================================================================
+   Isometric 3D Social Media Icons (Uiverse.io jolprince_5263 adapted)
+   Scaled down to sleek luxury compact dimensions (~38px)
+   ========================================================================== */
+
+.iso-card {
+  max-width: fit-content;
+  border-radius: 9999px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    inset 0 0 15px rgba(255, 255, 255, 0.1),
+    inset 0 0 4px rgba(255, 255, 255, 0.2),
+    0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.4s ease;
+}
+
+.iso-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(251, 191, 36, 0.4);
+  box-shadow:
+    inset 0 0 20px rgba(251, 191, 36, 0.15),
+    0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.iso-card ul {
+  padding: 0.35rem 0.6rem;
+  display: flex;
+  list-style: none;
+  gap: 0.85rem;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  margin: 0;
+}
+
+.iso-card ul li {
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iso-pro {
+  transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iso-pro a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  text-decoration: none;
+}
+
+.iso-pro .svg {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 9px;
+  height: 38px;
+  width: 38px;
+  border-radius: 100%;
+  background: #ffffff;
+  color: #061d2d;
+  fill: currentColor;
+  box-shadow:
+    inset 0 0 10px rgba(255, 255, 255, 0.3),
+    inset 0 0 4px rgba(255, 255, 255, 0.5),
+    0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.iso-pro .text {
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #FBBF24;
+  background-color: rgba(6, 29, 45, 0.94);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  z-index: 9999;
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.45),
+    inset 0 0 8px rgba(251, 191, 36, 0.15);
+}
+
+/* Isometric Projection Hover Effect */
+.iso-pro:hover a > .svg {
+  transform: translate(8px, -8px);
+  border-radius: 100%;
+  background: #FBBF24;
+  color: #061d2d;
+  box-shadow:
+    0 10px 20px rgba(251, 191, 36, 0.4),
+    inset 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+.iso-pro:hover .text {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px) skew(-4deg);
+}
+
+.iso-pro span {
+  opacity: 0;
+  position: absolute;
+  border-radius: 50%;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  height: 38px;
+  width: 38px;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 10px rgba(255, 255, 255, 0.3),
+    inset 0 0 4px rgba(255, 255, 255, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.164);
+}
+
+.iso-pro:hover span {
+  opacity: 1;
+}
+
+.iso-pro:hover span:nth-child(1) {
+  opacity: 0.25;
+  background: rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  transform: translate(0, 0);
+}
+
+.iso-pro:hover span:nth-child(2) {
+  opacity: 0.45;
+  background: rgba(251, 191, 36, 0.3);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  transform: translate(3px, -3px);
+}
+
+.iso-pro:hover span:nth-child(3) {
+  opacity: 0.7;
+  background: rgba(251, 191, 36, 0.45);
+  border: 1px solid rgba(251, 191, 36, 0.55);
+  transform: translate(6px, -6px);
+}
+
+/* Individual Brand Glows on Hover */
+.iso-pro.iso-instagram:hover a > .svg {
+  background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(220, 39, 67, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.iso-pro.iso-instagram:hover span:nth-child(1) {
+  background: rgba(225, 48, 108, 0.2);
+  border-color: rgba(225, 48, 108, 0.3);
+}
+.iso-pro.iso-instagram:hover span:nth-child(2) {
+  background: rgba(225, 48, 108, 0.3);
+  border-color: rgba(225, 48, 108, 0.4);
+}
+.iso-pro.iso-instagram:hover span:nth-child(3) {
+  background: rgba(225, 48, 108, 0.45);
+  border-color: rgba(225, 48, 108, 0.55);
+}
+.iso-pro.iso-instagram .text {
+  color: #E1306C;
+  border-color: rgba(225, 48, 108, 0.45);
+}
+
+.iso-pro.iso-facebook:hover a > .svg {
+  background: #1877F2;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(24, 119, 242, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.iso-pro.iso-facebook:hover span:nth-child(1) {
+  background: rgba(24, 119, 242, 0.2);
+  border-color: rgba(24, 119, 242, 0.3);
+}
+.iso-pro.iso-facebook:hover span:nth-child(2) {
+  background: rgba(24, 119, 242, 0.3);
+  border-color: rgba(24, 119, 242, 0.4);
+}
+.iso-pro.iso-facebook:hover span:nth-child(3) {
+  background: rgba(24, 119, 242, 0.45);
+  border-color: rgba(24, 119, 242, 0.55);
+}
+.iso-pro.iso-facebook .text {
+  color: #1877F2;
+  border-color: rgba(24, 119, 242, 0.45);
+}
+
+.iso-pro.iso-tiktok:hover a > .svg {
+  background: #000000;
+  color: #25F4EE;
+  box-shadow: 0 10px 22px rgba(37, 244, 238, 0.35), inset 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.iso-pro.iso-tiktok:hover span:nth-child(1) {
+  background: rgba(37, 244, 238, 0.2);
+  border-color: rgba(37, 244, 238, 0.3);
+}
+.iso-pro.iso-tiktok:hover span:nth-child(2) {
+  background: rgba(37, 244, 238, 0.3);
+  border-color: rgba(37, 244, 238, 0.4);
+}
+.iso-pro.iso-tiktok:hover span:nth-child(3) {
+  background: rgba(37, 244, 238, 0.45);
+  border-color: rgba(37, 244, 238, 0.55);
+}
+.iso-pro.iso-tiktok .text {
+  color: #25F4EE;
+  border-color: rgba(37, 244, 238, 0.45);
+}
+
+.iso-pro.iso-phone:hover a > .svg {
+  background: #22c55e;
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(34, 197, 94, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.iso-pro.iso-phone:hover span:nth-child(1) {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+.iso-pro.iso-phone:hover span:nth-child(2) {
+  background: rgba(34, 197, 94, 0.3);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+.iso-pro.iso-phone:hover span:nth-child(3) {
+  background: rgba(34, 197, 94, 0.45);
+  border-color: rgba(34, 197, 94, 0.55);
+}
+.iso-pro.iso-phone .text {
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.45);
+}
+
+/* ── Global Scrollbar Hiding Utilities ─────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar,
+[data-no-scrollbar]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar,
+.scrollbar-none,
+[data-no-scrollbar] {
+  -ms-overflow-style: none !important;  /* IE and Edge */
+  scrollbar-width: none !important;  /* Firefox */
+}
+
+/* ── Contact Details Bubble Hover Animation (Matching Hotel Logo Yellow) ── */
+.contact-bubbles-card {
+  --c1: #0B3D5E; /* Deep ocean navy text */
+  --c2: #FBBF24; /* Hotel logo golden yellow */
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.5px solid rgba(251, 191, 36, 0.28);
+  box-shadow: 0 4px 20px -2px rgba(11, 61, 94, 0.05);
+  transition: border-color 400ms cubic-bezier(0.83, 0, 0.17, 1),
+              box-shadow 400ms cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.contact-bubbles-card::before {
+  top: 0;
+  left: 0;
+}
+
+.contact-bubbles-card::after {
+  top: 100%;
+  left: 100%;
+}
+
+.contact-bubbles-card::before,
+.contact-bubbles-card::after {
+  content: "";
+  position: absolute;
+  width: 175%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  scale: 0;
+  translate: -50% -50%;
+  transition: scale 900ms cubic-bezier(0.76, 0, 0.24, 1),
+              transform 900ms cubic-bezier(0.76, 0, 0.24, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.contact-bubbles-card:hover {
+  border-color: #F59E0B;
+  box-shadow: 0 16px 36px -6px rgba(251, 191, 36, 0.35), 0 0 0 1px rgba(245, 158, 11, 0.35);
+}
+
+.contact-bubbles-card:hover::before,
+.contact-bubbles-card:hover::after {
+  scale: 1;
+}
+
+.contact-bubbles-card:active {
+  scale: 0.98;
+  filter: brightness(0.95);
+}
+
+/* Ensure all child content stays on top of expanding bubbles */
+.contact-bubbles-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.contact-bubbles-card .bubble-title {
+  transition: color 500ms cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.contact-bubbles-card:hover .bubble-title {
+  color: #0B3D5E !important;
+}
+
+.contact-bubbles-card .bubble-value {
+  transition: color 500ms cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.contact-bubbles-card:hover .bubble-value {
+  color: #052439 !important;
+}
+
+.contact-bubbles-card .bubble-icon-box {
+  transition: background-color 450ms cubic-bezier(0.83, 0, 0.17, 1),
+              border-color 450ms cubic-bezier(0.83, 0, 0.17, 1),
+              transform 400ms cubic-bezier(0.83, 0, 0.17, 1),
+              box-shadow 400ms cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.contact-bubbles-card:hover .bubble-icon-box {
+  background-color: #0B3D5E !important;
+  border-color: #052439 !important;
+  box-shadow: 0 6px 18px rgba(11, 61, 94, 0.25);
+  transform: scale(1.08) rotate(6deg);
+}
+
+.contact-bubbles-card .bubble-icon {
+  transition: color 450ms cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.contact-bubbles-card:hover .bubble-icon {
+  color: #FBBF24 !important;
+}
+
+.contact-bubbles-card .bubble-arrow {
+  transition: background-color 450ms cubic-bezier(0.83, 0, 0.17, 1),
+              border-color 450ms cubic-bezier(0.83, 0, 0.17, 1),
+              color 450ms cubic-bezier(0.83, 0, 0.17, 1),
+              transform 400ms cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+.contact-bubbles-card:hover .bubble-arrow {
+  background-color: #0B3D5E !important;
+  border-color: #052439 !important;
+  color: #FBBF24 !important;
+  transform: translateX(4px);
+}
+
+/* ── Contact Form Button: Uiverse alexroumi hover slide effect ── */
+.contact-submit-btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  color: #0B3D5E;
+  border: unset;
+  border-radius: 9999px;
+  font-weight: 900;
+  cursor: pointer;
+  -webkit-box-shadow: 0 8px 25px -3px rgba(251, 191, 36, 0.45);
+  box-shadow: 0 8px 25px -3px rgba(251, 191, 36, 0.45);
+  transition: color 300ms cubic-bezier(0.83, 0, 0.17, 1),
+              box-shadow 300ms cubic-bezier(0.83, 0, 0.17, 1),
+              transform 200ms ease;
+}
+
+.contact-submit-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #0B3D5E 0%, #052439 100%);
+  z-index: -1;
+  -webkit-box-shadow: 0 8px 25px -3px rgba(11, 61, 94, 0.4);
+  box-shadow: 0 8px 25px -3px rgba(11, 61, 94, 0.4);
+  transition: width 350ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.contact-submit-btn:hover {
+  color: #FBBF24;
+  -webkit-box-shadow: 0 12px 30px -3px rgba(11, 61, 94, 0.45);
+  box-shadow: 0 12px 30px -3px rgba(11, 61, 94, 0.45);
+}
+
+.contact-submit-btn:hover::before {
+  width: 100%;
+}
+
+.contact-submit-btn:active {
+  transform: scale(0.98);
+}
+
+.contact-submit-btn > * {
+  position: relative;
+  z-index: 2;
+  transition: transform 300ms ease, color 300ms ease;
+}
+
+.contact-submit-btn:hover .submit-btn-icon {
+  transform: translateX(4px);
+  color: #FBBF24;
+}
+
+/* ── Social Media Buttons: Uiverse iZOXVL boton-elegante radial ripple ── */
+.boton-elegante {
+  padding: 12px 16px;
+  border: 1.5px solid rgba(226, 232, 240, 0.85);
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #0B3D5E;
+  font-size: 0.75rem;
+  cursor: pointer;
+  border-radius: 1rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  position: relative;
+  overflow: hidden;
+  font-weight: 700;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px -2px rgba(11, 61, 94, 0.05);
+}
+
+.boton-elegante::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle,
+    rgba(251, 191, 36, 0.35) 0%,
+    rgba(245, 158, 11, 0.15) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  transform: scale(0);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.boton-elegante:hover::after {
+  transform: scale(4);
+}
+
+.boton-elegante:hover {
+  border-color: #FBBF24;
+  background-color: #FFFFFF;
+  color: #0B3D5E;
+  box-shadow: 0 8px 24px -4px rgba(251, 191, 36, 0.25), 0 0 0 1px rgba(251, 191, 36, 0.3);
+  transform: translateY(-2px);
+}
+
+.boton-elegante:active {
+  transform: scale(0.97);
+}
+
+.boton-elegante > * {
+  position: relative;
+  z-index: 2;
+  transition: transform 300ms ease, color 300ms ease;
+}
+
+.boton-elegante:hover .social-icon {
+  transform: scale(1.12);
+}
+
+/* Platform-specific brand accents for boton-elegante */
+.boton-elegante.social-ig:hover {
+  border-color: rgba(244, 63, 94, 0.6);
+  color: #E1306C;
+  box-shadow: 0 8px 24px -4px rgba(244, 63, 94, 0.25);
+}
+.boton-elegante.social-ig::after {
+  background: radial-gradient(
+    circle,
+    rgba(244, 63, 94, 0.3) 0%,
+    rgba(251, 191, 36, 0.15) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+
+.boton-elegante.social-fb:hover {
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #1877F2;
+  box-shadow: 0 8px 24px -4px rgba(59, 130, 246, 0.25);
+}
+.boton-elegante.social-fb::after {
+  background: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.3) 0%,
+    rgba(11, 61, 94, 0.15) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+
+.boton-elegante.social-tt:hover {
+  border-color: rgba(15, 23, 42, 0.5);
+  color: #0F172A;
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.2);
+}
+.boton-elegante.social-tt::after {
+  background: radial-gradient(
+    circle,
+    rgba(15, 23, 42, 0.22) 0%,
+    rgba(251, 191, 36, 0.15) 50%,
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+
+/* ── Plan Your Stay Button: Uiverse adamgiebl center-expand curtain animation ── */
+.btn-plan-stay {
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  text-align: center;
+  font-weight: 800;
+  padding: 0.9em 2.2em;
+  border: 2.5px solid #0B3D5E;
+  border-radius: 9999px;
+  position: relative;
+  box-shadow: 0 4px 14px rgba(11, 61, 94, 0.12), 0 2px 6px rgba(11, 61, 94, 0.08);
+  color: #0B3D5E;
+  background-color: #FFFFFF;
+  text-decoration: none;
+  transition: color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+}
+
+@media (min-width: 640px) {
+  .btn-plan-stay {
+    font-size: 0.875rem;
+    padding: 0.95em 2.4em;
+  }
+}
+
+.btn-plan-stay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  right: 50%;
+  bottom: 0;
+  opacity: 0;
+  background: linear-gradient(135deg, #0B3D5E 0%, #052439 100%);
+  border-radius: inherit;
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.btn-plan-stay:hover,
+.btn-plan-stay:focus-visible {
+  color: #FFFFFF;
+  border-color: #0B3D5E;
+  box-shadow: 0 10px 28px -4px rgba(11, 61, 94, 0.38), 0 4px 12px rgba(11, 61, 94, 0.16);
+}
+
+.btn-plan-stay:hover::before,
+.btn-plan-stay:focus-visible::before {
+  left: 0;
+  right: 0;
+  opacity: 1;
+}
+
+.btn-plan-stay:active {
+  transform: scale(0.93);
+}
+
+.btn-plan-stay > * {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-plan-stay:hover .btn-plan-stay-icon,
+.btn-plan-stay:focus-visible .btn-plan-stay-icon {
+  transform: translateX(4px);
+  color: #FBBF24;
+}
+
+/* ── Gooey Blobs Button: Uiverse cssbuttons-io Tailored to Ocean Air Warm Amber Gold (#FBBF24 / #F59E0B) ── */
+.c-button {
+  color: #0B3D5E;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 1.05em 2em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  border-radius: 9999px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ── From Uiverse.io by Ali-Tahmazi99 - Skew Split Blades Animation Tailored to Hotel Logo Colors ── */
+.btn-curated-packages {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  padding: 0.9em 1.75em;
+  border-radius: 12px;
+  border: 1.5px solid #0B3D5E;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(11, 61, 94, 0.08);
+  text-decoration: none;
+  box-sizing: border-box;
+  isolation: isolate;
+}
+
+.btn-curated-packages::before,
+.btn-curated-packages::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 0;
+  height: 100%;
+  transform: skew(15deg);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.btn-curated-packages::before {
+  left: -15px;
+  background: #052439;
+}
+
+.btn-curated-packages::after {
+  right: -15px;
+  background: #0B3D5E;
+}
+
+.btn-curated-packages:hover::before,
+.btn-curated-packages:hover::after {
+  width: 58%;
+}
+
+.btn-curated-packages:hover {
+  border-color: #F59E0B;
+  box-shadow: 0 12px 28px -4px rgba(11, 61, 94, 0.4), 0 0 0 1px rgba(245, 158, 11, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-curated-packages span,
+.btn-curated-packages .btn-curated-packages__text {
+  color: #0B3D5E;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 640px) {
+  .btn-curated-packages span,
+  .btn-curated-packages .btn-curated-packages__text {
+    font-size: 0.9375rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+.btn-curated-packages:hover span,
+.btn-curated-packages:hover .btn-curated-packages__text {
+  color: #FBBF24;
+}
+
+.btn-curated-packages:active {
+  transform: scale(0.98);
+}
+
+@media (min-width: 640px) {
+  .c-button {
+    font-size: 0.875rem;
+    padding: 1.15em 2.2em;
+  }
+}
+
+.c-button--gooey {
+  color: #0B3D5E;
+  border: 2.5px solid #F59E0B;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 24px -4px rgba(251, 191, 36, 0.3);
+  transition: all 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  isolation: isolate;
+}
+
+.c-button--gooey .c-button__text {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: color 400ms ease, transform 300ms ease;
+}
+
+.c-button--gooey .c-button__blobs {
+  height: 100%;
+  filter: url(#goo);
+  -webkit-filter: url(#goo);
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: inherit;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.c-button--gooey .c-button__blobs div {
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
+  width: 38%;
+  height: 100%;
+  border-radius: 100%;
+  position: absolute;
+  transform: scale(1.6) translateY(130%) translateZ(0);
+  transition: all 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.c-button--gooey .c-button__blobs div:nth-child(1) {
+  left: -8%;
+}
+
+.c-button--gooey .c-button__blobs div:nth-child(2) {
+  left: 31%;
+  transition-delay: 50ms;
+}
+
+.c-button--gooey .c-button__blobs div:nth-child(3) {
+  left: 70%;
+  transition-delay: 25ms;
+}
+
+.c-button--gooey:hover {
+  color: #0B3D5E;
+  border-color: #D97706;
+  box-shadow: 0 14px 35px -4px rgba(251, 191, 36, 0.55), 0 0 0 1px rgba(251, 191, 36, 0.6);
+  transform: translateY(-2px);
+}
+
+.c-button--gooey:hover .c-button__blobs div {
+  transform: scale(1.6) translateY(0) translateZ(0);
+}
+
+.c-button--gooey:hover .c-button__text svg {
+  transform: translateX(4px);
+}
+
+.c-button--gooey:active {
+  transform: scale(0.96);
+}
+
+/* ── From Uiverse.io by nikk7007 - Skew Blades Animation Tailored to Ocean Air "View Rates" Button ── */
+.btn-view-rates {
+  --color: #0B3D5E;
+  --color2: #FBBF24;
+  padding: 0.8em 1.85em;
+  background-color: transparent;
+  border-radius: 8px;
+  border: 1.5px solid var(--color);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  z-index: 1;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(11, 61, 94, 0.08);
+  isolation: isolate;
+  text-decoration: none;
+}
+
+@media (min-width: 640px) {
+  .btn-view-rates {
+    font-size: 0.875rem;
+    padding: 0.85em 2.1em;
+  }
+}
+
+.btn-view-rates::after,
+.btn-view-rates::before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+  transform: skew(90deg) translate(-50%, -50%);
+  position: absolute;
+  inset: 50%;
+  left: 25%;
+  z-index: -1;
+  transition: 0.5s ease-out;
+  background-color: var(--color);
+  pointer-events: none;
+}
+
+.btn-view-rates::before {
+  top: -50%;
+  left: -25%;
+  transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
+}
+
+.btn-view-rates:hover::before {
+  transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
+}
+
+.btn-view-rates:hover::after {
+  transform: skew(45deg) translate(-50%, -50%);
+}
+
+.btn-view-rates:hover,
+.btn-view-rates:focus-visible {
+  color: var(--color2);
+  border-color: var(--color);
+  box-shadow: 0 10px 25px -4px rgba(11, 61, 94, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-view-rates:active {
+  filter: brightness(0.85);
+  transform: scale(0.98);
+}
+
+.btn-view-rates > * {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.btn-view-rates:hover .btn-view-rates-icon,
+.btn-view-rates:focus-visible .btn-view-rates-icon {
+  transform: translateX(4px);
+  color: var(--color2);
+}
+
+/* ─── Uiverse.io by gharsh11032000 - Animated Expand Button (CTA) ─── */
+.animated-cta-button {
+  --color: #FBBF24;
+  --color2: #071E2E;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 42px;
+  border: 4px solid transparent;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background-color: transparent;
+  border-radius: 100px;
+  font-weight: 800;
+  color: var(--color);
+  box-shadow: 0 0 0 2px var(--color), 0 8px 25px rgba(251, 191, 36, 0.2);
+  cursor: pointer;
+  overflow: hidden;
+  text-decoration: none;
+  isolation: isolate;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (min-width: 640px) {
+  .animated-cta-button {
+    font-size: 15px;
+    padding: 18px 48px;
+  }
+}
+
+.animated-cta-button svg {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  fill: var(--color);
+  z-index: 9;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.animated-cta-button .arr-1 {
+  right: 20px;
+}
+
+.animated-cta-button .arr-2 {
+  left: -25%;
+}
+
+.animated-cta-button .circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: var(--color);
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.animated-cta-button .text {
+  position: relative;
+  z-index: 2;
+  transform: translateX(-12px);
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  white-space: nowrap;
+}
+
+.animated-cta-button:hover,
+.animated-cta-button:focus-visible {
+  box-shadow: 0 0 0 12px transparent, 0 16px 45px rgba(251, 191, 36, 0.45);
+  color: var(--color2);
+  border-radius: 16px;
+  transform: translateY(-2px);
+}
+
+.animated-cta-button:hover .arr-1,
+.animated-cta-button:focus-visible .arr-1 {
+  right: -25%;
+}
+
+.animated-cta-button:hover .arr-2,
+.animated-cta-button:focus-visible .arr-2 {
+  left: 20px;
+}
+
+.animated-cta-button:hover .text,
+.animated-cta-button:focus-visible .text {
+  transform: translateX(12px);
+}
+
+.animated-cta-button:hover svg,
+.animated-cta-button:focus-visible svg {
+  fill: var(--color2);
+}
+
+.animated-cta-button:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 0 4px var(--color);
+}
+
+.animated-cta-button:hover .circle,
+.animated-cta-button:focus-visible .circle {
+  width: 440px;
+  height: 440px;
+  opacity: 1;
+}
+
+/* ─── Uiverse.io by gharsh11032000 - Admin Login Expand Button ─── */
+.admin-signin-expand-btn {
+  --color: #FBBF24;
+  --color2: #071E2E;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 54px;
+  padding: 0 32px;
+  border: 4px solid transparent;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background-color: rgba(7, 30, 46, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 100px;
+  font-weight: 800;
+  color: var(--color);
+  box-shadow: 0 0 0 2px var(--color), 0 8px 25px rgba(251, 191, 36, 0.2);
+  cursor: pointer;
+  overflow: hidden;
+  text-decoration: none;
+  isolation: isolate;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.admin-signin-expand-btn svg.arr-1,
+.admin-signin-expand-btn svg.arr-2 {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  fill: var(--color);
+  z-index: 9;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.admin-signin-expand-btn .arr-1 {
+  right: 22px;
+}
+
+.admin-signin-expand-btn .arr-2 {
+  left: -25%;
+}
+
+.admin-signin-expand-btn .circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: var(--color);
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.admin-signin-expand-btn .text {
+  position: relative;
+  z-index: 2;
+  transform: translateX(-10px);
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  white-space: nowrap;
+}
+
+.admin-signin-expand-btn:hover:not(:disabled),
+.admin-signin-expand-btn:focus-visible:not(:disabled) {
+  box-shadow: 0 0 0 10px transparent, 0 16px 45px rgba(251, 191, 36, 0.45);
+  color: var(--color2);
+  border-radius: 16px;
+  transform: translateY(-2px);
+}
+
+.admin-signin-expand-btn:hover:not(:disabled) .arr-1,
+.admin-signin-expand-btn:focus-visible:not(:disabled) .arr-1 {
+  right: -25%;
+}
+
+.admin-signin-expand-btn:hover:not(:disabled) .arr-2,
+.admin-signin-expand-btn:focus-visible:not(:disabled) .arr-2 {
+  left: 22px;
+}
+
+.admin-signin-expand-btn:hover:not(:disabled) .text,
+.admin-signin-expand-btn:focus-visible:not(:disabled) .text {
+  transform: translateX(10px);
+}
+
+.admin-signin-expand-btn:hover:not(:disabled) svg.arr-1,
+.admin-signin-expand-btn:hover:not(:disabled) svg.arr-2,
+.admin-signin-expand-btn:focus-visible:not(:disabled) svg.arr-1,
+.admin-signin-expand-btn:focus-visible:not(:disabled) svg.arr-2 {
+  fill: var(--color2);
+}
+
+.admin-signin-expand-btn:active:not(:disabled) {
+  transform: scale(0.97);
+  box-shadow: 0 0 0 4px var(--color);
+}
+
+.admin-signin-expand-btn:hover:not(:disabled) .circle,
+.admin-signin-expand-btn:focus-visible:not(:disabled) .circle {
+  width: 520px;
+  height: 520px;
+  opacity: 1;
+}
+
+.admin-signin-expand-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Luxury Uiverse Animated CTA Button for Offer Ad */
+.uiverse-cta-btn {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #D97706 100%);
+  border: 2px solid #FCD34D;
+  color: #062135;
+  box-shadow: 0 10px 28px rgba(245, 158, 11, 0.4);
+  transition: color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease, transform 0.2s ease;
+  isolation: isolate;
+  cursor: pointer;
+}
+
+.uiverse-cta-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -100%;
+  transform: translateY(-50%) scale(1);
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 9999px;
+  background-color: #062135;
+  z-index: -1;
+  transition: left 0.7s cubic-bezier(0.25, 1, 0.5, 1), transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: left, transform;
+  pointer-events: none;
+}
+
+.uiverse-cta-btn:hover {
+  color: #FDE68A;
+  border-color: #F59E0B;
+  box-shadow: 0 16px 42px rgba(245, 158, 11, 0.55), 0 0 25px rgba(245, 158, 11, 0.3);
+}
+
+.uiverse-cta-btn:hover::before {
+  left: 0;
+  transform: translateY(-50%) scale(1.6);
+}
+
+.uiverse-cta-btn:active {
+  transform: scale(0.98);
+}
+
+.uiverse-cta-btn .cta-arrow-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(6, 33, 53, 0.35);
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: rotate(45deg);
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.35s ease, border-color 0.35s ease;
+  flex-shrink: 0;
+}
+
+.uiverse-cta-btn:hover .cta-arrow-badge {
+  transform: rotate(90deg);
+  background-color: #F59E0B;
+  border-color: transparent;
+}
+
+
+
+

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AdminLayout } from "@/components/admin-layout";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { customFetch } from "@workspace/api-client-react";
 import {
   TrendingDown,
   TrendingUp,
@@ -14,7 +15,7 @@ import {
   SunMedium,
   Snowflake,
   BedDouble,
-  Sparkles,
+  Compass,
   Grid3x3,
   ChevronDown,
   ChevronUp,
@@ -81,17 +82,18 @@ function getToken() {
   return localStorage.getItem("ow-admin-token") || "";
 }
 
-async function apiFetch(url: string, options: RequestInit = {}) {
-  const res = await fetch(url, {
+async function apiFetch<T = any>(url: string, options: RequestInit = {}): Promise<T> {
+  const token = getToken();
+  const headers: Record<string, string> = {
+    ...(options.headers as Record<string, string> || {}),
+  };
+  if (token && !headers["Authorization"] && !headers["authorization"]) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return customFetch<T>(url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
-      ...(options.headers || {}),
-    },
+    headers,
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
 }
 
 // ─── Price Input Component ────────────────────────────────────────────────────
@@ -251,8 +253,8 @@ function SeasonCard({
     form.roomAdjustmentType !== (adjustment?.roomAdjustmentType || "fixed") ||
     form.experienceAdjustmentType !== (adjustment?.experienceAdjustmentType || "fixed") ||
     form.packageAdjustmentType !== (adjustment?.packageAdjustmentType || "fixed") ||
-    form.dateFrom !== (adjustment?.dateFrom || "") ||
-    form.dateTo !== (adjustment?.dateTo || "");
+    form.dateFrom !== (formatDateTimeLocal(adjustment?.dateFrom) || "") ||
+    form.dateTo !== (formatDateTimeLocal(adjustment?.dateTo) || "");
 
   return (
     <motion.div
@@ -400,7 +402,7 @@ function SeasonCard({
                 />
                 <PriceAdjustInput
                   label="Experience Prices"
-                  icon={Sparkles}
+                  icon={Compass}
                   iconColor="text-purple-500"
                   adjustmentType={form.experienceAdjustmentType}
                   adjustmentValue={form.experienceAdjustmentValue}
@@ -472,16 +474,23 @@ export default function AdminRateAdjustments() {
   // This ensures saving/activating one card NEVER touches the other.
   const getAdjForSeason = (key: string): RateAdjustment | null => {
     const season = SEASONS.find((s) => s.key === key)!;
-    return adjustments.find((a) => a.seasonName === season.defaultName) ?? null;
+    return (
+      adjustments.find((a) => a.seasonName === season.defaultName) ??
+      adjustments.find((a) =>
+        a.seasonName.toLowerCase().includes(season.key === "summer" ? "low" : "high")
+      ) ??
+      null
+    );
   };
 
   async function fetchAdjustments() {
     try {
       setIsLoading(true);
-      const data = await apiFetch(API_BASE);
+      const data = await apiFetch<RateAdjustment[]>(API_BASE);
       setAdjustments(Array.isArray(data) ? data : []);
-    } catch (e) {
-      toast({ title: "Error loading adjustments", variant: "destructive" });
+    } catch (e: any) {
+      console.error("Failed to load rate adjustments:", e);
+      toast({ title: "Error loading adjustments", description: e?.message || "Could not load rate adjustments", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }

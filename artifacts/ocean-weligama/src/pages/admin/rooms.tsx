@@ -25,7 +25,8 @@ import {
   EyeOff,
   MoreVertical,
   Star,
-  Sparkles,
+  Layers,
+  Package,
   Upload,
   X,
 } from "lucide-react";
@@ -437,7 +438,7 @@ export default function AdminRooms() {
                         </DropdownMenuItem>
                         <Link href="/ow-admin/matrix-pricing">
                           <DropdownMenuItem className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
-                            <Sparkles className="w-4 h-4" /> Set Matrix Prices
+                            <Layers className="w-4 h-4" /> Set Matrix Prices
                           </DropdownMenuItem>
                         </Link>
                         <DropdownMenuItem onClick={() => toggleStatus(room.id, room.status)} className="gap-3 cursor-pointer py-3 rounded-xl font-bold text-slate-600 hover:text-[#0B3D5E] hover:bg-slate-50">
@@ -734,7 +735,7 @@ export default function AdminRooms() {
                       <FormField control={form.control} name="showInPackages" render={({ field }) => (
                         <FormItem className="flex flex-row items-center justify-between rounded-2xl border p-6 bg-card shadow-sm md:col-span-2">
                           <div className="space-y-1">
-                            <FormLabel className="text-base font-bold text-[#4BBCCC] flex items-center gap-1"><Sparkles className="w-4 h-4" /> Show in Packages</FormLabel>
+                            <FormLabel className="text-base font-bold text-[#4BBCCC] flex items-center gap-1"><Package className="w-4 h-4" /> Show in Packages</FormLabel>
                             <FormDescription>Display this room in the "Stay in Style" section.</FormDescription>
                           </div>
                           <FormControl>

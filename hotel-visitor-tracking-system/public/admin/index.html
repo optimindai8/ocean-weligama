@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Visitor Analytics</title>
+    <link rel="stylesheet" href="admin.css" />
+    <script type="module" src="dashboard.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div>
+          <h1>Website Visitors</h1>
+          <p class="muted" id="range-label">Loading…</p>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="segmented" role="group" aria-label="Time period" id="periods">
+          <button type="button" data-period="today" aria-pressed="false">Today</button>
+          <button type="button" data-period="7d" aria-pressed="true">7 days</button>
+          <button type="button" data-period="30d" aria-pressed="false">30 days</button>
+          <button type="button" data-period="90d" aria-pressed="false">90 days</button>
+        </div>
+        <button type="button" class="ghost" id="logout">Sign out</button>
+      </div>
+    </header>
+
+    <main>
+      <p class="status" id="status" role="status"></p>
+
+      <section class="kpis" aria-label="Key numbers">
+        <div class="card kpi live">
+          <p class="label">Online now</p>
+          <p class="value" id="kpi-online">–</p>
+          <p class="hint">active in the last 5 minutes</p>
+        </div>
+        <div class="card kpi">
+          <p class="label">Visitors</p>
+          <p class="value" id="kpi-visitors">–</p>
+          <p class="hint" id="kpi-visitors-hint">unique guests</p>
+        </div>
+        <div class="card kpi">
+          <p class="label">Page views</p>
+          <p class="value" id="kpi-views">–</p>
+          <p class="hint" id="kpi-views-hint">pages opened</p>
+        </div>
+        <div class="card kpi">
+          <p class="label">Visits</p>
+          <p class="value" id="kpi-sessions">–</p>
+          <p class="hint">browsing sessions</p>
+        </div>
+        <div class="card kpi">
+          <p class="label">Returning guests</p>
+          <p class="value" id="kpi-returning">–</p>
+          <p class="hint" id="kpi-returning-hint">of all visitors</p>
+        </div>
+        <div class="card kpi">
+          <p class="label">Time on site</p>
+          <p class="value" id="kpi-time">–</p>
+          <p class="hint">average per visit</p>
+        </div>
+      </section>
+
+      <section class="card chart">
+        <h2>Visitors per day</h2>
+        <div id="chart"></div>
+      </section>
+
+      <div class="grid-2">
+        <section class="card">
+          <h2>Guest actions</h2>
+          <div id="events"></div>
+          <p class="note">Booking, phone, WhatsApp, email and contact-form actions.</p>
+        </section>
+        <section class="card">
+          <h2>Most visited pages</h2>
+          <div id="pages"></div>
+        </section>
+      </div>
+
+      <div class="grid-2">
+        <section class="card">
+          <h2>Where guests come from</h2>
+          <h3>Channel</h3>
+          <div id="mediums"></div>
+          <h3>Top sources</h3>
+          <div id="sources"></div>
+        </section>
+        <section class="card">
+          <h2>Guest countries</h2>
+          <div id="countries"></div>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2>Devices</h2>
+        <div class="grid-2">
+          <div><h3>Device type</h3><div id="devices"></div></div>
+          <div><h3>Browser</h3><div id="browsers"></div></div>
+          <div><h3>Operating system</h3><div id="systems"></div></div>
+        </div>
+      </section>
+
+      <p class="note">
+        Counts are unique visitors per row. A guest who returns through a different source or device can appear in more than one row.
+        Search-engine bots and your own excluded devices are not counted.
+      </p>
+    </main>
+  </body>
+</html>

@@ -235,6 +235,7 @@ export const ListServicesResponseItem = zod.object({
   id: zod.string(),
   slug: zod.string(),
   isFeatured: zod.boolean().optional(),
+  showInRelated: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
   comparisonLabel: zod.string().nullish(),
@@ -310,6 +311,7 @@ export const GetServiceResponse = zod.object({
   id: zod.string(),
   slug: zod.string(),
   isFeatured: zod.boolean().optional(),
+  showInRelated: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
   comparisonLabel: zod.string().nullish(),
@@ -951,6 +953,7 @@ export const AdminListServicesResponseItem = zod.object({
   id: zod.string(),
   slug: zod.string(),
   isFeatured: zod.boolean().optional(),
+  showInRelated: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
   comparisonLabel: zod.string().nullish(),
@@ -979,6 +982,7 @@ export const AdminListServicesResponse = zod.array(
 export const AdminCreateServiceBody = zod.object({
   slug: zod.string(),
   isFeatured: zod.boolean().optional(),
+  showInRelated: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
   comparisonLabel: zod.string().nullish(),
@@ -1007,6 +1011,7 @@ export const AdminUpdateServiceParams = zod.object({
 export const AdminUpdateServiceBody = zod.object({
   slug: zod.string().optional(),
   isFeatured: zod.boolean().optional(),
+  showInRelated: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
   comparisonLabel: zod.string().nullish(),
@@ -1032,6 +1037,7 @@ export const AdminUpdateServiceResponse = zod.object({
   id: zod.string(),
   slug: zod.string(),
   isFeatured: zod.boolean().optional(),
+  showInRelated: zod.boolean().optional(),
   iconEmoji: zod.string().optional(),
   shortDesc: zod.string().optional(),
   comparisonLabel: zod.string().nullish(),
@@ -1199,6 +1205,7 @@ export const AdminMarkNotificationsReadResponse = zod.object({
 export const AdminGetDashboardResponse = zod.object({
   todayBookings: zod.number(),
   monthRevenue: zod.string(),
+  yearRevenue: zod.string().optional(),
   occupancyRate: zod.number(),
   activeGuests: zod.number(),
   totalBookings: zod.number(),
@@ -1224,6 +1231,48 @@ export const AdminGetBookingsTrendResponseItem = zod.object({
 export const AdminGetBookingsTrendResponse = zod.array(
   AdminGetBookingsTrendResponseItem,
 );
+
+/**
+ * @summary Get daily, monthly, and yearly booking counts for plots
+ */
+export const AdminGetBookingPlotsQueryParams = zod.object({
+  year: zod.coerce.number().optional(),
+  month: zod.coerce.number().optional(),
+});
+
+export const AdminGetBookingPlotsResponse = zod.object({
+  selectedYear: zod.number(),
+  selectedMonth: zod.number(),
+  daily: zod.array(
+    zod.object({
+      day: zod.number(),
+      date: zod.string(),
+      bookings: zod.number(),
+      revenue: zod.string(),
+    }),
+  ),
+  monthly: zod.array(
+    zod.object({
+      month: zod.string(),
+      monthNum: zod.number(),
+      bookings: zod.number(),
+      revenue: zod.string(),
+    }),
+  ),
+  yearly: zod.array(
+    zod.object({
+      year: zod.string(),
+      bookings: zod.number(),
+      revenue: zod.string(),
+    }),
+  ),
+  totalBookings: zod.number(),
+  monthBookings: zod.number(),
+  yearBookings: zod.number(),
+  totalRevenue: zod.string(),
+  monthRevenue: zod.string(),
+  yearRevenue: zod.string(),
+});
 
 /**
  * @summary Upcoming check-ins for the next 7 days
@@ -1592,6 +1641,9 @@ export const ListBlogsResponseItem = zod.object({
   date: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   isFeatured: zod.boolean().optional(),
+  isMainPost: zod.boolean().optional(),
+  isLatest: zod.boolean().optional(),
+  showOnHome: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
   deletedAt: zod.coerce.date().nullish(),
 });
@@ -1613,6 +1665,9 @@ export const GetBlogResponse = zod.object({
   date: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   isFeatured: zod.boolean().optional(),
+  isMainPost: zod.boolean().optional(),
+  isLatest: zod.boolean().optional(),
+  showOnHome: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
   deletedAt: zod.coerce.date().nullish(),
 });
@@ -1629,6 +1684,9 @@ export const AdminListBlogsResponseItem = zod.object({
   date: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   isFeatured: zod.boolean().optional(),
+  isMainPost: zod.boolean().optional(),
+  isLatest: zod.boolean().optional(),
+  showOnHome: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
   deletedAt: zod.coerce.date().nullish(),
 });
@@ -1643,6 +1701,10 @@ export const AdminCreateBlogBody = zod.object({
   image: zod.string(),
   category: zod.enum(["Surfing", "Travel", "Food", "Lifestyle", "Yoga"]),
   date: zod.coerce.date(),
+  isFeatured: zod.boolean().optional(),
+  isMainPost: zod.boolean().optional(),
+  isLatest: zod.boolean().optional(),
+  showOnHome: zod.boolean().optional(),
 });
 
 /**
@@ -1660,6 +1722,10 @@ export const AdminUpdateBlogBody = zod.object({
     .enum(["Surfing", "Travel", "Food", "Lifestyle", "Yoga"])
     .optional(),
   date: zod.coerce.date().optional(),
+  isFeatured: zod.boolean().optional(),
+  isMainPost: zod.boolean().optional(),
+  isLatest: zod.boolean().optional(),
+  showOnHome: zod.boolean().optional(),
 });
 
 export const AdminUpdateBlogResponse = zod.object({
@@ -1671,6 +1737,9 @@ export const AdminUpdateBlogResponse = zod.object({
   date: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   isFeatured: zod.boolean().optional(),
+  isMainPost: zod.boolean().optional(),
+  isLatest: zod.boolean().optional(),
+  showOnHome: zod.boolean().optional(),
   updatedAt: zod.coerce.date(),
   deletedAt: zod.coerce.date().nullish(),
 });

@@ -23,6 +23,7 @@ import type {
   AdminDeleteBlog200,
   AdminDeleteGuest200,
   AdminDeleteService200,
+  AdminGetBookingPlotsParams,
   AdminGetBookingsTrendParams,
   AdminGetRoomAvailabilityParams,
   AdminListBookingsParams,
@@ -41,6 +42,7 @@ import type {
   Booking,
   BookingCheck,
   BookingInput,
+  BookingPlotsResponse,
   BookingQuote,
   BookingUpdate,
   ContactInput,
@@ -4086,6 +4088,109 @@ export function useAdminGetBookingsTrend<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getAdminGetBookingsTrendQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get daily, monthly, and yearly booking counts for plots
+ */
+export const getAdminGetBookingPlotsUrl = (
+  params?: AdminGetBookingPlotsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/v1/admin/analytics/booking-plots?${stringifiedParams}`
+    : `/api/v1/admin/analytics/booking-plots`;
+};
+
+export const adminGetBookingPlots = async (
+  params?: AdminGetBookingPlotsParams,
+  options?: RequestInit,
+): Promise<BookingPlotsResponse> => {
+  return customFetch<BookingPlotsResponse>(getAdminGetBookingPlotsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminGetBookingPlotsQueryKey = (
+  params?: AdminGetBookingPlotsParams,
+) => {
+  return [
+    `/api/v1/admin/analytics/booking-plots`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getAdminGetBookingPlotsQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminGetBookingPlots>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: AdminGetBookingPlotsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof adminGetBookingPlots>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getAdminGetBookingPlotsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminGetBookingPlots>>
+  > = ({ signal }) =>
+    adminGetBookingPlots(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminGetBookingPlots>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminGetBookingPlotsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminGetBookingPlots>>
+>;
+export type AdminGetBookingPlotsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get daily, monthly, and yearly booking counts for plots
+ */
+
+export function useAdminGetBookingPlots<
+  TData = Awaited<ReturnType<typeof adminGetBookingPlots>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: AdminGetBookingPlotsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof adminGetBookingPlots>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminGetBookingPlotsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

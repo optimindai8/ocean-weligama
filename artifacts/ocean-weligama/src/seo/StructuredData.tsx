@@ -5,14 +5,29 @@ import {
   generateWebSiteSchema,
   generateBreadcrumbSchema,
   generateFaqSchema,
+  generateRoomSchema,
+  generateBlogPostSchema,
+  generatePackageSchema,
+  generateImageGallerySchema,
 } from "./jsonLd";
 
 export interface StructuredDataProps {
   breadcrumbs?: { name: string; item: string }[];
   faqs?: { question: string; answer: string }[];
+  room?: Parameters<typeof generateRoomSchema>[0];
+  blog?: Parameters<typeof generateBlogPostSchema>[0];
+  service?: Parameters<typeof generatePackageSchema>[0];
+  gallery?: Parameters<typeof generateImageGallerySchema>[0];
 }
 
-export function StructuredData({ breadcrumbs, faqs }: StructuredDataProps) {
+export function StructuredData({
+  breadcrumbs,
+  faqs,
+  room,
+  blog,
+  service,
+  gallery,
+}: StructuredDataProps) {
   useEffect(() => {
     const schemas: object[] = [
       generateHotelSchema(),
@@ -28,8 +43,24 @@ export function StructuredData({ breadcrumbs, faqs }: StructuredDataProps) {
       schemas.push(generateFaqSchema(faqs));
     }
 
+    if (room) {
+      schemas.push(generateRoomSchema(room));
+    }
+
+    if (blog) {
+      schemas.push(generateBlogPostSchema(blog));
+    }
+
+    if (service) {
+      schemas.push(generatePackageSchema(service));
+    }
+
+    if (gallery) {
+      schemas.push(generateImageGallerySchema(gallery));
+    }
+
     const scriptId = "seo-json-ld-scripts";
-    let existingContainer = document.getElementById(scriptId);
+    const existingContainer = document.getElementById(scriptId);
     if (existingContainer) {
       existingContainer.remove();
     }
@@ -50,7 +81,7 @@ export function StructuredData({ breadcrumbs, faqs }: StructuredDataProps) {
       const el = document.getElementById(scriptId);
       if (el) el.remove();
     };
-  }, [breadcrumbs, faqs]);
+  }, [breadcrumbs, faqs, room, blog, service, gallery]);
 
   return null;
 }

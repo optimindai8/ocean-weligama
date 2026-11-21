@@ -73,6 +73,7 @@ router.post("/v1/admin/services", requireAdmin, async (req, res) => {
           isActive: serviceFields.isActive ?? true,
           isBookable: serviceFields.isBookable ?? true,
           isFeatured: serviceFields.isFeatured ?? false,
+          showInRelated: serviceFields.showInRelated ?? false,
           sortOrder: serviceFields.sortOrder ?? 0,
         })
         .returning();

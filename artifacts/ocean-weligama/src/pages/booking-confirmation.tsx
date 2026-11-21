@@ -5,7 +5,7 @@ import { useGetBookingByReference, getGetBookingByReferenceQueryKey, useListRoom
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "wouter";
-import { Check, MessageCircle, Calendar, Users, ArrowRight, Home, Plane, MessageSquare, CreditCard, Award, Sparkles, Clock } from "lucide-react";
+import { Check, MessageCircle, Calendar, Users, ArrowRight, Home, Plane, MessageSquare, CreditCard, Award, Package, Clock } from "lucide-react";
 
 function getUnitLabel(unit: string | undefined, qty: number) {
   if (unit === 'per_day') return `${qty} Day${qty > 1 ? 's' : ''}`;
@@ -192,7 +192,7 @@ export default function BookingConfirmationPage() {
               {booking.services && booking.services.length > 0 && (
                 <div className="bg-emerald-50/30 border border-emerald-100/50 p-6 rounded-3xl">
                   <h3 className="text-sm font-black uppercase tracking-widest text-emerald-600 mb-6 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" /> Add-Ons & Packages
+                    <Package className="w-4 h-4" /> Add-Ons & Packages
                   </h3>
                   <div className="space-y-4">
                     {booking.services.map((s: any, idx: number) => {

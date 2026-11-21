@@ -28,6 +28,9 @@ const supabase = (supabaseUrl && supabaseAnonKey)
 
 const app: Express = express();
 
+// Trust reverse proxies (Cloudflare, Vercel, Nginx, ALB) to accurately parse real client IP
+app.set("trust proxy", true);
+
 // Disable powered-by header for security obfuscation
 app.disable("x-powered-by");
 
@@ -67,6 +70,7 @@ app.use(
 );
 
 // Global payload body limits to block payload bombing attacks
+app.use(express.text({ type: ["text/plain", "text/*"], limit: "1mb" }));
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 

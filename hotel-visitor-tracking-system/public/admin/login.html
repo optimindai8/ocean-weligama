@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Sign in · Visitor Analytics</title>
+    <link rel="stylesheet" href="admin.css" />
+    <script type="module" src="login.js"></script>
+  </head>
+  <body>
+    <div class="login-wrap">
+      <main class="card login-card">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <div>
+            <h1>Website Visitors</h1>
+            <p class="muted">Admin sign in</p>
+          </div>
+        </div>
+        <form id="login-form" autocomplete="on">
+          <div class="field">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" autocomplete="username" required maxlength="100" />
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="200" />
+          </div>
+          <p class="error" id="error" role="alert"></p>
+          <button class="primary" id="submit" type="submit">Sign in</button>
+        </form>
+      </main>
+    </div>
+  </body>
+</html>

@@ -68,7 +68,7 @@ export function Navbar() {
           <Link href="/">
             <div className="flex items-center gap-2 sm:gap-3 cursor-pointer group">
               <TransparentLogo 
-                src="/logo.jpg" 
+                src="/images/logo.jpg" 
                 className="h-10 w-10 sm:h-14 sm:w-14 object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-12" 
               />
               <div className="flex flex-col">

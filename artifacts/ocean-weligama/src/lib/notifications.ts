@@ -8,6 +8,7 @@ import {
   createSubmissionGuard as createSubmissionGuardCore,
   isHoneypotTripped as isHoneypotTrippedCore,
   isEmailJsConfigured,
+  // @ts-expect-error Untyped JS composition module
 } from "@hotel-notifications/composition.js";
 
 export interface ContactNotificationPayload {

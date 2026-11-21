@@ -31,7 +31,8 @@ import {
   EyeOff,
   MoreVertical,
   Settings2,
-  Sparkles,
+  Star,
+  Package,
   Upload,
   X,
 } from "lucide-react";
@@ -373,7 +374,7 @@ export default function AdminPackages() {
                       <div className="flex items-center gap-2">
                         {service.isFeatured && (
                           <Badge className="rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 bg-amber-100 text-amber-850 flex items-center gap-1">
-                            <Sparkles className="w-3 h-3 fill-amber-500 text-amber-500" /> Most Popular
+                            <Star className="w-3 h-3 fill-amber-500 text-amber-500" /> Most Popular
                           </Badge>
                         )}
                         <Badge className={`rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-0 ${service.isActive ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-500"}`}>
@@ -440,7 +441,7 @@ export default function AdminPackages() {
                 className="bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-sm p-20 flex flex-col items-center justify-center text-center"
               >
                 <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner">
-                  <Sparkles className="w-10 h-10 text-slate-300" />
+                  <Package className="w-10 h-10 text-slate-300" />
                 </div>
                 <h2 className="text-2xl font-black text-[#0B3D5E] mb-2">No packages yet</h2>
                 <p className="text-slate-500 font-medium max-w-md mb-8">

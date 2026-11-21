@@ -3,105 +3,286 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <!-- 1. Home Page -->
   <url>
     <loc>https://oceanairweligama.com/</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/"/>
-    <lastmod>2026-08-06</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://oceanairweligama.com/logo.jpg</image:loc>
+      <image:loc>https://oceanairweligama.com/images/logo.jpg</image:loc>
       <image:title>Ocean Air Weligama Hotel &amp; Villa</image:title>
       <image:caption>Ocean Air Weligama beachfront luxury hotel &amp; villa in Weligama Bay Sri Lanka</image:caption>
     </image:image>
     <video:video>
-      <video:thumbnail_loc>https://oceanairweligama.com/hero-video-poster.jpg</video:thumbnail_loc>
+      <video:thumbnail_loc>https://oceanairweligama.com/images/hero-video-poster.jpg</video:thumbnail_loc>
       <video:title>Ocean Air Weligama Barefoot Beach Experience</video:title>
       <video:description>Experience barefoot luxury 100 steps from the Indian Ocean at Ocean Air Weligama Sri Lanka.</video:description>
-      <video:content_loc>https://oceanairweligama.com/hero-video.mp4</video:content_loc>
+      <video:content_loc>https://oceanairweligama.com/videos/hero-video.mp4</video:content_loc>
     </video:video>
   </url>
+
+  <!-- 2. Rooms & Suites Index -->
   <url>
     <loc>https://oceanairweligama.com/rooms</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/rooms"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/rooms"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/rooms"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/rooms"/>
-    <lastmod>2026-08-06</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
+
+  <!-- Room Details -->
+  <url>
+    <loc>https://oceanairweligama.com/rooms/deluxe-ocean-view</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/rooms/deluxe-ocean-view"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/rooms/deluxe-ocean-view"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/rooms/deluxe-ocean-view"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/rooms/deluxe-ocean-view"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/rooms/private-beach-villa</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/rooms/private-beach-villa"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/rooms/private-beach-villa"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/rooms/private-beach-villa"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/rooms/private-beach-villa"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/rooms/sunset-suite</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/rooms/sunset-suite"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/rooms/sunset-suite"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/rooms/sunset-suite"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/rooms/sunset-suite"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/rooms/deluxe-double-with-balcony</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/rooms/deluxe-double-with-balcony"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/rooms/deluxe-double-with-balcony"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/rooms/deluxe-double-with-balcony"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/rooms/deluxe-double-with-balcony"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/rooms/comfortable-basic-private</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/rooms/comfortable-basic-private"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/rooms/comfortable-basic-private"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/rooms/comfortable-basic-private"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/rooms/comfortable-basic-private"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- 3. Packages & Experiences -->
   <url>
     <loc>https://oceanairweligama.com/packages</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/packages"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/packages"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/packages"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/packages"/>
-    <lastmod>2026-08-06</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
   </url>
+  <url>
+    <loc>https://oceanairweligama.com/experiences</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/experiences"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/experiences"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/experiences"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/experiences"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/packages/surfer-advance-package</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/packages/surfer-advance-package"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/packages/surfer-advance-package"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/packages/surfer-advance-package"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/packages/surfer-advance-package"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/packages/yoga-surf-retreat-package</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/packages/yoga-surf-retreat-package"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/packages/yoga-surf-retreat-package"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/packages/yoga-surf-retreat-package"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/packages/yoga-surf-retreat-package"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/packages/surf-lessons</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/packages/surf-lessons"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/packages/surf-lessons"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/packages/surf-lessons"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/packages/surf-lessons"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/packages/scooter-rentals</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/packages/scooter-rentals"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/packages/scooter-rentals"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/packages/scooter-rentals"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/packages/scooter-rentals"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/packages/whale-watching-tours</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/packages/whale-watching-tours"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/packages/whale-watching-tours"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/packages/whale-watching-tours"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/packages/whale-watching-tours"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- 4. Visual Gallery -->
   <url>
     <loc>https://oceanairweligama.com/gallery</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/gallery"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/gallery"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/gallery"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/gallery"/>
-    <lastmod>2026-08-06</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
+
+  <!-- 5. About & Heritage -->
   <url>
     <loc>https://oceanairweligama.com/about</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/about"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/about"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/about"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/about"/>
-    <lastmod>2026-08-06</lastmod>
+    <lastmod>2026-11-21</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
+
+  <!-- 6. Contact & Concierge -->
   <url>
     <loc>https://oceanairweligama.com/contact</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/contact"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/contact"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/contact"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/contact"/>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
   </url>
+
+  <!-- 7. Island Journal & Blog Index -->
   <url>
     <loc>https://oceanairweligama.com/blog</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/blog"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/blog"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/blog"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/blog"/>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.85</priority>
   </url>
+
+  <!-- Blog Stories -->
+  <url>
+    <loc>https://oceanairweligama.com/blog/secret-surf-breaks-of-weligama-bay</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/blog/secret-surf-breaks-of-weligama-bay"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/blog/secret-surf-breaks-of-weligama-bay"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/blog/secret-surf-breaks-of-weligama-bay"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/blog/secret-surf-breaks-of-weligama-bay"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/blog/our-story-ocean-air-weligama</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/blog/our-story-ocean-air-weligama"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/blog/our-story-ocean-air-weligama"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/blog/our-story-ocean-air-weligama"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/blog/our-story-ocean-air-weligama"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/blog/southern-sri-lanka-coastal-flavours</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/blog/southern-sri-lanka-coastal-flavours"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/blog/southern-sri-lanka-coastal-flavours"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/blog/southern-sri-lanka-coastal-flavours"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/blog/southern-sri-lanka-coastal-flavours"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/blog/morning-yoga-ocean-breath</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/blog/morning-yoga-ocean-breath"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/blog/morning-yoga-ocean-breath"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/blog/morning-yoga-ocean-breath"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/blog/morning-yoga-ocean-breath"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://oceanairweligama.com/blog/day-trips-from-weligama</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/blog/day-trips-from-weligama"/>
+    <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/blog/day-trips-from-weligama"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/blog/day-trips-from-weligama"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/blog/day-trips-from-weligama"/>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- 8. Frequently Asked Questions -->
   <url>
     <loc>https://oceanairweligama.com/faq</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/faq"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/faq"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/faq"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/faq"/>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
   </url>
+
+  <!-- 9. Booking & Cancellation Policy -->
   <url>
     <loc>https://oceanairweligama.com/cancellation-policy</loc>
     <xhtml:link rel="alternate" hreflang="en" href="https://oceanairweligama.com/cancellation-policy"/>
     <xhtml:link rel="alternate" hreflang="en-LK" href="https://oceanairsrilanka.lk/cancellation-policy"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://oceanairsrilanka.com/cancellation-policy"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://oceanairweligama.com/cancellation-policy"/>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <lastmod>2026-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
   </url>
 </urlset>

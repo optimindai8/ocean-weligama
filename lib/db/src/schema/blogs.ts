@@ -23,6 +23,9 @@ export const blogs = pgTable("blogs", {
   category: blogCategoryEnum("category").notNull(),
   date: timestamp("date", { withTimezone: true }).notNull(),
   isFeatured: boolean("is_featured").default(false),
+  isMainPost: boolean("is_main_post").default(false),
+  isLatest: boolean("is_latest").default(false),
+  showOnHome: boolean("show_on_home").default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

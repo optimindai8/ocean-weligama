@@ -29,7 +29,7 @@ import {
   EyeOff,
   MoreVertical,
   Settings2,
-  Sparkles,
+  Compass,
   Upload,
   X,
 } from "lucide-react";
@@ -89,6 +89,7 @@ const serviceSchema = z.object({
   isActive: z.boolean().default(true),
   isBookable: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
+  showInRelated: z.boolean().default(false),
   sortOrder: z.string().optional(),
   iconEmoji: z.string().max(10).optional(),
   unit: z.enum(["per_person", "per_day", "per_session", "per_tour", "per_trip", "per_lesson", "flat_rate"]).default("flat_rate"),
@@ -125,6 +126,7 @@ export default function AdminAddons() {
       isActive: true,
       isBookable: true,
       isFeatured: false,
+      showInRelated: false,
       sortOrder: "0",
       iconEmoji: "",
       unit: "flat_rate",
@@ -145,6 +147,7 @@ export default function AdminAddons() {
         isActive: service.isActive,
         isBookable: service.isBookable ?? true,
         isFeatured: service.isFeatured ?? false,
+        showInRelated: (service as any).showInRelated ?? false,
         sortOrder: service.sortOrder?.toString() || "0",
         iconEmoji: service.iconEmoji || "",
         unit: (service.unit as any) || "flat_rate",
@@ -161,7 +164,8 @@ export default function AdminAddons() {
         basePrice: "0.00",
         isActive: true,
         isBookable: true,
-      isFeatured: false,
+        isFeatured: false,
+        showInRelated: false,
         sortOrder: "0",
         iconEmoji: "",
         unit: "flat_rate",
@@ -186,13 +190,14 @@ export default function AdminAddons() {
     const generatedSlug = values.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const data = {
       ...values,
-      slug: generatedSlug,
+      slug: editingService ? editingService.slug : generatedSlug,
       highlights: [values.name],
       description: values.description || null,
       category: "Adventure",
       unit: values.unit,
       sortOrder: 0,
       iconEmoji: values.iconEmoji || null,
+      showInRelated: Boolean(values.showInRelated),
     };
 
     if (editingService) {
@@ -316,7 +321,7 @@ export default function AdminAddons() {
               >
                 <div className="flex items-start justify-between mb-6">
                   <div className="w-16 h-16 rounded-[1.2rem] flex items-center justify-center text-2xl shadow-md shadow-slate-200/50 group-hover:scale-105 transition-transform bg-slate-50">
-                    {service.iconEmoji || <Sparkles className="w-6 h-6 text-[#0B3D5E]/30" />}
+                    {service.iconEmoji || <Compass className="w-6 h-6 text-[#0B3D5E]/30" />}
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="rounded-full px-3 py-1 text-[10px] uppercase tracking-widest font-black border-slate-200 text-slate-500">
@@ -356,6 +361,17 @@ export default function AdminAddons() {
                       {service.category || "Adventure"}
                     </Badge>
                     <span className="text-[10px] text-slate-400 font-mono font-medium truncate max-w-[120px]">/{service.slug}</span>
+                    {service.isFeatured && (
+                      <Badge className="bg-[#0B3D5E]/10 text-[#0B3D5E] border border-[#0B3D5E]/20 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md flex gap-1 items-center">
+                        Home Featured
+                      </Badge>
+                    )}
+                    {(service as any).showInRelated && (
+                      <Badge className="bg-amber-100 text-amber-800 border border-amber-300/60 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md flex gap-1 items-center">
+                        <Compass className="w-2.5 h-2.5 text-amber-600" />
+                        In More Experiences
+                      </Badge>
+                    )}
                   </div>
                   <p className="text-sm text-slate-500 font-medium line-clamp-3 mb-6 min-h-[4.5rem]">
                     {service.description || "No description provided."}
@@ -386,7 +402,7 @@ export default function AdminAddons() {
             className="bg-white rounded-[3rem] border border-dashed border-slate-200 shadow-sm p-20 flex flex-col items-center justify-center text-center"
           >
             <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner">
-              <Sparkles className="w-10 h-10 text-slate-300" />
+              <Compass className="w-10 h-10 text-slate-300" />
             </div>
             <h2 className="text-2xl font-black text-[#0B3D5E] mb-2">No experiences yet</h2>
             <p className="text-slate-500 font-medium max-w-md mb-8">
@@ -506,15 +522,15 @@ export default function AdminAddons() {
                     )}
                   />
 
-                  <div className="flex gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="isActive"
                       render={({ field }) => (
-                        <FormItem className="flex-1 flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
-                          <div className="space-y-0.5">
-                            <FormLabel className="text-sm font-bold">Active</FormLabel>
-                            <p className="text-[10px] text-muted-foreground">Visible to guests.</p>
+                        <FormItem className="flex flex-row items-center justify-between rounded-2xl border border-slate-200/80 p-4 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-bold text-[#0B3D5E]">Active</FormLabel>
+                            <p className="text-[11px] text-muted-foreground">Publicly visible to guests on the website.</p>
                           </div>
                           <FormControl>
                             <Switch
@@ -525,36 +541,62 @@ export default function AdminAddons() {
                         </FormItem>
                       )}
                     />
-                    
-                      <FormField
-                        control={form.control}
-                        name="isFeatured"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4 bg-muted/20">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">Show on Home Page</FormLabel>
-                              <FormDescription>
-                                Display this package on the main home page
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
 
-                      <FormField
-                        control={form.control}
-                        name="isBookable"
+                    <FormField
+                      control={form.control}
+                      name="isBookable"
                       render={({ field }) => (
-                        <FormItem className="flex-1 flex flex-row items-center justify-between rounded-2xl border p-4 bg-muted/20">
-                          <div className="space-y-0.5">
-                            <FormLabel className="text-sm font-bold">Bookable</FormLabel>
-                            <p className="text-[10px] text-muted-foreground">Accepts bookings.</p>
+                        <FormItem className="flex flex-row items-center justify-between rounded-2xl border border-slate-200/80 p-4 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-bold text-[#0B3D5E]">Bookable</FormLabel>
+                            <p className="text-[11px] text-muted-foreground">Accepts direct bookings and add-on selection.</p>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="isFeatured"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-2xl border border-slate-200/80 p-4 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                          <div className="space-y-0.5 pr-2">
+                            <FormLabel className="text-sm font-bold text-[#0B3D5E]">Show on Home Page</FormLabel>
+                            <FormDescription className="text-[11px] text-muted-foreground">
+                              Feature this experience on the main home page.
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="showInRelated"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-2xl border border-amber-200/80 p-4 bg-amber-50/40 hover:bg-amber-50/70 transition-colors">
+                          <div className="space-y-0.5 pr-2">
+                            <div className="flex items-center gap-1.5">
+                              <Compass className="w-3.5 h-3.5 text-amber-500" />
+                              <FormLabel className="text-sm font-bold text-[#0B3D5E]">
+                                Show in "More Experiences"
+                              </FormLabel>
+                            </div>
+                            <FormDescription className="text-[11px] text-slate-500">
+                              Display under "More Experiences You May Love" on experience detail pages.
+                            </FormDescription>
                           </div>
                           <FormControl>
                             <Switch

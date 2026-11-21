@@ -5,6 +5,24 @@ Disallow: /ow-admin/
 Disallow: /api/
 Disallow: /api/v1/admin/
 
+User-agent: Googlebot
+Allow: /
+Disallow: /ow-admin
+Disallow: /ow-admin/
+Disallow: /api/
+Disallow: /api/v1/admin/
+
+User-agent: Googlebot-Image
+Allow: /images/
+Allow: /videos/
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+Disallow: /ow-admin
+Disallow: /ow-admin/
+Disallow: /api/
+
 Sitemap: https://oceanairweligama.com/sitemap.xml
 Sitemap: https://oceanairsrilanka.lk/sitemap.xml
 Sitemap: https://oceanairsrilanka.com/sitemap.xml

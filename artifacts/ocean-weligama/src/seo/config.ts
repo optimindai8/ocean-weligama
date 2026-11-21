@@ -301,7 +301,7 @@ export const defaultSEOConfig: SEOConfig = {
   primaryDomainCom: "https://oceanairweligama.com",
   primaryDomainLk: "https://oceanairsrilanka.lk",
   primaryDomainSriLanka: "https://oceanairsrilanka.com",
-  defaultOgImage: "https://oceanairweligama.com/logo.jpg",
+  defaultOgImage: "https://oceanairweligama.com/images/logo.jpg",
   twitterHandle: "@oceanairweligama",
   location: {
     streetAddress: "No 42 Jayasayurupura Pelana",

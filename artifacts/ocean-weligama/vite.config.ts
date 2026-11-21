@@ -21,6 +21,37 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
     plugins: [
       react(),
       tailwindcss(),
+      {
+        name: "asset-fallback-rewrite",
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            if (req.url) {
+              // Redirect any accidental nested http(s) URLs: "/images/https://..." -> "https://..."
+              const nestedHttp = req.url.match(/https?:\/\/[^\s"']+/i);
+              if (nestedHttp) {
+                res.writeHead(302, { Location: nestedHttp[0] });
+                res.end();
+                return;
+              }
+
+              // Normalize double-prefixed paths
+              if (req.url.startsWith("/images/images/")) {
+                req.url = req.url.replace(/^\/images\/images\//, "/images/");
+              } else if (req.url.startsWith("/videos/videos/")) {
+                req.url = req.url.replace(/^\/videos\/videos\//, "/videos/");
+              } else {
+                const url = req.url.split("?")[0] || "";
+                if (url.match(/^\/[^/]+\.(mp4|webm|mov|m4v)$/i)) {
+                  req.url = req.url.replace(/^\/([^/]+)/, "/videos/$1");
+                } else if (url.match(/^\/[^/]+\.(jpg|jpeg|png|webp|gif|svg)$/i) && !url.includes("favicon")) {
+                  req.url = req.url.replace(/^\/([^/]+)/, "/images/$1");
+                }
+              }
+            }
+            next();
+          });
+        },
+      },
     ],
     resolve: {
       alias: {
@@ -32,7 +63,7 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
     },
     root: path.resolve(import.meta.dirname),
     build: {
-      outDir: path.resolve(import.meta.dirname, "dist/public"),
+      outDir: path.resolve(import.meta.dirname, "dist"),
       emptyOutDir: true,
       rollupOptions: {
         onLog(level, log, handler) {
@@ -54,11 +85,25 @@ export default defineConfig(async ({ mode }): Promise<UserConfig> => {
       fs: {
         strict: true,
       },
+      proxy: {
+        "/api": {
+          target: process.env.VITE_API_URL || "http://localhost:8080",
+          changeOrigin: true,
+          xfwd: true,
+        },
+      },
     },
     preview: {
       port,
       host: "0.0.0.0",
       allowedHosts: true,
+      proxy: {
+        "/api": {
+          target: process.env.VITE_API_URL || "http://localhost:8080",
+          changeOrigin: true,
+          xfwd: true,
+        },
+      },
     },
   };
 });

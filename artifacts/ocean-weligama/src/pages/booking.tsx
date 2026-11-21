@@ -31,7 +31,7 @@ import {
   Check,
   Users,
   CreditCard,
-  Sparkles,
+  Sun,
   ShieldCheck,
   Waves,
   ArrowRight,
@@ -104,12 +104,12 @@ function getServiceIcon(name: string) {
   const n = name.toLowerCase();
   if (n.includes('surf') || n.includes('package')) return Award;
   if (n.includes('lesson')) return Waves;
-  if (n.includes('yoga')) return Sparkles;
+  if (n.includes('yoga')) return Sun;
   if (n.includes('whale')) return Ship;
   if (n.includes('safari')) return Compass;
   if (n.includes('cook')) return Utensils;
   if (n.includes('scooter') || n.includes('bike')) return Bike;
-  return Sparkles;
+  return Compass;
 }
 
 function getServiceTag(category?: string | null) {
@@ -140,7 +140,7 @@ const ALL_STEPS = {
   room: { id: "room", label: "Room", icon: Home },
   dates: { id: "dates", label: "Dates", icon: Calendar },
   guests: { id: "guests", label: "Guests", icon: Users },
-  experiences: { id: "experiences", label: "Experiences", icon: Sparkles },
+  experiences: { id: "experiences", label: "Experiences", icon: Compass },
   airport: { id: "airport", label: "Airport", icon: Plane },
   confirm: { id: "confirm", label: "Confirm", icon: CreditCard },
 };
@@ -392,7 +392,7 @@ function RoomCard({ room, isSelected, onClick, claimedOffer }: { room: any, isSe
 // Main component
 // ─────────────────────────────────────────────────────────────────────────────
 export default function BookingPage() {
-  const [, setLocation]   = useLocation();
+  const [location, setLocation] = useLocation();
   const { toast }         = useToast();
 
   if (typeof window !== 'undefined' && window.location.search.includes('new=1')) {
@@ -427,6 +427,12 @@ export default function BookingPage() {
   const flow = ["room", "dates", "guests", "experiences", "airport", "confirm"];
 
   const [stepId, setStepId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const sp = new URLSearchParams(window.location.search);
+      const urlStep = sp.get('step');
+      if (urlStep && flow.includes(urlStep)) return urlStep;
+      if (sp.get('room')) return "dates";
+    }
     const saved = loadState("stepId", "room");
     return flow.includes(saved) ? saved : "room";
   });
@@ -451,13 +457,39 @@ export default function BookingPage() {
       to: dr.to ? new Date(dr.to) : undefined,
     };
   });
-  const [selectedRoomIds,       setSelectedRoomIds]       = useState<string[]>(() => loadState("roomIds", []));
+  const [selectedRoomIds,       setSelectedRoomIds]       = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const sp = new URLSearchParams(window.location.search);
+      const urlRoom = sp.get('room');
+      if (urlRoom) return [urlRoom];
+    }
+    return loadState("roomIds", []);
+  });
   const [selectedDbServiceIds,  setSelectedDbServiceIds]  = useState<string[]>(() => loadState("serviceIds", []));
   const [serviceQuantities,     setServiceQuantities]     = useState<Record<string, number>>(() => loadState("serviceQuantities", {}));
   const [expandedPkgs,          setExpandedPkgs]          = useState<Record<string, boolean>>({});
   const [highlightCustomizations, setHighlightCustomizations] = useState<Record<string, Record<number, number>>>(() => loadState("highlightCustom", {}));
   const [matrixPrice, setMatrixPrice] = useState<any>(() => loadState("matrixPrice", null));
   const [isMatrixPackageExpanded, setIsMatrixPackageExpanded] = useState(false);
+
+  // Sync with incoming URL search parameters (e.g., direct booking links from room cards)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const sp = new URLSearchParams(window.location.search);
+    const roomParam = sp.get('room');
+    const stepParam = sp.get('step');
+    if (roomParam) {
+      setSelectedRoomIds([roomParam]);
+      saveState("roomIds", [roomParam]);
+    }
+    if (stepParam && flow.includes(stepParam)) {
+      setStepId(stepParam);
+      saveState("stepId", stepParam);
+    } else if (roomParam && !stepParam) {
+      setStepId("dates");
+      saveState("stepId", "dates");
+    }
+  }, [location]);
 
 
   useEffect(() => { saveState("stepId", stepId); }, [stepId]);
@@ -806,7 +838,7 @@ export default function BookingPage() {
           serviceQuantities,
           serviceCustomizations: getServiceCustomizations(),
           isMatrixBooking: !!matrixPrice,
-        },
+        } as any,
       });
 
       // Dispatch EmailJS booking notification to hotel inbox
@@ -961,7 +993,7 @@ export default function BookingPage() {
                     >
                       {selectedRooms.map((room, i) => (
                         <div key={room.id} className="flex items-center gap-1.5 bg-white border border-sky-100 rounded-full px-4 py-2 shadow-sm">
-                          <span className="text-lg">{room.iconEmoji || '🏠'}</span>
+                          <span className="text-lg">{(room as any).iconEmoji || '🏠'}</span>
                           <span className="text-xs font-bold text-slate-700">{room.name || `Room ${i+1}`}</span>
                           <span className="text-[10px] font-black text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full ml-1">Max {room.maxGuests}</span>
                         </div>
@@ -1177,7 +1209,7 @@ export default function BookingPage() {
                         onClick={() => setIsMatrixPackageExpanded(!isMatrixPackageExpanded)}
                       >
                         <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm border border-sky-100 shrink-0">
-                          <Sparkles className="w-5 h-5 text-sky-600" />
+                          <Award className="w-5 h-5 text-sky-600" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[10px] font-black uppercase tracking-widest text-sky-500 mb-0.5">Package Selected</p>
@@ -1326,7 +1358,7 @@ export default function BookingPage() {
               >
                 <StepHeader
                   n={currentStepNumber} iconBg="bg-gradient-to-br from-violet-100 to-indigo-100"
-                  icon={<Sparkles className="w-9 h-9 text-violet-600" />}
+                  icon={<Compass className="w-9 h-9 text-violet-600" />}
                   title="Experiences & Packages"
                   sub="Enhance your stay with surf packages and island adventures — all optional."
                 />
@@ -1519,7 +1551,7 @@ export default function BookingPage() {
                   <div>
                     <h2 className="text-2xl font-serif font-bold text-[#0B3D5E] mb-8 px-2 flex items-center gap-3">
                       <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200">
-                        <Sparkles className="w-4.5 h-4.5 text-white"/>
+                        <Compass className="w-4.5 h-4.5 text-white"/>
                       </span>
                       Add-On Experiences
                     </h2>
@@ -2134,7 +2166,7 @@ export default function BookingPage() {
                                 const svc = Array.isArray(services) ? services.find(s => s.id === id) : null;
                                 if (!svc) return null;
                                 const qty = serviceQuantities[id] || 1;
-                                const unitText = svc.unit === 'per_session' || svc.unit === 'per_lesson' ? ` (${qty} ${svc.unit === 'per_session' ? (qty > 1 ? 'Sessions' : 'Session') : (qty > 1 ? 'Lessons' : 'Lesson')})` : '';
+                                const unitText = svc.unit === 'per_session' || (svc.unit as string) === 'per_lesson' ? ` (${qty} ${svc.unit === 'per_session' ? (qty > 1 ? 'Sessions' : 'Session') : (qty > 1 ? 'Lessons' : 'Lesson')})` : '';
                                 return (
                                   <div key={id} className="flex items-center gap-2">
                                     <Check className="w-3.5 h-3.5 text-accent shrink-0" />
@@ -2291,7 +2323,7 @@ export default function BookingPage() {
                                     serviceQuantities,
                                     serviceCustomizations: getServiceCustomizations(),
                                     isMatrixBooking: !!matrixPrice,
-                                  }
+                                  } as any
                                 });
                                 if ((newRes as any).available) {
                                   goToStep("airport");

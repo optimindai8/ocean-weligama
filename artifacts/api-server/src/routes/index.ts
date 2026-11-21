@@ -20,6 +20,7 @@ import adminFaqRouter from "./admin-faq";
 import settingsRouter from "./settings";
 import offerAdsRouter from "./offer-ads";
 import adminRateAdjustmentsRouter from "./admin-rate-adjustments";
+import trackingRouter from "./tracking";
 
 const router: IRouter = Router();
 
@@ -44,5 +45,6 @@ router.use(adminFaqRouter);
 router.use(settingsRouter);
 router.use(offerAdsRouter);
 router.use(adminRateAdjustmentsRouter);
+router.use(trackingRouter);
 
 export default router;

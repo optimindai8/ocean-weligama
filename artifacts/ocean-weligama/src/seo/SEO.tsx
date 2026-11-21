@@ -79,35 +79,50 @@ export function SEO({
     setMeta("bingbot", "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1");
     setMeta("revisit-after", "1 days");
     setMeta("rating", "general");
+    setMeta("distribution", "global");
+    setMeta("coverage", "Worldwide");
     setMeta("author", "Ocean Air Weligama Hotel & Villa");
 
-    // 3. Open Graph Tags
+    // 3. Mobile Web App & Theme Color
+    setMeta("theme-color", "#0B3D5E");
+    setMeta("apple-mobile-web-app-capable", "yes");
+    setMeta("apple-mobile-web-app-status-bar-style", "black-translucent");
+    setMeta("application-name", "Ocean Air Weligama");
+    setMeta("format-detection", "telephone=no");
+
+    // 4. Open Graph Tags
     setMeta("og:site_name", defaultSEOConfig.siteName, true);
     setMeta("og:title", fullTitle, true);
     setMeta("og:description", description, true);
     setMeta("og:type", ogType, true);
     setMeta("og:url", canonicalUrl, true);
     setMeta("og:image", ogImage, true);
+    setMeta("og:image:width", "1200", true);
+    setMeta("og:image:height", "630", true);
+    setMeta("og:image:type", "image/jpeg", true);
+    setMeta("og:image:alt", fullTitle, true);
     setMeta("og:locale", "en_US", true);
     setMeta("og:locale:alternate", "en_LK", true);
 
-    // 4. Twitter Card Tags
+    // 5. Twitter Card Tags
     setMeta("twitter:card", "summary_large_image");
     setMeta("twitter:site", defaultSEOConfig.twitterHandle);
+    setMeta("twitter:creator", defaultSEOConfig.twitterHandle);
     setMeta("twitter:title", fullTitle);
     setMeta("twitter:description", description);
     setMeta("twitter:image", ogImage);
+    setMeta("twitter:image:alt", fullTitle);
 
-    // 5. Geo Location Tags (Pinpoint Weligama Bay Coordinates)
+    // 6. Geo Location Tags (Pinpoint Weligama Bay Coordinates)
     setMeta("geo.region", "LK-31");
     setMeta("geo.placename", "Weligama, Matara, Southern Province, Sri Lanka");
     setMeta("geo.position", `${defaultSEOConfig.location.latitude};${defaultSEOConfig.location.longitude}`);
     setMeta("ICBM", `${defaultSEOConfig.location.latitude}, ${defaultSEOConfig.location.longitude}`);
 
-    // 6. Canonical Link (.com vs .lk vs oceanairsrilanka.com unified authority)
+    // 7. Canonical Link (.com vs .lk vs oceanairsrilanka.com unified authority)
     setLink("canonical", canonicalUrl);
 
-    // 7. Multi-Domain & International Hreflang Link Tags
+    // 8. Multi-Domain & International Hreflang Link Tags
     setLink("alternate", comUrl, "en");
     setLink("alternate", lkUrl, "en-LK");
     setLink("alternate", sriLankaUrl, "en-US");

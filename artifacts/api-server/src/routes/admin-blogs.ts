@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { blogs } from "@workspace/db";
-import { eq, isNull, desc } from "drizzle-orm";
+import { eq, ne, isNull, desc } from "drizzle-orm";
 import { requireAdmin } from "../lib/auth.js";
 
 const router = Router();
@@ -24,6 +24,11 @@ router.get("/v1/admin/blogs", requireAdmin, async (req, res) => {
 router.post("/v1/admin/blogs", requireAdmin, async (req, res) => {
   try {
     const body = req.body;
+    const willBeMain = body.isMainPost ?? body.isFeatured ?? false;
+
+    if (willBeMain) {
+      await db.update(blogs).set({ isMainPost: false, isFeatured: false }).where(isNull(blogs.deletedAt));
+    }
 
     const [newBlog] = await db
       .insert(blogs)
@@ -33,7 +38,10 @@ router.post("/v1/admin/blogs", requireAdmin, async (req, res) => {
         image: body.image,
         category: body.category,
         date: new Date(body.date),
-        isFeatured: body.isFeatured ?? false,
+        isFeatured: willBeMain,
+        isMainPost: willBeMain,
+        isLatest: body.isLatest ?? false,
+        showOnHome: body.showOnHome ?? false,
       })
       .returning();
 
@@ -49,15 +57,27 @@ router.patch("/v1/admin/blogs/:id", requireAdmin, async (req, res) => {
     const { id } = req.params as Record<string, string>;
     const body = req.body;
 
+    const willBeMain = body.isMainPost !== undefined ? body.isMainPost : body.isFeatured;
+
+    if (willBeMain === true) {
+      // Single main post constraint: deactivate all other blogs
+      await db
+        .update(blogs)
+        .set({ isMainPost: false, isFeatured: false })
+        .where(ne(blogs.id, id));
+    }
+
     const [updatedBlog] = await db
       .update(blogs)
       .set({
-        ...(body.title && { title: body.title }),
-        ...(body.description && { description: body.description }),
-        ...(body.image && { image: body.image }),
-        ...(body.category && { category: body.category }),
-        ...(body.date && { date: new Date(body.date) }),
-        ...(body.isFeatured !== undefined && { isFeatured: body.isFeatured }),
+        ...(body.title !== undefined && { title: body.title }),
+        ...(body.description !== undefined && { description: body.description }),
+        ...(body.image !== undefined && { image: body.image }),
+        ...(body.category !== undefined && { category: body.category }),
+        ...(body.date !== undefined && { date: new Date(body.date) }),
+        ...(willBeMain !== undefined && { isMainPost: willBeMain, isFeatured: willBeMain }),
+        ...(body.isLatest !== undefined && { isLatest: body.isLatest }),
+        ...(body.showOnHome !== undefined && { showOnHome: body.showOnHome }),
         updatedAt: new Date(),
       })
       .where(eq(blogs.id, id))

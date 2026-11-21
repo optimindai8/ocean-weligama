@@ -79,6 +79,9 @@ export interface Blog {
   date: string;
   createdAt: string;
   isFeatured?: boolean;
+  isMainPost?: boolean;
+  isLatest?: boolean;
+  showOnHome?: boolean;
   updatedAt: string;
   deletedAt?: string | null;
 }
@@ -100,6 +103,10 @@ export interface BlogInput {
   image: string;
   category: BlogInputCategory;
   date: string;
+  isFeatured?: boolean;
+  isMainPost?: boolean;
+  isLatest?: boolean;
+  showOnHome?: boolean;
 }
 
 export type BlogUpdateCategory =
@@ -119,6 +126,10 @@ export interface BlogUpdate {
   image?: string;
   category?: BlogUpdateCategory;
   date?: string;
+  isFeatured?: boolean;
+  isMainPost?: boolean;
+  isLatest?: boolean;
+  showOnHome?: boolean;
 }
 
 export type RoomType = (typeof RoomType)[keyof typeof RoomType];
@@ -278,6 +289,7 @@ export interface Service {
   id: string;
   slug: string;
   isFeatured?: boolean;
+  showInRelated?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
   /** @nullable */
@@ -323,6 +335,7 @@ export const ServiceInputUnit = {
 export interface ServiceInput {
   slug: string;
   isFeatured?: boolean;
+  showInRelated?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
   /** @nullable */
@@ -367,6 +380,7 @@ export const ServiceUpdateUnit = {
 export interface ServiceUpdate {
   slug?: string;
   isFeatured?: boolean;
+  showInRelated?: boolean;
   iconEmoji?: string;
   shortDesc?: string;
   /** @nullable */
@@ -755,6 +769,7 @@ export interface AdminAuthResult {
 export interface DashboardMetrics {
   todayBookings: number;
   monthRevenue: string;
+  yearRevenue?: string;
   occupancyRate: number;
   activeGuests: number;
   totalBookings: number;
@@ -767,6 +782,40 @@ export interface TrendPoint {
   date: string;
   bookings: number;
   revenue: string;
+}
+
+export interface DailyPlotPoint {
+  day: number;
+  date: string;
+  bookings: number;
+  revenue: string;
+}
+
+export interface MonthlyPlotPoint {
+  month: string;
+  monthNum: number;
+  bookings: number;
+  revenue: string;
+}
+
+export interface YearlyPlotPoint {
+  year: string;
+  bookings: number;
+  revenue: string;
+}
+
+export interface BookingPlotsResponse {
+  selectedYear: number;
+  selectedMonth: number;
+  daily: DailyPlotPoint[];
+  monthly: MonthlyPlotPoint[];
+  yearly: YearlyPlotPoint[];
+  totalBookings: number;
+  monthBookings: number;
+  yearBookings: number;
+  totalRevenue: string;
+  monthRevenue: string;
+  yearRevenue: string;
 }
 
 export interface PricingRule {
@@ -922,6 +971,11 @@ export type AdminMarkNotificationsRead200 = {
 
 export type AdminGetBookingsTrendParams = {
   days?: number;
+};
+
+export type AdminGetBookingPlotsParams = {
+  year?: number;
+  month?: number;
 };
 
 export type AdminDeleteAllGuests200 = {

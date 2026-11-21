@@ -17,7 +17,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronLeft, ChevronRight, ChevronDown, Filter, Trash2, Eye, User, Phone, Mail, Globe, Home, Calendar, Sparkles, CreditCard, MessageSquare, Clock, Check, Award, Plane, Search, RefreshCw, Info, ArrowRight, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, ChevronDown, Filter, Trash2, Eye, User, Phone, Mail, Globe, Home, Calendar, Package, CreditCard, MessageSquare, Clock, Check, Award, Plane, Search, RefreshCw, Info, ArrowRight, Zap, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,6 +45,51 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AlertTriangle } from "lucide-react";
+
+const STATUS_CONFIG: Record<string, { label: string; dotColor: string; badgeBg: string; textColor: string; desc: string }> = {
+  pending: {
+    label: "Pending",
+    dotColor: "bg-amber-400",
+    badgeBg: "bg-amber-50/90 border-amber-200 text-amber-800 hover:bg-amber-100/80 hover:border-amber-300",
+    textColor: "text-amber-800",
+    desc: "Awaiting confirmation",
+  },
+  confirmed: {
+    label: "Confirmed",
+    dotColor: "bg-emerald-500",
+    badgeBg: "bg-emerald-50/90 border-emerald-200 text-emerald-800 hover:bg-emerald-100/80 hover:border-emerald-300",
+    textColor: "text-emerald-800",
+    desc: "Approved & reserved",
+  },
+  checked_in: {
+    label: "Checked In",
+    dotColor: "bg-sky-500",
+    badgeBg: "bg-sky-50/90 border-sky-200 text-sky-800 hover:bg-sky-100/80 hover:border-sky-300",
+    textColor: "text-sky-800",
+    desc: "Currently at property",
+  },
+  checked_out: {
+    label: "Checked Out",
+    dotColor: "bg-slate-400",
+    badgeBg: "bg-slate-100/90 border-slate-200 text-slate-700 hover:bg-slate-200/70 hover:border-slate-300",
+    textColor: "text-slate-700",
+    desc: "Stay completed",
+  },
+  cancelled: {
+    label: "Cancelled",
+    dotColor: "bg-rose-500",
+    badgeBg: "bg-rose-50/90 border-rose-200 text-rose-800 hover:bg-rose-100/80 hover:border-rose-300",
+    textColor: "text-rose-800",
+    desc: "Booking cancelled",
+  },
+  no_show: {
+    label: "No Show",
+    dotColor: "bg-orange-500",
+    badgeBg: "bg-orange-50/90 border-orange-200 text-orange-800 hover:bg-orange-100/80 hover:border-orange-300",
+    textColor: "text-orange-800",
+    desc: "Guest did not arrive",
+  },
+};
 
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -126,6 +180,7 @@ export default function AdminBookings() {
   const [expandedPkgs, setExpandedPkgs] = useState<Record<string, boolean>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
 
 
@@ -183,16 +238,21 @@ export default function AdminBookings() {
   } | undefined;
 
   function handleStatusChange(id: string, status: string) {
+    setUpdatingId(id);
     updateBooking.mutate(
       { id, data: { status } },
       {
         onSuccess: () => {
-          toast({ title: "Status updated" });
+          toast({ title: "Status updated successfully" });
           queryClient.invalidateQueries({ queryKey: getAdminListBookingsQueryKey(params) });
           queryClient.invalidateQueries({ queryKey: getAdminGetNotificationCountsQueryKey() });
           setSelectedBookingId(null);
+          setUpdatingId(null);
         },
-        onError: () => toast({ variant: "destructive", title: "Update failed" }),
+        onError: () => {
+          toast({ variant: "destructive", title: "Update failed" });
+          setUpdatingId(null);
+        },
       }
     );
   }
@@ -332,7 +392,21 @@ export default function AdminBookings() {
                 <thead className="border-b border-slate-100 bg-slate-50/95 backdrop-blur sticky top-0 z-10 shadow-sm">
                   <tr>
                     {["Reference", "Guest", "Contact", "Check-in", "Check-out", "Nights", "Status", "Total", "Actions"].map((h) => (
-                      <th key={h} className="text-left px-6 py-4 font-black text-slate-400 text-[10px] uppercase tracking-widest whitespace-nowrap">{h}</th>
+                      <th
+                        key={h}
+                        className={cn(
+                          "py-4 font-black text-slate-400 text-[10px] uppercase tracking-widest whitespace-nowrap",
+                          h === "Actions"
+                            ? "text-right pr-6 px-4"
+                            : h === "Nights"
+                            ? "text-center px-2"
+                            : h === "Check-in" || h === "Check-out" || h === "Status" || h === "Total"
+                            ? "text-left px-3"
+                            : "text-left px-4"
+                        )}
+                      >
+                        {h}
+                      </th>
                     ))}
                   </tr>
                 </thead>
@@ -352,7 +426,7 @@ export default function AdminBookings() {
                       onClick={() => setSelectedBooking(b)}
                       data-testid={`row-booking-${b.id}`}
                     >
-                      <td className="px-6 py-5 font-mono text-xs font-bold text-[#4BBCCC] whitespace-nowrap">
+                      <td className="px-4 py-4 font-mono text-xs font-bold text-[#4BBCCC] whitespace-nowrap">
                         <div className="flex flex-col gap-1.5">
                           <span>{b.reference}</span>
                           {b.status === "pending" && (
@@ -362,24 +436,28 @@ export default function AdminBookings() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-5 whitespace-nowrap">
+                      <td className="px-4 py-4 whitespace-nowrap">
                         <p className="font-bold text-[#0B3D5E] group-hover:text-sky-700 transition-colors">{b.guestFullName}</p>
                       </td>
-                      <td className="px-6 py-5">
-                        <div className="flex flex-col gap-1 text-xs">
+                      <td className="px-4 py-4">
+                        <div className="flex flex-col gap-0.5 text-xs">
                           <span className="text-slate-600 font-medium">{b.guestEmail}</span>
                           {b.guestPhone && <span className="text-slate-400">{b.guestPhone}</span>}
                         </div>
                       </td>
-                      <td className="px-6 py-5 text-slate-600 font-medium whitespace-nowrap">{b.checkIn}</td>
-                      <td className="px-6 py-5 text-slate-600 font-medium whitespace-nowrap">{b.checkOut}</td>
-                      <td className="px-6 py-5 text-center font-bold text-slate-400">{b.nights}n</td>
-                      <td className="px-6 py-5">
-                        <span className={`px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-black border-0 ${STATUS_COLORS[b.status] ?? "bg-slate-100 text-slate-600"}`}>
-                          {b.status.replace("_", " ")}
+                      <td className="px-3 py-4 text-slate-600 font-medium whitespace-nowrap text-xs">{b.checkIn}</td>
+                      <td className="px-3 py-4 text-slate-600 font-medium whitespace-nowrap text-xs">{b.checkOut}</td>
+                      <td className="px-2 py-4 text-center font-bold text-slate-400 text-xs">{b.nights}n</td>
+                      <td className="px-3 py-4 whitespace-nowrap">
+                        <span className={cn(
+                          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase tracking-widest font-black border",
+                          STATUS_CONFIG[b.status]?.badgeBg || "bg-slate-100 border-slate-200 text-slate-600"
+                        )}>
+                          <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", STATUS_CONFIG[b.status]?.dotColor || "bg-slate-400")} />
+                          {STATUS_CONFIG[b.status]?.label || b.status.replace("_", " ")}
                         </span>
                       </td>
-                      <td className="px-6 py-5 whitespace-nowrap">
+                      <td className="px-3 py-4 whitespace-nowrap">
                         <div className="flex flex-col">
                           <span className="font-black text-[#0B3D5E]">€{rowTotal}</span>
                           <span className="text-[10px] text-slate-400 font-medium">
@@ -387,22 +465,105 @@ export default function AdminBookings() {
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
-                          <select
-                            value={b.status}
-                            onChange={(e) => handleStatusChange(b.id, e.target.value)}
-                            className="text-xs font-bold uppercase tracking-wider border border-slate-200 rounded-xl px-3 py-1.5 bg-white text-slate-600 cursor-pointer hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0B3D5E]/20"
-                            data-testid={`select-status-${b.id}`}
-                          >
-                            {["pending", "confirmed", "checked_in", "checked_out", "cancelled", "no_show"].map((s) => (
-                              <option key={s} value={s}>{s.replace("_", " ")}</option>
-                            ))}
-                          </select>
+                      <td className="px-4 py-4 pr-6 whitespace-nowrap text-right">
+                        <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button
+                                type="button"
+                                disabled={updatingId === b.id}
+                                className={cn(
+                                  "group/btn inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 border cursor-pointer select-none outline-none focus:ring-2 focus:ring-[#0B3D5E]/20 shadow-xs",
+                                  STATUS_CONFIG[b.status]?.badgeBg || "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100",
+                                  updatingId === b.id && "opacity-70 cursor-wait"
+                                )}
+                                data-testid={`action-status-btn-${b.id}`}
+                                title="Change status"
+                              >
+                                {updatingId === b.id ? (
+                                  <Loader2 className="w-3.5 h-3.5 animate-spin text-[#0B3D5E]" />
+                                ) : (
+                                  <span
+                                    className={cn(
+                                      "w-2 h-2 rounded-full shrink-0 shadow-xs",
+                                      STATUS_CONFIG[b.status]?.dotColor || "bg-slate-400"
+                                    )}
+                                  />
+                                )}
+                                <span className="tracking-wide">
+                                  {STATUS_CONFIG[b.status]?.label || b.status.replace("_", " ")}
+                                </span>
+                                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover/btn:text-slate-600 transition-transform duration-200 group-data-[state=open]/btn:rotate-180" />
+                              </button>
+                            </DropdownMenuTrigger>
+
+                            <DropdownMenuContent
+                              align="end"
+                              sideOffset={6}
+                              className="w-64 p-1.5 rounded-2xl bg-white border border-slate-200/90 shadow-[0_20px_45px_rgba(11,61,94,0.14)] z-50 animate-in fade-in-0 zoom-in-95"
+                            >
+                              <DropdownMenuLabel className="px-3 py-2 text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                                <span>Change Booking Status</span>
+                                <span className="font-mono text-[9px] text-[#4BBCCC] font-bold">{b.reference}</span>
+                              </DropdownMenuLabel>
+                              <DropdownMenuSeparator className="my-1 bg-slate-100" />
+                              <div className="space-y-0.5">
+                                {(["pending", "confirmed", "checked_in", "checked_out", "cancelled", "no_show"] as const).map((s) => {
+                                  const cfg = STATUS_CONFIG[s];
+                                  const isSelected = b.status === s;
+                                  return (
+                                    <DropdownMenuItem
+                                      key={s}
+                                      onSelect={() => {
+                                        if (b.status !== s) {
+                                          handleStatusChange(b.id, s);
+                                        }
+                                      }}
+                                      className={cn(
+                                        "flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-colors duration-150 outline-none",
+                                        isSelected
+                                          ? "bg-[#0B3D5E]/8 text-[#0B3D5E] font-bold"
+                                          : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                                      )}
+                                      data-testid={`status-option-${s}-${b.id}`}
+                                    >
+                                      <div className="flex items-center gap-2.5">
+                                        <span className={cn("w-2 h-2 rounded-full shrink-0", cfg.dotColor)} />
+                                        <div className="flex flex-col">
+                                          <span className="leading-tight">{cfg.label}</span>
+                                          <span className="text-[10px] font-normal text-slate-400 leading-tight">
+                                            {cfg.desc}
+                                          </span>
+                                        </div>
+                                      </div>
+                                      {isSelected && (
+                                        <Check className="w-4 h-4 text-[#0B3D5E] stroke-[2.5]" />
+                                      )}
+                                    </DropdownMenuItem>
+                                  );
+                                })}
+                              </div>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 rounded-xl text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                            className="h-8 w-8 rounded-xl text-slate-400 hover:text-[#0B3D5E] hover:bg-[#0B3D5E]/8 transition-colors shrink-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedBooking(b);
+                            }}
+                            title="View Details"
+                            data-testid={`view-booking-${b.id}`}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-xl text-rose-400 hover:text-rose-600 hover:bg-rose-50 transition-colors shrink-0"
                             onClick={(e) => { e.stopPropagation(); setDeleteId(b.id); }}
                             disabled={deleteBooking.isPending}
                             title="Delete Booking"
@@ -527,7 +688,7 @@ export default function AdminBookings() {
                     {selectedBooking.services && selectedBooking.services.length > 0 && (
                       <div className="bg-white rounded-2xl p-5 sm:p-6 border border-border shadow-sm">
                         <h3 className="text-sm font-black uppercase tracking-widest text-emerald-600 mb-4 flex items-center gap-2">
-                          <Sparkles className="w-4 h-4" /> Add-Ons & Packages
+                          <Package className="w-4 h-4" /> Add-Ons & Packages
                         </h3>
                         <div className="space-y-4">
                           {selectedBooking.services.map((s: any, idx: number) => {

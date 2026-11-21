@@ -1006,6 +1006,28 @@ paths:
                 items:
                   $ref: "#/components/schemas/TrendPoint"
 
+  /v1/admin/analytics/booking-plots:
+    get:
+      operationId: adminGetBookingPlots
+      tags: [admin-analytics]
+      summary: Get daily, monthly, and yearly booking counts for plots
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: integer
+        - name: month
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Booking plots data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingPlotsResponse"
+
   /v1/admin/analytics/upcoming-checkins:
     get:
       operationId: adminGetUpcomingCheckins
@@ -1630,6 +1652,12 @@ components:
           format: date-time
         isFeatured:
           type: boolean
+        isMainPost:
+          type: boolean
+        isLatest:
+          type: boolean
+        showOnHome:
+          type: boolean
 
         updatedAt:
           type: string
@@ -1655,6 +1683,14 @@ components:
         date:
           type: string
           format: date-time
+        isFeatured:
+          type: boolean
+        isMainPost:
+          type: boolean
+        isLatest:
+          type: boolean
+        showOnHome:
+          type: boolean
 
     BlogUpdate:
       type: object
@@ -1671,6 +1707,14 @@ components:
         date:
           type: string
           format: date-time
+        isFeatured:
+          type: boolean
+        isMainPost:
+          type: boolean
+        isLatest:
+          type: boolean
+        showOnHome:
+          type: boolean
 
     Room:
       type: object
@@ -1821,6 +1865,8 @@ components:
           type: string
         isFeatured:
           type: boolean
+        showInRelated:
+          type: boolean
         iconEmoji:
           type: string
         shortDesc:
@@ -1868,6 +1914,8 @@ components:
           type: string
         isFeatured:
           type: boolean
+        showInRelated:
+          type: boolean
         iconEmoji:
           type: string
         shortDesc:
@@ -1911,6 +1959,8 @@ components:
         slug:
           type: string
         isFeatured:
+          type: boolean
+        showInRelated:
           type: boolean
         iconEmoji:
           type: string
@@ -2488,6 +2538,8 @@ components:
           type: integer
         monthRevenue:
           type: string
+        yearRevenue:
+          type: string
         occupancyRate:
           type: number
         activeGuests:
@@ -2510,6 +2562,76 @@ components:
         bookings:
           type: integer
         revenue:
+          type: string
+
+    DailyPlotPoint:
+      type: object
+      required: [day, date, bookings, revenue]
+      properties:
+        day:
+          type: integer
+        date:
+          type: string
+        bookings:
+          type: integer
+        revenue:
+          type: string
+
+    MonthlyPlotPoint:
+      type: object
+      required: [month, monthNum, bookings, revenue]
+      properties:
+        month:
+          type: string
+        monthNum:
+          type: integer
+        bookings:
+          type: integer
+        revenue:
+          type: string
+
+    YearlyPlotPoint:
+      type: object
+      required: [year, bookings, revenue]
+      properties:
+        year:
+          type: string
+        bookings:
+          type: integer
+        revenue:
+          type: string
+
+    BookingPlotsResponse:
+      type: object
+      required: [selectedYear, selectedMonth, daily, monthly, yearly, totalBookings, monthBookings, yearBookings, totalRevenue, monthRevenue, yearRevenue]
+      properties:
+        selectedYear:
+          type: integer
+        selectedMonth:
+          type: integer
+        daily:
+          type: array
+          items:
+            $ref: "#/components/schemas/DailyPlotPoint"
+        monthly:
+          type: array
+          items:
+            $ref: "#/components/schemas/MonthlyPlotPoint"
+        yearly:
+          type: array
+          items:
+            $ref: "#/components/schemas/YearlyPlotPoint"
+        totalBookings:
+          type: integer
+        monthBookings:
+          type: integer
+        yearBookings:
+          type: integer
+        totalRevenue:
+          type: string
+        monthRevenue:
+          type: string
+        yearRevenue:
           type: string
 
     PricingRule:

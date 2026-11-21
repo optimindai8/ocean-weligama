@@ -35,6 +35,8 @@ import AdminGuests from "@/pages/admin/guests";
 import AdminFAQ from "@/pages/admin/faq";
 import AdminOfferAds from "@/pages/admin/offer-ads";
 import AdminRateAdjustments from "@/pages/admin/rate-adjustments";
+import AdminSettings from "@/pages/admin/settings";
+import AdminVisitors from "@/pages/admin/visitors";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +52,7 @@ import { Navbar } from "@/components/navbar";
 import { useLocation } from "wouter";
 import { LanguageProvider } from "@/components/LanguageContext";
 import { OfferAdPopup } from "@/components/OfferAdPopup";
+import { CookieConsentPopup } from "@/components/CookieConsentPopup";
 import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 
 function App() {
@@ -70,6 +73,7 @@ function App() {
             <>
               <Navbar />
               <OfferAdPopup />
+              <CookieConsentPopup />
               <WhatsAppWidget />
             </>
           )}
@@ -81,6 +85,8 @@ function App() {
               <Route path="/rooms/:slug" component={RoomDetailPage} />
               <Route path="/packages" component={PackagesPage} />
               <Route path="/packages/:slug" component={PackageDetailPage} />
+              <Route path="/experiences" component={PackagesPage} />
+              <Route path="/experiences/:slug" component={PackageDetailPage} />
               <Route path="/gallery" component={GalleryPage} />
               <Route path="/about" component={AboutPage} />
               <Route path="/contact" component={ContactPage} />
@@ -94,6 +100,7 @@ function App() {
               {/* Admin routes */}
               <Route path="/ow-admin" component={AdminLoginPage} />
               <Route path="/ow-admin/dashboard" component={AdminDashboard} />
+              <Route path="/ow-admin/visitors" component={AdminVisitors} />
               <Route path="/ow-admin/bookings" component={AdminBookings} />
               <Route path="/ow-admin/guests" component={AdminGuests} />
               <Route path="/ow-admin/rooms" component={AdminRooms} />
@@ -108,6 +115,7 @@ function App() {
               <Route path="/ow-admin/faq" component={AdminFAQ} />
               <Route path="/ow-admin/offer-ads" component={AdminOfferAds} />
               <Route path="/ow-admin/rate-adjustments" component={AdminRateAdjustments} />
+              <Route path="/ow-admin/settings" component={AdminSettings} />
 
               <Route component={NotFound} />
             </Switch>
