@@ -26,6 +26,9 @@ import {
   Tablet,
   MousePointerClick,
   RotateCcw,
+  AlertTriangle,
+  Database,
+  X,
   Calendar,
   Palmtree,
   UtensilsCrossed,
@@ -702,6 +705,7 @@ export default function AdminVisitors() {
   const [expandedPage, setExpandedPage] = useState<string | null>(null);
   const [isManualRefreshing, setIsManualRefreshing] = useState(false);
   const [lastRefreshedAt, setLastRefreshedAt] = useState<Date>(new Date());
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -763,12 +767,15 @@ export default function AdminVisitors() {
   });
 
   const handleReset = () => {
-    const confirmed = window.confirm(
-      "⚠️ Reset All Visitor Statistics?\n\nThis will permanently delete all guest tracking data from the database. All metrics, conversions, and trends will return to zero.\n\nAre you sure you want to proceed?"
-    );
-    if (confirmed) {
-      resetMutation.mutate();
-    }
+    setIsResetModalOpen(true);
+  };
+
+  const handleConfirmReset = () => {
+    resetMutation.mutate(undefined, {
+      onSettled: () => {
+        setIsResetModalOpen(false);
+      },
+    });
   };
 
   const summary = data?.summary || {
@@ -1891,6 +1898,106 @@ export default function AdminVisitors() {
           )}
         </div>
       </div>
+
+      {/* Smooth Reset Access Confirmation Modal */}
+      <AnimatePresence>
+        {isResetModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            {/* Backdrop with smooth blur and fade */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              onClick={() => !resetMutation.isPending && setIsResetModalOpen(false)}
+              className="fixed inset-0 bg-slate-950/70 backdrop-blur-md"
+            />
+
+            {/* Modal Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] border border-rose-200/80 dark:border-rose-900/50 p-6 sm:p-8 overflow-hidden z-10"
+            >
+              {/* Subtle Ambient Red Glow Accent */}
+              <div className="absolute -top-20 -right-20 w-44 h-44 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-20 -left-20 w-44 h-44 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => !resetMutation.isPending && setIsResetModalOpen(false)}
+                disabled={resetMutation.isPending}
+                aria-label="Close dialog"
+                className="absolute top-5 right-5 p-2 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-40"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Header Icon & Title */}
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 border border-rose-200 dark:border-rose-800 shadow-sm">
+                  <AlertTriangle className="w-6 h-6 text-rose-600 dark:text-rose-400" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white leading-snug">
+                    Reset Visitor Statistics?
+                  </h3>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400 mt-0.5">
+                    Irreversible Database Action
+                  </p>
+                </div>
+              </div>
+
+              {/* Description & Impact List */}
+              <div className="space-y-3 mb-6">
+                <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Are you sure you want to reset all visitor tracking data? This operation permanently clears stored tracking logs from the database.
+                </p>
+
+                {/* Details Callout Box */}
+                <div className="rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-900/40 p-4 space-y-2 text-xs text-rose-900 dark:text-rose-200">
+                  <div className="flex items-center gap-2 font-bold">
+                    <Database className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                    <span>Affected Records</span>
+                  </div>
+                  <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-400">
+                    <li>Total unique visitor sessions and page views</li>
+                    <li>Device, browser, OS, and geo-location metrics</li>
+                    <li>Button click heatmaps and live conversion events</li>
+                  </ul>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 italic pt-1">
+                    Real-time tracking will immediately resume counting from zero.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsResetModalOpen(false)}
+                  disabled={resetMutation.isPending}
+                  className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold text-sm transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmReset}
+                  disabled={resetMutation.isPending}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50 active:scale-95"
+                >
+                  <RotateCcw className={`w-4 h-4 ${resetMutation.isPending ? "animate-spin" : ""}`} />
+                  <span>{resetMutation.isPending ? "Resetting..." : "Yes, Reset All Data"}</span>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </AdminLayout>
   );
 }
